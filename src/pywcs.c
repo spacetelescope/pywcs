@@ -29,7 +29,7 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 DAMAGE.
 */
 
-/* $Id: Documentation_Guidelines.html,v 1.2 2007/09/04 20:44:02 dencheva Exp $ */
+/* $Id: Doumentation_Guidelines.html,v 1.2 2007/09/04 20:44:02 dencheva Exp $ */
 
 /*
  Author: Michael Droettboom
