@@ -22,7 +22,7 @@ def test_file(path):
     print "=" * 75
     print path
     hdulist = pyfits.open(path)
-    wcslist = pywcs.parse_wcs(hdulist)
+    wcslist = pywcs.parse_hdulist(hdulist)
     data1 = numpy.array([100,200])
     data2 = numpy.array([200,300])
     data3 = numpy.array([[0,1],[2,3],[4,5],[6,7]], numpy.float_)
