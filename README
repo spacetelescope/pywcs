@@ -1,0 +1,96 @@
+------------------------------------------------------------------------------
+Copyright (C) 2008 Association of Universities for Research in Astronomy (AURA)
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+    1. Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+
+    2. Redistributions in binary form must reproduce the above
+      copyright notice, this list of conditions and the following
+      disclaimer in the documentation and/or other materials provided
+      with the distribution.
+
+    3. The name of AURA and its representatives may not be used to
+      endorse or promote products derived from this software without
+      specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY AURA ``AS IS'' AND ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL AURA BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+DAMAGE.
+------------------------------------------------------------------------------
+
+Introduction
+------------
+
+pywcs is a set of routines for handling the FITS World Coordinate
+System (WCS) standard.  It is a thin wrapper around the high- and
+mid-level interfaces of Dr. Mark Calabretta's WCSLIB available here:
+
+  http://www.atnf.csiro.au/people/mcalabre/WCS/
+
+pywcs is alpha-quality software.  Please direct any questions to:
+
+  Michael Droettboom
+  mdroe@stsci.edu
+
+The current version is focused on providing basic access to the
+functionality in WCSLIB.  Future releases will have better integration
+with PyFITS and more Python-specific utilities.
+
+Build instructions
+------------------
+
+pywcs includes its own copy of WCSLIB.
+
+pywcs uses the standard Python distutils system to build and install
+itself.  From the command line run::
+
+    python setup.py install
+
+to install pywcs.
+
+Building documentation
+----------------------
+
+Optionally, the API documentation can be built using epydoc
+(http://epydoc.sourceforge.net).
+
+After installing pywcs, type::
+
+    epydoc pywcs pywcs.pywcs
+
+The API documentation is also available online at:
+
+    http://stsdas.stsci.edu/astrolib/pywcs-1.0a1-4.3_api/index.html
+
+General usage instructions
+--------------------------
+
+The basic workflow is as follows:
+
+    1. ``import pywcs``
+
+    2. Call ``pywcs.parse_image_header()`` with a raw FITS header or
+    ``pywcs.parse_hdulist()`` with a PyFITS hdulist.  This will return
+    a list containing all of the WCS transformations specified in the
+    FITS file.
+
+    3. Optionally, if the FITS file uses any deprecated or
+    non-standard features, you may need to call one of the ``fix``
+    methods on the object.
+
+    4. Select the correct ``Wcs`` transform object from the list, and
+    convert coordinates using the ``.p2s()`` or ``.s2p()`` methods.
+
+See the API documentation for usage details about these methods.
+

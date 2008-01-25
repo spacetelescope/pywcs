@@ -115,7 +115,7 @@ fd.close()
 ######################################################################
 # DISTUTILS SETUP
 setup(name="pywcs",
-      version="0.1 (%s)" % WCSVERSION,
+      version="1.0a1-%s" % WCSVERSION,
       description="Python wrappers to WCSLIB",
       author="Michael Droettboom",
       author_email=CONTACT,

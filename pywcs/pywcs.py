@@ -27,8 +27,6 @@
 # USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 # DAMAGE.
 
-# $Id: ocumentation_Guidelines.html,v 1.2 2007/09/04 20:44:02 dencheva Exp $
-
 __docformat__ = "epytext"
 
 from _pywcs import *
@@ -41,54 +39,58 @@ except ImportError:
 
 if has_pyfits:
     # TODO: update formatting in this docstring
-    def parse_wcs(hdulist):
-        """Parses the WCS information in a PyFITS hdulist object.
+    def parse_hudlist(hdulist):
+        """parse_hdulist(hdulist) -> list of Wcs objects
 
-All WCS keywords defined in Papers I, II, and III are
+Parses a FITS image header, either that of a primary HDU or of an image
+extension.  All WCS keywords defined in Papers I, II, and III are
 recognized, and also those used by the AIPS convention and certain
 other keywords that existed in early drafts of the WCS papers.
 
-Given a string containing a FITS image header, parse_wcs()
+Given a string containing a FITS image header, C{parse_image_header()}
 identifies and reads all WCS keywords for the primary coordinate
 representation and up to 26 alternate representations.  It returns
-this information as a list of Wcs objects.
+this information as a list of C{Wcs} objects.
 
-parse_wcs() fills in information associated with coordinate lookup
-tables.
+C{parse_image_header()} fills in information associated with
+coordinate lookup tables.
 
-Parameters
-----------
+C{wcspih} determines the number of coordinate axes independently for
+each alternate coordinate representation (denoted by the C{"a"} value in
+keywords like C{CTYPEia}) from the higher of
+    - C{NAXIS}
+    - C{WCSAXES}
+    - The highest axis number in any parameterized WCS keyword.  The
+      keyvalue, as well as the keyword, must be syntactically valid
+      otherwise it will not be considered.
 
-header : hdulist
-    A PyFITS hdulist parsed from a FITS file.
+If none of these keyword types is present, i.e. if the header only
+contains auxiliary WCS keywords for a particular coordinate
+representation, then no coordinate description is constructed for it.
 
-    TODO: Deal with this next paragraph in a Pythonic way
-    For negative values of ctrl (see below), header[] is modified so
-    that WCS keyrecords processed by wcspih() are removed from it.
+C{wcspih} enforces correct FITS "keyword = value" syntax with regard
+to C{"= "} occurring in columns 9 and 10.  However, it does
+recognize free-format character (NOST 100-2.0, Sect. 5.2.1), integer
+(Sect. 5.2.3), and floating-point values (Sect. 5.2.4) for all
+keywords.
 
-Returns
--------
+Where CROTAn, CDi_ja, and PCi_ja occur together in one header, wcspih()
+and wcsbth() treat them as described in the prologue to wcs.h.
 
-wcs : list
-    A list of Wcs objects, containing up to 27 coordinate
+
+
+@param header: String containing the (entire) FITS image header from which to
+    identify and construct the coordinate representations.
+@type header: string
+@param relax: Degree of permissiveness:
+    - C{False}: Recognize only FITS keywords defined by the
+      published WCS standard.
+    - C{True}: Admit all recognized informal extensions of the
+      WCS standard.
+@type relax: bool
+
+@return: A list of C{Wcs} objects, containing up to 27 coordinate
     representations.
-
-Other parameters
-----------------
-
-relax : string
-    Degree of permissiveness:
-        'standard': Recognize only FITS keywords defined by the
-            published WCS standard.
-        'all': Admit all recognized informal extensions of the
-            WCS standard.
-
-TODO: handle the ctrl/nreject arguments
-
-Exceptions
-----------
-
-MemoryError
     """
         return parse_image_header(str(hdulist[0].header.ascardlist()))
 

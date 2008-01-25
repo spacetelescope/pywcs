@@ -1,0 +1,3 @@
+include LICENSE MANIFEST.in
+include doc/docstrings.py
+recursive-include wcslib-4.3 *

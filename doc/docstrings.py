@@ -46,7 +46,7 @@ and C{-GLS}.
 copy = """
 copy()
 
-Creates a deep copy of the Wcs object."
+Creates a deep copy of the Wcs object.
 """
 
 crota = """
@@ -144,10 +144,11 @@ used to label coordinate values.
 """
 
 cylfix = """
+cylfix() -> int
+
 Fixes WCS keyvalues for malformed cylindrical projections.
 
 @return: C{0} for success; C{-1} if no change required.
-@rtype: int
 """
 
 datfix = """
@@ -203,8 +204,6 @@ Returns C{True} if C{CDi_ja} is present.  C{CDi_ja} is an alternate
 specification of the linear transformation matrix, maintained for
 historical compatibility.
 
-@see: L{cd} for more information.
-
 Matrix elements in the IRAF convention are equivalent to the product
 C{CDi_ja = CDELTia * PCi_ja}, but the defaults differ from that of the
 C{PCi_ja} matrix.  If one or more C{CDi_ja} keywords are present then all
@@ -216,6 +215,8 @@ specification.
 
 While C{CDi_ja} may not formally co-exist with C{PCi_ja}, it may
 co-exist with C{CDELTia} and C{CROTAia} which are to be ignored."
+
+@see: L{cd} for more information.
 """
 
 has_crotaia = """
@@ -225,8 +226,6 @@ Returns True if C{CROTAia} is present.  C{CROTAia} is an alternate
 specification of the linear transformation matrix, maintained for
 historical compatibility.
 
-@see: L{cd} for more information.
-
 In the AIPS convention, C{CROTAia} may only be associated with the
 latitude axis of a celestial axis pair.  It specifies a rotation in
 the image plane that is applied AFTER the C{CDELTia}; any other C{CROTAia}
@@ -235,8 +234,9 @@ keywords are ignored.
 C{CROTAia} may not formally co-exist with C{PCi_ja}.  C{CROTAia} and
 C{CDELTia} may formally co-exist with C{CDi_ja} but if so are to be
 ignored.
-"
-""" # TODO: Elaborate
+
+@see: L{cd} for more information.
+"""
 
 has_pci_ja = """
 has_pci_ja() -> bool
@@ -398,10 +398,10 @@ identifies and reads all WCS keywords for the primary coordinate
 representation and up to 26 alternate representations.  It returns
 this information as a list of C{Wcs} objects.
 
-C{parse_image_header()} fills in information associated with
+C{parse_image_header} fills in information associated with
 coordinate lookup tables.
 
-C{wcspih} determines the number of coordinate axes independently for
+C{parse_image_header} determines the number of coordinate axes independently for
 each alternate coordinate representation (denoted by the C{"a"} value in
 keywords like C{CTYPEia}) from the higher of
     - C{NAXIS}
@@ -414,16 +414,11 @@ If none of these keyword types is present, i.e. if the header only
 contains auxiliary WCS keywords for a particular coordinate
 representation, then no coordinate description is constructed for it.
 
-C{wcspih} enforces correct FITS "keyword = value" syntax with regard
-to C{"= "} occurring in columns 9 and 10.  However, it does
-recognize free-format character (NOST 100-2.0, Sect. 5.2.1), integer
-(Sect. 5.2.3), and floating-point values (Sect. 5.2.4) for all
+C{parse_image_header} enforces correct FITS "keyword = value" syntax
+with regard to C{"= "} occurring in columns 9 and 10.  However, it
+does recognize free-format character (NOST 100-2.0, Sect. 5.2.1),
+integer (Sect. 5.2.3), and floating-point values (Sect. 5.2.4) for all
 keywords.
-
-Where CROTAn, CDi_ja, and PCi_ja occur together in one header, wcspih()
-and wcsbth() treat them as described in the prologue to wcs.h.
-
-
 
 @param header: String containing the (entire) FITS image header from which to
     identify and construct the coordinate representations.
@@ -437,6 +432,8 @@ and wcsbth() treat them as described in the prologue to wcs.h.
 
 @return: A list of C{Wcs} objects, containing up to 27 coordinate
     representations.
+
+@raises MemoryError: Memory allocation failed.
 """
 #    /* TODO: Deal with this next paragraph in a Pythonic way
 #    For negative values of ctrl (see below), header[] is modified so
@@ -633,7 +630,5 @@ Wcs = """
 Wcs objects can convert between pixel and world coordinates, based on
 the WCS settings in a FITS file.
 
-To create Wcs objects, one would normally use L{parse_image_header}.
-
-@raises MemoryError: Memory allocation failed.
+To create Wcs objects, one would normally use pywcs.parse_image_header.
 """

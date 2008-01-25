@@ -29,8 +29,6 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 DAMAGE.
 */
 
-/* $Id: Doumentation_Guidelines.html,v 1.2 2007/09/04 20:44:02 dencheva Exp $ */
-
 /*
  Author: Michael Droettboom
          mdroe@stsci.edu
@@ -1335,7 +1333,6 @@ pywcs_parse_image_header(PyObject* self, PyObject* args, PyObject* kwargs) {
   char*          header        = NULL;
   int            header_length = 0;
   int            nkeyrec       = 0;
-  char*          ctrl_arg      = NULL;
   int            relax         = 0;
   int            ctrl          = 0;
   int            nreject       = 0;
@@ -1347,18 +1344,13 @@ pywcs_parse_image_header(PyObject* self, PyObject* args, PyObject* kwargs) {
   PyObject*      pywcsprm_obj  = NULL;
   int            i             = 0;
 
-  const char* keywords[] = {"header", "relax", "ctrl", NULL};
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s#|is", (char **)keywords,
-                                   &header, &header_length, &relax,
-                                   &ctrl_arg))
+  const char* keywords[] = {"header", "relax", NULL};
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s#|i", (char **)keywords,
+                                   &header, &header_length, &relax))
     return NULL;
 
   if (relax)
     relax = WCSHDR_all;
-
-  if (ctrl_arg != NULL) {
-    // TODO: Parse the ctrl argument
-  }
 
   nkeyrec = header_length / 80;
 
