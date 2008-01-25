@@ -63,7 +63,8 @@ Building documentation
 ----------------------
 
 Optionally, the API documentation can be built using epydoc
-(http://epydoc.sourceforge.net).
+(http://epydoc.sourceforge.net).  Version 3.0beta1 or later of epydoc
+must be used.  Earlier versions will not document all of the members.
 
 After installing pywcs, type::
 

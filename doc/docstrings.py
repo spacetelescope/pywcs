@@ -5,8 +5,6 @@
 # included by pywcs.c
 
 cd = """
-@type 2x2 array.
-
 For historical compatibility, two alternate specifications of the
 linear transformation matrix are supported, those associated with the
 C{CDi_ja} and C{CROTAia} keywords.  Although these may not formally
@@ -26,12 +24,14 @@ visible to the lower-level routines.  In particular, L{set} resets
 L{cdelt} to unity if C{CDi_ja} is present (and no C{PCi_ja}).  If no C{CROTAia}
 is associated with the latitude axis, L{set} reverts to a unity
 C{PCi_ja} matrix.
+
+@type: 2x2 array
 """
 
 cdelt = """
-@type array[naxis]
-
 Coordinate increments (C{CDELTia}) for each coord axis.
+
+@type: array[naxis]
 """
 
 celfix = """
@@ -50,7 +50,6 @@ Creates a deep copy of the Wcs object.
 """
 
 crota = """
-@type array[2][2]
 
 C{CROTAia} keyvalues for each coord axis.
 
@@ -59,33 +58,33 @@ specification of the linear transformation matrix, maintained for
 historical compatibility.
 
 @see: L{cd} for more information.
+
+@type: array[2][2]
 """
 
 crpix = """
-@type array[naxis]
-
 Coordinate reference pixels (C{CRPIXja}) for each pixel axis.
+
+@type: array[naxis]
 """
 
 crval = """
-@type array[naxis]
-
 Coordinate reference values (C{CRVALia}) for each coordinate axis.
+
+@type: array[naxis]
 """
 
 ctype = """
-@type list of strings
-
 List of C{CTYPEia} keyvalues.
 
 The L{ctype} keyword values must be in upper case and there must
 be zero or one pair of matched celestial axis types, and zero or one
 spectral axis.
+
+@type: list of strings
 """
 
 cubeface = """
-@type int
-
 Index into the C{pixcrd} (pixel coordinate) array for the C{CUBEFACE}
 axis.  This is used for quadcube projections where the cube faces are
 stored on a separate axis.
@@ -116,12 +115,13 @@ used by the presence or absence of a C{CUBEFACE} axis in L{ctype}.
 L{p2s} and L{s2p} translate the C{CUBEFACE} axis representation to the
 single plane representation understood by the lower-level projection
 routines.
+
+@type: int
 """
 
 cunit = """
-@type: list of strings
-
 List of C{CUNITia} keyvalues which define the units of measurement of the
+
 C{CRVALia}, C{CDELTia} and C{CDi_ja} keywords.
 
 As C{CUNITia} is an optional header keyword, L{cunit} may be left
@@ -141,6 +141,8 @@ then resets L{cunit} accordingly.
 
 L{set} ignores L{cunit} for other coordinate types; L{cunit} may be
 used to label coordinate values.
+
+@type: list of strings
 """
 
 cylfix = """
@@ -163,8 +165,7 @@ half a day then C{ValueError} is raised.
 @return: C{0} for success; C{-1} if no change required.
 """
 
-fix = """
-fix(translate_units='', naxis=0) -> dict
+fix = """fix(translate_units='', naxis=0) -> dict
 
 Applies all of the corrections handled separately by L{datfix},
 L{unitfix}, L{celfix}, L{spcfix} and L{cylfix}.
@@ -186,10 +187,12 @@ L{unitfix}, L{celfix}, L{spcfix} and L{cylfix}.
 
     Thus C{''} doesn't do any unsafe translations, whereas C{'shd'}
     does all of them.
+
 @type translate_units: string
 
 @param naxis: Image axis lengths.  If this array pointer is set to zero,
     then L{cylfix} will not be invoked.
+
 @type naxis: array[naxis] of int
 
 @return: A dictionary containing the following keys, each referring to a
@@ -248,27 +251,27 @@ to specify the linear transformation matrix.
 """
 
 lat = """
-@type: int
-
 The index into the world coordinate array containing latitude values.
+
+@type: int
 """
 
 latpole = """
-@type: float
-
 The native latitude of the celestial pole, C{LATPOLEa} (deg).
+
+@type: float
 """
 
 lng = """
-@type: int
-
 The index into the world coordinate array containing longitude values.
+
+@type: int
 """
 
 lonpole = """
-@type: float
-
 The native longitude of the celestial pole, C{LONPOLEa} (deg).
+
+@type: float
 """
 
 mix = """
@@ -281,11 +284,12 @@ the unknown celestial coordinate element using L{s2p}.
 @param mixpix: Which element on the pixel coordinate is given.
 @type mixpix: int
 
-@param mixcel: Which element of the celestial coordinate is given:
-        1. Celestial longitude is given in C{world[self.L{lng}]}, latitude
-           returned in C{world[self.L{lat}]}.
-        2. Celestial latitude is given in world[self.lat], longitude
-           returned in C{world[self.L{lng}]}
+@param mixcel: Which element of the celestial coordinate is given. If
+    C{1}, celestial longitude is given in C{world[self.L{lng}]},
+    latitude returned in C{world[self.L{lat}]}.  If C{2}, celestial
+    latitude is given in world[self.lat], longitude returned in
+    C{world[self.L{lng}]}
+
 @type mixcel: int
 
 @param vspan: Solution interval for the celestial coordinate, in degrees.
@@ -294,15 +298,18 @@ the unknown celestial coordinate element using L{s2p}.
     C{(-120,+120)} is the same as C{(240,480)}, except that the solution
     will be returned with the same normalization, i.e. lie within the
     interval specified.
-@type vspan: 2-tuple of floats\n" // Make this a generic sequence
+
+@type vspan: sequence of two floats
 
 @param vstep: Step size for solution search, in degrees.  If C{0}, a
     sensible, although perhaps non-optimal default will be used.
+
 @type vstep: float
 
 @param viter: If a solution is not found then the step size will be halved
     and the search recommenced.  C{viter} controls how many times the step
     size is halved.  The allowed range is 5 - 10.
+
 @type viter: int
 
 @param world: World coordinate elements.  C{world[self.lng]} and C{world[self.lat]}
@@ -310,18 +317,21 @@ the unknown celestial coordinate element using L{s2p}.
     given and which returned depends on the value of mixcel.  All
     other elements are given.  The results will be written to this
     array in-place.
+
 @type world: array[naxis]
 
 @param pixcrd: Pixel coordinate.  The element indicated by mixpix is given
     and the remaining elements will be written in-place.
+
 @type pixcrd: array[naxis]
 
 @return: A dictionary with the following keys:
-    - C{phi} I{(type=array[naxis])}
-    - C{theta} I{(type=array[naxis])}
+
+    - C{phi} (array[naxis])
+    - C{theta} (array[naxis])
         - Longitude and latitude in the native coordinate system of the
           projection, in degrees.
-    - C{imgcrd} I{type=array[naxis])}
+    - C{imgcrd} (array[naxis])
         - Image coordinate elements.  C{imgcrd[self.lng]} and
           C{imgcrd[self.lat]} are the projected I{x}- and
           I{y}-coordinates, in "degrees".
@@ -339,10 +349,10 @@ transformation parameters.
 """
 
 naxis = """
-@type: int
-
 The number of axes (pixel and coordinate), given by the C{NAXIS} or
 C{WCSAXESa} keyvalues.
+
+@type: int
 """
 
 p2s = """
@@ -351,26 +361,36 @@ p2s(pixcrd) -> dict
 Converts pixel to world coordinates.
 
 @param pixcrd: Array of pixel coordinates.
+
 @type pixcrd: numpy array[ncoord][nelem]
 
 @return: A dictionary with the following keys:
-        - C{imgcrd} I{(type=array[ncoord][nelem])}
+
+        - C{imgcrd} (array[ncoord][nelem])
+
             - Array of intermediate world coordinates.  For celestial
               axes, C{imgcrd[][self.lng]} and C{imgcrd[][self.lat]} are the
               projected I{x}-, and I{y}-coordinates, in "degrees".  For
               spectral axes, C{imgcrd[][self.spec]} is the intermediate
               spectral coordinate, in SI units.
-        - C{phi} I{(type=array[ncoord])}
-        - C{theta} I{(type=array[ncoord])}
+
+        - C{phi} (array[ncoord])
+
+        - C{theta} (array[ncoord])
+
             - Longitude and latitude in the native coordinate system
               of the projection, in degrees.
-        - C{world} I{(type=array[ncoord][nelem])}
+
+        - C{world} (array[ncoord][nelem])
+
             - Array of world coordinates.  For celestial axes,
               C{world[][self.lng]} and C{world[][self.lat]} are the celestial
               longitude and latitude, in degrees.  For spectral axes,
               C{imgcrd[][self.spec]} is the intermediate spectral
               coordinate, in SI units.
-        - C{stat} I{(type=array[ncoord])}
+
+        - C{stat} (array[ncoord])
+
             - Status return value for each coordinate. C{0} for success, C{1}
               for invalid pixel coordinate.
 
@@ -386,7 +406,7 @@ Converts pixel to world coordinates.
 """
 
 parse_image_header = """
-parse_image_header(header, relax=0) -> list of C{Wcs} objects
+parse_image_header(header, relax=False) -> list of C{Wcs} objects
 
 Parses a FITS image header, either that of a primary HDU or of an image
 extension.  All WCS keywords defined in Papers I, II, and III are
@@ -430,9 +450,6 @@ keywords.
       WCS standard.
 @type relax: bool
 
-@return: A list of C{Wcs} objects, containing up to 27 coordinate
-    representations.
-
 @raises MemoryError: Memory allocation failed.
 """
 #    /* TODO: Deal with this next paragraph in a Pythonic way
@@ -440,12 +457,12 @@ keywords.
 #    "that WCS keyrecords processed by wcspih() are removed from it.\n" */
 
 pc = """
-@type: array[2][2]
-
 The C{PCi_ja} (pixel coordinate) transformation matrix.  The order is::
 
   [[PC1_1, PC1_2],
    [PC2_1, PC2_2]]
+
+@type: array[2][2]
 """
 
 print_contents = """
@@ -456,37 +473,37 @@ for debugging purposes, and may be removed in the future.
 """
 
 ps = """
-@type: list of tuples
-
 C{PSi_ma} keywords for each I{i} and I{m}.  Returned as a list of
 tuples of the form (I{i}, I{m}, I{value}):
 
     - I{i}: axis number, as in C{PSi_ma}, (i.e. 1-relative)
     - I{m}: parameter number, as in C{PSi_ma}, (i.e. 0-relative)
     - I{value}: parameter value (as a string)
+
+@type: list of tuples
 """
 
 pv = """
-@type: list of tuples
-
 C{PVi_ma} keywords for each I{i} and I{m}.  Returned as a list of
 tuples of the form (I{i}, I{m}, I{value}):
 
     - I{i}: axis number, as in C{PVi_ma}, (i.e. 1-relative)
     - I{m}: parameter number, as in C{PVi_ma}, (i.e. 0-relative)
     - I{value}: parameter value (as a string)
+
+@type: list of tuples
 """
 
 restfrq = """
-@type: float
-
 Rest frequency (Hz) from C{RESTFRQa}.
+
+@type: float
 """
 
 restwav = """
-@type: float
-
 Rest wavelength (m) from C{RESTWAVa}.
+
+@type: float
 """
 
 s2p = """
@@ -499,11 +516,11 @@ Transforms world coordinates to pixel coordinates.
 @type world: array[ncoord][nelem]
 
 @return: A dictionary with the following keys:
-        - C{phi} I{(type=array[ncoord])}
-        - C{theta} I{(type=array[ncoord])}
+        - C{phi} (array[ncoord])
+        - C{theta} (array[ncoord])
             - Longitude and latitude in the native coordinate system
               of the projection, in degrees.
-        - C{imgcrd} I{(type=array[ncoord][nelem])}
+        - C{imgcrd} (array[ncoord][nelem])
             - Array of intermediate world coordinates.  For celestial
               axes, C{imgcrd[][self.lng]} and C{imgcrd[][self.lat]} are the
               projected I{x}-, and I{y}-coordinates, in "degrees".  For
@@ -511,9 +528,9 @@ Transforms world coordinates to pixel coordinates.
               number is also returned in C{imgcrd[][self.cubeface]}.  For
               spectral axes, C{imgcrd[][self.spec]} is the intermediate
               spectral coordinate, in SI units.
-        - C{pixcrd} I{(type=array[ncoord][nelem])}
+        - C{pixcrd} (array[ncoord][nelem])
             - Array of pixel coordinates.
-        - C{stat} I{(type=array[ncoord])}
+        - C{stat} (array[ncoord])
             - Status return value for each coordinate. C{0} for success, C{1}
               for invalid pixel coordinate.
 
@@ -565,9 +582,9 @@ C{VELO-OBS}, C{FELO-HEL})
 """
 
 spec = """
-@type: int
-
 The index containing the spectral axis values.
+
+@type: int
 """
 
 sptr = """

@@ -108,7 +108,7 @@ fd.write('*/\n')
 for key in keys:
     if key.startswith('__'):
         continue
-    val = docstrings[key].strip().encode("string_escape").replace('"', '\\"')
+    val = docstrings[key].lstrip().encode("string_escape").replace('"', '\\"')
     fd.write("const char doc_%s[] = \"%s\";\n\n" % (key, val))
 fd.close()
 

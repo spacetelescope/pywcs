@@ -37,10 +37,10 @@ coordinates from image pixel coordinates, and vice versa.
 @license: BSD-like (Python wrappers)
 @author: Mark Calabretta (wcslib)
 @organization: Australia Telescope National Facility, CSIRO (wcslib)
-@licenses: LGPL (wcslib)
+@license: LGPL (wcslib)
 """
 
-__docformat__ = "reStructuredText"
+__docformat__ = "epytext"
 
 from pywcs import *
 

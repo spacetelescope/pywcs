@@ -39,8 +39,8 @@ except ImportError:
 
 if has_pyfits:
     # TODO: update formatting in this docstring
-    def parse_hudlist(hdulist):
-        """parse_hdulist(hdulist) -> list of Wcs objects
+    def parse_hdulist(hdulist, relax=False):
+        """parse_hdulist(hdulist, relax=False) -> list of Wcs objects
 
 Parses a FITS image header, either that of a primary HDU or of an image
 extension.  All WCS keywords defined in Papers I, II, and III are
@@ -55,7 +55,7 @@ this information as a list of C{Wcs} objects.
 C{parse_image_header()} fills in information associated with
 coordinate lookup tables.
 
-C{wcspih} determines the number of coordinate axes independently for
+C{parse_hdulist} determines the number of coordinate axes independently for
 each alternate coordinate representation (denoted by the C{"a"} value in
 keywords like C{CTYPEia}) from the higher of
     - C{NAXIS}
@@ -68,31 +68,22 @@ If none of these keyword types is present, i.e. if the header only
 contains auxiliary WCS keywords for a particular coordinate
 representation, then no coordinate description is constructed for it.
 
-C{wcspih} enforces correct FITS "keyword = value" syntax with regard
-to C{"= "} occurring in columns 9 and 10.  However, it does
-recognize free-format character (NOST 100-2.0, Sect. 5.2.1), integer
-(Sect. 5.2.3), and floating-point values (Sect. 5.2.4) for all
+C{parse_hdulist} enforces correct FITS C{"keyword = value"} syntax
+with regard to C{"= "} occurring in columns 9 and 10.  However, it
+does recognize free-format character (NOST 100-2.0, Sect. 5.2.1),
+integer (Sect. 5.2.3), and floating-point values (Sect. 5.2.4) for all
 keywords.
 
-Where CROTAn, CDi_ja, and PCi_ja occur together in one header, wcspih()
-and wcsbth() treat them as described in the prologue to wcs.h.
-
-
-
-@param header: String containing the (entire) FITS image header from which to
-    identify and construct the coordinate representations.
-@type header: string
+@param hdulist: A PyFITS hdulist
+@type hdulist: string
 @param relax: Degree of permissiveness:
     - C{False}: Recognize only FITS keywords defined by the
       published WCS standard.
     - C{True}: Admit all recognized informal extensions of the
       WCS standard.
 @type relax: bool
-
-@return: A list of C{Wcs} objects, containing up to 27 coordinate
-    representations.
     """
-        return parse_image_header(str(hdulist[0].header.ascardlist()))
+        return parse_image_header(str(hdulist[0].header.ascardlist()), relax)
 
 # This is a hack so epydoc will document this method
 def parse_image_header(header, relax=False):
