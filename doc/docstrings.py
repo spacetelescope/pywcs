@@ -25,7 +25,7 @@ L{cdelt} to unity if C{CDi_ja} is present (and no C{PCi_ja}).  If no C{CROTAia}
 is associated with the latitude axis, L{set} reverts to a unity
 C{PCi_ja} matrix.
 
-@type: 2x2 array
+@type: array[2][2]
 """
 
 cdelt = """
@@ -121,7 +121,6 @@ routines.
 
 cunit = """
 List of C{CUNITia} keyvalues which define the units of measurement of the
-
 C{CRVALia}, C{CDELTia} and C{CDi_ja} keywords.
 
 As C{CUNITia} is an optional header keyword, L{cunit} may be left
