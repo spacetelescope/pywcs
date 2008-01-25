@@ -406,7 +406,7 @@ Converts pixel to world coordinates.
 """
 
 parse_image_header = """
-parse_image_header(header, relax=False) -> list of C{Wcs} objects
+parse_image_header(header, relax=False) -> list of L{Wcs} objects
 
 Parses a FITS image header, either that of a primary HDU or of an image
 extension.  All WCS keywords defined in Papers I, II, and III are

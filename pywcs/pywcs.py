@@ -33,14 +33,13 @@ from _pywcs import *
 import _pywcs
 try:
     import pyfits
-    has_pyfits = True
+    _has_pyfits = True
 except ImportError:
-    has_pyfits = False
+    _has_pyfits = False
 
-if has_pyfits:
-    # TODO: update formatting in this docstring
+if _has_pyfits:
     def parse_hdulist(hdulist, relax=False):
-        """parse_hdulist(hdulist, relax=False) -> list of Wcs objects
+        """parse_hdulist(hdulist, relax=False) -> list of L{Wcs} objects
 
 Parses a FITS image header, either that of a primary HDU or of an image
 extension.  All WCS keywords defined in Papers I, II, and III are

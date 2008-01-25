@@ -119,7 +119,7 @@ setup(name="pywcs",
       description="Python wrappers to WCSLIB",
       author="Michael Droettboom",
       author_email=CONTACT,
-      url="http://www.stsci.edu/", # TODO: Update this URL
+      url="http://projects.scipy.org/astropy/astrolib/wiki/WikiStart",
       packages=['pywcs'],
       ext_modules=[
         Extension('pywcs._pywcs',
