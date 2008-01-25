@@ -889,7 +889,7 @@ PyWcsprm_sptr(PyWcsprm* self, PyObject* args, PyObject* kwds) {
                     "ctype string has more than 8 characters.");
   }
 
-  strncpy(py_ctype, ctype, 9);
+  strncpy(ctype, py_ctype, 9);
 
   status = wcssptr(self->x, &i, ctype);
 
