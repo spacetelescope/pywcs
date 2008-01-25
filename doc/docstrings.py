@@ -18,12 +18,12 @@ C{CDi_ja} and C{CROTAia} keywords, if found, are to be stored in the
 L{cd} and L{crota} arrays which are dimensioned similarly to L{pc} and
 L{cdelt}.
 
-These alternate specifications of the linear transformation matrix
-are translated immediately to C{PCi_ja} by L{set} and are nowhere
-visible to the lower-level routines.  In particular, L{set} resets
-L{cdelt} to unity if C{CDi_ja} is present (and no C{PCi_ja}).  If no C{CROTAia}
-is associated with the latitude axis, L{set} reverts to a unity
-C{PCi_ja} matrix.
+These alternate specifications of the linear transformation matrix are
+translated immediately to C{PCi_ja} by L{set} and are nowhere visible
+to the lower-level routines.  In particular, L{set} resets L{cdelt} to
+unity if C{CDi_ja} is present (and no C{PCi_ja}).  If no C{CROTAia} is
+associated with the latitude axis, L{set} reverts to a unity C{PCi_ja}
+matrix.
 
 @type: array[2][2]
 """
@@ -89,8 +89,8 @@ Index into the C{pixcrd} (pixel coordinate) array for the C{CUBEFACE}
 axis.  This is used for quadcube projections where the cube faces are
 stored on a separate axis.
 
-The quadcube projections (C{TSC}, C{CSC}, C{QSC}) may be
-represented in FITS in either of two ways:
+The quadcube projections (C{TSC}, C{CSC}, C{QSC}) may be represented
+in FITS in either of two ways:
 
     - The six faces may be laid out in one plane and numbered as
       follows::
@@ -107,8 +107,8 @@ represented in FITS in either of two ways:
       the pixel-to-world routines accept them on either side.
 
     - The C{"COBE"} convention in which the six faces are stored in a
-      three-dimensional structure using a C{"CUBEFACE"} axis indexed from
-      0 to 5 as above.
+      three-dimensional structure using a C{"CUBEFACE"} axis indexed
+      from 0 to 5 as above.
 
 These routines support both methods; L{set} determines which is being
 used by the presence or absence of a C{CUBEFACE} axis in L{ctype}.
@@ -120,15 +120,15 @@ routines.
 """
 
 cunit = """
-List of C{CUNITia} keyvalues which define the units of measurement of the
-C{CRVALia}, C{CDELTia} and C{CDi_ja} keywords.
+List of C{CUNITia} keyvalues which define the units of measurement of
+the C{CRVALia}, C{CDELTia} and C{CDi_ja} keywords.
 
 As C{CUNITia} is an optional header keyword, L{cunit} may be left
 blank but otherwise is expected to contain a standard units
 specification as defined by WCS Paper I.  Utility function
-C{wcsutrn()}, (not currently wrapped for Python) is available to translate
-commonly used non-standard units specifications but this must be
-done as a separate step before invoking L{set}.
+C{wcsutrn()}, (not currently wrapped for Python) is available to
+translate commonly used non-standard units specifications but this
+must be done as a separate step before invoking L{set}.
 
 For celestial axes, if L{cunit} is not blank, L{set} uses C{wcsunits}
 to parse it and scale L{cdelt}, L{crval}, and L{cd} to degrees.  It
@@ -156,10 +156,10 @@ datfix = """
 datfix() -> int
 
 Translates the old C{DATE-OBS} date format to year-2000 standard form
-C{(yyyy-mm-ddThh:mm:ss)} and derives C{MJD-OBS} from it if not already set.
-Alternatively, if C{mjdobs} is set and C{dateobs} isn't, then L{datfix}
-derives C{dateobs} from it.  If both are set but disagree by more than
-half a day then C{ValueError} is raised.
+C{(yyyy-mm-ddThh:mm:ss)} and derives C{MJD-OBS} from it if not already
+set.  Alternatively, if C{mjdobs} is set and C{dateobs} isn't, then
+L{datfix} derives C{dateobs} from it.  If both are set but disagree by
+more than half a day then C{ValueError} is raised.
 
 @return: C{0} for success; C{-1} if no change required.
 """
@@ -169,16 +169,17 @@ fix = """fix(translate_units='', naxis=0) -> dict
 Applies all of the corrections handled separately by L{datfix},
 L{unitfix}, L{celfix}, L{spcfix} and L{cylfix}.
 
-@param translate_units: Do potentially unsafe translations of non-standard
-    unit strings.
+@param translate_units: Do potentially unsafe translations of
+    non-standard unit strings.
 
-    Although C{"S"} is commonly used to represent seconds,
-    its translation to C{"s"} is potentially unsafe since
-    the standard recognizes C{"S"} formally as Siemens,
-    however rarely that may be used.  The same applies
-    to C{"H"} for hours (Henry), and C{"D"} for days (Debye).
+    Although C{"S"} is commonly used to represent seconds, its
+    translation to C{"s"} is potentially unsafe since the standard
+    recognizes C{"S"} formally as Siemens, however rarely that may be
+    used.  The same applies to C{"H"} for hours (Henry), and C{"D"}
+    for days (Debye).
 
-    This string controls what to do in such cases, and is case-insensitive.
+    This string controls what to do in such cases, and is
+    case-insensitive.
 
         - If the string contains C{"s"}, translate C{"S"} to C{"s"}.
         - If the string contains C{"h"}, translate C{"H"} to C{"h"}.
@@ -189,14 +190,14 @@ L{unitfix}, L{celfix}, L{spcfix} and L{cylfix}.
 
 @type translate_units: string
 
-@param naxis: Image axis lengths.  If this array pointer is set to zero,
-    then L{cylfix} will not be invoked.
+@param naxis: Image axis lengths.  If this array pointer is set to
+    zero, then L{cylfix} will not be invoked.
 
 @type naxis: array[naxis] of int
 
-@return: A dictionary containing the following keys, each referring to a
-    status string for each of the sub-fix functions that were called:
-    L{datfix}, L{unitfix}, L{celfix}, L{spcfix}, L{cylfix}.
+@return: A dictionary containing the following keys, each referring to
+    a status string for each of the sub-fix functions that were
+    called: L{datfix}, L{unitfix}, L{celfix}, L{spcfix}, L{cylfix}.
 """
 
 has_cdi_ja = """
@@ -208,15 +209,15 @@ historical compatibility.
 
 Matrix elements in the IRAF convention are equivalent to the product
 C{CDi_ja = CDELTia * PCi_ja}, but the defaults differ from that of the
-C{PCi_ja} matrix.  If one or more C{CDi_ja} keywords are present then all
-unspecified C{CDi_ja} default to zero.  If no C{CDi_ja} (or C{CROTAia})
-keywords are present, then the header is assumed to be in C{PCi_ja} form
-whether or not any C{PCi_ja} keywords are present since this results in
-an interpretation of C{CDELTia} consistent with the original FITS
-specification.
+C{PCi_ja} matrix.  If one or more C{CDi_ja} keywords are present then
+all unspecified C{CDi_ja} default to zero.  If no C{CDi_ja} (or
+C{CROTAia}) keywords are present, then the header is assumed to be in
+C{PCi_ja} form whether or not any C{PCi_ja} keywords are present since
+this results in an interpretation of C{CDELTia} consistent with the
+original FITS specification.
 
 While C{CDi_ja} may not formally co-exist with C{PCi_ja}, it may
-co-exist with C{CDELTia} and C{CROTAia} which are to be ignored."
+co-exist with C{CDELTia} and C{CROTAia} which are to be ignored.
 
 @see: L{cd} for more information.
 """
@@ -230,8 +231,8 @@ historical compatibility.
 
 In the AIPS convention, C{CROTAia} may only be associated with the
 latitude axis of a celestial axis pair.  It specifies a rotation in
-the image plane that is applied AFTER the C{CDELTia}; any other C{CROTAia}
-keywords are ignored.
+the image plane that is applied AFTER the C{CDELTia}; any other
+C{CROTAia} keywords are ignored.
 
 C{CROTAia} may not formally co-exist with C{PCi_ja}.  C{CROTAia} and
 C{CDELTia} may formally co-exist with C{CDi_ja} but if so are to be
@@ -276,9 +277,9 @@ The native longitude of the celestial pole, C{LONPOLEa} (deg).
 mix = """
 mix(mixpix, mixcel, vspan, vstep, viter, world, pixcrd) -> dict
 
-Given either the celestial longitude or latitude plus an element
-of the pixel coordinate, solves for the remaining elements by iterating on
-the unknown celestial coordinate element using L{s2p}.
+Given either the celestial longitude or latitude plus an element of
+the pixel coordinate, solves for the remaining elements by iterating
+on the unknown celestial coordinate element using L{s2p}.
 
 @param mixpix: Which element on the pixel coordinate is given.
 @type mixpix: int
@@ -291,12 +292,12 @@ the unknown celestial coordinate element using L{s2p}.
 
 @type mixcel: int
 
-@param vspan: Solution interval for the celestial coordinate, in degrees.
-    The ordering of the two limits is irrelevant.  Longitude ranges may be
-    specified with any convenient normalization, for example
-    C{(-120,+120)} is the same as C{(240,480)}, except that the solution
-    will be returned with the same normalization, i.e. lie within the
-    interval specified.
+@param vspan: Solution interval for the celestial coordinate, in
+    degrees.  The ordering of the two limits is irrelevant.  Longitude
+    ranges may be specified with any convenient normalization, for
+    example C{(-120,+120)} is the same as C{(240,480)}, except that
+    the solution will be returned with the same normalization,
+    i.e. lie within the interval specified.
 
 @type vspan: sequence of two floats
 
@@ -305,22 +306,22 @@ the unknown celestial coordinate element using L{s2p}.
 
 @type vstep: float
 
-@param viter: If a solution is not found then the step size will be halved
-    and the search recommenced.  C{viter} controls how many times the step
-    size is halved.  The allowed range is 5 - 10.
+@param viter: If a solution is not found then the step size will be
+    halved and the search recommenced.  C{viter} controls how many
+    times the step size is halved.  The allowed range is 5 - 10.
 
 @type viter: int
 
-@param world: World coordinate elements.  C{world[self.lng]} and C{world[self.lat]}
-    are the celestial longitude and latitude, in degrees.  Which is
-    given and which returned depends on the value of mixcel.  All
-    other elements are given.  The results will be written to this
-    array in-place.
+@param world: World coordinate elements.  C{world[self.L{lng}]} and
+    C{world[self.L{lat}]} are the celestial longitude and latitude, in
+    degrees.  Which is given and which returned depends on the value
+    of mixcel.  All other elements are given.  The results will be
+    written to this array in-place.
 
 @type world: array[naxis]
 
-@param pixcrd: Pixel coordinate.  The element indicated by mixpix is given
-    and the remaining elements will be written in-place.
+@param pixcrd: Pixel coordinate.  The element indicated by mixpix is
+    given and the remaining elements will be written in-place.
 
 @type pixcrd: array[naxis]
 
@@ -328,11 +329,14 @@ the unknown celestial coordinate element using L{s2p}.
 
     - C{phi} (array[naxis])
     - C{theta} (array[naxis])
+
         - Longitude and latitude in the native coordinate system of the
           projection, in degrees.
+
     - C{imgcrd} (array[naxis])
-        - Image coordinate elements.  C{imgcrd[self.lng]} and
-          C{imgcrd[self.lat]} are the projected I{x}- and
+
+        - Image coordinate elements.  C{imgcrd[self.L{lng}]} and
+          C{imgcrd[self.L{lat}]} are the projected I{x}- and
           I{y}-coordinates, in "degrees".
 
 @raise MemoryError: Memory allocation failed.
@@ -368,10 +372,11 @@ Converts pixel to world coordinates.
         - C{imgcrd} (array[ncoord][nelem])
 
             - Array of intermediate world coordinates.  For celestial
-              axes, C{imgcrd[][self.lng]} and C{imgcrd[][self.lat]} are the
-              projected I{x}-, and I{y}-coordinates, in "degrees".  For
-              spectral axes, C{imgcrd[][self.spec]} is the intermediate
-              spectral coordinate, in SI units.
+              axes, C{imgcrd[][self.L{lng}]} and
+              C{imgcrd[][self.L{lat}]} are the projected I{x}-, and
+              I{y}-coordinates, in "degrees".  For spectral axes,
+              C{imgcrd[][self.L{spec}]} is the intermediate spectral
+              coordinate, in SI units.
 
         - C{phi} (array[ncoord])
 
@@ -383,10 +388,10 @@ Converts pixel to world coordinates.
         - C{world} (array[ncoord][nelem])
 
             - Array of world coordinates.  For celestial axes,
-              C{world[][self.lng]} and C{world[][self.lat]} are the celestial
-              longitude and latitude, in degrees.  For spectral axes,
-              C{imgcrd[][self.spec]} is the intermediate spectral
-              coordinate, in SI units.
+              C{world[][self.L{lng}]} and C{world[][self.L{lat}]} are
+              the celestial longitude and latitude, in degrees.  For
+              spectral axes, C{imgcrd[][self.L{spec}]} is the
+              intermediate spectral coordinate, in SI units.
 
         - C{stat} (array[ncoord])
 
@@ -407,9 +412,9 @@ Converts pixel to world coordinates.
 parse_image_header = """
 parse_image_header(header, relax=False) -> list of L{Wcs} objects
 
-Parses a FITS image header, either that of a primary HDU or of an image
-extension.  All WCS keywords defined in Papers I, II, and III are
-recognized, and also those used by the AIPS convention and certain
+Parses a FITS image header, either that of a primary HDU or of an
+image extension.  All WCS keywords defined in Papers I, II, and III
+are recognized, and also those used by the AIPS convention and certain
 other keywords that existed in early drafts of the WCS papers.
 
 Given a string containing a FITS image header, C{parse_image_header()}
@@ -417,14 +422,17 @@ identifies and reads all WCS keywords for the primary coordinate
 representation and up to 26 alternate representations.  It returns
 this information as a list of C{Wcs} objects.
 
-C{parse_image_header} fills in information associated with
-coordinate lookup tables.
+C{parse_image_header} fills in information associated with coordinate
+lookup tables.
 
-C{parse_image_header} determines the number of coordinate axes independently for
-each alternate coordinate representation (denoted by the C{"a"} value in
-keywords like C{CTYPEia}) from the higher of
+C{parse_image_header} determines the number of coordinate axes
+independently for each alternate coordinate representation (denoted by
+the C{"a"} value in keywords like C{CTYPEia}) from the higher of
+
     - C{NAXIS}
+
     - C{WCSAXES}
+
     - The highest axis number in any parameterized WCS keyword.  The
       keyvalue, as well as the keyword, must be syntactically valid
       otherwise it will not be considered.
@@ -517,19 +525,27 @@ Transforms world coordinates to pixel coordinates.
 @return: A dictionary with the following keys:
         - C{phi} (array[ncoord])
         - C{theta} (array[ncoord])
+
             - Longitude and latitude in the native coordinate system
               of the projection, in degrees.
+
         - C{imgcrd} (array[ncoord][nelem])
+
             - Array of intermediate world coordinates.  For celestial
-              axes, C{imgcrd[][self.lng]} and C{imgcrd[][self.lat]} are the
-              projected I{x}-, and I{y}-coordinates, in "degrees".  For
-              quadcube projections with a C{CUBEFACE} axis, the face
-              number is also returned in C{imgcrd[][self.cubeface]}.  For
-              spectral axes, C{imgcrd[][self.spec]} is the intermediate
-              spectral coordinate, in SI units.
+              axes, C{imgcrd[][self.L{lng}]} and
+              C{imgcrd[][self.L{lat}]} are the projected I{x}-, and
+              I{y}-coordinates, in "degrees".  For quadcube
+              projections with a C{CUBEFACE} axis, the face number is
+              also returned in C{imgcrd[][self.L{cubeface}]}.  For
+              spectral axes, C{imgcrd[][self.L{spec}]} is the
+              intermediate spectral coordinate, in SI units.
+
         - C{pixcrd} (array[ncoord][nelem])
+
             - Array of pixel coordinates.
+
         - C{stat} (array[ncoord])
+
             - Status return value for each coordinate. C{0} for success, C{1}
               for invalid pixel coordinate.
 
@@ -550,13 +566,14 @@ set()
 Sets up a Wcs object for use according to information supplied within
 it.
 
-C{set} recognizes the C{NCP} projection and converts it to the equivalent
-C{SIN} projection and it also recognizes C{GLS} as a synonym for C{SFL}.  It
-does alias translation for the AIPS spectral types (C{FREQ-LSR}, C{FELO-HEL},
-etc.) but without changing the input header keywords.
+C{set} recognizes the C{NCP} projection and converts it to the
+equivalent C{SIN} projection and it also recognizes C{GLS} as a
+synonym for C{SFL}.  It does alias translation for the AIPS spectral
+types (C{FREQ-LSR}, C{FELO-HEL}, etc.) but without changing the input
+header keywords.
 
-Note that this routine need not be called directly; it will be invoked by
-L{p2s} and L{s2p} if necessary.
+Note that this routine need not be called directly; it will be invoked
+by L{p2s} and L{s2p} if necessary.
 
 C{set} strips off trailing blanks in all string members.
 
@@ -592,15 +609,16 @@ sptr(ctype, i=-1)
 Translates the spectral axis in a Wcs object.  For example, a C{FREQ} axis
 may be translated into C{ZOPT-F2W} and vice versa.
 
-@param ctype: Required spectral C{CTYPEia}.  Wildcarding may be used, i.e.
-    if the final three characters are specified as C{"???"}, or if just the
-    eighth character is specified as C{"?"}, the correct algorithm code will
-    be substituted and returned.
+@param ctype: Required spectral C{CTYPEia}.  Wildcarding may be used,
+    i.e.  if the final three characters are specified as C{"???"}, or
+    if just the eighth character is specified as C{"?"}, the correct
+    algorithm code will be substituted and returned.
 @type ctype: string
 
-@param i: Index of the spectral axis (0-rel).  If C{i < 0} (or not provided),
-    it will be set to the first spectral axis identified from the C{CTYPE}
-    keyvalues in the FITS header.
+@param i: Index of the spectral axis (0-rel).  If C{i < 0} (or not
+    provided), it will be set to the first spectral axis identified
+    from the C{CTYPE} keyvalues in the FITS header.
+@type i: int
 
 @raises MemoryError: Memory allocation failed.
 @raises SingularMatrixError: Linear transformation matrix is singular.
@@ -618,19 +636,20 @@ may be translated into C{ZOPT-F2W} and vice versa.
 unitfix = """
 unitfix(translate_units='') -> int
 
-Translates non-standard C{CUNITia} keyvalues.
-For example, C{DEG} -> C{deg}, also stripping off unnecessary whitespace.
+Translates non-standard C{CUNITia} keyvalues.  For example, C{DEG} ->
+C{deg}, also stripping off unnecessary whitespace.
 
-@param translate_units: Do potentially unsafe translations of non-standard
-    unit strings.
+@param translate_units: Do potentially unsafe translations of
+    non-standard unit strings.
 
-    Although C{"S"} is commonly used to represent seconds,
-    its translation to C{"s"} is potentially unsafe since
-    the standard recognizes C{"S"} formally as Siemens,
-    however rarely that may be used.  The same applies
-    to C{"H"} for hours (Henry), and C{"D"} for days (Debye).
+    Although C{"S"} is commonly used to represent seconds, its
+    recognizes C{"S"} formally as Siemens, however rarely that may be
+    translation to C{"s"} is potentially unsafe since the standard
+    used.  The same applies to C{"H"} for hours (Henry), and C{"D"}
+    for days (Debye).
 
-    This string controls what to do in such cases, and is case-insensitive.
+    This string controls what to do in such cases, and is
+    case-insensitive.
 
         - If the string contains C{"s"}, translate C{"S"} to C{"s"}.
         - If the string contains C{"h"}, translate C{"H"} to C{"h"}.
@@ -646,5 +665,6 @@ Wcs = """
 Wcs objects can convert between pixel and world coordinates, based on
 the WCS settings in a FITS file.
 
-To create Wcs objects, one would normally use pywcs.parse_image_header.
+To create Wcs objects, one would normally use
+pywcs.parse_image_header.
 """
