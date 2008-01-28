@@ -1431,11 +1431,7 @@ init_pywcs(void)
   if (PyType_Ready(&PyWcsprmType) < 0)
     return;
 
-  m = Py_InitModule3("_pywcs", module_methods,
-"The routines in this module implement the FITS World Coordinate System\n"
-"(WCS) standard which defines methods to be used for computing world\n"
-"coordinates from image pixel coordinates, and vice versa."
-                     );
+  m = Py_InitModule3("_pywcs", module_methods, doc_pywcs);
 
   if (m == NULL)
     return;

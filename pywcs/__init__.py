@@ -28,9 +28,7 @@
 # DAMAGE.
 
 """
-The routines in this module implement the FITS World Coordinate System
-(WCS) standard which defines methods to be used for computing world
-coordinates from image pixel coordinates, and vice versa.
+%s
 
 @author: Michael Droettboom (Python wrappers)
 @organization: Space Telescope Science Institute (Python wrappers)
@@ -43,4 +41,6 @@ coordinates from image pixel coordinates, and vice versa.
 __docformat__ = "epytext"
 
 from pywcs import *
+import _pywcs
 
+__doc__ = __doc__ % _pywcs.__doc__

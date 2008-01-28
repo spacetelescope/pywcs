@@ -5,6 +5,8 @@
 # included by pywcs.c
 
 cd = """
+C{CDi_ja} linear transformation matrix.
+
 For historical compatibility, two alternate specifications of the
 linear transformation matrix are supported, those associated with the
 C{CDi_ja} and C{CROTAia} keywords.  Although these may not formally
@@ -499,6 +501,28 @@ tuples of the form (I{i}, I{m}, I{value}):
     - I{value}: parameter value (as a string)
 
 @type: list of tuples
+"""
+
+pywcs = """
+The routines in this module implement the FITS World Coordinate System
+(WCS) standard which defines methods to be used for computing world
+coordinates from image pixel coordinates, and vice versa.
+
+The basic workflow is as follows:
+
+    1. C{import pywcs}
+
+    2. Call C{pywcs.parse_image_header()} with a raw FITS header or
+    C{pywcs.parse_hdulist()} with a PyFITS hdulist.  This will return
+    a list containing all of the WCS transformations specified in the
+    FITS file.
+
+    3. Optionally, if the FITS file uses any deprecated or
+    non-standard features, you may need to call one of the C{fix}
+    methods on the object.
+
+    4. Select the correct C{Wcs} transform object from the list, and
+    convert coordinates using the C{p2s()} or C{s2p()} methods.
 """
 
 restfrq = """
