@@ -16,17 +16,18 @@ import numpy
 import pywcs
 import pyfits
 
-members = """cd cdelt crota crpix crval ctype cubeface cunit lat latpole lng lonpole naxis pc ps pv restfrq restwav spec""".split()
+members = """alt cd cdelt cname colax colnum crder crota crpix crval csyer ctype cubeface cunit dateavg dateobs equinox lat latpole lng lonpole mjdavg mjdobs name naxis obsgeo pc ps pv radesys restfrq restwav spec specsys ssysobs ssyssrc velosys velangl zsource""".split()
 
 def test_file(path):
     print "=" * 75
     print path
     hdulist = pyfits.open(path)
-    wcslist = pywcs.parse_hdulist(hdulist)
+    wcsdict = pywcs.parse_hdu(hdulist[0])
     data1 = numpy.array([100,200])
     data2 = numpy.array([200,300])
     data3 = numpy.array([[0,1],[2,3],[4,5],[6,7]], numpy.float_)
-    for wcs in wcslist:
+    print wcsdict.keys()
+    for wcs in wcsdict.values():
         wcs.fix()
         wcs.set()
         print "p2s: %s" % wcs.p2s(data3)
@@ -45,8 +46,8 @@ def test_file(path):
                 print "wcs.%s: EXCEPTION: %s" % (member, e)
             else:
                 print "wcs.%s: %s" % (member, val)
-
         wcs.print_contents()
+
 
 def run_directory(directory):
     for filepath in glob.glob(os.path.join(directory, "*.fits")):

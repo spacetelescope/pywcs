@@ -38,25 +38,26 @@ except ImportError:
     _has_pyfits = False
 
 if _has_pyfits:
-    def parse_hdulist(hdulist, relax=False):
-        """parse_hdulist(hdulist, relax=False) -> list of L{Wcs} objects
+    def parse_hdu(hdu, relax=False):
+        """parse_hdu(hdu, relax=False) -> dict of L{Wcs} objects
 
 Parses a FITS image header, either that of a primary HDU or of an image
 extension.  All WCS keywords defined in Papers I, II, and III are
 recognized, and also those used by the AIPS convention and certain
 other keywords that existed in early drafts of the WCS papers.
 
-Given a string containing a FITS image header, C{parse_image_header()}
-identifies and reads all WCS keywords for the primary coordinate
-representation and up to 26 alternate representations.  It returns
-this information as a list of C{Wcs} objects.
+Given a PyFITS HDU object, C{parse_hdu} identifies and reads all WCS
+keywords for the primary coordinate representation and up to 26
+alternate representations.  It returns this information as a list of
+C{Wcs} objects.
 
-C{parse_image_header()} fills in information associated with
-coordinate lookup tables.
+C{parse_hdu} fills in information associated with coordinate lookup
+tables.
 
-C{parse_hdulist} determines the number of coordinate axes independently for
-each alternate coordinate representation (denoted by the C{"a"} value in
-keywords like C{CTYPEia}) from the higher of
+C{parse_hdu} determines the number of coordinate axes independently
+for each alternate coordinate representation (denoted by the C{"a"}
+value in keywords like C{CTYPEia}) from the higher of
+
     - C{NAXIS}
     - C{WCSAXES}
     - The highest axis number in any parameterized WCS keyword.  The
@@ -67,22 +68,30 @@ If none of these keyword types is present, i.e. if the header only
 contains auxiliary WCS keywords for a particular coordinate
 representation, then no coordinate description is constructed for it.
 
-C{parse_hdulist} enforces correct FITS C{"keyword = value"} syntax
+C{parse_hdu} enforces correct FITS C{"keyword = value"} syntax
 with regard to C{"= "} occurring in columns 9 and 10.  However, it
 does recognize free-format character (NOST 100-2.0, Sect. 5.2.1),
 integer (Sect. 5.2.3), and floating-point values (Sect. 5.2.4) for all
 keywords.
 
-@param hdulist: A PyFITS hdulist
-@type hdulist: string
+@param hdu: The FITS header information to parse
+@type hdu: PyFITS HDU object
 @param relax: Degree of permissiveness:
     - C{False}: Recognize only FITS keywords defined by the
       published WCS standard.
     - C{True}: Admit all recognized informal extensions of the
       WCS standard.
 @type relax: bool
-    """
-        return parse_image_header(str(hdulist[0].header.ascardlist()), relax)
+
+@returns: A dictionary where the keys are single-character strings
+   that identify a particular WCS transformation.  For example, the
+   C{"a"} in keyword names such as C{CTYPEia}).  This is blank (C{' '})
+   for the primary coordinate description, or one of the 26 upper-case
+   letters, A-Z.
+
+@raises MemoryError: Memory allocation failed.
+"""
+        return parse_image_header(str(hdu.header.ascardlist()), relax)
 
 # This is a hack so epydoc will document this method
 def parse_image_header(header, relax=False):
