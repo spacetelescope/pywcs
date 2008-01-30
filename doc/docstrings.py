@@ -506,7 +506,7 @@ Converts pixel to world coordinates.
             - Array of world coordinates.  For celestial axes,
               C{world[][self.L{lng}]} and C{world[][self.L{lat}]} are
               the celestial longitude and latitude, in degrees.  For
-              spectral axes, C{imgcrd[][self.L{spec}]} is the
+              spectral axes, C{world[][self.L{spec}]} is the
               intermediate spectral coordinate, in SI units.
 
         - C{stat} (array[ncoord] of int)
@@ -653,10 +653,10 @@ Short example::
     hdulist = pyfits.open("test.fits")
 
     # Parse the WCS keywords in the primary HDU
-    wcslist = pywcs.parse_hdu(hdulist[0])
+    wcsdict = pywcs.parse_hdu(hdulist[0])
 
     # Get the "blank" or primary Wcs
-    wcs = wcslist[' ']
+    wcs = wcsdict[' ']
 
     # Print out the "name" of the Wcs, as defined in the FITS header
     print wcs.name
