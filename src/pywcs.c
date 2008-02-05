@@ -74,8 +74,8 @@ PyObject*
 PyArray_SimpleNewFromDataCopy(int nd, const npy_intp* dims, int typenum,
                               const void* data) {
   PyArrayObject* result = NULL;
-  int size = 0;
-  int i = 0;
+  int            size   = 0;
+  int            i      = 0;
 
   result = (PyArrayObject*) PyArray_SimpleNew(nd, (npy_intp*)dims, typenum);
   if (result == NULL)
@@ -88,6 +88,20 @@ PyArray_SimpleNewFromDataCopy(int nd, const npy_intp* dims, int typenum,
   memcpy(PyArray_DATA(result), data, size);
 
   return (PyObject*)result;
+}
+
+void offset_array(PyArrayObject* array, double value) {
+  int     size = 1;
+  int     i    = 0;
+  double* data = NULL;
+
+  for (i = 0; i < PyArray_NDIM(array); ++i)
+    size *= PyArray_DIM(array, i);
+
+  data = (double*)PyArray_DATA(array);
+
+  for (i = 0; i < size; ++i)
+    data[i] += value;
 }
 
 /***************************************************************************
@@ -160,43 +174,99 @@ PyWcsprm_cnew(struct wcsprm* prm) {
 
 static PyObject *
 PyWcsprm_new(PyTypeObject* type, PyObject* args, PyObject* kwds) {
-  return (PyObject*)PyWcsprm_cnew(NULL);
+  PyWcsprm* self;
+  self = (PyWcsprm*)type->tp_alloc(type, 0);
+  if (self != NULL)
+    self->x = NULL;
+  return (PyObject*)self;
 }
 
 static int
 PyWcsprm_init(PyWcsprm* self, PyObject* args, PyObject* kwds) {
-  int            naxis;
   struct wcsprm* obj;
   int            status;
+  char *         header        = NULL;
+  int            header_length = 0;
+  int            nkeyrec       = 0;
+  char *         key           = " ";
+  int            keylen        = 0;
+  int            relax         = 0;
+  int            ctrl          = 0;
+  int            nreject       = 0;
+  int            nwcs          = 0;
+  struct wcsprm* wcs           = NULL;
+  int            i             = 0;
 
   if (self->x != NULL) {
-    PyErr_SetString(PyExc_AssertionError,
-                    "Wcs object is not new during initialization");
+    wcsfree(self->x);
+    free(self->x);
+    self->x = NULL;
+  }
+
+  const char* keywords[] = {"header", "key", "relax", NULL};
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "s#|s#i", (char **)keywords,
+                                   &header, &header_length,
+                                   &key, &keylen,
+                                   &relax))
+    return -1;
+
+  if (relax)
+    relax = WCSHDR_all;
+
+  if (keylen != 1 ||
+      !(key[0] == ' ' ||
+        (key[0] >= 'A' && key[0] <= 'Z'))) {
+    PyErr_SetString(PyExc_ValueError, "key must be ' ' or 'A'-'Z'");
     return -1;
   }
 
-  if (!PyArg_ParseTuple(args, "i", &naxis))
-    return -1;
+  nkeyrec = header_length / 80;
 
-  obj = malloc(sizeof(struct wcsprm));
-  if (obj == NULL) {
-    PyErr_SetString(PyExc_MemoryError,
-                    "Could not allocate wcsprm object");
-    return -1;
-  }
-
-  status = wcsini(1, naxis, obj);
+  // Make the call
+  status = wcspih(header,
+                  nkeyrec,
+                  relax,
+                  ctrl,
+                  &nreject,
+                  &nwcs,
+                  &wcs);
 
   if (status != 0) {
-    free(obj);
     PyErr_SetString(PyExc_MemoryError,
-                    "Could not initialize wcsprm object");
+                    "Memory allocation error.");
     return -1;
   }
 
-  self->x = obj;
+  for (i = 0; i < nwcs; ++i) {
+    if (wcs[i].alt[0] == key[0]) {
+      obj = malloc(sizeof(struct wcsprm));
+      if (obj == NULL) {
+        PyErr_SetString(PyExc_MemoryError,
+                        "Could not allocate wcsprm object");
+        return -1;
+      }
 
-  return 0;
+      obj->flag = -1;
+      if (wcscopy(1, wcs + i, obj) == 0) {
+        self->x = obj;
+        wcsvfree(&nwcs, &wcs);
+        return 0;
+      } else {
+        wcsfree(obj);
+        free(obj);
+        wcsvfree(&nwcs, &wcs);
+        PyErr_SetString(PyExc_MemoryError,
+                        "Could not initialize wcsprm object");
+        return -1;
+      }
+    }
+  }
+
+  wcsvfree(&nwcs, &wcs);
+  PyErr_Format(PyExc_KeyError,
+               "No WCS with key '%s' was found in the given header",
+               key);
+  return -1;
 }
 
 static PyObject*
@@ -289,7 +359,7 @@ PyWcsprm_cylfix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     if (PyArray_DIM(naxis_array, 0) != self->x->naxis) {
       PyErr_Format(PyExc_ValueError,
                    "naxis must be same length as the number of axes of "
-                   "the Wcs object (%d).",
+                   "the WCS object (%d).",
                    self->x->naxis);
       Py_DECREF(naxis_array);
       return NULL;
@@ -383,7 +453,7 @@ PyWcsprm_fix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     if (PyArray_DIM(naxis_array, 0) != self->x->naxis) {
       PyErr_Format(PyExc_ValueError,
                    "naxis must be same length as the number of axes of "
-                   "the Wcs object (%d).",
+                   "the WCS object (%d).",
                    self->x->naxis);
       Py_DECREF(naxis_array);
       return NULL;
@@ -559,6 +629,9 @@ PyWcsprm_mix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     goto __PyWcsprm_mix_exit;
   }
 
+  /* Convert pixel coordinates to 1-based */
+  offset_array(pixcrd, 1.0);
+
   status = wcsmix(self->x,
                   mixpix,
                   mixcel,
@@ -570,6 +643,9 @@ PyWcsprm_mix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
                   (double*)PyArray_DATA(theta),
                   (double*)PyArray_DATA(imgcrd),
                   (double*)PyArray_DATA(pixcrd));
+
+  /* Convert pixel coordinates back to 0-based) */
+  offset_array(pixcrd, -1.0);
 
   if (status == 0) {
     result = PyDict_New();
@@ -604,14 +680,17 @@ PyWcsprm_mix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
 
 static PyObject*
 PyWcsprm_p2s(PyWcsprm* self, PyObject* arg) {
-  PyArrayObject* pixcrd = NULL;
-  PyArrayObject* imgcrd = NULL;
-  PyArrayObject* phi    = NULL;
-  PyArrayObject* theta  = NULL;
-  PyArrayObject* world  = NULL;
-  PyArrayObject* stat   = NULL;
-  PyObject*      result = NULL;
-  int            status = 0;
+  PyArrayObject* pixcrd  = NULL;
+  PyArrayObject* imgcrd  = NULL;
+  PyArrayObject* phi     = NULL;
+  PyArrayObject* theta   = NULL;
+  PyArrayObject* world   = NULL;
+  PyArrayObject* stat    = NULL;
+  PyObject*      result  = NULL;
+  int            status  = 0;
+
+  // TODO: If a pair of arrays was passed in, a pair of arrays should be
+  // passed out (same for s2p)
 
   if (self->x == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
@@ -661,6 +740,9 @@ PyWcsprm_p2s(PyWcsprm* self, PyObject* arg) {
     goto __PyWcsprm_p2s_exit;
   }
 
+  /* Adjust pixel coordinates to be 1-based */
+  offset_array(pixcrd, 1.0);
+
   /* Make the call */
   status = wcsp2s(self->x,
                   PyArray_DIM(pixcrd, 0),
@@ -671,6 +753,9 @@ PyWcsprm_p2s(PyWcsprm* self, PyObject* arg) {
                   (double*)PyArray_DATA(theta),
                   (double*)PyArray_DATA(world),
                   (int*)PyArray_DATA(stat));
+
+  /* Adjust pixel coordinates back to 0-based */
+  offset_array(pixcrd, -1.0);
 
   if (status == 0 || status == 8) {
     result = PyDict_New();
@@ -696,6 +781,10 @@ PyWcsprm_p2s(PyWcsprm* self, PyObject* arg) {
   } else if (status > 0 && status < WCS_ERRMSG_MAX) {
     PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
     return NULL;
+  } else if (status == -1) {
+    PyErr_SetString(PyExc_ValueError,
+                    "Invalid argument.");
+    return NULL;
   } else {
     PyErr_SetString(PyExc_RuntimeError,
                     "Unknown error occurred.  Something is seriously wrong.");
@@ -705,15 +794,14 @@ PyWcsprm_p2s(PyWcsprm* self, PyObject* arg) {
 
 static PyObject*
 PyWcsprm_s2p(PyWcsprm* self, PyObject* arg) {
-  PyArrayObject* world  = NULL;
-  PyArrayObject* phi    = NULL;
-  PyArrayObject* theta  = NULL;
-  PyArrayObject* imgcrd = NULL;
-  PyArrayObject* pixcrd = NULL;
-  PyArrayObject* stat   = NULL;
-
-  PyObject* result = NULL;
-  int status = 0;
+  PyArrayObject* world   = NULL;
+  PyArrayObject* phi     = NULL;
+  PyArrayObject* theta   = NULL;
+  PyArrayObject* imgcrd  = NULL;
+  PyArrayObject* pixcrd  = NULL;
+  PyArrayObject* stat    = NULL;
+  PyObject*      result  = NULL;
+  int            status  = 0;
 
   if (self->x == NULL) {
     PyErr_SetString(PyExc_AssertionError,
@@ -774,6 +862,9 @@ PyWcsprm_s2p(PyWcsprm* self, PyObject* arg) {
                   (double*)PyArray_DATA(imgcrd),
                   (double*)PyArray_DATA(pixcrd),
                   (int*)PyArray_DATA(stat));
+
+  /* Adjust pixel coordinates to be zero-based */
+  offset_array(pixcrd, -1.0);
 
   if (status == 0 || status == 9) {
     result = PyDict_New();
@@ -975,9 +1066,9 @@ PyWcsprm_get_cd(PyWcsprm* self, void* closure) {
 
 static PyObject*
 PyWcsprm_get_cname(PyWcsprm* self, void* closure) {
-  PyObject* result = NULL;
+  PyObject* result    = NULL;
   PyObject* subresult = NULL;
-  int i = 0;
+  int       i         = 0;
 
   if (self->x == NULL || self->x->cname == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
@@ -1004,7 +1095,7 @@ PyWcsprm_get_cname(PyWcsprm* self, void* closure) {
 static PyObject*
 PyWcsprm_get_cdelt(PyWcsprm* self, void* closure) {
   PyObject* result = NULL;
-  int i = 0;
+  int       i      = 0;
 
   if (self->x == NULL || self->x->cdelt == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
@@ -1049,7 +1140,7 @@ PyWcsprm_get_colax(PyWcsprm* self, void* closure) {
 static PyObject*
 PyWcsprm_get_crder(PyWcsprm* self, void* closure) {
   PyObject* result;
-  int i = 0;
+  int       i = 0;
 
   if (self->x == NULL || self->x->crder == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
@@ -1091,13 +1182,23 @@ PyWcsprm_get_crota(PyWcsprm* self, void* closure) {
 
 static PyObject*
 PyWcsprm_get_crpix(PyWcsprm* self, void* closure) {
+  PyArrayObject* result = NULL;
+
   if (self->x == NULL || self->x->crpix == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
     return NULL;
   }
 
-  return PyArray_SimpleNewFromDataCopy(1, &self->x->naxis,
-                                       PyArray_DOUBLE, self->x->crpix);
+  result = (PyArrayObject*)PyArray_SimpleNewFromDataCopy(1, &self->x->naxis,
+                                                         PyArray_DOUBLE,
+                                                         self->x->crpix);
+
+  if (result == NULL)
+    return NULL;
+
+  offset_array(result, -1.0);
+
+  return (PyObject*)result;
 }
 
 static PyObject*
@@ -1114,7 +1215,7 @@ PyWcsprm_get_crval(PyWcsprm* self, void* closure) {
 static PyObject*
 PyWcsprm_get_csyer(PyWcsprm* self, void* closure) {
   PyObject* result;
-  int i = 0;
+  int       i = 0;
 
   if (self->x == NULL || self->x->csyer == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
@@ -1140,7 +1241,7 @@ static PyObject*
 PyWcsprm_get_ctype(PyWcsprm* self, void* closure) {
   PyObject* result;
   PyObject* subresult;
-  int i = 0;
+  int       i = 0;
 
   if (self->x == NULL || self->x->ctype == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
@@ -1177,7 +1278,7 @@ static PyObject*
 PyWcsprm_get_cunit(PyWcsprm* self, void* closure) {
   PyObject* result;
   PyObject* subresult;
-  int i = 0;
+  int       i = 0;
 
   if (self->x == NULL || self->x->cunit == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
@@ -1315,8 +1416,8 @@ PyWcsprm_get_naxis(PyWcsprm* self, void* closure) {
 static PyObject*
 PyWcsprm_get_obsgeo(PyWcsprm* self, void* closure) {
   PyObject* result = NULL;
-  int i = 0;
-  int size = 3;
+  int       i      = 0;
+  int       size   = 3;
 
   if (self->x == NULL || self->x->obsgeo == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
@@ -1522,6 +1623,10 @@ PyWcsprm_get_zsource(PyWcsprm* self, void* closure) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
     return NULL;
   }
+
+  if (self->x->zsource == UNDEFINED)
+    return PyFloat_FromDouble(NAN);
+
   return PyFloat_FromDouble(self->x->zsource);
 }
 
@@ -1600,7 +1705,7 @@ static PyMethodDef PyWcsprm_methods[] = {
 static PyTypeObject PyWcsprmType = {
     PyObject_HEAD_INIT(NULL)
     0,                         /*ob_size*/
-    "pywcs.Wcs",               /*tp_name*/
+    "pywcs._WCS",               /*tp_name*/
     sizeof(PyWcsprm),          /*tp_basicsize*/
     0,                         /*tp_itemsize*/
     (destructor)PyWcsprm_dealloc, /*tp_dealloc*/
@@ -1618,8 +1723,8 @@ static PyTypeObject PyWcsprmType = {
     0,                         /*tp_getattro*/
     0,                         /*tp_setattro*/
     0,                         /*tp_as_buffer*/
-    Py_TPFLAGS_DEFAULT,        /*tp_flags*/
-    doc_Wcs,                   /* tp_doc */
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,        /*tp_flags*/
+    doc_WCS,                   /* tp_doc */
     0,                         /* tp_traverse */
     0,                         /* tp_clear */
     0,		               /* tp_richcompare */
@@ -1639,90 +1744,7 @@ static PyTypeObject PyWcsprmType = {
     PyWcsprm_new,              /* tp_new */
 };
 
-/***************************************************************************
- * Free functions                                                          *
- ***************************************************************************/
-
-static PyObject*
-pywcs_parse_image_header(PyObject* self, PyObject* args, PyObject* kwargs) {
-  char*          header        = NULL;
-  int            header_length = 0;
-  int            nkeyrec       = 0;
-  int            relax         = 0;
-  int            ctrl          = 0;
-  int            nreject       = 0;
-  int            nwcs          = 0;
-  struct wcsprm* wcs           = NULL;
-  int            status        = 0;
-  PyObject*      result        = NULL;
-  struct wcsprm* wcsprm_obj    = NULL;
-  PyObject*      pywcsprm_obj  = NULL;
-  int            i             = 0;
-
-  const char* keywords[] = {"header", "relax", NULL};
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s#|i", (char **)keywords,
-                                   &header, &header_length, &relax))
-    return NULL;
-
-  if (relax)
-    relax = WCSHDR_all;
-
-  nkeyrec = header_length / 80;
-
-  // Make the call
-  status = wcspih(header,
-                  nkeyrec,
-                  relax,
-                  ctrl,
-                  &nreject,
-                  &nwcs,
-                  &wcs);
-
-  if (status != 0) {
-    PyErr_SetString(PyExc_MemoryError,
-                    "Memory allocation error.");
-    return NULL;
-  }
-
-  result = PyDict_New();
-  if (result == NULL)
-    return NULL;
-
-  for (i = 0; i < nwcs; ++i) {
-    // We have to copy all of the wcsprm objects here, since they
-    // were all allocated as a single array (by wcspih), but they
-    // need to show up as individual objects in Python, that can be
-    // deallocated individually.  So this isn't optimal, but hopefully
-    // these objects don't take long to copy.
-    pywcsprm_obj = NULL;
-    wcsprm_obj = malloc(sizeof(struct wcsprm));
-    if (wcsprm_obj != NULL) {
-      wcsprm_obj->flag = -1;
-      if (wcscopy(1, wcs + i, wcsprm_obj) == 0) {
-        pywcsprm_obj = (PyObject*)PyWcsprm_cnew(wcsprm_obj);
-      } else {
-        wcsfree(wcsprm_obj);
-        free(wcsprm_obj);
-      }
-    }
-
-    if (pywcsprm_obj == NULL ||
-        PyDict_SetItemString(result, wcsprm_obj->alt, pywcsprm_obj)) {
-      // Something above didn't work, so free everything
-      Py_XDECREF(pywcsprm_obj);
-      Py_DECREF(result);
-      wcsvfree(&nwcs, &wcs);
-      PyErr_SetString(PyExc_MemoryError, "Memory allocation error.");
-      return NULL;
-    }
-  }
-
-  wcsvfree(&nwcs, &wcs);
-  return result;
-}
-
 static PyMethodDef module_methods[] = {
-  {"parse_image_header", (PyCFunction)pywcs_parse_image_header, METH_KEYWORDS, doc_parse_image_header},
   {NULL}
 };
 
@@ -1752,7 +1774,7 @@ init_pywcs(void)
     return;
 
   Py_INCREF(&PyWcsprmType);
-  PyModule_AddObject(m, "Wcs", (PyObject *)&PyWcsprmType);
+  PyModule_AddObject(m, "_WCS", (PyObject *)&PyWcsprmType);
 
   DEFINE_EXCEPTION(SingularMatrix);
   DEFINE_EXCEPTION(InconsistentAxisTypes);

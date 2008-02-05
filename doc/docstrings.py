@@ -16,7 +16,6 @@ letters, A-Z.
 cd = """
 C{CDi_ja} linear transformation matrix.
 
-linear transformation matrix are supported, those associated with the
 For historical compatibility, two alternate specifications of the
 C{CDi_ja} and C{CROTAia} keywords.  Although these may not formally
 co-exist with C{PCi_ja}, the approach here is simply to ignore them if
@@ -80,7 +79,7 @@ It should be set to zero for an image header or pixel list.
 copy = """
 copy()
 
-Creates a deep copy of the Wcs object.
+Creates a deep copy of the WCS object.
 """
 
 crder = """
@@ -93,11 +92,10 @@ Any undefined elements are returned as NaN.
 """
 
 crota = """
-C{CROTAia} keyvalues for each coord axis.
+C{CROTAia} keyvalues for each coordinate axis.
 
-C{CROTAia} is an alternate
-specification of the linear transformation matrix, maintained for
-historical compatibility.
+C{CROTAia} is an alternate specification of the linear transformation
+matrix, maintained for historical compatibility.
 
 @see: L{cd} for more information.
 
@@ -106,6 +104,8 @@ historical compatibility.
 
 crpix = """
 Coordinate reference pixels (C{CRPIXja}) for each pixel axis.
+
+B{Pixel coordinates are zero-based}.
 
 @type: array[naxis] of double
 """
@@ -182,8 +182,8 @@ translate commonly used non-standard units specifications but this
 must be done as a separate step before invoking L{set}.
 
 For celestial axes, if L{cunit} is not blank, L{set} uses C{wcsunits}
-to parse it and scale L{cdelt}, L{crval}, and L{cd} to degrees.  It
-then resets L{cunit} to "deg".
+to parse it and scale L{cdelt}, L{crval}, and L{cd} to decimal
+degrees.  It then resets L{cunit} to "deg".
 
 For spectral axes, if L{cunit} is not blank, L{set} uses C{wcsunits}
 to parse it and scale L{cdelt}, L{crval}, and L{cd} to SI units.  It
@@ -236,12 +236,13 @@ The equinox associated with dynamical equatorial or ecliptic
 coordinate systems, C{EQUINOXa} (or C{EPOCH} in older headers).  Not
 applicable to ICRS equatorial or ecliptic coordinates.
 
-If the equinox is undefined, NaN is returned.
+If the L{equinox} is undefined, NaN is returned.
 
 @type: float
 """
 
-fix = """fix(translate_units='', naxis=0) -> dict
+fix = """
+fix(translate_units='', naxis=0) -> dict
 
 Applies all of the corrections handled separately by L{datfix},
 L{unitfix}, L{celfix}, L{spcfix} and L{cylfix}.
@@ -403,6 +404,7 @@ on the unknown celestial coordinate element using L{s2p}.
 
 @param pixcrd: Pixel coordinate.  The element indicated by mixpix is
     given and the remaining elements will be written in-place.
+    B{Pixel coordinates are zero-based.}
 
 @type pixcrd: array[naxis] of double
 
@@ -436,7 +438,7 @@ mjdavg = """
 Modified Julian Date (MJD = JD - 2400000.5), C{MJD-AVG}, corresponding
 to C{DATE-AVG}.
 
-If mjdavg is undefined, NaN is returned.
+If L{mjdavg} is undefined, NaN is returned.
 
 @see: L{mjdobs}
 @type: float
@@ -446,7 +448,7 @@ mjdobs = """
 Modified Julian Date (MJD = JD - 2400000.5), C{MJD-OBS}, corresponding
 to C{DATE-OBS}.
 
-If mjdobs is undefined, NaN is returned.
+If L{mjdobs} is undefined, NaN is returned.
 
 @see: L{mjdavg}
 @type: float
@@ -479,7 +481,8 @@ p2s(pixcrd) -> dict
 
 Converts pixel to world coordinates.
 
-@param pixcrd: Array of pixel coordinates.
+@param pixcrd: Array of pixel coordinates.  B{Pixel coordinates are
+    zero-based.}
 
 @type pixcrd: numpy array[ncoord][nelem] of double
 
@@ -490,9 +493,9 @@ Converts pixel to world coordinates.
             - Array of intermediate world coordinates.  For celestial
               axes, C{imgcrd[][self.L{lng}]} and
               C{imgcrd[][self.L{lat}]} are the projected I{x}-, and
-              I{y}-coordinates, in "degrees".  For spectral axes,
-              C{imgcrd[][self.L{spec}]} is the intermediate spectral
-              coordinate, in SI units.
+              I{y}-coordinates, in decimal degrees.  For spectral
+              axes, C{imgcrd[][self.L{spec}]} is the intermediate
+              spectral coordinate, in SI units.
 
         - C{phi} (array[ncoord] of double)
 
@@ -505,9 +508,9 @@ Converts pixel to world coordinates.
 
             - Array of world coordinates.  For celestial axes,
               C{world[][self.L{lng}]} and C{world[][self.L{lat}]} are
-              the celestial longitude and latitude, in degrees.  For
-              spectral axes, C{world[][self.L{spec}]} is the
-              intermediate spectral coordinate, in SI units.
+              the celestial longitude and latitude, in decimal
+              degrees.  For spectral axes, C{world[][self.L{spec}]} is
+              the intermediate spectral coordinate, in SI units.
 
         - C{stat} (array[ncoord] of int)
 
@@ -519,6 +522,7 @@ Converts pixel to world coordinates.
 @raises InconsistentAxisTypesError: Inconsistent or unrecognized
     coordinate axis types.
 @raises ValueError: Invalid parameter value.
+@raises ValueError: x- and y-coordinate arrays are not the same size.
 @raises InvalidTransformError: Invalid coordinate transformation
     parameters.
 @raises InvalidTransformError: Ill-conditioned coordinate transformation
@@ -526,7 +530,7 @@ Converts pixel to world coordinates.
 """
 
 parse_image_header = """
-parse_image_header(header, relax=False) -> dict of L{Wcs} objects
+parse_image_header(header, relax=False) -> dict of L{WCS} objects
 
 Parses a FITS image header, either that of a primary HDU or of an
 image extension.  All WCS keywords defined in Papers I, II, and III
@@ -536,7 +540,7 @@ other keywords that existed in early drafts of the WCS papers.
 Given a string containing a FITS image header, C{parse_image_header()}
 identifies and reads all WCS keywords for the primary coordinate
 representation and up to 26 alternate representations.  It returns
-this information as a list of C{Wcs} objects.
+this information as a list of C{WCS} objects.
 
 C{parse_image_header} fills in information associated with coordinate
 lookup tables.
@@ -597,7 +601,7 @@ The C{PCi_ja} (pixel coordinate) transformation matrix.  The order is::
 print_contents = """
 print_contents()
 
-Print the contents of the Wcs object to stdout.  Probably only useful
+Print the contents of the WCS object to stdout.  Probably only useful
 for debugging purposes, and may be removed in the future.
 """
 
@@ -628,21 +632,22 @@ The routines in this module implement the FITS World Coordinate System
 (WCS) standard which defines methods to be used for computing world
 coordinates from image pixel coordinates, and vice versa.
 
+B{Note that pixel coordinates are always given and returned with a base
+of zero, to be consistent with Numpy and PyFITS indexing, not base one
+as the FITS standard.}
+
 The basic workflow is as follows:
 
     1. C{import pywcs}
 
-    2. Call C{pywcs.parse_image_header()} with a raw FITS header or
-    C{pywcs.parse_hdu()} with a PyFITS HDU object.  This will return a
-    dictionary containing all of the WCS transformations specified in
-    the FITS file.
+    2. Call the C{pywcs.WCS} constructor with a PyFITS header object.
 
     3. Optionally, if the FITS file uses any deprecated or
     non-standard features, you may need to call one of the C{fix}
     methods on the object.
 
-    4. Select the correct C{Wcs} transform object, and convert
-    coordinates using the C{p2s()} or C{s2p()} methods.
+    4. Convert coordinates using the C{pixel2world()} or
+    C{world2pixel()} methods.
 
 Short example::
 
@@ -653,20 +658,16 @@ Short example::
     hdulist = pyfits.open("test.fits")
 
     # Parse the WCS keywords in the primary HDU
-    wcsdict = pywcs.parse_hdu(hdulist[0])
+    wcs = pywcs.WCS(hdulist[0].header)
 
-    # Get the "blank" or primary Wcs
-    wcs = wcsdict[' ']
-
-    # Print out the "name" of the Wcs, as defined in the FITS header
+    # Print out the "name" of the WCS, as defined in the FITS header
     print wcs.name
 
     # Some interesting pixel coordinates
     pixcrd = numpy.array([[0,0],[24,38],[45,98]], numpy.float_)
 
     # Convert pixel coordinates to world coordinates
-    result = wcs.p2s(pixcrd)
-    world = result['world']
+    world = wcs.pixel2world(pixcrd)
     print world
 """
 
@@ -679,7 +680,7 @@ The equatorial or ecliptic coordinate system type, C{RADESYSa}.
 restfrq = """
 Rest frequency (Hz) from C{RESTFRQa}.
 
-If restfrq is undefined, NaN is returned.
+If L{restfrq} is undefined, NaN is returned.
 
 @see: L{restwav}
 @type: float
@@ -688,7 +689,7 @@ If restfrq is undefined, NaN is returned.
 restwav = """
 Rest wavelength (m) from C{RESTWAVa}.
 
-If restwav is undefined, NaN is returned.
+If L{restwav} is undefined, NaN is returned.
 
 @see: L{restfrq}
 @type: float
@@ -699,8 +700,8 @@ s2p(world) -> dict
 
 Transforms world coordinates to pixel coordinates.
 
+@param world: Array of world coordinates, in decimal degrees.
 
-@param world: Array of world coordinates.
 @type world: array[ncoord][nelem] of double
 
 @return: A dictionary with the following keys:
@@ -723,7 +724,8 @@ Transforms world coordinates to pixel coordinates.
 
         - C{pixcrd} (array[ncoord][nelem] of double)
 
-            - Array of pixel coordinates.
+            - Array of pixel coordinates.  B{Pixel coordinates are
+              zero-based.}
 
         - C{stat} (array[ncoord] of int)
 
@@ -744,7 +746,7 @@ Transforms world coordinates to pixel coordinates.
 set = """
 set()
 
-Sets up a Wcs object for use according to information supplied within
+Sets up a WCS object for use according to information supplied within
 it.
 
 C{set} recognizes the C{NCP} projection and converts it to the
@@ -786,7 +788,7 @@ The index containing the spectral axis values.
 """
 
 specsys = """
-Spectral reference frame (standard of rest), SPECSYSa
+Spectral reference frame (standard of rest), C{SPECSYSa}
 
 @see: L{ssysobs}, L{velosys}.
 @type: string
@@ -795,7 +797,7 @@ Spectral reference frame (standard of rest), SPECSYSa
 sptr = """
 sptr(ctype, i=-1)
 
-Translates the spectral axis in a Wcs object.  For example, a C{FREQ}
+Translates the spectral axis in a WCS object.  For example, a C{FREQ}
 axis may be translated into C{ZOPT-F2W} and vice versa.
 
 @param ctype: Required spectral C{CTYPEia}.  Wildcarding may be used,
@@ -871,7 +873,7 @@ velangl = """
 The angle in degrees that should be used to decompose an observed
 velocity into radial and transverse components.
 
-If velangl is undefined, NaN is returned.
+If L{velangl} is undefined, NaN is returned.
 
 @type: float
 """
@@ -881,22 +883,43 @@ The relative radial velocity (m/s) between the observer and the
 selected standard of rest in the direction of the celestial reference
 coordinate, C{VELOSYSa}.
 
-If velosys is undefined, NaN is returned.
+If L{velosys} is undefined, NaN is returned.
 
 @see: L{specsys}, L{ssysobs}
 @type: float
 """
 
-Wcs = """
-Wcs objects can convert between pixel and world coordinates, based on
+WCS = """
+WCS(header, key=' ', relax=False)
+
+WCS objects convert between pixel and world coordinates, based on
 the WCS settings in a FITS file.
 
-To create Wcs objects, one would normally use
-pywcs.parse_image_header.
+@param header: A PyFITS header object or a string containing the raw
+    FITS header data.
+@type header: PyFITS header object or string
+
+@param key: The key referring to a particular WCS transform in the
+    header.  This may be either C{' '} or C{'A'}-C{'Z'} and
+    corresponds to the C{"a"} part of C{"CTYPEia"}.
+@type key: string
+
+@param relax: Degree of permissiveness:
+    - C{False}: Recognize only FITS keywords defined by the
+      published WCS standard.
+    - C{True}: Admit all recognized informal extensions of the
+      WCS standard.
+@type relax: bool
+
+@raises MemoryError: Memory allocation failed.
+@raises ValueError: Invalid key.
+@raises KeyError: Key not found in FITS header.
 """
 
 zsource = """
 The redshift, C{ZSOURCEa}, of the source.
+
+If L{zsource} is undefined, NaN is returned.
 
 @see: L{ssyssrc}
 @type: float

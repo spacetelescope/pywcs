@@ -68,7 +68,7 @@ must be used.  Earlier versions will not document all of the members.
 
 After installing pywcs, type::
 
-    epydoc pywcs
+    epydoc --inheritance=included --no-private pywcs
 
 The API documentation is also available online at:
 

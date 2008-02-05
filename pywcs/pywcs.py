@@ -29,7 +29,8 @@
 
 __docformat__ = "epytext"
 
-from _pywcs import *
+import numpy
+
 import _pywcs
 try:
     import pyfits
@@ -37,63 +38,82 @@ try:
 except ImportError:
     _has_pyfits = False
 
-if _has_pyfits:
-    def parse_hdu(hdu, relax=False):
-        """parse_hdu(hdu, relax=False) -> dict of L{Wcs} objects
+# This is here for the sake of epydoc
+WCSBase = _pywcs._WCS
 
-Parses a FITS image header, either that of a primary HDU or of an image
-extension.  All WCS keywords defined in Papers I, II, and III are
-recognized, and also those used by the AIPS convention and certain
-other keywords that existed in early drafts of the WCS papers.
+# A wrapper around the C WCS type
+class WCS(WCSBase):
+    """%s""" % _pywcs._WCS.__doc__
 
-Given a PyFITS HDU object, C{parse_hdu} identifies and reads all WCS
-keywords for the primary coordinate representation and up to 26
-alternate representations.  It returns this information as a list of
-C{Wcs} objects.
+    def __init__(self, header, key=' ', relax=False):
+        if _has_pyfits:
+            if isinstance(header, pyfits.NP_pyfits.Header):
+                header = str(header.ascardlist())
+        WCSBase.__init__(self, header, key, relax)
 
-C{parse_hdu} fills in information associated with coordinate lookup
-tables.
+    def pixel2world(self, x, y=None):
+        """
+        pixel2world(x, y=None) -> world
 
-C{parse_hdu} determines the number of coordinate axes independently
-for each alternate coordinate representation (denoted by the C{"a"}
-value in keywords like C{CTYPEia}) from the higher of
+        Transforms world coordinates to pixel coordinates.
+        L{pixel2world} is a convenience wrapper around L{p2s}.  If
+        intermediate values from the transform are needed, use the
+        more complex L{p2s} directly.
 
-    - C{NAXIS}
-    - C{WCSAXES}
-    - The highest axis number in any parameterized WCS keyword.  The
-      keyvalue, as well as the keyword, must be syntactically valid
-      otherwise it will not be considered.
+        @param x: Array of I{x} pixel coordinates, or if L{y} is not
+            provided, a 2-dimensional array of both I{x}- and
+            I{y}-coordinates.  B{Pixel coordinates are zero based.}
+        @type x: array of double
 
-If none of these keyword types is present, i.e. if the header only
-contains auxiliary WCS keywords for a particular coordinate
-representation, then no coordinate description is constructed for it.
+        @param y: Array of I{y} pixel coordinates.  If provided, L{x}
+            must be 1-dimensional and the same length as L{y}.
+        @type y: array of double or None
 
-C{parse_hdu} enforces correct FITS C{"keyword = value"} syntax
-with regard to C{"= "} occurring in columns 9 and 10.  However, it
-does recognize free-format character (NOST 100-2.0, Sect. 5.2.1),
-integer (Sect. 5.2.3), and floating-point values (Sect. 5.2.4) for all
-keywords.
+        @return: If both L{x} and L{y} were provided, a 2-tuple of
+            arrays, where the first element is latitude coordinates
+            and the second element is longitude coordinates.
+            Otherwise, a single 2D array containing both latitude and
+            longitude.
+        """
+        if y is None:
+            return self.p2s(x)['world']
+        else:
+            assert len(x) == len(y)
+            length = len(x)
+            xy = numpy.hstack((x.reshape((length, 1)), y.reshape((length, 1))))
+            world = self.p2s(xy)['world']
+            return world[:, 0], world[:, 1]
 
-@param hdu: The FITS header information to parse
-@type hdu: PyFITS HDU object
-@param relax: Degree of permissiveness:
-    - C{False}: Recognize only FITS keywords defined by the
-      published WCS standard.
-    - C{True}: Admit all recognized informal extensions of the
-      WCS standard.
-@type relax: bool
+    def world2pixel(self, ra, dec=None):
+        """
+        world2pixel(ra, dec=None) -> pixel
 
-@returns: A dictionary where the keys are single-character strings
-   that identify a particular WCS transformation.  For example, the
-   C{"a"} in keyword names such as C{CTYPEia}).  This is blank (C{' '})
-   for the primary coordinate description, or one of the 26 upper-case
-   letters, A-Z.
+        Transforms world coordinates to pixel coordinates.
+        L{world2pixel} is a convenience wrapper around L{s2p}.  If
+        intermediate values from the transform are needed, use the
+        more complex L{s2p} directly.
 
-@raises MemoryError: Memory allocation failed.
-"""
-        return parse_image_header(str(hdu.header.ascardlist()), relax)
+        @param ra: Array of I{ra} world coordinates, or if L{dec} is
+            not provided, a 2-dimensional array of both I{ra}- and
+            I{dec}-coordinates.  B{World coordinates are in decimal
+            degrees.}
+        @type ra: array of double
 
-# This is a hack so epydoc will document this method
-def parse_image_header(header, relax=False):
-    return _pywcs.parse_image_header(header, relax)
-parse_image_header.__doc__ = _pywcs.parse_image_header.__doc__
+        @param dec: Array of I{dec} world coordinates.  If provided,
+            L{ra} must be 1-dimensional and the same length as L{dec}.
+        @type dec: array of double or None
+
+        @return: If both L{ra} and L{dec} were provided, a 2-tuple of
+            arrays, where the first element is I{x} coordinates and
+            the second element is I{y} coordinates.  Otherwise, a
+            single 2D array containing both I{x} and I{y}.  B{Pixel
+            coordinates are zero-based.}
+        """
+        if dec is None:
+            return self.p2s(x)['pixcrd']
+        else:
+            assert len(ra) == len(dec)
+            length = len(ra)
+            radec = numpy.hstack((ra.reshape((length, 1)), dec.reshape((length, 1))))
+            pixcrd = self.p2s(radec)['pixcrd']
+            return pixcrd[:, 0], pixcrd[:, 1]
