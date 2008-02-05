@@ -35,10 +35,10 @@ from pywcs import WCS
 
 class SIP(WCS):
     """
-    An extended version of WCS that supports Simple (or Spitzer)
-    Imaging Polynomial (SIP) distortion coefficients.  In addition to
-    all of the functionality of regular WCS objects, SIP objects also
-    provide L{pix2foc} and L{foc2pix} to correct/apply the SIP
+    An extended WCS that supports Simple (or Spitzer) Imaging
+    Polynomial (SIP) distortion coefficients.  In addition to all of
+    the functionality of regular WCS objects, SIP objects also provide
+    L{pix2foc} and L{foc2pix} methods to correct or apply the SIP
     distortion.
 
     @param header: A PyFITS header object or a string containing the raw
@@ -59,39 +59,56 @@ class SIP(WCS):
     """
     def __init__(self, header, relax=False):
         assert isinstance(header, pyfits.NP_pyfits.Header)
-        assert len(key) == 1 and (key == ' ' or (key >= 'A' and key <= 'Z'))
 
-        if not header.has_key("A_ORDER"):
-            raise ValueError("Missing A_ORDER keyword for SIP distortion")
-        order = int(header["A_ORDER"])
-        self.a = numpy.zeros((m+1, m+1))
-        for i in range(m+1):
-            for j in range(m-i+1):
-                self.a[i, j] = header["A_%d_%d" % (i, j)]
+        if header.has_key("A_ORDER"):
+            m = int(header["A_ORDER"])
+            self._a = numpy.zeros((m+1, m+1))
+            for i in range(m+1):
+                for j in range(m-i+1):
+                    self._a[i, j] = header.get("A_%d_%d" % (i, j), 0.0)
 
-        if not header.has_key("B_ORDER"):
-            raise ValueError("Missing B_ORDER keyword for SIP distortion")
-        order = int(header["B_ORDER"])
-        self.b = numpy.zeros((m+1, m+1))
-        for i in range(m+1):
-            for j in range(m-i+1):
-                self.b[i, j] = header["B_%d_%d" % (i, j)]
+            if not header.has_key("B_ORDER"):
+                raise ValueError(
+                    "A_ORDER provided without corresponding B_ORDER "
+                    "keyword for SIP distortion")
 
-        if not header.has_key("AP_ORDER"):
-            raise ValueError("Missing AP_ORDER keyword for SIP distortion")
-        order = int(header["AP_ORDER"])
-        self.ap = numpy.zeros((m+1, m+1))
-        for i in range(m+1):
-            for j in range(m-i+1):
-                self.ap[i, j] = header["AP_%d_%d" % (i, j)]
+            m = int(header["B_ORDER"])
+            self._b = numpy.zeros((m+1, m+1))
+            for i in range(m+1):
+                for j in range(m-i+1):
+                    self._b[i, j] = header.get("B_%d_%d" % (i, j), 0.0)
+        elif header.has_key("B_ORDER"):
+            raise ValueError(
+                "B_ORDER provided without corresponding A_ORDER "
+                "keyword for SIP distortion")
+        else:
+            self._a = None
+            self._b = None
 
-        if not header.has_key("BP_ORDER"):
-            raise ValueError("Missing BP_ORDER keyword for SIP distortion")
-        order = int(header["BP_ORDER"])
-        self.bp = numpy.zeros((m+1, m+1))
-        for i in range(m+1):
-            for j in range(m-i+1):
-                self.bp[i, j] = header["BP_%d_%d" % (i, j)]
+        if header.has_key("AP_ORDER"):
+            m = int(header["AP_ORDER"])
+            self._ap = numpy.zeros((m+1, m+1))
+            for i in range(m+1):
+                for j in range(m-i+1):
+                    self._ap[i, j] = header.get("AP_%d_%d" % (i, j), 0.0)
+
+            if not header.has_key("BP_ORDER"):
+                raise ValueError(
+                    "AP_ORDER provided without corresponding BP_ORDER "
+                    "keyword for SIP distortion")
+
+            m = int(header["BP_ORDER"])
+            self._bp = numpy.zeros((m+1, m+1))
+            for i in range(m+1):
+                for j in range(m-i+1):
+                    self._bp[i, j] = header.get("BP_%d_%d" % (i, j), 0.0)
+        elif header.has_key("BP_ORDER"):
+            raise ValueError(
+                "BP_ORDER provided without corresponding AP_ORDER "
+                "keyword for SIP distortion")
+        else:
+            self._ap = None
+            self._bp = None
 
         WCS.__init__(self, header, key=" ", relax=relax)
 
@@ -118,6 +135,11 @@ class SIP(WCS):
 
         @raises AssertionError: C{len(x) == len(y)}
         """
+        if self._ap is None or self._bp is None:
+            raise ValueError(
+                "This object can not perform foc2pix conversion, since "
+                "no AP or BP information was provided in the FITS header.")
+
         # If a single array was passed in, split it
         if y is None:
             y = x[:, 1]
@@ -134,13 +156,13 @@ class SIP(WCS):
         length = len(x)
         ap = self.ap
         bp = self.bp
-        m = ap.shape[0] - 1
-        n = bp.shape[0] - 1
+        m = self.ap_order
+        n = self.bp_order
 
         temp_x = x - self.crpix[0]
         temp_y = y - self.crpix[1]
 
-        s = npy.zeros((m + 1, length))
+        s = numpy.zeros((m + 1, length))
         for j in range(m+1):
             s[j] = ap[m-j, j]
             for k in range(j-1, -1, -1):
@@ -152,7 +174,7 @@ class SIP(WCS):
 
         u = sum
 
-        s = npy.zeros((n + 1, length))
+        s = numpy.zeros((n + 1, length))
         for j in range(n+1):
             s[j] = bp[n-j, j]
             for k in range(j-1, -1, -1):
@@ -176,7 +198,7 @@ class SIP(WCS):
                                  v.reshape((length, 1))))
         return u, v
 
-    def pix2foc(u, v=None):
+    def pix2foc(self, u, v=None):
         """
         Convert pixel coordinates to focal plane coordinates.
 
@@ -199,6 +221,11 @@ class SIP(WCS):
 
         @raises AssertionError: C{len(u) == len(v)}
         """
+        if self._a is None or self._b is None:
+            raise ValueError(
+                "This object can not perform foc2pix conversion, since "
+                "no A or B information was provided in the FITS header.")
+
         # If a single array was passed in, split it
         if v is None:
             v = u[:, 1]
@@ -206,18 +233,17 @@ class SIP(WCS):
             numarrays = 1
         else:
             numarrays = 2
-        assert len(x) == len(y)
+        assert len(u) == len(v)
 
         length = len(u)
         a = self.a
         b = self.b
-        m = a.shape[0] - 1
-        n = b.shape[0] - 1
-        wcs = self.wcs
+        m = self.a_order
+        n = self.b_order
         temp_u = u - self.crpix[0]
         temp_v = v - self.crpix[1]
 
-        s = npy.zeros((m + 1, length))
+        s = numpy.zeros((m + 1, length))
         for j in range(m+1):
             s[j] = a[m-j, j]
             for k in range(j-1, -1, -1):
@@ -229,7 +255,7 @@ class SIP(WCS):
 
         x = sum
 
-        s = npy.zeros((m+1, length))
+        s = numpy.zeros((m+1, length))
         for j in range(n+1):
             s[j] = b[n-j, j]
             for k in range(j-1, -1, -1):
@@ -252,4 +278,60 @@ class SIP(WCS):
             return numpy.hstack((x.reshape((length, 1)),
                                  y.reshape((length, 1))))
         return x, y
+
+    #@property
+    def get_a_order(self):
+        if self._a is None:
+            raise ValueError("No A_ORDER provided in the FITS header.")
+        return self._a.shape[0] - 1
+    a_order = property(get_a_order)
+
+    #@property
+    def get_b_order(self):
+        if self._b is None:
+            raise ValueError("No B_ORDER provided in the FITS header.")
+        return self._b.shape[0] - 1
+    b_order = property(get_b_order)
+
+    #@property
+    def get_ap_order(self):
+        if self._ap is None:
+            raise ValueError("No AP_ORDER provided in the FITS header.")
+        return self._ap.shape[0] - 1
+    ap_order = property(get_ap_order)
+
+    #@property
+    def get_bp_order(self):
+        if self._bp is None:
+            raise ValueError("No BP_ORDER provided in the FITS header.")
+        return self._bp.shape[0] - 1
+    bp_order = property(get_bp_order)
+
+    #@property
+    def get_a(self):
+        if self._a is None:
+            raise ValueError("No A* provided in the FITS header.")
+        return self._a
+    a = property(get_a)
+
+    #@property
+    def get_b(self):
+        if self._b is None:
+            raise ValueError("No B* provided in the FITS header.")
+        return self._b
+    b = property(get_b)
+
+    #@property
+    def get_ap(self):
+        if self._ap is None:
+            raise ValueError("No AP* provided in the FITS header.")
+        return self._ap
+    ap = property(get_ap)
+
+    #@property
+    def get_bp(self):
+        if self._bp is None:
+            raise ValueError("No BP* provided in the FITS header.")
+        return self._bp
+    bp = property(get_bp)
 
