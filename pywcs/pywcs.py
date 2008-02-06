@@ -80,7 +80,8 @@ class WCS(WCSBase):
         else:
             assert len(x) == len(y)
             length = len(x)
-            xy = numpy.hstack((x.reshape((length, 1)), y.reshape((length, 1))))
+            xy = numpy.hstack((x.reshape((length, 1)),
+                               y.reshape((length, 1))))
             world = self.p2s(xy)['world']
             return world[:, 0], world[:, 1]
 
@@ -114,6 +115,7 @@ class WCS(WCSBase):
         else:
             assert len(ra) == len(dec)
             length = len(ra)
-            radec = numpy.hstack((ra.reshape((length, 1)), dec.reshape((length, 1))))
+            radec = numpy.hstack((ra.reshape((length, 1)),
+                                  dec.reshape((length, 1))))
             pixcrd = self.p2s(radec)['pixcrd']
             return pixcrd[:, 0], pixcrd[:, 1]
