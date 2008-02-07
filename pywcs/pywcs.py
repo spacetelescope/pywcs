@@ -45,11 +45,19 @@ WCSBase = _pywcs._WCS
 class WCS(WCSBase):
     """%s""" % _pywcs._WCS.__doc__
 
-    def __init__(self, header, key=' ', relax=False):
+    def __init__(self, header=None, key=' ', relax=False, naxis=2):
         if _has_pyfits:
             if isinstance(header, pyfits.NP_pyfits.Header):
                 header = str(header.ascardlist())
-        WCSBase.__init__(self, header, key, relax)
+
+        WCSBase.__init__(self, header=header, key=key, relax=relax, naxis=naxis)
+
+        if header is None:
+            # Set some reasonable defaults.  These are from
+            # wcsutil.py
+            self.crpix = numpy.zeros((self.naxis,), numpy.double)
+            self.crval = numpy.zeros((self.naxis,), numpy.double)
+
 
     def pixel2world(self, x, y=None):
         """

@@ -109,7 +109,7 @@ for key in keys:
     if key.startswith('__'):
         continue
     val = docstrings[key].lstrip().encode("string_escape").replace('"', '\\"')
-    fd.write("const char doc_%s[] = \"%s\";\n\n" % (key, val))
+    fd.write("static const char doc_%s[] = \"%s\";\n\n" % (key, val))
 fd.close()
 
 ######################################################################

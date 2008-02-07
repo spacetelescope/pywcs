@@ -278,6 +278,28 @@ L{unitfix}, L{celfix}, L{spcfix} and L{cylfix}.
     called: L{datfix}, L{unitfix}, L{celfix}, L{spcfix}, L{cylfix}.
 """
 
+get_ps = """
+get_ps() -> list of tuples
+
+Returns C{PSi_ma} keywords for each I{i} and I{m}.  Returned as a list
+of tuples of the form (I{i}, I{m}, I{value}):
+
+    - I{i}: axis number, as in C{PSi_ma}, (i.e. 1-relative)
+    - I{m}: parameter number, as in C{PSi_ma}, (i.e. 0-relative)
+    - I{value}: parameter value (as a string)
+"""
+
+get_pv = """
+get_pv() -> list of tuples
+
+Returns C{PVi_ma} keywords for each I{i} and I{m}.  Returned as a list
+of tuples of the form (I{i}, I{m}, I{value}):
+
+    - I{i}: axis number, as in C{PVi_ma}, (i.e. 1-relative)
+    - I{m}: parameter number, as in C{PVi_ma}, (i.e. 0-relative)
+    - I{value}: parameter value (as a string)
+"""
+
 has_cdi_ja = """
 has_cdi_ja() -> bool
 
@@ -605,28 +627,6 @@ Print the contents of the WCS object to stdout.  Probably only useful
 for debugging purposes, and may be removed in the future.
 """
 
-ps = """
-C{PSi_ma} keywords for each I{i} and I{m}.  Returned as a list of
-tuples of the form (I{i}, I{m}, I{value}):
-
-    - I{i}: axis number, as in C{PSi_ma}, (i.e. 1-relative)
-    - I{m}: parameter number, as in C{PSi_ma}, (i.e. 0-relative)
-    - I{value}: parameter value (as a string)
-
-@type: list of tuples
-"""
-
-pv = """
-C{PVi_ma} keywords for each I{i} and I{m}.  Returned as a list of
-tuples of the form (I{i}, I{m}, I{value}):
-
-    - I{i}: axis number, as in C{PVi_ma}, (i.e. 1-relative)
-    - I{m}: parameter number, as in C{PVi_ma}, (i.e. 0-relative)
-    - I{value}: parameter value (as a string)
-
-@type: list of tuples
-"""
-
 pywcs = """
 The routines in this module implement the FITS World Coordinate System
 (WCS) standard which defines methods to be used for computing world
@@ -771,6 +771,28 @@ C{set} strips off trailing blanks in all string members.
     parameters.
 """
 
+set_ps = """
+set_ps(list)
+
+Sets C{PSi_ma} keywords for each I{i} and I{m}.  The input must be a
+sequence of tuples of the form (I{i}, I{m}, I{value}):
+
+    - I{i}: axis number, as in C{PSi_ma}, (i.e. 1-relative)
+    - I{m}: parameter number, as in C{PSi_ma}, (i.e. 0-relative)
+    - I{value}: parameter value (as a string)
+"""
+
+set_pv = """
+set_pv(list)
+
+Sets C{PVi_ma} keywords for each I{i} and I{m}.  The input must be a
+sequence of tuples of the form (I{i}, I{m}, I{value}):
+
+    - I{i}: axis number, as in C{PVi_ma}, (i.e. 1-relative)
+    - I{m}: parameter number, as in C{PVi_ma}, (i.e. 0-relative)
+    - I{value}: parameter value (as a string)
+"""
+
 spcfix = """
 spcfix() -> int
 
@@ -890,18 +912,20 @@ If L{velosys} is undefined, NaN is returned.
 """
 
 WCS = """
-WCS(header, key=' ', relax=False)
+WCS(header=None, key=' ', relax=False, naxes=2)
 
 WCS objects convert between pixel and world coordinates, based on
 the WCS settings in a FITS file.
 
 @param header: A PyFITS header object or a string containing the raw
-    FITS header data.
+    FITS header data.  If header is not provided, the object will be
+    initialized to default values.
 @type header: PyFITS header object or string
 
 @param key: The key referring to a particular WCS transform in the
     header.  This may be either C{' '} or C{'A'}-C{'Z'} and
-    corresponds to the C{"a"} part of C{"CTYPEia"}.
+    corresponds to the C{"a"} part of C{"CTYPEia"}.  (C{key}
+    may only be provided if C{header} is also provided.)
 @type key: string
 
 @param relax: Degree of permissiveness:
@@ -909,7 +933,12 @@ the WCS settings in a FITS file.
       published WCS standard.
     - C{True}: Admit all recognized informal extensions of the
       WCS standard.
+    (C{relax} may be provided only if C{header} is also provided.)
 @type relax: bool
+
+@param naxes: The number of world coordinates axes for the object.
+    (C{naxes may only be provided if C{header} is C{None}.)
+@type naxes: int
 
 @raises MemoryError: Memory allocation failed.
 @raises ValueError: Invalid key.

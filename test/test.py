@@ -16,7 +16,7 @@ import numpy
 import pywcs
 import pyfits
 
-members = """alt cd cdelt cname colax colnum crder crota crpix crval csyer ctype cubeface cunit dateavg dateobs equinox lat latpole lng lonpole mjdavg mjdobs name naxis obsgeo pc ps pv radesys restfrq restwav spec specsys ssysobs ssyssrc velosys velangl zsource""".split()
+members = """alt cd cdelt cname colax colnum crder crota crpix crval csyer ctype cubeface cunit dateavg dateobs equinox lat latpole lng lonpole mjdavg mjdobs name naxis obsgeo pc radesys restfrq restwav spec specsys ssysobs ssyssrc velosys velangl zsource""".split()
 
 def test_file(path):
     print "=" * 75

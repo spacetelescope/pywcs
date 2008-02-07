@@ -284,54 +284,94 @@ class SIP(WCS):
         if self._a is None:
             raise ValueError("No A_ORDER provided in the FITS header.")
         return self._a.shape[0] - 1
-    a_order = property(get_a_order)
+    a_order = property(
+        get_a_order,
+        doc = """
+              The A_ORDER value.
+              @type: int
+              """)
 
     #@property
     def get_b_order(self):
         if self._b is None:
             raise ValueError("No B_ORDER provided in the FITS header.")
         return self._b.shape[0] - 1
-    b_order = property(get_b_order)
+    b_order = property(
+        get_b_order,
+        doc = """
+              The B_ORDER value.
+              @type: int
+              """)
 
     #@property
     def get_ap_order(self):
         if self._ap is None:
             raise ValueError("No AP_ORDER provided in the FITS header.")
         return self._ap.shape[0] - 1
-    ap_order = property(get_ap_order)
+    ap_order = property(
+        get_ap_order,
+        doc = """
+              The AP_ORDER value.
+              @type: int
+              """)
 
     #@property
     def get_bp_order(self):
         if self._bp is None:
             raise ValueError("No BP_ORDER provided in the FITS header.")
         return self._bp.shape[0] - 1
-    bp_order = property(get_bp_order)
+    bp_order = property(
+        get_bp_order,
+        doc = """
+              The BP_ORDER value.
+              @type: int
+              """)
 
     #@property
     def get_a(self):
         if self._a is None:
             raise ValueError("No A* provided in the FITS header.")
         return self._a
-    a = property(get_a)
+    a = property(
+        get_a,
+        doc = """
+              The A coefficient array.
+              @type: array[a_order+1][a_order+1] of double
+              """)
 
     #@property
     def get_b(self):
         if self._b is None:
             raise ValueError("No B* provided in the FITS header.")
         return self._b
-    b = property(get_b)
+    b = property(
+        get_b,
+        doc = """
+              The B coefficient array.
+              @type: array[b_order+1][b_order+1] of double
+              """)
 
     #@property
     def get_ap(self):
         if self._ap is None:
             raise ValueError("No AP* provided in the FITS header.")
         return self._ap
-    ap = property(get_ap)
+    ap = property(
+        get_ap,
+        doc = """
+              The AP coefficient array.
+              @type: array[ap_order+1][ap_order+1] of double
+              """)
 
     #@property
     def get_bp(self):
         if self._bp is None:
             raise ValueError("No BP* provided in the FITS header.")
         return self._bp
-    bp = property(get_bp)
+    bp = property(
+        get_bp,
+        doc = """
+              The BP coefficient array.
+              @type: array[bp_order+1][bp_order+1] of double
+              """)
 
