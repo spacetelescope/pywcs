@@ -18,11 +18,17 @@ import pyfits
 
 members = """alt cd cdelt cname colax colnum crder crota crpix crval csyer ctype cubeface cunit dateavg dateobs equinox lat latpole lng lonpole mjdavg mjdobs name naxis obsgeo pc radesys restfrq restwav spec specsys ssysobs ssyssrc velosys velangl zsource""".split()
 
+def similar(a, b):
+    diff = numpy.abs(a - b)
+    return numpy.all(diff < 1e-9)
+
 def test_file(path):
     print "=" * 75
     print path
     hdulist = pyfits.open(path)
     wcs = pywcs.WCS(hdulist[0].header)
+
+    print wcs
 
     data1 = numpy.array([0,2,4,6])
     data2 = numpy.array([1,3,5,7])
@@ -31,8 +37,12 @@ def test_file(path):
     wcs.fix()
     wcs.set()
     print "p2s: %s" % wcs.p2s(data3)
-    print "pixel2world: %s %s" % wcs.pixel2world(data1, data2)
     print "s2p: %s" % wcs.s2p(data3)
+
+    world = wcs.pixel2world(data1, data2)
+    x, y = wcs.world2pixel(*world)
+    #assert similar(x, data1)
+    #assert similar(y, data2)
 
 #         try:
 #             print "mix: %s" % wcs.mix(1, 1, (-120,120), 0.0, 10, data1, data2)
@@ -47,7 +57,12 @@ def test_file(path):
         except Exception, e:
             print "wcs.%s: EXCEPTION: %s" % (member, e)
         else:
-            print "wcs.%s: %s" % (member, val)
+            print "wcs.%s: %r" % (member, val)
+            try:
+                setattr(wcs, member, val)
+            except Exception, e:
+                print "wcs.%s setting: EXCEPTION: %s" % (member, e)
+
     wcs.print_contents()
 
 

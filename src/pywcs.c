@@ -77,6 +77,14 @@ parse_unsafe_unit_conversion_spec(const char* arg) {
 }
 
 static void
+offset_c_array(double* value, size_t size, double offset) {
+  double* end = value + size;
+
+  for ( ; value != end; ++value)
+    *value += offset;
+}
+
+static void
 offset_array(PyArrayObject* array, double value) {
   int     size = 1;
   int     i    = 0;
@@ -87,8 +95,7 @@ offset_array(PyArrayObject* array, double value) {
 
   data = (double*)PyArray_DATA(array);
 
-  for (i = 0; i < size; ++i)
-    data[i] += value;
+  offset_c_array(data, size, value);
 }
 
 static void
@@ -97,10 +104,10 @@ copy_array_to_c_double(PyArrayObject* array, double* dest) {
   int     i    = 0;
   double* data = NULL;
 
+  data = (double*)PyArray_DATA(array);
+
   for (i = 0; i < PyArray_NDIM(array); ++i)
     size *= PyArray_DIM(array, i);
-
-  data = (double*)PyArray_DATA(array);
 
   for (i = 0; i < size; ++i, ++dest, ++data)
     *dest = *data == NAN ? UNDEFINED : *data;
@@ -112,10 +119,11 @@ copy_array_to_c_int(PyArrayObject* array, int* dest) {
   int  i    = 0;
   int* data = NULL;
 
+  data = (int*)PyArray_DATA(array);
+
   for (i = 0; i < PyArray_NDIM(array); ++i)
     size *= PyArray_DIM(array, i);
 
-  data = (int*)PyArray_DATA(array);
 
   for (i = 0; i < size; ++i, ++dest, ++data)
     *dest = *data;
@@ -136,22 +144,22 @@ is_valid_alt_key(const char* key) {
 static inline
 void nan2undefined(double* value, size_t nvalues) {
   double* end = value + nvalues;
-  double v;
+  double v = 0;
 
-  while (value != end) {
+  for ( ; value != end; ++value) {
     v = *value;
-    *value++ = (v == NAN) ? UNDEFINED : v;
+    *value = (v == NAN) ? UNDEFINED : v;
   }
 }
 
 static inline
 void undefined2nan(double* value, size_t nvalues) {
   double* end = value + nvalues;
-  double v;
+  double v = 0;
 
-  while (value != end) {
+  for ( ; value != end; ++value) {
     v = *value;
-    *value++ = (v == UNDEFINED) ? NAN : v;
+    *value = (v == UNDEFINED) ? NAN : v;
   }
 }
 
@@ -238,47 +246,51 @@ PyWcsprmListProxy_New(PyWcsprm* owner, Py_ssize_t size, char (*array)[72]);
    quite small.
 */
 static void
-PyWcsprm_Nan2Undefined(PyWcsprm* self) {
+PyWcsprm_Python2C(PyWcsprm* self) {
   struct wcsprm* x     = self->x;
   int            naxis = x->naxis;
 
   nan2undefined(x->cd, 4);
   nan2undefined(x->cdelt, naxis);
   nan2undefined(x->crder, naxis);
-  nan2undefined(x->crota, 4);
+  nan2undefined(x->crota, naxis);
   nan2undefined(x->crpix, naxis);
   nan2undefined(x->crval, naxis);
   nan2undefined(x->csyer, naxis);
   nan2undefined(&x->equinox, 1);
   nan2undefined(&x->mjdavg, 1);
   nan2undefined(&x->mjdobs, 1);
+  nan2undefined(x->obsgeo, 3);
   nan2undefined(&x->restfrq, 1);
   nan2undefined(&x->restwav, 1);
   nan2undefined(&x->velangl, 1);
   nan2undefined(&x->velosys, 1);
   nan2undefined(&x->zsource, 1);
+  offset_c_array(x->crpix, naxis, 1.0);
 }
 
 static void
-PyWcsprm_Undefined2Nan(PyWcsprm* self) {
+PyWcsprm_C2Python(PyWcsprm* self) {
   struct wcsprm* x     = self->x;
   int            naxis = x->naxis;
 
   undefined2nan(x->cd, 4);
   undefined2nan(x->cdelt, naxis);
   undefined2nan(x->crder, naxis);
-  undefined2nan(x->crota, 4);
+  undefined2nan(x->crota, naxis);
   undefined2nan(x->crpix, naxis);
   undefined2nan(x->crval, naxis);
   undefined2nan(x->csyer, naxis);
   undefined2nan(&x->equinox, 1);
   undefined2nan(&x->mjdavg, 1);
   undefined2nan(&x->mjdobs, 1);
+  undefined2nan(x->obsgeo, 3);
   undefined2nan(&x->restfrq, 1);
   undefined2nan(&x->restwav, 1);
   undefined2nan(&x->velangl, 1);
   undefined2nan(&x->velosys, 1);
   undefined2nan(&x->zsource, 1);
+  offset_c_array(x->crpix, naxis, -1.0);
 }
 
 /***************************************************************************
@@ -371,7 +383,7 @@ PyWcsprm_init(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     }
 
     self->x = obj;
-    PyWcsprm_Undefined2Nan(self);
+    PyWcsprm_C2Python(self);
 
     return 0;
   } else { /* header != NULL */
@@ -438,10 +450,21 @@ PyWcsprm_init(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     }
 
     self->x = obj;
-    PyWcsprm_Undefined2Nan(self);
+    PyWcsprm_C2Python(self);
     wcsvfree(&nwcs, &wcs);
     return 0;
   }
+}
+
+static PyObject*
+PyWcsprm_repr(PyWcsprm* self) {
+  if (self->x == NULL || self->x->wcsname == NULL) {
+    PyErr_SetString(PyExc_AssertionError,
+                    "Underlying object is NULL.");
+    return NULL;
+  }
+
+  return PyString_FromFormat("<WCS object '%s'>", self->x->wcsname);
 }
 
 static PyObject*
@@ -494,9 +517,9 @@ PyWcsprm_celfix(PyWcsprm* self) {
     return NULL;
   }
 
-  PyWcsprm_Nan2Undefined(self);
+  PyWcsprm_Python2C(self);
   status = celfix(self->x);
-  PyWcsprm_Undefined2Nan(self);
+  PyWcsprm_C2Python(self);
 
   if (status == -1 || status == 0) {
     return PyInt_FromLong(status);
@@ -544,9 +567,9 @@ PyWcsprm_cylfix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     naxis = (int*)PyArray_DATA(naxis_array);
   }
 
-  PyWcsprm_Nan2Undefined(self);
+  PyWcsprm_Python2C(self);
   status = cylfix(naxis, self->x);
-  PyWcsprm_Undefined2Nan(self);
+  PyWcsprm_C2Python(self);
 
   Py_XDECREF(naxis_array);
 
@@ -640,9 +663,9 @@ PyWcsprm_fix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     naxis = (int*)PyArray_DATA(naxis_array);
   }
 
-  PyWcsprm_Nan2Undefined(self);
+  PyWcsprm_Python2C(self);
   status = wcsfix(ctrl, naxis, self->x, stat);
-  PyWcsprm_Undefined2Nan(self);
+  PyWcsprm_C2Python(self);
 
   /* We're done with this already, so deref now so we don't have to remember
      later */
@@ -662,6 +685,7 @@ PyWcsprm_fix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
         Py_XDECREF(result);
         return NULL;
       }
+      Py_XDECREF(subresult);
     }
   }
 
@@ -674,7 +698,7 @@ PyWcsprm_get_ps(PyWcsprm* self, PyObject* args, PyObject* kwds) {
   PyObject* subresult = NULL;
   int       i         = 0;
 
-  if (self->x == NULL || self->x->ps == NULL) {
+  if (self->x == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
     return NULL;
   }
@@ -708,7 +732,7 @@ PyWcsprm_get_pv(PyWcsprm* self, PyObject* args, PyObject* kwds) {
   PyObject* subresult = NULL;
   int       i         = 0;
 
-  if (self->x == NULL || self->x->pv == NULL) {
+  if (self->x == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
     return NULL;
   }
@@ -883,7 +907,7 @@ PyWcsprm_mix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
 
   /* Convert pixel coordinates to 1-based */
   offset_array(pixcrd, 1.0);
-  PyWcsprm_Nan2Undefined(self);
+  PyWcsprm_Python2C(self);
   status = wcsmix(self->x,
                   mixpix,
                   mixcel,
@@ -895,7 +919,7 @@ PyWcsprm_mix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
                   (double*)PyArray_DATA(theta),
                   (double*)PyArray_DATA(imgcrd),
                   (double*)PyArray_DATA(pixcrd));
-  PyWcsprm_Undefined2Nan(self);
+  PyWcsprm_C2Python(self);
   /* Convert pixel coordinates back to 0-based) */
   offset_array(pixcrd, -1.0);
 
@@ -993,7 +1017,7 @@ PyWcsprm_p2s(PyWcsprm* self, PyObject* arg) {
   offset_array(pixcrd, 1.0);
 
   /* Make the call */
-  PyWcsprm_Nan2Undefined(self);
+  PyWcsprm_Python2C(self);
   status = wcsp2s(self->x,
                   PyArray_DIM(pixcrd, 0),
                   PyArray_DIM(pixcrd, 1),
@@ -1003,7 +1027,7 @@ PyWcsprm_p2s(PyWcsprm* self, PyObject* arg) {
                   (double*)PyArray_DATA(theta),
                   (double*)PyArray_DATA(world),
                   (int*)PyArray_DATA(stat));
-  PyWcsprm_Undefined2Nan(self);
+  PyWcsprm_C2Python(self);
   /* Adjust pixel coordinates back to 0-based */
   offset_array(pixcrd, -1.0);
 
@@ -1103,7 +1127,7 @@ PyWcsprm_s2p(PyWcsprm* self, PyObject* arg) {
   }
 
   /* Make the call */
-  PyWcsprm_Nan2Undefined(self);
+  PyWcsprm_Python2C(self);
   status = wcss2p(self->x,
                   PyArray_DIM(world, 0),
                   PyArray_DIM(world, 1),
@@ -1113,7 +1137,7 @@ PyWcsprm_s2p(PyWcsprm* self, PyObject* arg) {
                   (double*)PyArray_DATA(imgcrd),
                   (double*)PyArray_DATA(pixcrd),
                   (int*)PyArray_DATA(stat));
-  PyWcsprm_Undefined2Nan(self);
+  PyWcsprm_C2Python(self);
 
   /* Adjust pixel coordinates to be zero-based */
   offset_array(pixcrd, -1.0);
@@ -1152,9 +1176,9 @@ PyWcsprm_s2p(PyWcsprm* self, PyObject* arg) {
 static PyObject*
 PyWcsprm_set(PyWcsprm* self) {
   int status = 0;
-  PyWcsprm_Nan2Undefined(self);
+  PyWcsprm_Python2C(self);
   status = wcsset(self->x);
-  PyWcsprm_Undefined2Nan(self);
+  PyWcsprm_C2Python(self);
 
   if (status == 0) {
     Py_INCREF(Py_None);
@@ -1292,9 +1316,9 @@ PyWcsprm_print_contents(PyWcsprm* self) {
   if (PyWcsprm_set(self) == NULL)
     return NULL;
 
-  PyWcsprm_Nan2Undefined(self);
+  PyWcsprm_Python2C(self);
   wcsprt(self->x);
-  PyWcsprm_Undefined2Nan(self);
+  PyWcsprm_C2Python(self);
 
   Py_INCREF(Py_None);
   return Py_None;
@@ -1310,9 +1334,9 @@ PyWcsprm_spcfix(PyWcsprm* self) {
     return NULL;
   }
 
-  PyWcsprm_Nan2Undefined(self);
+  PyWcsprm_Python2C(self);
   status = spcfix(self->x);
-  PyWcsprm_Undefined2Nan(self);
+  PyWcsprm_C2Python(self);
 
   if (status == -1 || status == 0) {
     return PyInt_FromLong(status);
@@ -1351,9 +1375,9 @@ PyWcsprm_sptr(PyWcsprm* self, PyObject* args, PyObject* kwds) {
 
   strncpy(ctype, py_ctype, 9);
 
-  PyWcsprm_Nan2Undefined(self);
+  PyWcsprm_Python2C(self);
   status = wcssptr(self->x, &i, ctype);
-  PyWcsprm_Undefined2Nan(self);
+  PyWcsprm_C2Python(self);
 
   if (status == 0) {
     Py_INCREF(Py_None);
@@ -1488,6 +1512,8 @@ PyWcsprm_set_cd(PyWcsprm* self, PyObject* value, void* closure) {
   copy_array_to_c_double(value_array, self->x->cd);
   self->x->altlin |= has_cd;
 
+  Py_DECREF(value_array);
+
   return 0;
 }
 
@@ -1527,7 +1553,7 @@ PyWcsprm_set_cname(PyWcsprm* self, PyObject* value, void* closure) {
     if (str == NULL)
       return -1;
 
-    str_char = PyString_AsString(value);
+    str_char = PyString_AsString(str);
     if (str_char == NULL)
       return -1;
 
@@ -1574,6 +1600,8 @@ PyWcsprm_set_cdelt(PyWcsprm* self, PyObject* value, void* closure) {
   }
 
   copy_array_to_c_double(value_array, self->x->cdelt);
+
+  Py_DECREF(value_array);
 
   return 0;
 }
@@ -1648,6 +1676,8 @@ PyWcsprm_set_colax(PyWcsprm* self, PyObject* value, void* closure) {
 
   copy_array_to_c_int(value_array, self->x->colax);
 
+  Py_DECREF(value_array);
+
   return 0;
 }
 
@@ -1688,13 +1718,13 @@ PyWcsprm_set_crder(PyWcsprm* self, PyObject* value, void* closure) {
 
   copy_array_to_c_double(value_array, self->x->crder);
 
+  Py_DECREF(value_array);
+
   return 0;
 }
 
 static PyObject*
 PyWcsprm_get_crota(PyWcsprm* self, void* closure) {
-  const npy_intp dims[2] = {2, 2};
-
   if (self->x == NULL || self->x->crota == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
     return NULL;
@@ -1705,7 +1735,8 @@ PyWcsprm_get_crota(PyWcsprm* self, void* closure) {
     return NULL;
   }
 
-  return PyWcsprmArrayProxy_New(self, 2, dims, PyArray_DOUBLE, self->x->crota);
+  return PyWcsprmArrayProxy_New(self, 1, &self->x->naxis, PyArray_DOUBLE,
+                                self->x->crota);
 }
 
 static int
@@ -1723,17 +1754,19 @@ PyWcsprm_set_crota(PyWcsprm* self, PyObject* value, void* closure) {
   }
 
   value_array = (PyArrayObject*)PyArray_ContiguousFromAny(value, PyArray_DOUBLE,
-                                                          2, 2);
+                                                          1, 1);
   if (value_array == NULL)
     return -1;
 
-  if (PyArray_DIM(value_array, 0) != 2 || PyArray_DIM(value_array, 1) != 2) {
-    PyErr_SetString(PyExc_ValueError, "crota must be a 2x2 array");
+  if (PyArray_DIM(value_array, 0) != self->x->naxis) {
+    PyErr_SetString(PyExc_ValueError, "len(crota) != naxis");
     return -1;
   }
 
   copy_array_to_c_double(value_array, self->x->crota);
   self->x->altlin |= has_crota;
+
+  Py_DECREF(value_array);
 
   return 0;
 }
@@ -1774,8 +1807,9 @@ PyWcsprm_set_crpix(PyWcsprm* self, PyObject* value, void* closure) {
     return -1;
   }
 
-  // offset_array(value_array, 1.0); /* TODO: Do we want to do this? */
   copy_array_to_c_double(value_array, self->x->crpix);
+
+  Py_DECREF(value_array);
 
   return 0;
 }
@@ -1816,6 +1850,8 @@ PyWcsprm_set_crval(PyWcsprm* self, PyObject* value, void* closure) {
   }
 
   copy_array_to_c_double(value_array, self->x->crval);
+
+  Py_DECREF(value_array);
 
   return 0;
 }
@@ -1858,6 +1894,8 @@ PyWcsprm_set_csyer(PyWcsprm* self, PyObject* value, void* closure) {
 
   copy_array_to_c_double(value_array, self->x->csyer);
 
+  Py_DECREF(value_array);
+
   return 0;
 }
 
@@ -1897,11 +1935,13 @@ PyWcsprm_set_ctype(PyWcsprm* self, PyObject* value, void* closure) {
     if (str == NULL)
       return -1;
 
-    str_char = PyString_AsString(value);
+    str_char = PyString_AsString(str);
     if (str_char == NULL)
       return -1;
 
     strncpy(self->x->ctype[i], str_char, 72);
+
+    Py_DECREF(str);
   }
 
   return 0;
@@ -1975,11 +2015,13 @@ PyWcsprm_set_cunit(PyWcsprm* self, PyObject* value, void* closure) {
     if (str == NULL)
       return -1;
 
-    str_char = PyString_AsString(value);
+    str_char = PyString_AsString(str);
     if (str_char == NULL)
       return -1;
 
     strncpy(self->x->cunit[i], str_char, 72);
+
+    Py_DECREF(str);
   }
 
   return 0;
@@ -2071,8 +2113,6 @@ PyWcsprm_get_equinox(PyWcsprm* self, void* closure) {
 
 static int
 PyWcsprm_set_equinox(PyWcsprm* self, PyObject* value, void* closure) {
-  double value_double;
-
   if (self->x == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
     return -1;
@@ -2086,9 +2126,7 @@ PyWcsprm_set_equinox(PyWcsprm* self, PyObject* value, void* closure) {
   if (!PyFloat_Check(value))
     return -1;
 
-  value_double = PyFloat_AsDouble(value);
-
-  self->x->equinox = value_double;
+  self->x->equinox = PyFloat_AsDouble(value);
 
   return 0;
 }
@@ -2113,8 +2151,6 @@ PyWcsprm_get_latpole(PyWcsprm* self, void* closure) {
 
 static int
 PyWcsprm_set_latpole(PyWcsprm* self, PyObject* value, void* closure) {
-  double value_double;
-
   if (self->x == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
     return -1;
@@ -2128,9 +2164,7 @@ PyWcsprm_set_latpole(PyWcsprm* self, PyObject* value, void* closure) {
   if (!PyFloat_Check(value))
     return -1;
 
-  value_double = PyFloat_AsDouble(value);
-
-  self->x->latpole = value_double;
+  self->x->latpole = PyFloat_AsDouble(value);
 
   return 0;
 }
@@ -2155,8 +2189,6 @@ PyWcsprm_get_lonpole(PyWcsprm* self, void* closure) {
 
 static int
 PyWcsprm_set_lonpole(PyWcsprm* self, PyObject* value, void* closure) {
-  double value_double;
-
   if (self->x == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
     return -1;
@@ -2170,9 +2202,7 @@ PyWcsprm_set_lonpole(PyWcsprm* self, PyObject* value, void* closure) {
   if (!PyFloat_Check(value))
     return -1;
 
-  value_double = PyFloat_AsDouble(value);
-
-  self->x->lonpole = value_double;
+  self->x->lonpole = PyFloat_AsDouble(value);
 
   return 0;
 }
@@ -2189,8 +2219,6 @@ PyWcsprm_get_mjdavg(PyWcsprm* self, void* closure) {
 
 static int
 PyWcsprm_set_mjdavg(PyWcsprm* self, PyObject* value, void* closure) {
-  double value_double;
-
   if (self->x == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
     return -1;
@@ -2204,9 +2232,7 @@ PyWcsprm_set_mjdavg(PyWcsprm* self, PyObject* value, void* closure) {
   if (!PyFloat_Check(value))
     return -1;
 
-  value_double = PyFloat_AsDouble(value);
-
-  self->x->mjdavg = value_double;
+  self->x->mjdavg = PyFloat_AsDouble(value);
 
   return 0;
 }
@@ -2223,8 +2249,6 @@ PyWcsprm_get_mjdobs(PyWcsprm* self, void* closure) {
 
 static int
 PyWcsprm_set_mjdobs(PyWcsprm* self, PyObject* value, void* closure) {
-  double value_double;
-
   if (self->x == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
     return -1;
@@ -2238,9 +2262,7 @@ PyWcsprm_set_mjdobs(PyWcsprm* self, PyObject* value, void* closure) {
   if (!PyFloat_Check(value))
     return -1;
 
-  value_double = PyFloat_AsDouble(value);
-
-  self->x->mjdobs = value_double;
+  self->x->mjdobs = PyFloat_AsDouble(value);
 
   return 0;
 }
@@ -2319,8 +2341,8 @@ PyWcsprm_set_obsgeo(PyWcsprm* self, PyObject* value, void* closure) {
   }
 
   value_array = (PyArrayObject*)PyArray_ContiguousFromAny(value,
-                                                             PyArray_DOUBLE,
-                                                             1, 1);
+                                                          PyArray_DOUBLE,
+                                                          1, 1);
   if (value_array == NULL)
     return -1;
 
@@ -2330,6 +2352,8 @@ PyWcsprm_set_obsgeo(PyWcsprm* self, PyObject* value, void* closure) {
   }
 
   copy_array_to_c_double(value_array, self->x->obsgeo);
+
+  Py_DECREF(value_array);
 
   return 0;
 }
@@ -2378,6 +2402,8 @@ PyWcsprm_set_pc(PyWcsprm* self, PyObject* value, void* closure) {
 
   copy_array_to_c_double(value_array, self->x->pc);
   self->x->altlin |= has_pc;
+
+  Py_DECREF(value_array);
 
   return 0;
 }
@@ -2431,8 +2457,6 @@ PyWcsprm_get_restfrq(PyWcsprm* self, void* closure) {
 
 static int
 PyWcsprm_set_restfrq(PyWcsprm* self, PyObject* value, void* closure) {
-  double value_double;
-
   if (self->x == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
     return -1;
@@ -2446,9 +2470,7 @@ PyWcsprm_set_restfrq(PyWcsprm* self, PyObject* value, void* closure) {
   if (!PyFloat_Check(value))
     return -1;
 
-  value_double = PyFloat_AsDouble(value);
-
-  self->x->restfrq = value_double;
+  self->x->restfrq = PyFloat_AsDouble(value);;
 
   return 0;
 }
@@ -2465,8 +2487,6 @@ PyWcsprm_get_restwav(PyWcsprm* self, void* closure) {
 
 static int
 PyWcsprm_set_restwav(PyWcsprm* self, PyObject* value, void* closure) {
-  double value_double;
-
   if (self->x == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
     return -1;
@@ -2480,9 +2500,7 @@ PyWcsprm_set_restwav(PyWcsprm* self, PyObject* value, void* closure) {
   if (!PyFloat_Check(value))
     return -1;
 
-  value_double = PyFloat_AsDouble(value);
-
-  self->x->restwav = value_double;
+  self->x->restwav = PyFloat_AsDouble(value);
 
   return 0;
 }
@@ -2494,29 +2512,6 @@ PyWcsprm_get_spec(PyWcsprm* self, void* closure) {
     return NULL;
   }
   return PyInt_FromLong(self->x->spec);
-}
-
-static int
-PyWcsprm_set_spec(PyWcsprm* self, PyObject* value, void* closure) {
-  long value_int;
-
-  if (self->x == NULL) {
-    PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
-    return -1;
-  }
-
-  if (value == NULL) { /* deletion */
-    PyErr_SetString(PyExc_TypeError, "Can not delete the spec attribute");
-    return -1;
-  }
-
-  value_int = PyInt_AsLong(value);
-  if (value_int == -1 && PyErr_Occurred())
-    return -1;
-
-  self->x->spec = value_int;
-
-  return 0;
 }
 
 static PyObject*
@@ -2642,8 +2637,6 @@ PyWcsprm_get_velangl(PyWcsprm* self, void* closure) {
 
 static int
 PyWcsprm_set_velangl(PyWcsprm* self, PyObject* value, void* closure) {
-  double value_double;
-
   if (self->x == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
     return -1;
@@ -2657,9 +2650,7 @@ PyWcsprm_set_velangl(PyWcsprm* self, PyObject* value, void* closure) {
   if (!PyFloat_Check(value))
     return -1;
 
-  value_double = PyFloat_AsDouble(value);
-
-  self->x->velangl = value_double;
+  self->x->velangl = PyFloat_AsDouble(value);
 
   return 0;
 }
@@ -2676,8 +2667,6 @@ PyWcsprm_get_velosys(PyWcsprm* self, void* closure) {
 
 static int
 PyWcsprm_set_velosys(PyWcsprm* self, PyObject* value, void* closure) {
-  double value_double;
-
   if (self->x == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
     return -1;
@@ -2691,9 +2680,7 @@ PyWcsprm_set_velosys(PyWcsprm* self, PyObject* value, void* closure) {
   if (!PyFloat_Check(value))
     return -1;
 
-  value_double = PyFloat_AsDouble(value);
-
-  self->x->velosys = value_double;
+  self->x->velosys = PyFloat_AsDouble(value);
 
   return 0;
 }
@@ -2710,8 +2697,6 @@ PyWcsprm_get_zsource(PyWcsprm* self, void* closure) {
 
 static int
 PyWcsprm_set_zsource(PyWcsprm* self, PyObject* value, void* closure) {
-  double value_double;
-
   if (self->x == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
     return -1;
@@ -2725,9 +2710,7 @@ PyWcsprm_set_zsource(PyWcsprm* self, PyObject* value, void* closure) {
   if (!PyFloat_Check(value))
     return -1;
 
-  value_double = PyFloat_AsDouble(value);
-
-  self->x->zsource = value_double;
+  self->x->zsource = PyFloat_AsDouble(value);
 
   return 0;
 }
@@ -2771,7 +2754,7 @@ static PyGetSetDef PyWcsprm_getset[] = {
   {"radesys", (getter)PyWcsprm_get_radesys, (setter)PyWcsprm_set_radesys, (char *)doc_radesys},
   {"restfrq", (getter)PyWcsprm_get_restfrq, (setter)PyWcsprm_set_restfrq, (char *)doc_restfrq},
   {"restwav", (getter)PyWcsprm_get_restwav, (setter)PyWcsprm_set_restwav, (char *)doc_restwav},
-  {"spec", (getter)PyWcsprm_get_spec, (setter)PyWcsprm_set_spec, (char *)doc_spec},
+  {"spec", (getter)PyWcsprm_get_spec, NULL, (char *)doc_spec},
   {"specsys", (getter)PyWcsprm_get_specsys, (setter)PyWcsprm_set_specsys, (char *)doc_specsys},
   {"ssysobs", (getter)PyWcsprm_get_ssysobs, (setter)PyWcsprm_set_ssysobs, (char *)doc_ssysobs},
   {"ssyssrc", (getter)PyWcsprm_get_ssyssrc, (setter)PyWcsprm_set_ssyssrc, (char *)doc_ssyssrc},
@@ -2817,13 +2800,13 @@ static PyTypeObject PyWcsprmType = {
     0,                          /*tp_getattr*/
     0,                          /*tp_setattr*/
     0,                          /*tp_compare*/
-    0,                          /*tp_repr*/
+    (reprfunc)PyWcsprm_repr,    /*tp_repr*/
     0,                          /*tp_as_number*/
     0,                          /*tp_as_sequence*/
     0,                          /*tp_as_mapping*/
     0,                          /*tp_hash */
     0,                          /*tp_call*/
-    0,                          /*tp_str*/
+    (reprfunc)PyWcsprm_repr,    /*tp_str*/
     0,                          /*tp_getattro*/
     0,                          /*tp_setattro*/
     0,                          /*tp_as_buffer*/
@@ -2963,6 +2946,7 @@ PyWcsprmListProxy_repr(PyWcsprmListProxy* self) {
   char*      rp     = NULL;
   Py_ssize_t i      = 0;
   Py_ssize_t j      = 0;
+  PyObject*  result = NULL;
 
   buffer = malloc(self->size*76 + 2);
   if (buffer == NULL)
@@ -2986,7 +2970,9 @@ PyWcsprmListProxy_repr(PyWcsprmListProxy* self) {
   *wp++ = ']';
   *wp++ = 0;
 
-  return PyString_FromString(buffer);
+  result = PyString_FromString(buffer);
+  free(buffer);
+  return result;
 }
 
 static PySequenceMethods PyWcsprmListProxy_sequence_methods = {

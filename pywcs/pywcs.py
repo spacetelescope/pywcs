@@ -53,77 +53,69 @@ class WCS(WCSBase):
         WCSBase.__init__(self, header=header, key=key, relax=relax, naxis=naxis)
 
         if header is None:
-            # Set some reasonable defaults.  These are from
-            # wcsutil.py
+            # Set some reasonable defaults.
             self.crpix = numpy.zeros((self.naxis,), numpy.double)
             self.crval = numpy.zeros((self.naxis,), numpy.double)
+            self.ctype = ['RA---TAN', 'DEC--TAN']
 
-
-    def pixel2world(self, x, y=None):
+    def pixel2world(self, *args):
         """
-        pixel2world(x, y=None) -> world
+        pixel2world(*args) -> world
 
         Transforms world coordinates to pixel coordinates.
         L{pixel2world} is a convenience wrapper around L{p2s}.  If
         intermediate values from the transform are needed, use the
         more complex L{p2s} directly.
 
-        @param x: Array of I{x} pixel coordinates, or if L{y} is not
-            provided, a 2-dimensional array of both I{x}- and
-            I{y}-coordinates.  B{Pixel coordinates are zero based.}
-        @type x: array of double
+        Either one or two arguments may be provided.
 
-        @param y: Array of I{y} pixel coordinates.  If provided, L{x}
-            must be 1-dimensional and the same length as L{y}.
-        @type y: array of double or None
+          - one argument: An Nx2 array of I{x}- and I{y}-coordinates.
 
-        @return: If both L{x} and L{y} were provided, a 2-tuple of
-            arrays, where the first element is latitude coordinates
-            and the second element is longitude coordinates.
-            Otherwise, a single 2D array containing both latitude and
-            longitude.
+          - two arguments: Two one-dimensional arrays of I{x} and I{y}
+            coordinates.
+
+        @return: Returns the world coordinates.  If the input was a
+            single array, a single array is returned, otherwise a
+            tuple of arrays is returned.
         """
-        if y is None:
-            return self.p2s(x)['world']
-        else:
+        if len(args) == 1:
+            return self.p2s(args[0])['world']
+        elif len(args) == 2:
+            x, y = args
             assert len(x) == len(y)
             length = len(x)
             xy = numpy.hstack((x.reshape((length, 1)),
                                y.reshape((length, 1))))
             world = self.p2s(xy)['world']
-            return world[:, 0], world[:, 1]
+            return [world[:, i] for i in range(world.shape[1])]
+        raise TypeError("Expected 1 or 2 arguments, %d given" % len(args))
 
-    def world2pixel(self, ra, dec=None):
+    def world2pixel(self, *args):
         """
-        world2pixel(ra, dec=None) -> pixel
+        world2pixel(*args) -> pixel
 
         Transforms world coordinates to pixel coordinates.
         L{world2pixel} is a convenience wrapper around L{s2p}.  If
         intermediate values from the transform are needed, use the
         more complex L{s2p} directly.
 
-        @param ra: Array of I{ra} world coordinates, or if L{dec} is
-            not provided, a 2-dimensional array of both I{ra}- and
-            I{dec}-coordinates.  B{World coordinates are in decimal
-            degrees.}
-        @type ra: array of double
+        Either one or L{naxis} arguments may be provided.
 
-        @param dec: Array of I{dec} world coordinates.  If provided,
-            L{ra} must be 1-dimensional and the same length as L{dec}.
-        @type dec: array of double or None
+          - one argument: An NxL{naxis} array of world coordinates.
 
-        @return: If both L{ra} and L{dec} were provided, a 2-tuple of
-            arrays, where the first element is I{x} coordinates and
-            the second element is I{y} coordinates.  Otherwise, a
-            single 2D array containing both I{x} and I{y}.  B{Pixel
-            coordinates are zero-based.}
+          - L{naxis} arguments: L{naxis} one-dimensional arrays of
+            world coordinates.
+
+        @return: Returns the pixel coordinates.  If the input was a
+            single array, a single array is returned, otherwise a
+            tuple of arrays is returned.
         """
-        if dec is None:
-            return self.p2s(x)['pixcrd']
-        else:
-            assert len(ra) == len(dec)
-            length = len(ra)
-            radec = numpy.hstack((ra.reshape((length, 1)),
-                                  dec.reshape((length, 1))))
-            pixcrd = self.p2s(radec)['pixcrd']
+        if len(args) == 1:
+            return self.s2p(args[0])['pixcrd']
+        elif len(args) == self.naxis:
+            length = len(args[0])
+            combined = numpy.hstack([x.reshape((length, 1)) for x in args])
+            pixcrd = self.s2p(combined)['pixcrd']
             return pixcrd[:, 0], pixcrd[:, 1]
+        raise TypeError("Expected 1 or %d arguments, %d given" %
+                        (self.naxis, len(args)))
