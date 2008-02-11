@@ -726,7 +726,7 @@ it.
 Note that this routine need not be called directly; it will be invoked
 by L{p2s} and L{s2p} if necessary.
 
-Some attributes that are based on other attributes (such as L{lattype} on
+Some attributes that are based on other attributes (such as L{lattyp} on
 L{ctype}) may not be correct until after L{set} is called.
 
 C{set} strips off trailing blanks in all string members.
