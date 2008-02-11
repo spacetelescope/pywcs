@@ -41,6 +41,7 @@ DAMAGE.
 #include <wcslib/wcsfix.h>
 #include <wcslib/wcshdr.h>
 #include <wcslib/wcsmath.h>
+#include "isnan.h"
 
 /*
  It gets to be really tedious to type long docstrings in ANSI C syntax (since
@@ -76,7 +77,7 @@ parse_unsafe_unit_conversion_spec(const char* arg) {
   return ctrl;
 }
 
-static void
+static inline void
 offset_c_array(double* value, size_t size, double offset) {
   double* end = value + size;
 
@@ -109,8 +110,12 @@ copy_array_to_c_double(PyArrayObject* array, double* dest) {
   for (i = 0; i < PyArray_NDIM(array); ++i)
     size *= PyArray_DIM(array, i);
 
-  for (i = 0; i < size; ++i, ++dest, ++data)
-    *dest = *data == NAN ? UNDEFINED : *data;
+  for (i = 0; i < size; ++i, ++dest, ++data) {
+    if (isnan64(*data))
+      *dest = UNDEFINED;
+    else
+      *dest = *data;
+  }
 }
 
 static void
@@ -123,7 +128,6 @@ copy_array_to_c_int(PyArrayObject* array, int* dest) {
 
   for (i = 0; i < PyArray_NDIM(array); ++i)
     size *= PyArray_DIM(array, i);
-
 
   for (i = 0; i < size; ++i, ++dest, ++data)
     *dest = *data;
@@ -144,12 +148,10 @@ is_valid_alt_key(const char* key) {
 static inline
 void nan2undefined(double* value, size_t nvalues) {
   double* end = value + nvalues;
-  double v = 0;
 
-  for ( ; value != end; ++value) {
-    v = *value;
-    *value = (v == NAN) ? UNDEFINED : v;
-  }
+  for ( ; value != end; ++value)
+    if (isnan64(*value))
+      *value = UNDEFINED;
 }
 
 static inline
@@ -175,9 +177,9 @@ static PyObject* WcsExc_NoSolution;
 static PyObject* WcsExc_InvalidSubimageSpecification;
 static PyObject* WcsExc_NonseparableSubimageCoordinateSystem;
 
-/* This is an array mapping the wcs status codes to Python
- * exception types.  The exception string is stored as part
- * of wcslib itself in wcs_errmsg.
+/* This is an array mapping the wcs status codes to Python exception
+ * types.  The exception string is stored as part of wcslib itself in
+ * wcs_errmsg.
  */
 static PyObject** wcs_errexc[] = {
   /* 0 */ NULL,                         /* Success */
@@ -1173,24 +1175,32 @@ PyWcsprm_s2p(PyWcsprm* self, PyObject* arg) {
   }
 }
 
-static PyObject*
-PyWcsprm_set(PyWcsprm* self) {
+static int
+PyWcsprm_cset(PyWcsprm* self) {
   int status = 0;
   PyWcsprm_Python2C(self);
   status = wcsset(self->x);
   PyWcsprm_C2Python(self);
 
   if (status == 0) {
-    Py_INCREF(Py_None);
-    return Py_None;
+    return 0;
   } else if (status > 0 && status < WCS_ERRMSG_MAX) {
     PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
-    return NULL;
+    return -1;
   } else {
     PyErr_SetString(PyExc_RuntimeError,
                     "Unknown error occurred.  Something is seriously wrong.");
-    return NULL;
+    return -1;
   }
+}
+
+static PyObject*
+PyWcsprm_set(PyWcsprm* self) {
+  if (PyWcsprm_cset(self))
+    return NULL;
+
+  Py_INCREF(Py_None);
+  return Py_None;
 }
 
 static PyObject*
@@ -1229,6 +1239,7 @@ PyWcsprm_set_ps(PyWcsprm* self, PyObject* arg, PyObject* kwds) {
       return NULL;
     if (!PyArg_ParseTuple(subvalue, "iis", &ival, &mval, &value))
       return NULL;
+    Py_DECREF(subvalue);
   }
 
   for (i = 0; i < size; ++i) {
@@ -1237,9 +1248,12 @@ PyWcsprm_set_ps(PyWcsprm* self, PyObject* arg, PyObject* kwds) {
       return NULL;
     if (!PyArg_ParseTuple(subvalue, "iis", &ival, &mval, &value))
       return NULL;
+    Py_DECREF(subvalue);
+
     self->x->ps[i].i = ival;
     self->x->ps[i].m = mval;
     strncpy(self->x->ps[i].value, value, 72);
+    self->x->ps[i].value[71] = 0;
     self->x->nps = i + 1;
   }
 
@@ -1283,6 +1297,7 @@ PyWcsprm_set_pv(PyWcsprm* self, PyObject* arg, PyObject* kwds) {
       return NULL;
     if (!PyArg_ParseTuple(subvalue, "iid", &ival, &mval, &value))
       return NULL;
+    Py_DECREF(subvalue);
   }
 
   for (i = 0; i < size; ++i) {
@@ -1291,6 +1306,8 @@ PyWcsprm_set_pv(PyWcsprm* self, PyObject* arg, PyObject* kwds) {
       return NULL;
     if (!PyArg_ParseTuple(subvalue, "iid", &ival, &mval, &value))
       return NULL;
+    Py_DECREF(subvalue);
+
     self->x->pv[i].i = ival;
     self->x->pv[i].m = mval;
     self->x->pv[i].value = value;
@@ -1393,6 +1410,48 @@ PyWcsprm_sptr(PyWcsprm* self, PyObject* args, PyObject* kwds) {
 }
 
 static PyObject*
+PyWcsprm_to_header(PyWcsprm* self, PyObject* args, PyObject* kwds) {
+  int       relax   = 0;
+  int       nkeyrec = 0;
+  char*     header  = NULL;
+  int       status  = 0;
+  PyObject* result  = NULL;
+
+  if (self->x == NULL) {
+    PyErr_SetString(PyExc_AssertionError,
+                    "Underlying object is NULL.");
+    return NULL;
+  }
+
+  const char* keywords[] = {"relax", NULL};
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "|i", (char **)keywords,
+                                   &relax))
+    return NULL;
+
+  if (relax)
+    relax = -1;
+
+  PyWcsprm_Python2C(self);
+  status = wcshdo(relax, self->x, &nkeyrec, &header);
+  PyWcsprm_C2Python(self);
+
+  if (status != 0) {
+    PyErr_SetString(PyExc_RuntimeError,
+                    "Unknown error occurred.  Something is seriously wrong.");
+    free(header);
+    return NULL;
+  }
+
+  /* Just return the raw header string.  PyFITS on the Python side will help
+     to parse and use this information. */
+  result = PyString_FromStringAndSize(header, nkeyrec * 80);
+
+  free(header);
+
+  return result;
+}
+
+static PyObject*
 PyWcsprm_unitfix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
   char* translate_units = NULL;
   int   ctrl            = 0;
@@ -1425,6 +1484,7 @@ PyWcsprm_unitfix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     return NULL;
   }
 }
+
 
 /***************************************************************************
  * Member getters
@@ -2170,12 +2230,30 @@ PyWcsprm_set_latpole(PyWcsprm* self, PyObject* value, void* closure) {
 }
 
 static PyObject*
+PyWcsprm_get_lattyp(PyWcsprm* self, void* closure) {
+  if (self->x == NULL || self->x->lattyp == NULL) {
+    PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
+    return NULL;
+  }
+  return PyString_FromString(self->x->lattyp);
+}
+
+static PyObject*
 PyWcsprm_get_lng(PyWcsprm* self, void* closure) {
   if (self->x == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
     return NULL;
   }
   return PyInt_FromLong(self->x->lng);
+}
+
+static PyObject*
+PyWcsprm_get_lngtyp(PyWcsprm* self, void* closure) {
+  if (self->x == NULL || self->x->lngtyp == NULL) {
+    PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
+    return NULL;
+  }
+  return PyString_FromString(self->x->lngtyp);
 }
 
 static PyObject*
@@ -2743,7 +2821,9 @@ static PyGetSetDef PyWcsprm_getset[] = {
   {"equinox", (getter)PyWcsprm_get_equinox, (setter)PyWcsprm_set_equinox, (char *)doc_equinox},
   {"lat", (getter)PyWcsprm_get_lat, NULL, (char *)doc_lat},
   {"latpole", (getter)PyWcsprm_get_latpole, (setter)PyWcsprm_set_latpole, (char *)doc_latpole},
+  {"lattyp", (getter)PyWcsprm_get_lattyp, NULL, (char *)doc_lattyp},
   {"lng", (getter)PyWcsprm_get_lng, NULL, (char *)doc_lng},
+  {"lngtyp", (getter)PyWcsprm_get_lngtyp, NULL, (char *)doc_lngtyp},
   {"lonpole", (getter)PyWcsprm_get_lonpole, (setter)PyWcsprm_set_lonpole, (char *)doc_lonpole},
   {"mjdavg", (getter)PyWcsprm_get_mjdavg, (setter)PyWcsprm_set_mjdavg, (char *)doc_mjdavg},
   {"mjdobs", (getter)PyWcsprm_get_mjdobs, (setter)PyWcsprm_set_mjdobs, (char *)doc_mjdobs},
@@ -2785,50 +2865,51 @@ static PyMethodDef PyWcsprm_methods[] = {
   {"set_pv", (PyCFunction)PyWcsprm_set_pv, METH_O, doc_set_pv},
   {"spcfix", (PyCFunction)PyWcsprm_spcfix, METH_NOARGS, doc_spcfix},
   {"sptr", (PyCFunction)PyWcsprm_sptr, METH_NOARGS, doc_sptr},
+  {"to_header", (PyCFunction)PyWcsprm_to_header, METH_VARARGS, doc_to_header},
   {"unitfix", (PyCFunction)PyWcsprm_unitfix, METH_VARARGS, doc_unitfix},
   {NULL}
 };
 
 static PyTypeObject PyWcsprmType = {
-    PyObject_HEAD_INIT(NULL)
-    0,                          /*ob_size*/
-    "pywcs._WCS",               /*tp_name*/
-    sizeof(PyWcsprm),           /*tp_basicsize*/
-    0,                          /*tp_itemsize*/
-    (destructor)PyWcsprm_dealloc, /*tp_dealloc*/
-    0,                          /*tp_print*/
-    0,                          /*tp_getattr*/
-    0,                          /*tp_setattr*/
-    0,                          /*tp_compare*/
-    (reprfunc)PyWcsprm_repr,    /*tp_repr*/
-    0,                          /*tp_as_number*/
-    0,                          /*tp_as_sequence*/
-    0,                          /*tp_as_mapping*/
-    0,                          /*tp_hash */
-    0,                          /*tp_call*/
-    (reprfunc)PyWcsprm_repr,    /*tp_str*/
-    0,                          /*tp_getattro*/
-    0,                          /*tp_setattro*/
-    0,                          /*tp_as_buffer*/
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
-    doc_WCS,                    /* tp_doc */
-    0,                          /* tp_traverse */
-    0,                          /* tp_clear */
-    0,                          /* tp_richcompare */
-    0,                          /* tp_weaklistoffset */
-    0,                          /* tp_iter */
-    0,                          /* tp_iternext */
-    PyWcsprm_methods,           /* tp_methods */
-    PyWcsprm_members,           /* tp_members */
-    PyWcsprm_getset,            /* tp_getset */
-    0,                          /* tp_base */
-    0,                          /* tp_dict */
-    0,                          /* tp_descr_get */
-    0,                          /* tp_descr_set */
-    0,                          /* tp_dictoffset */
-    (initproc)PyWcsprm_init,    /* tp_init */
-    0,                          /* tp_alloc */
-    PyWcsprm_new,               /* tp_new */
+  PyObject_HEAD_INIT(NULL)
+  0,                          /*ob_size*/
+  "pywcs._WCS",               /*tp_name*/
+  sizeof(PyWcsprm),           /*tp_basicsize*/
+  0,                          /*tp_itemsize*/
+  (destructor)PyWcsprm_dealloc, /*tp_dealloc*/
+  0,                          /*tp_print*/
+  0,                          /*tp_getattr*/
+  0,                          /*tp_setattr*/
+  0,                          /*tp_compare*/
+  (reprfunc)PyWcsprm_repr,    /*tp_repr*/
+  0,                          /*tp_as_number*/
+  0,                          /*tp_as_sequence*/
+  0,                          /*tp_as_mapping*/
+  0,                          /*tp_hash */
+  0,                          /*tp_call*/
+  (reprfunc)PyWcsprm_repr,    /*tp_str*/
+  0,                          /*tp_getattro*/
+  0,                          /*tp_setattro*/
+  0,                          /*tp_as_buffer*/
+  Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
+  doc_WCS,                    /* tp_doc */
+  0,                          /* tp_traverse */
+  0,                          /* tp_clear */
+  0,                          /* tp_richcompare */
+  0,                          /* tp_weaklistoffset */
+  0,                          /* tp_iter */
+  0,                          /* tp_iternext */
+  PyWcsprm_methods,           /* tp_methods */
+  PyWcsprm_members,           /* tp_members */
+  PyWcsprm_getset,            /* tp_getset */
+  0,                          /* tp_base */
+  0,                          /* tp_dict */
+  0,                          /* tp_descr_get */
+  0,                          /* tp_descr_set */
+  0,                          /* tp_dictoffset */
+  (initproc)PyWcsprm_init,    /* tp_init */
+  0,                          /* tp_alloc */
+  PyWcsprm_new,               /* tp_new */
 };
 
 /***************************************************************************
@@ -2948,12 +3029,14 @@ PyWcsprmListProxy_repr(PyWcsprmListProxy* self) {
   Py_ssize_t j      = 0;
   PyObject*  result = NULL;
 
-  buffer = malloc(self->size*76 + 2);
+  /* Overallocating, of course, to be safe */
+  buffer = malloc(self->size*80 + 2);
   if (buffer == NULL)
     return NULL;
 
   buffer[0] = '[';
   wp = buffer + 1;
+
   for (i = 0; i < self->size; ++i) {
     *wp++ = '\'';
     rp = self->array[i];
@@ -2988,45 +3071,45 @@ static PySequenceMethods PyWcsprmListProxy_sequence_methods = {
 };
 
 static PyTypeObject PyWcsprmListProxyType = {
-    PyObject_HEAD_INIT(NULL)
-    0,                          /*ob_size*/
-    "pywcs.ListProxy",          /*tp_name*/
-    sizeof(PyWcsprmListProxy),  /*tp_basicsize*/
-    0,                          /*tp_itemsize*/
-    (destructor)PyWcsprmListProxy_dealloc, /*tp_dealloc*/
-    0,                          /*tp_print*/
-    0,                          /*tp_getattr*/
-    0,                          /*tp_setattr*/
-    0,                          /*tp_compare*/
-    (reprfunc)PyWcsprmListProxy_repr, /*tp_repr*/
-    0,                          /*tp_as_number*/
-    &PyWcsprmListProxy_sequence_methods, /*tp_as_sequence*/
-    0,                          /*tp_as_mapping*/
-    0,                          /*tp_hash */
-    0,                          /*tp_call*/
-    (reprfunc)PyWcsprmListProxy_repr, /*tp_str*/
-    0,                          /*tp_getattro*/
-    0,                          /*tp_setattro*/
-    0,                          /*tp_as_buffer*/
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC, /*tp_flags*/
-    0,                          /* tp_doc */
-    (traverseproc)PyWcsprmListProxy_traverse, /* tp_traverse */
-    (inquiry)PyWcsprmListProxy_clear, /* tp_clear */
-    0,                          /* tp_richcompare */
-    0,                          /* tp_weaklistoffset */
-    0,                          /* tp_iter */
-    0,                          /* tp_iternext */
-    0,                          /* tp_methods */
-    0,                          /* tp_members */
-    0,                          /* tp_getset */
-    0,                          /* tp_base */
-    0,                          /* tp_dict */
-    0,                          /* tp_descr_get */
-    0,                          /* tp_descr_set */
-    0,                          /* tp_dictoffset */
-    0,                          /* tp_init */
-    0,                          /* tp_alloc */
-    PyWcsprmListProxy_new,      /* tp_new */
+  PyObject_HEAD_INIT(NULL)
+  0,                          /*ob_size*/
+  "pywcs.ListProxy",          /*tp_name*/
+  sizeof(PyWcsprmListProxy),  /*tp_basicsize*/
+  0,                          /*tp_itemsize*/
+  (destructor)PyWcsprmListProxy_dealloc, /*tp_dealloc*/
+  0,                          /*tp_print*/
+  0,                          /*tp_getattr*/
+  0,                          /*tp_setattr*/
+  0,                          /*tp_compare*/
+  (reprfunc)PyWcsprmListProxy_repr, /*tp_repr*/
+  0,                          /*tp_as_number*/
+  &PyWcsprmListProxy_sequence_methods, /*tp_as_sequence*/
+  0,                          /*tp_as_mapping*/
+  0,                          /*tp_hash */
+  0,                          /*tp_call*/
+  (reprfunc)PyWcsprmListProxy_repr, /*tp_str*/
+  0,                          /*tp_getattro*/
+  0,                          /*tp_setattro*/
+  0,                          /*tp_as_buffer*/
+  Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC, /*tp_flags*/
+  0,                          /* tp_doc */
+  (traverseproc)PyWcsprmListProxy_traverse, /* tp_traverse */
+  (inquiry)PyWcsprmListProxy_clear, /* tp_clear */
+  0,                          /* tp_richcompare */
+  0,                          /* tp_weaklistoffset */
+  0,                          /* tp_iter */
+  0,                          /* tp_iternext */
+  0,                          /* tp_methods */
+  0,                          /* tp_members */
+  0,                          /* tp_getset */
+  0,                          /* tp_base */
+  0,                          /* tp_dict */
+  0,                          /* tp_descr_get */
+  0,                          /* tp_descr_set */
+  0,                          /* tp_dictoffset */
+  0,                          /* tp_init */
+  0,                          /* tp_alloc */
+  PyWcsprmListProxy_new,      /* tp_new */
 };
 
 /***************************************************************************

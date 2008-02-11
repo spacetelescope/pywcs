@@ -41,7 +41,7 @@ matrix.
 cdelt = """
 Coordinate increments (C{CDELTia}) for each coord axis.
 
-Any undefined elements are returned as NaN.
+An undefined value is represented by NaN.
 
 @type: array[naxis] of double
 """
@@ -85,7 +85,7 @@ Creates a deep copy of the WCS object.
 crder = """
 The random error in each coordinate axis, C{CRDERia}.
 
-Any undefined elements are returned as NaN.
+An undefined value is represented by NaN.
 
 @see: L{csyer}
 @type: array[naxis] of double
@@ -99,7 +99,7 @@ matrix, maintained for historical compatibility.
 
 @see: L{cd} for more information.
 
-@type: array[2][2] of double
+@type: array[naxis] of double
 """
 
 crpix = """
@@ -119,7 +119,7 @@ Coordinate reference values (C{CRVALia}) for each coordinate axis.
 csyer = """
 The systematic error in the coordinate value axes, C{CSYERia}.
 
-Any undefined elements are returned as NaN.
+An undefined value is represented by NaN.
 
 @see: L{crder}
 @type: array[naxis] of double
@@ -236,7 +236,7 @@ The equinox associated with dynamical equatorial or ecliptic
 coordinate systems, C{EQUINOXa} (or C{EPOCH} in older headers).  Not
 applicable to ICRS equatorial or ecliptic coordinates.
 
-If the L{equinox} is undefined, NaN is returned.
+An undefined value is represented by NaN.
 
 @type: float
 """
@@ -364,11 +364,25 @@ The native latitude of the celestial pole, C{LATPOLEa} (deg).
 @type: float
 """
 
+lattyp = """
+Celestial axis type for latitude, e.g. RA.
+
+@see: L{ctype}
+@type: string
+"""
+
 lng = """
 The index into the world coordinate array containing longitude values.
 
 @see: L{lat}
 @type: int
+"""
+
+lngtyp = """
+Celestial axis type for longitude, e.g. DEC.
+
+@see: L{ctype}
+@type: string
 """
 
 lonpole = """
@@ -460,7 +474,7 @@ mjdavg = """
 Modified Julian Date (MJD = JD - 2400000.5), C{MJD-AVG}, corresponding
 to C{DATE-AVG}.
 
-If L{mjdavg} is undefined, NaN is returned.
+An undefined value is represented by NaN.
 
 @see: L{mjdobs}
 @type: float
@@ -470,7 +484,7 @@ mjdobs = """
 Modified Julian Date (MJD = JD - 2400000.5), C{MJD-OBS}, corresponding
 to C{DATE-OBS}.
 
-If L{mjdobs} is undefined, NaN is returned.
+An undefined value is represented by NaN.
 
 @see: L{mjdavg}
 @type: float
@@ -486,6 +500,26 @@ naxis = """
 The number of axes (pixel and coordinate), given by the C{NAXIS} or
 C{WCSAXESa} keyvalues.
 
+The number of coordinate axes is determined at parsing time, and can
+not be subsequently changed.
+
+It is determined from the highest of the following:
+
+  1. C{NAXIS}
+
+  2. C{WCSAXESa}
+
+  3. The highest axis number in any parameterized WCS keyword.  The
+     keyvalue, as well as the keyword, must be syntactically valid
+     otherwise it will not be considered.
+
+If none of these keyword types is present, i.e. if the header only
+contains auxiliary WCS keywords for a particular coordinate
+representation, then no coordinate description is constructed for it.
+
+This value may differ for different coordinate representations of the
+same image.
+
 @type: int
 """
 
@@ -493,7 +527,7 @@ obsgeo = """
 Location of the observer in a standard terrestrial reference frame,
 C{OBSGEO-X}, C{OBSGEO-Y}, C{OBSGEO-Z} (in metres).
 
-Any undefined elements are returned as NaN.
+An undefined value is represented by NaN.
 
 @type: array[3] of double
 """
@@ -550,66 +584,6 @@ Converts pixel to world coordinates.
 @raises InvalidTransformError: Ill-conditioned coordinate transformation
     parameters.
 """
-
-parse_image_header = """
-parse_image_header(header, relax=False) -> dict of L{WCS} objects
-
-Parses a FITS image header, either that of a primary HDU or of an
-image extension.  All WCS keywords defined in Papers I, II, and III
-are recognized, and also those used by the AIPS convention and certain
-other keywords that existed in early drafts of the WCS papers.
-
-Given a string containing a FITS image header, C{parse_image_header()}
-identifies and reads all WCS keywords for the primary coordinate
-representation and up to 26 alternate representations.  It returns
-this information as a list of C{WCS} objects.
-
-C{parse_image_header} fills in information associated with coordinate
-lookup tables.
-
-C{parse_image_header} determines the number of coordinate axes
-independently for each alternate coordinate representation (denoted by
-the C{"a"} value in keywords like C{CTYPEia}) from the higher of
-
-    - C{NAXIS}
-
-    - C{WCSAXES}
-
-    - The highest axis number in any parameterized WCS keyword.  The
-      keyvalue, as well as the keyword, must be syntactically valid
-      otherwise it will not be considered.
-
-If none of these keyword types is present, i.e. if the header only
-contains auxiliary WCS keywords for a particular coordinate
-representation, then no coordinate description is constructed for it.
-
-C{parse_image_header} enforces correct FITS "keyword = value" syntax
-with regard to C{"= "} occurring in columns 9 and 10.  However, it
-does recognize free-format character (NOST 100-2.0, Sect. 5.2.1),
-integer (Sect. 5.2.3), and floating-point values (Sect. 5.2.4) for all
-keywords.
-
-@param header: String containing the (entire) FITS image header from
-    which to identify and construct the coordinate representations.
-@type header: string
-@param relax: Degree of permissiveness:
-    - C{False}: Recognize only FITS keywords defined by the
-      published WCS standard.
-    - C{True}: Admit all recognized informal extensions of the
-      WCS standard.
-@type relax: bool
-
-@returns: A dictionary where the keys are single-character strings
-   that identify a particular WCS transformation.  For example, the
-   C{"a"} in keyword names such as C{CTYPEia}).  This is blank (C{' '})
-   for the primary coordinate description, or one of the 26 upper-case
-   letters, A-Z.
-
-@raises MemoryError: Memory allocation failed.
-"""
-#    /* TODO: Deal with this next paragraph in a Pythonic way
-#    For negative values of ctrl (see below), header[] is modified so
-#    "that WCS keyrecords processed by wcspih() are removed from it.\n" */
 
 pc = """
 The C{PCi_ja} (pixel coordinate) transformation matrix.  The order is::
@@ -680,7 +654,7 @@ The equatorial or ecliptic coordinate system type, C{RADESYSa}.
 restfrq = """
 Rest frequency (Hz) from C{RESTFRQa}.
 
-If L{restfrq} is undefined, NaN is returned.
+An undefined value is represented by NaN.
 
 @see: L{restwav}
 @type: float
@@ -689,7 +663,7 @@ If L{restfrq} is undefined, NaN is returned.
 restwav = """
 Rest wavelength (m) from C{RESTWAVa}.
 
-If L{restwav} is undefined, NaN is returned.
+An undefined value is represented by NaN.
 
 @see: L{restfrq}
 @type: float
@@ -749,16 +723,19 @@ set()
 Sets up a WCS object for use according to information supplied within
 it.
 
-C{set} recognizes the C{NCP} projection and converts it to the
-equivalent C{SIN} projection and it also recognizes C{GLS} as a
-synonym for C{SFL}.  It does alias translation for the AIPS spectral
-types (C{FREQ-LSR}, C{FELO-HEL}, etc.) but without changing the input
-header keywords.
-
 Note that this routine need not be called directly; it will be invoked
 by L{p2s} and L{s2p} if necessary.
 
+Some attributes that are based on other attributes (such as L{lattype} on
+L{ctype}) may not be correct until after L{set} is called.
+
 C{set} strips off trailing blanks in all string members.
+
+Among all the obvious details, C{set} recognizes the C{NCP} projection
+and converts it to the equivalent C{SIN} projection and it also
+recognizes C{GLS} as a synonym for C{SFL}.  It does alias translation
+for the AIPS spectral types (C{FREQ-LSR}, C{FELO-HEL}, etc.) but
+without changing the input header keywords.
 
 @raises MemoryError: Memory allocation failed.
 @raises SingularMatrixError: Linear transformation matrix is singular.
@@ -863,6 +840,63 @@ was measured, C{SSYSSRCa}.
 @type: string
 """
 
+to_header = """
+to_header(relax=False) -> string
+
+L{to_header} translates a WCS object into a FITS header.
+
+    - If the L{colnum} member is non-zero then a binary table image
+      array header will be produced.
+
+    - Otherwise, if the L{colax} member is set non-zero then a pixel
+      list header will be produced.
+
+    - Otherwise, a primary image or image extension header will be
+      produced.
+
+The output header will almost certainly differ from the input in a
+number of respects:
+
+    1. The output header only contains WCS-related keywords.  In
+       particular, it does not contain syntactically-required keywords
+       such as C{SIMPLE}, C{NAXIS}, C{BITPIX}, or C{END}.
+
+    2. Deprecated (e.g. C{CROTAn}) or non-standard usage will be
+       translated to standard (this is partially dependent on whether
+       L{fix} was applied).
+
+    3. Quantities will be converted to the units used internally,
+       basically SI with the addition of degrees.
+
+    4. Floating-point quantities may be given to a different decimal
+       precision.
+
+    5. Elements of the C{PCi_j} matrix will be written if and only if
+       they differ from the unit matrix.  Thus, if the matrix is unity
+       then no elements will be written.
+
+    6. Additional keywords such as C{WCSAXES}, C{CUNITia}, C{LONPOLEa}
+       and C{LATPOLEa} may appear.
+
+    7. The original keycomments will be lost, although L{to_header}
+       tries hard to write meaningful comments.
+
+    8. Keyword order may be changed.
+
+Keywords can be translated between the image array, binary table, and
+pixel lists forms by manipulating the L{colnum} or L{colax} members of
+the WCS object.
+
+@param relax: Degree of permissiveness:
+    - C{False}: Recognize only FITS keywords defined by the
+      published WCS standard.
+    - C{True}: Admit all recognized informal extensions of the
+      WCS standard.
+@type relax: bool
+
+@return: A raw FITS header as a string.
+"""
+
 unitfix = """
 unitfix(translate_units='') -> int
 
@@ -895,7 +929,7 @@ velangl = """
 The angle in degrees that should be used to decompose an observed
 velocity into radial and transverse components.
 
-If L{velangl} is undefined, NaN is returned.
+An undefined value is represented by NaN.
 
 @type: float
 """
@@ -905,7 +939,7 @@ The relative radial velocity (m/s) between the observer and the
 selected standard of rest in the direction of the celestial reference
 coordinate, C{VELOSYSa}.
 
-If L{velosys} is undefined, NaN is returned.
+An undefined value is represented by NaN.
 
 @see: L{specsys}, L{ssysobs}
 @type: float
@@ -916,6 +950,12 @@ WCS(header=None, key=' ', relax=False, naxes=2)
 
 WCS objects convert between pixel and world coordinates, based on
 the WCS settings in a FITS file.
+
+The FITS header parsing enforces correct FITS "keyword = value" syntax
+with regard to C{"= "} occurring in columns 9 and 10.  However, it
+does recognize free-format character (NOST 100-2.0, Sect. 5.2.1),
+integer (Sect. 5.2.3), and floating-point values (Sect. 5.2.4) for all
+keywords.
 
 @param header: A PyFITS header object or a string containing the raw
     FITS header data.  If header is not provided, the object will be
@@ -937,7 +977,7 @@ the WCS settings in a FITS file.
 @type relax: bool
 
 @param naxes: The number of world coordinates axes for the object.
-    (C{naxes may only be provided if C{header} is C{None}.)
+    (C{naxes} may only be provided if C{header} is C{None}.)
 @type naxes: int
 
 @raises MemoryError: Memory allocation failed.
@@ -948,7 +988,7 @@ the WCS settings in a FITS file.
 zsource = """
 The redshift, C{ZSOURCEa}, of the source.
 
-If L{zsource} is undefined, NaN is returned.
+An undefined value is represented by NaN.
 
 @see: L{ssyssrc}
 @type: float

@@ -64,7 +64,7 @@ def test_file(path):
                 print "wcs.%s setting: EXCEPTION: %s" % (member, e)
 
     wcs.print_contents()
-
+    print wcs.to_header()
 
 def run_directory(directory):
     for filepath in glob.glob(os.path.join(directory, "*.fits")):
