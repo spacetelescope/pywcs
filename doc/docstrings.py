@@ -46,6 +46,13 @@ An undefined value is represented by NaN.
 @type: array[naxis] of double
 """
 
+cel_offset = """
+If true, an offset will be applied to C{(x, y)} to force C{(x,y) = (0,0)}
+at the fiducial point.
+
+@type: boolean
+"""
+
 celfix = """
 celfix() -> int
 
@@ -350,8 +357,28 @@ to specify the linear transformation matrix.
 @see: L{cd} for more information.
 """
 
+imgpix_matrix = """
+Inverse of the matrix containing the product of the C{CDELTia}
+diagonal matrix and the C{PCi_ja} matrix.
+
+I{This value may not be correct until after L{set} is called.}
+
+@type: array[2][2] of double
+"""
+
+is_unity = """
+is_unity() -> bool
+
+Returns True if the linear transformation matrix (L{cd}) is unity.
+
+I{This value may not be correct until after L{set} is called.}
+
+@see: L{cd}
+"""
+
 lat = """
 The index into the world coordinate array containing latitude values.
+B{[Read only]}.
 
 @see: L{lng}
 @type: int
@@ -365,7 +392,9 @@ The native latitude of the celestial pole, C{LATPOLEa} (deg).
 """
 
 lattyp = """
-Celestial axis type for latitude, e.g. RA.
+Celestial axis type for latitude, e.g. RA.  B{[Read only]}.
+
+I{This value may not be correct until after L{set} is called.}
 
 @see: L{ctype}
 @type: string
@@ -373,13 +402,16 @@ Celestial axis type for latitude, e.g. RA.
 
 lng = """
 The index into the world coordinate array containing longitude values.
+B{[Read only]}.
 
 @see: L{lat}
 @type: int
 """
 
 lngtyp = """
-Celestial axis type for longitude, e.g. DEC.
+Celestial axis type for longitude, e.g. DEC.  B{[Read only]}.
+
+I{This value may not be correct until after L{set} is called.}
 
 @see: L{ctype}
 @type: string
@@ -405,7 +437,7 @@ on the unknown celestial coordinate element using L{s2p}.
 @param mixcel: Which element of the celestial coordinate is given. If
     C{1}, celestial longitude is given in C{world[self.L{lng}]},
     latitude returned in C{world[self.L{lat}]}.  If C{2}, celestial
-    latitude is given in world[self.lat], longitude returned in
+    latitude is given in C{world[self.L{lat}]}, longitude returned in
     C{world[self.L{lng}]}
 
 @type mixcel: int
@@ -433,13 +465,13 @@ on the unknown celestial coordinate element using L{s2p}.
 @param world: World coordinate elements.  C{world[self.L{lng}]} and
     C{world[self.L{lat}]} are the celestial longitude and latitude, in
     degrees.  Which is given and which returned depends on the value
-    of mixcel.  All other elements are given.  The results will be
+    of C{mixcel}.  All other elements are given.  The results will be
     written to this array in-place.
 
 @type world: array[naxis] of double
 
-@param pixcrd: Pixel coordinate.  The element indicated by mixpix is
-    given and the remaining elements will be written in-place.
+@param pixcrd: Pixel coordinate.  The element indicated by C{mixpix}
+    is given and the remaining elements will be written in-place.
     B{Pixel coordinates are zero-based.}
 
 @type pixcrd: array[naxis] of double
@@ -456,7 +488,7 @@ on the unknown celestial coordinate element using L{s2p}.
 
         - Image coordinate elements.  C{imgcrd[self.L{lng}]} and
           C{imgcrd[self.L{lat}]} are the projected I{x}- and
-          I{y}-coordinates, in "degrees".
+          I{y}-coordinates, in decimal degrees.
 
 @raise MemoryError: Memory allocation failed.
 @raise SingularMatrixError: Linear transformation matrix is singular.
@@ -498,7 +530,7 @@ The name given to the coordinate representation C{WCSNAMEa}.
 
 naxis = """
 The number of axes (pixel and coordinate), given by the C{NAXIS} or
-C{WCSAXESa} keyvalues.
+C{WCSAXESa} keyvalues.  B{[Read only]}.
 
 The number of coordinate axes is determined at parsing time, and can
 not be subsequently changed.
@@ -590,6 +622,25 @@ The C{PCi_ja} (pixel coordinate) transformation matrix.  The order is::
 
   [[PC1_1, PC1_2],
    [PC2_1, PC2_2]]
+
+@type: array[2][2] of double
+"""
+
+phi0 = """
+The native latitude of the fiducial point, i.e. the point whose
+celestial coordinates are given in ref[1:2].  If undefined (NaN) the
+initialization routine, L{set}, will set this to a projection-specific
+default.
+
+@see: L{theta0}
+@type: float
+"""
+
+piximg_matrix = """
+Matrix containing the product of the C{CDELTia} diagonal matrix and
+the C{PCi_ja} matrix.
+
+I{This value may not be correct until after L{set} is called.}
 
 @type: array[2][2] of double
 """
@@ -781,7 +832,7 @@ C{VELO-OBS}, C{FELO-HEL})
 """
 
 spec = """
-The index containing the spectral axis values.
+The index containing the spectral axis values.  B{[Read only]}.
 
 @type: int
 """
@@ -838,6 +889,16 @@ was measured, C{SSYSSRCa}.
 
 @see: L{zsource}
 @type: string
+"""
+
+theta0 = """
+The native longitude of the fiducial point, i.e. the point whose
+celestial coordinates are given in ref[1:2].  If undefined (NaN) the
+initialization routine, L{set}, will set this to a projection-specific
+default.
+
+@see: L{phi0}
+@type: float
 """
 
 to_header = """
