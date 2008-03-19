@@ -37,10 +37,10 @@ DAMAGE.
 #include <Python.h>
 #include <structmember.h>
 #include <numpy/arrayobject.h>
-#include <wcslib/wcs.h>
-#include <wcslib/wcsfix.h>
-#include <wcslib/wcshdr.h>
-#include <wcslib/wcsmath.h>
+#include <wcs.h>
+#include <wcsfix.h>
+#include <wcshdr.h>
+#include <wcsmath.h>
 #include "isnan.h"
 
 /*
