@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-CONTACT = "mdroe@stsci.edu"
+CONTACT = "Michael Droettboom"
+EMAIL = "mdroe@stsci.edu"
 
 import sys
 from distutils.core import setup, Extension
@@ -70,7 +71,7 @@ def determine_64_bit_int():
         print "WARNING: Unable to determine a suitable 64-bit integer type."
         print "         Defaulting to 'long long int', which should work with most"
         print "         platforms, but your build may be broken."
-        print "         Please contact <%s> with details about your platform." % CONTACT
+        print "         Please contact <%s> with details about your platform." % EMAIL
         return "long long int"
 
     if ctypes.sizeof(ctypes.c_longlong) == 8:
@@ -82,7 +83,7 @@ def determine_64_bit_int():
     else:
         print "WARNING: Could not find a suitable 64-bit integer type."
         print "         Defaulting to 'long long int', but your build may be broken."
-        print "         Please contact <%s> with details about your platform." % CONTACT
+        print "         Please contact <%s> with details about your platform." % EMAIL
         return "long long int"
 
 fd = open("src/wcsconfig.h", "w")
@@ -117,8 +118,8 @@ fd.close()
 setup(name="pywcs",
       version="1.0a1-%s" % WCSVERSION,
       description="Python wrappers to WCSLIB",
-      author="Michael Droettboom",
-      author_email=CONTACT,
+      author=CONTACT,
+      author_email=EMAIL,
       url="http://projects.scipy.org/astropy/astrolib/wiki/WikiStart",
       packages=['pywcs'],
       ext_modules=[
