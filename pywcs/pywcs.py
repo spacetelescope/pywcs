@@ -58,14 +58,32 @@ class WCS(WCSBase):
             self.crval = numpy.zeros((self.naxis,), numpy.double)
             self.ctype = ['RA---TAN', 'DEC--TAN']
 
+    def _pixel2world_generic(self, func, *args):
+        if len(args) == 1:
+            return func(args[0])['world']
+        elif len(args) == 2:
+            x, y = args
+            assert len(x) == len(y)
+            length = len(x)
+            xy = numpy.hstack((x.reshape((length, 1)),
+                               y.reshape((length, 1))))
+            world = func(xy)['world']
+            return [world[:, i] for i in range(world.shape[1])]
+        raise TypeError("Expected 1 or 2 arguments, %d given" % len(args))
+
     def pixel2world(self, *args):
         """
         pixel2world(*args) -> world
 
         Transforms world coordinates to pixel coordinates.
+
         L{pixel2world} is a convenience wrapper around L{p2s}.  If
         intermediate values from the transform are needed, use the
         more complex L{p2s} directly.
+
+        B{The pixel coordinates given are 0-based (like array indices
+        in C and Python).  If your pixel coordinates are 1-based (like
+        array indices in Fortran), use L{pixel2world_fits} instead.}
 
         Either one or two arguments may be provided.
 
@@ -78,17 +96,28 @@ class WCS(WCSBase):
             single array, a single array is returned, otherwise a
             tuple of arrays is returned.
         """
+        return self._pixel2world_generic(self.p2s, *args)
+
+    def pixel2world_fits(self, *args):
+        """
+        pixel2world_fits(*args) -> world
+
+        Identical to L{pixel2world}, except pixel coordinates are
+        1-based (like array indices in Fortran), instead of 0-based
+        (like array indices C and Python).
+        """
+        return self._pixel2world_generic(self.p2s_fits, *args)
+
+    def _world2pixel_generic(self, func, *args):
         if len(args) == 1:
-            return self.p2s(args[0])['world']
-        elif len(args) == 2:
-            x, y = args
-            assert len(x) == len(y)
-            length = len(x)
-            xy = numpy.hstack((x.reshape((length, 1)),
-                               y.reshape((length, 1))))
-            world = self.p2s(xy)['world']
-            return [world[:, i] for i in range(world.shape[1])]
-        raise TypeError("Expected 1 or 2 arguments, %d given" % len(args))
+            return func(args[0])['pixcrd']
+        elif len(args) == self.naxis:
+            length = len(args[0])
+            combined = numpy.hstack([x.reshape((length, 1)) for x in args])
+            pixcrd = func(combined)['pixcrd']
+            return pixcrd[:, 0], pixcrd[:, 1]
+        raise TypeError("Expected 1 or %d arguments, %d given" %
+                        (self.naxis, len(args)))
 
     def world2pixel(self, *args):
         """
@@ -98,6 +127,11 @@ class WCS(WCSBase):
         L{world2pixel} is a convenience wrapper around L{s2p}.  If
         intermediate values from the transform are needed, use the
         more complex L{s2p} directly.
+
+        B{The pixel coordinates returned are 0-based (like array
+        indices in C and Python).  If you require pixel coordinates to
+        be 1-based (like array indices in Fortran), use
+        L{world2pixel_fits} instead.}
 
         Either one or L{naxis} arguments may be provided.
 
@@ -110,12 +144,15 @@ class WCS(WCSBase):
             single array, a single array is returned, otherwise a
             tuple of arrays is returned.
         """
-        if len(args) == 1:
-            return self.s2p(args[0])['pixcrd']
-        elif len(args) == self.naxis:
-            length = len(args[0])
-            combined = numpy.hstack([x.reshape((length, 1)) for x in args])
-            pixcrd = self.s2p(combined)['pixcrd']
-            return pixcrd[:, 0], pixcrd[:, 1]
-        raise TypeError("Expected 1 or %d arguments, %d given" %
-                        (self.naxis, len(args)))
+        return self._world2pixel_generic(self.s2p, *args)
+
+    def world2pixel_fits(self, *args):
+        """
+        pixel2world_fits(*args) -> world
+
+        Identical to L{world2pixel}, except pixel coordinates are
+        1-based (like array indices in Fortran), instead of 0-based
+        (like array indices C and Python).
+        """
+        return self._world2pixel_generic(self.s2p_fits, *args)
+
