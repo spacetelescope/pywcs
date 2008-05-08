@@ -277,7 +277,6 @@ PyWcsprm_Python2C(PyWcsprm* self) {
   nan2undefined(&x->velangl, 1);
   nan2undefined(&x->velosys, 1);
   nan2undefined(&x->zsource, 1);
-  offset_c_array(x->crpix, naxis, 1.0);
 }
 
 static void
@@ -301,7 +300,6 @@ PyWcsprm_C2Python(PyWcsprm* self) {
   undefined2nan(&x->velangl, 1);
   undefined2nan(&x->velosys, 1);
   undefined2nan(&x->zsource, 1);
-  offset_c_array(x->crpix, naxis, -1.0);
 }
 
 /***************************************************************************
@@ -826,7 +824,7 @@ PyWcsprm_is_unity(PyWcsprm* self) {
 }
 
 static PyObject*
-PyWcsprm_mix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
+PyWcsprm_mix_generic(PyWcsprm* self, PyObject* args, PyObject* kwds, int do_shift) {
   int            mixpix     = 0;
   int            mixcel     = 0;
   double         vspan[2]   = {0, 0};
@@ -929,7 +927,8 @@ PyWcsprm_mix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
   }
 
   /* Convert pixel coordinates to 1-based */
-  offset_array(pixcrd, 1.0);
+  if (do_shift)
+    offset_array(pixcrd, 1.0);
   PyWcsprm_Python2C(self);
   status = wcsmix(self->x,
                   mixpix,
@@ -944,7 +943,8 @@ PyWcsprm_mix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
                   (double*)PyArray_DATA(pixcrd));
   PyWcsprm_C2Python(self);
   /* Convert pixel coordinates back to 0-based) */
-  offset_array(pixcrd, -1.0);
+  if (do_shift)
+    offset_array(pixcrd, -1.0);
 
   if (status == 0) {
     result = PyDict_New();
@@ -978,7 +978,17 @@ PyWcsprm_mix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
 }
 
 static PyObject*
-PyWcsprm_p2s(PyWcsprm* self, PyObject* arg) {
+PyWcsprm_mix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
+  return PyWcsprm_mix_generic(self, args, kwds, 1);
+}
+
+static PyObject*
+PyWcsprm_mix_fits(PyWcsprm* self, PyObject* args, PyObject* kwds) {
+  return PyWcsprm_mix_generic(self, args, kwds, 0);
+}
+
+static PyObject*
+PyWcsprm_p2s_generic(PyWcsprm* self, PyObject* arg, int do_shift) {
   PyArrayObject* pixcrd  = NULL;
   PyArrayObject* imgcrd  = NULL;
   PyArrayObject* phi     = NULL;
@@ -1036,7 +1046,8 @@ PyWcsprm_p2s(PyWcsprm* self, PyObject* arg) {
   }
 
   /* Adjust pixel coordinates to be 1-based */
-  offset_array(pixcrd, 1.0);
+  if (do_shift)
+    offset_array(pixcrd, 1.0);
 
   /* Make the call */
   PyWcsprm_Python2C(self);
@@ -1051,7 +1062,8 @@ PyWcsprm_p2s(PyWcsprm* self, PyObject* arg) {
                   (int*)PyArray_DATA(stat));
   PyWcsprm_C2Python(self);
   /* Adjust pixel coordinates back to 0-based */
-  offset_array(pixcrd, -1.0);
+  if (do_shift)
+    offset_array(pixcrd, -1.0);
 
   if (status == 0 || status == 8) {
     result = PyDict_New();
@@ -1089,7 +1101,17 @@ PyWcsprm_p2s(PyWcsprm* self, PyObject* arg) {
 }
 
 static PyObject*
-PyWcsprm_s2p(PyWcsprm* self, PyObject* arg) {
+PyWcsprm_p2s(PyWcsprm* self, PyObject* arg) {
+  return PyWcsprm_p2s_generic(self, arg, 1);
+}
+
+static PyObject*
+PyWcsprm_p2s_fits(PyWcsprm* self, PyObject* arg) {
+  return PyWcsprm_p2s_generic(self, arg, 0);
+}
+
+static PyObject*
+PyWcsprm_s2p_generic(PyWcsprm* self, PyObject* arg, int do_shift) {
   PyArrayObject* world   = NULL;
   PyArrayObject* phi     = NULL;
   PyArrayObject* theta   = NULL;
@@ -1162,7 +1184,8 @@ PyWcsprm_s2p(PyWcsprm* self, PyObject* arg) {
   PyWcsprm_C2Python(self);
 
   /* Adjust pixel coordinates to be zero-based */
-  offset_array(pixcrd, -1.0);
+  if (do_shift)
+    offset_array(pixcrd, -1.0);
 
   if (status == 0 || status == 9) {
     result = PyDict_New();
@@ -1193,6 +1216,16 @@ PyWcsprm_s2p(PyWcsprm* self, PyObject* arg) {
                     "Unknown error occurred.  Something is seriously wrong.");
     return NULL;
   }
+}
+
+static PyObject*
+PyWcsprm_s2p(PyWcsprm* self, PyObject* arg) {
+  return PyWcsprm_s2p_generic(self, arg, 1);
+}
+
+static PyObject*
+PyWcsprm_s2p_fits(PyWcsprm* self, PyObject* arg) {
+  return PyWcsprm_s2p_generic(self, arg, 0);
 }
 
 static int
@@ -3055,9 +3088,12 @@ static PyMethodDef PyWcsprm_methods[] = {
   {"has_pci_ja", (PyCFunction)PyWcsprm_has_pci_ja, METH_NOARGS, doc_has_pci_ja},
   {"is_unity", (PyCFunction)PyWcsprm_is_unity, METH_NOARGS, doc_is_unity},
   {"mix", (PyCFunction)PyWcsprm_mix, METH_VARARGS, doc_mix},
+  {"mix_fits", (PyCFunction)PyWcsprm_mix_fits, METH_VARARGS, doc_mix_fits},
   {"p2s", (PyCFunction)PyWcsprm_p2s, METH_O, doc_p2s},
+  {"p2s_fits", (PyCFunction)PyWcsprm_p2s_fits, METH_O, doc_p2s_fits},
   {"print_contents", (PyCFunction)PyWcsprm_print_contents, METH_NOARGS, doc_print_contents},
   {"s2p", (PyCFunction)PyWcsprm_s2p, METH_O, doc_s2p},
+  {"s2p_fits", (PyCFunction)PyWcsprm_s2p_fits, METH_O, doc_s2p_fits},
   {"set", (PyCFunction)PyWcsprm_set, METH_NOARGS, doc_set},
   {"set_ps", (PyCFunction)PyWcsprm_set_ps, METH_O, doc_set_ps},
   {"set_pv", (PyCFunction)PyWcsprm_set_pv, METH_O, doc_set_pv},

@@ -112,7 +112,9 @@ matrix, maintained for historical compatibility.
 crpix = """
 Coordinate reference pixels (C{CRPIXja}) for each pixel axis.
 
-B{Pixel coordinates are zero-based}.
+B{Note that this coordinate is 1-based, and will be set/returned
+exactly as in the header.}  This means that L{p2s}(crpix) will not be
+correct, and one should use L{p2s_fits}(crpix) instead.
 
 @type: array[naxis] of double
 """
@@ -431,6 +433,10 @@ Given either the celestial longitude or latitude plus an element of
 the pixel coordinate, solves for the remaining elements by iterating
 on the unknown celestial coordinate element using L{s2p}.
 
+B{The pixel coordinates given and returned are 0-based (like array
+indices in C and Python).  If your pixel coordinates are 1-based (like
+array indices in Fortran), use L{mix_fits} instead.}
+
 @param mixpix: Which element on the pixel coordinate is given.
 @type mixpix: int
 
@@ -472,7 +478,8 @@ on the unknown celestial coordinate element using L{s2p}.
 
 @param pixcrd: Pixel coordinate.  The element indicated by C{mixpix}
     is given and the remaining elements will be written in-place.
-    B{Pixel coordinates are zero-based.}
+    B{The pixel coordinates given and returned are zero-based.  If
+    your pixel coordinates are one-based, use L{mix_fits} instead.}
 
 @type pixcrd: array[naxis] of double
 
@@ -500,6 +507,14 @@ on the unknown celestial coordinate element using L{s2p}.
 transformation parameters.
 @raise InvalidCoordinateError: Invalid world coordinate.
 @raise NoSolutionError: No solution found in the specified interval.
+"""
+
+mix_fits = """
+mix_fits(mixpix, mixcel, vspan, vstep, viter, world, pixcrd) -> dict
+
+Identical to L{mix}, except pixel coordinates are 1-based (like array
+indices in Fortran), instead of 0-based (like array indices C and
+Python).
 """
 
 mjdavg = """
@@ -569,8 +584,11 @@ p2s(pixcrd) -> dict
 
 Converts pixel to world coordinates.
 
-@param pixcrd: Array of pixel coordinates.  B{Pixel coordinates are
-    zero-based.}
+B{The pixel coordinates given are 0-based (like array indices in C and
+Python).  If your pixel coordinates are 1-based (like array indices in
+Fortran), use L{p2s_fits} instead.}
+
+@param pixcrd: Array of pixel coordinates.
 
 @type pixcrd: numpy array[ncoord][nelem] of double
 
@@ -615,6 +633,14 @@ Converts pixel to world coordinates.
     parameters.
 @raises InvalidTransformError: Ill-conditioned coordinate transformation
     parameters.
+"""
+
+p2s_fits = """
+p2s_fits(pixcrd) -> dict
+
+Identical to L{p2s}, except pixel coordinates are 1-based (like array
+indices in Fortran), instead of 0-based (like array indices C and
+Python).
 """
 
 pc = """
@@ -725,6 +751,10 @@ s2p(world) -> dict
 
 Transforms world coordinates to pixel coordinates.
 
+B{The pixel coordinates returned are 0-based (like array indices in C
+and Python).  If you require pixel coordinates to be 1-based (like
+array indices in Fortran), use L{s2p_fits} instead.}
+
 @param world: Array of world coordinates, in decimal degrees.
 
 @type world: array[ncoord][nelem] of double
@@ -766,6 +796,14 @@ Transforms world coordinates to pixel coordinates.
     parameters.
 @raises InvalidTransformError: Ill-conditioned coordinate
     transformation parameters.
+"""
+
+s2p_fits = """
+s2p_fits(pixcrd) -> dict
+
+Identical to L{s2p}, except pixel coordinates are 1-based (like array
+indices in Fortran), instead of 0-based (like array indices C and
+Python).
 """
 
 set = """
