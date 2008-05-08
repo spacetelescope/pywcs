@@ -228,13 +228,13 @@ PyWcsprmArrayProxy_New(PyWcsprm* self, int nd, const npy_intp* dims,
   PyArray_Descr* type_descr = NULL;
   PyObject*      result     = NULL;
 
-  type_descr = PyArray_DescrFromType(typenum);
+  type_descr = (PyArray_Descr*)PyArray_DescrFromType(typenum);
   if (type_descr == NULL)
     return NULL;
-  result = PyArray_NewFromDescr(&PyArray_Type, type_descr,
-                                nd, (npy_intp*)dims, NULL, (void*)data,
-                                NPY_CONTIGUOUS | NPY_WRITEABLE,
-                                NULL);
+  result = (PyObject*)PyArray_NewFromDescr(&PyArray_Type, type_descr,
+                                           nd, (npy_intp*)dims, NULL, (void*)data,
+                                           NPY_CONTIGUOUS | NPY_WRITEABLE,
+                                           NULL);
 
   if (result == NULL)
     return NULL;
@@ -347,6 +347,7 @@ PyWcsprm_init(PyWcsprm* self, PyObject* args, PyObject* kwds) {
   int            nwcs          = 0;
   struct wcsprm* wcs           = NULL;
   int            i             = 0;
+  const char*    keywords[]    = {"header", "key", "relax", "naxis", NULL};
 
   /* If we've already been initialized, free our wcsprm object */
   if (self->x != NULL) {
@@ -355,7 +356,6 @@ PyWcsprm_init(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     self->x = NULL;
   }
 
-  const char* keywords[] = {"header", "key", "relax", "naxis", NULL};
   if (!PyArg_ParseTupleAndKeywords(args, kwds, "|Osii", (char **)keywords,
                                    &header_obj, &key, &relax, &naxis))
     return -1;
@@ -548,6 +548,7 @@ PyWcsprm_cylfix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
   PyArrayObject* naxis_array = NULL;
   int*           naxis       = NULL;
   int            status      = 0;
+  const char*    keywords[]  = {"naxis", NULL};
 
   if (self->x == NULL) {
     PyErr_SetString(PyExc_AssertionError,
@@ -555,14 +556,13 @@ PyWcsprm_cylfix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     return NULL;
   }
 
-  const char* keywords[] = {"naxis", NULL};
   if (!PyArg_ParseTupleAndKeywords(args, kwds, "|O", (char **)keywords,
                                    &naxis_obj))
     return NULL;
 
   if (naxis_obj != NULL) {
     naxis_array = (PyArrayObject*)PyArray_ContiguousFromAny(naxis_obj, 1, 1,
-                                                               PyArray_INT);
+                                                            PyArray_INT);
     if (naxis_array == NULL)
       return NULL;
     if (PyArray_DIM(naxis_array, 0) != self->x->naxis) {
@@ -642,13 +642,13 @@ PyWcsprm_fix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     {"spcfix", SPCFIX},
     {"cylfix", CYLFIX}
   };
+  const char* keywords[] = {"translate_units", "naxis", NULL};
 
   if (self->x == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
     return NULL;
   }
 
-  const char* keywords[] = {"translate_units", "naxis", NULL};
   if (!PyArg_ParseTupleAndKeywords(args, kwds, "|sO", (char **)keywords,
                                    &translate_units, &naxis_obj))
     return NULL;
@@ -658,7 +658,7 @@ PyWcsprm_fix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
 
   if (naxis_obj != NULL) {
     naxis_array = (PyArrayObject*)PyArray_ContiguousFromAny(naxis_obj, 1, 1,
-                                                               PyArray_INT);
+                                                            PyArray_INT);
     if (naxis_array == NULL)
       return NULL;
     if (PyArray_DIM(naxis_array, 0) != self->x->naxis) {
@@ -768,8 +768,6 @@ PyWcsprm_get_pv(PyWcsprm* self, PyObject* args, PyObject* kwds) {
 
   return result;
 }
-
-// TODO: Replace these with some "hasattr" magic.
 
 static PyObject*
 PyWcsprm_has_cdi_ja(PyWcsprm* self) {
@@ -1423,10 +1421,11 @@ PyWcsprm_spcfix(PyWcsprm* self) {
 
 static PyObject*
 PyWcsprm_sptr(PyWcsprm* self, PyObject* args, PyObject* kwds) {
-  int   i        = -1;
-  char* py_ctype = 0;
+  int   i                = -1;
+  char* py_ctype         = 0;
   char  ctype[9];
-  int   status   = 0;
+  int   status           = 0;
+  const char* keywords[] = {"i", NULL};
 
   if (self->x == NULL) {
     PyErr_SetString(PyExc_AssertionError,
@@ -1434,7 +1433,6 @@ PyWcsprm_sptr(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     return NULL;
   }
 
-  const char* keywords[] = {"i", NULL};
   if (!PyArg_ParseTupleAndKeywords(args, kwds, "s|i", (char **)keywords,
                                    &py_ctype, &i))
     return NULL;
@@ -1465,11 +1463,12 @@ PyWcsprm_sptr(PyWcsprm* self, PyObject* args, PyObject* kwds) {
 
 static PyObject*
 PyWcsprm_to_header(PyWcsprm* self, PyObject* args, PyObject* kwds) {
-  int       relax   = 0;
-  int       nkeyrec = 0;
-  char*     header  = NULL;
-  int       status  = 0;
-  PyObject* result  = NULL;
+  int       relax        = 0;
+  int       nkeyrec      = 0;
+  char*     header       = NULL;
+  int       status       = 0;
+  PyObject* result       = NULL;
+  const char* keywords[] = {"relax", NULL};
 
   if (self->x == NULL) {
     PyErr_SetString(PyExc_AssertionError,
@@ -1477,7 +1476,6 @@ PyWcsprm_to_header(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     return NULL;
   }
 
-  const char* keywords[] = {"relax", NULL};
   if (!PyArg_ParseTupleAndKeywords(args, kwds, "|i", (char **)keywords,
                                    &relax))
     return NULL;
@@ -1507,9 +1505,10 @@ PyWcsprm_to_header(PyWcsprm* self, PyObject* args, PyObject* kwds) {
 
 static PyObject*
 PyWcsprm_unitfix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
-  char* translate_units = NULL;
-  int   ctrl            = 0;
-  int   status          = 0;
+  char* translate_units  = NULL;
+  int   ctrl             = 0;
+  int   status           = 0;
+  const char* keywords[] = {"translate_units", NULL};
 
   if (self->x == NULL) {
     PyErr_SetString(PyExc_AssertionError,
@@ -1517,7 +1516,6 @@ PyWcsprm_unitfix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     return NULL;
   }
 
-  const char* keywords[] = {"translate_units", NULL};
   if (!PyArg_ParseTupleAndKeywords(args, kwds, "|s", (char **)keywords,
                                    &translate_units))
     return NULL;
