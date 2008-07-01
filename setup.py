@@ -124,7 +124,8 @@ setup(name="pywcs",
       packages=['pywcs'],
       ext_modules=[
         Extension('pywcs._pywcs',
-                  ['src/pywcs.c'] +
+                  ['src/pywcs.c', 'src/distortion.c', 'src/distortion_wrap.c',
+                   'src/util.c'] +
                   WCSFILES,
                   include_dirs=[
                     numpy_include,

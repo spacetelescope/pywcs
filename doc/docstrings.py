@@ -89,6 +89,18 @@ copy()
 Creates a deep copy of the WCS object.
 """
 
+cpdis = """
+The pre-linear transformation distortion lookup tables.
+
+This is a 2-tuple of the form (x, y)
+"""
+
+cqdis = """
+The post-linear transformation distortion lookup tables.
+
+This is a 2-tuple of the form (x, y)
+"""
+
 crder = """
 The random error in each coordinate axis, C{CRDERia}.
 
@@ -212,6 +224,11 @@ Fixes WCS keyvalues for malformed cylindrical projections.
 @return: C{0} for success; C{-1} if no change required.
 """
 
+data = """
+The array data for the distortion lookup table.  Should be a 2D numpy
+double array.
+"""
+
 dateavg = """
 Representative mid-point of the date of observation in ISO format,
 C{yyyy-mm-ddThh:mm:ss}.
@@ -238,6 +255,10 @@ L{datfix} derives C{dateobs} from it.  If both are set but disagree by
 more than half a day then C{ValueError} is raised.
 
 @return: C{0} for success; C{-1} if no change required.
+"""
+
+DistortionLookupTable = """
+TODO
 """
 
 equinox = """
@@ -285,6 +306,12 @@ L{unitfix}, L{celfix}, L{spcfix} and L{cylfix}.
 @return: A dictionary containing the following keys, each referring to
     a status string for each of the sub-fix functions that were
     called: L{datfix}, L{unitfix}, L{celfix}, L{spcfix}, L{cylfix}.
+"""
+
+get_offset = """
+get_offset(x, y) -> offset
+
+Returns the offset from the distortion table for pixel point (x, y).
 """
 
 get_ps = """

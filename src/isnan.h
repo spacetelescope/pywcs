@@ -1,3 +1,6 @@
+#ifndef __ISNAN_H__
+#define __ISNAN_H__
+
 #include "wcsconfig.h"
 
 typedef unsigned WCSLIB_INT64 Int64;
@@ -35,3 +38,5 @@ typedef unsigned WCSLIB_INT64 Int64;
   ( (( U64(u) & 0x7ff0000000000000i64) != 0x7ff0000000000000i64)) ? 1:0
 #endif
 #endif /* isfinite64 */
+
+#endif /* __ISNAN_H__ */

@@ -42,6 +42,9 @@ DAMAGE.
 #include <wcshdr.h>
 #include <wcsmath.h>
 #include "isnan.h"
+#include "util.h"
+
+/* TODO: Refactor the setters and getters */
 
 /* Py_ssize_t for old Pythons */
 /* This code is as recommended by: */
@@ -86,62 +89,6 @@ parse_unsafe_unit_conversion_spec(const char* arg) {
   return ctrl;
 }
 
-static inline void
-offset_c_array(double* value, size_t size, double offset) {
-  double* end = value + size;
-
-  for ( ; value != end; ++value)
-    *value += offset;
-}
-
-static void
-offset_array(PyArrayObject* array, double value) {
-  int     size = 1;
-  int     i    = 0;
-  double* data = NULL;
-
-  for (i = 0; i < PyArray_NDIM(array); ++i)
-    size *= PyArray_DIM(array, i);
-
-  data = (double*)PyArray_DATA(array);
-
-  offset_c_array(data, size, value);
-}
-
-static void
-copy_array_to_c_double(PyArrayObject* array, double* dest) {
-  int     size = 1;
-  int     i    = 0;
-  double* data = NULL;
-
-  data = (double*)PyArray_DATA(array);
-
-  for (i = 0; i < PyArray_NDIM(array); ++i)
-    size *= PyArray_DIM(array, i);
-
-  for (i = 0; i < size; ++i, ++dest, ++data) {
-    if (isnan64(*data))
-      *dest = UNDEFINED;
-    else
-      *dest = *data;
-  }
-}
-
-static void
-copy_array_to_c_int(PyArrayObject* array, int* dest) {
-  int  size = 1;
-  int  i    = 0;
-  int* data = NULL;
-
-  data = (int*)PyArray_DATA(array);
-
-  for (i = 0; i < PyArray_NDIM(array); ++i)
-    size *= PyArray_DIM(array, i);
-
-  for (i = 0; i < size; ++i, ++dest, ++data)
-    *dest = *data;
-}
-
 static int
 is_valid_alt_key(const char* key) {
   if (key[1] != 0 ||
@@ -152,26 +99,6 @@ is_valid_alt_key(const char* key) {
   }
 
   return 1;
-}
-
-static inline
-void nan2undefined(double* value, size_t nvalues) {
-  double* end = value + nvalues;
-
-  for ( ; value != end; ++value)
-    if (isnan64(*value))
-      *value = UNDEFINED;
-}
-
-static inline
-void undefined2nan(double* value, size_t nvalues) {
-  double* end = value + nvalues;
-  double  v   = 0;
-
-  for ( ; value != end; ++value) {
-    v = *value;
-    *value = (v == UNDEFINED) ? NAN : v;
-  }
 }
 
 /***************************************************************************
@@ -222,29 +149,6 @@ typedef struct {
   struct wcsprm* x;
 } PyWcsprm;
 
-static PyObject*
-PyWcsprmArrayProxy_New(PyWcsprm* self, int nd, const npy_intp* dims,
-                       int typenum, const void* data) {
-  PyArray_Descr* type_descr = NULL;
-  PyObject*      result     = NULL;
-
-  type_descr = (PyArray_Descr*)PyArray_DescrFromType(typenum);
-  if (type_descr == NULL)
-    return NULL;
-  result = (PyObject*)PyArray_NewFromDescr(&PyArray_Type, type_descr,
-                                           nd, (npy_intp*)dims, NULL, (void*)data,
-                                           NPY_CONTIGUOUS | NPY_WRITEABLE,
-                                           NULL);
-
-  if (result == NULL)
-    return NULL;
-  Py_INCREF(self);
-  PyArray_BASE(result) = (PyObject*)self;
-  return result;
-}
-
-static PyObject *
-PyWcsprmListProxy_New(PyWcsprm* owner, Py_ssize_t size, char (*array)[72]);
 
 /* wcslib represents undefined values using its own special constant,
    UNDEFINED.  To be consistent with the Pythonic way of doing things,
@@ -256,50 +160,39 @@ PyWcsprmListProxy_New(PyWcsprm* owner, Py_ssize_t size, char (*array)[72]);
    computationally expensive as it sounds, as all these arrays are
    quite small.
 */
+typedef void (*value_fixer_t)(double*, size_t);
+
 static void
-PyWcsprm_Python2C(PyWcsprm* self) {
+_PyWcsprm_fix_values(PyWcsprm* self, value_fixer_t value_fixer) {
   struct wcsprm* x     = self->x;
   int            naxis = x->naxis;
 
-  nan2undefined(x->cd, 4);
-  nan2undefined(x->cdelt, naxis);
-  nan2undefined(x->crder, naxis);
-  nan2undefined(x->crota, naxis);
-  nan2undefined(x->crpix, naxis);
-  nan2undefined(x->crval, naxis);
-  nan2undefined(x->csyer, naxis);
-  nan2undefined(&x->equinox, 1);
-  nan2undefined(&x->mjdavg, 1);
-  nan2undefined(&x->mjdobs, 1);
-  nan2undefined(x->obsgeo, 3);
-  nan2undefined(&x->restfrq, 1);
-  nan2undefined(&x->restwav, 1);
-  nan2undefined(&x->velangl, 1);
-  nan2undefined(&x->velosys, 1);
-  nan2undefined(&x->zsource, 1);
+  value_fixer(x->cd, 4);
+  value_fixer(x->cdelt, naxis);
+  value_fixer(x->crder, naxis);
+  value_fixer(x->crota, naxis);
+  value_fixer(x->crpix, naxis);
+  value_fixer(x->crval, naxis);
+  value_fixer(x->csyer, naxis);
+  value_fixer(&x->equinox, 1);
+  value_fixer(&x->mjdavg, 1);
+  value_fixer(&x->mjdobs, 1);
+  value_fixer(x->obsgeo, 3);
+  value_fixer(&x->restfrq, 1);
+  value_fixer(&x->restwav, 1);
+  value_fixer(&x->velangl, 1);
+  value_fixer(&x->velosys, 1);
+  value_fixer(&x->zsource, 1);
+}
+
+static void
+PyWcsprm_Python2C(PyWcsprm* self) {
+  _PyWcsprm_fix_values(self, &nan2undefined);
 }
 
 static void
 PyWcsprm_C2Python(PyWcsprm* self) {
-  struct wcsprm* x     = self->x;
-  int            naxis = x->naxis;
-
-  undefined2nan(x->cd, 4);
-  undefined2nan(x->cdelt, naxis);
-  undefined2nan(x->crder, naxis);
-  undefined2nan(x->crota, naxis);
-  undefined2nan(x->crpix, naxis);
-  undefined2nan(x->crval, naxis);
-  undefined2nan(x->csyer, naxis);
-  undefined2nan(&x->equinox, 1);
-  undefined2nan(&x->mjdavg, 1);
-  undefined2nan(&x->mjdobs, 1);
-  undefined2nan(x->obsgeo, 3);
-  undefined2nan(&x->restfrq, 1);
-  undefined2nan(&x->restwav, 1);
-  undefined2nan(&x->velangl, 1);
-  undefined2nan(&x->velosys, 1);
-  undefined2nan(&x->zsource, 1);
+  _PyWcsprm_fix_values(self, &undefined2nan);
 }
 
 /***************************************************************************
@@ -1594,7 +1487,7 @@ PyWcsprm_get_cd(PyWcsprm* self, void* closure) {
     return NULL;
   }
 
-  return PyWcsprmArrayProxy_New(self, 2, dims, PyArray_DOUBLE, self->x->cd);
+  return PyArrayProxy_New((PyObject*)self, 2, dims, PyArray_DOUBLE, self->x->cd);
 }
 
 static int
@@ -1618,6 +1511,7 @@ PyWcsprm_set_cd(PyWcsprm* self, PyObject* value, void* closure) {
 
   if (PyArray_DIM(value_array, 0) != 2 || PyArray_DIM(value_array, 1) != 2) {
     PyErr_SetString(PyExc_ValueError, "cd must be a 2x2 array");
+    Py_DECREF(value_array);
     return -1;
   }
 
@@ -1636,7 +1530,7 @@ PyWcsprm_get_cname(PyWcsprm* self, void* closure) {
     return NULL;
   }
 
-  return PyWcsprmListProxy_New(self, self->x->naxis, self->x->cname);
+  return PyWcsprmListProxy_New((PyObject*)self, self->x->naxis, self->x->cname);
 }
 
 static int
@@ -1693,8 +1587,8 @@ PyWcsprm_get_cdelt(PyWcsprm* self, void* closure) {
 
   naxis = self->x->naxis;
 
-  return PyWcsprmArrayProxy_New(self, 1, &naxis, PyArray_DOUBLE,
-                                self->x->cdelt);
+  return PyArrayProxy_New((PyObject*)self, 1, &naxis, PyArray_DOUBLE,
+                          self->x->cdelt);
 }
 
 static int
@@ -1720,6 +1614,7 @@ PyWcsprm_set_cdelt(PyWcsprm* self, PyObject* value, void* closure) {
 
   if (PyArray_DIM(value_array, 0) != self->x->naxis) {
     PyErr_SetString(PyExc_ValueError, "len(cdelt) != naxis");
+    Py_DECREF(value_array);
     return -1;
   }
 
@@ -1807,8 +1702,8 @@ PyWcsprm_get_colax(PyWcsprm* self, void* closure) {
 
   naxis = self->x->naxis;
 
-  return PyWcsprmArrayProxy_New(self, 1, &naxis, PyArray_INT,
-                                self->x->colax);
+  return PyArrayProxy_New((PyObject*)self, 1, &naxis, PyArray_INT,
+                          self->x->colax);
 }
 
 static int
@@ -1832,12 +1727,11 @@ PyWcsprm_set_colax(PyWcsprm* self, PyObject* value, void* closure) {
 
   if (PyArray_DIM(value_array, 0) != self->x->naxis) {
     PyErr_SetString(PyExc_ValueError, "len(colax) != naxis");
+    Py_DECREF(value_array);
     return -1;
   }
 
   copy_array_to_c_int(value_array, self->x->colax);
-
-  Py_DECREF(value_array);
 
   return 0;
 }
@@ -1853,8 +1747,8 @@ PyWcsprm_get_crder(PyWcsprm* self, void* closure) {
 
   naxis = self->x->naxis;
 
-  return PyWcsprmArrayProxy_New(self, 1, &naxis, PyArray_DOUBLE,
-                                self->x->crder);
+  return PyArrayProxy_New((PyObject*)self, 1, &naxis, PyArray_DOUBLE,
+                          self->x->crder);
 }
 
 static int
@@ -1878,6 +1772,7 @@ PyWcsprm_set_crder(PyWcsprm* self, PyObject* value, void* closure) {
 
   if (PyArray_DIM(value_array, 0) != self->x->naxis) {
     PyErr_SetString(PyExc_ValueError, "len(crder) != naxis");
+    Py_DECREF(value_array);
     return -1;
   }
 
@@ -1904,8 +1799,8 @@ PyWcsprm_get_crota(PyWcsprm* self, void* closure) {
 
   naxis = self->x->naxis;
 
-  return PyWcsprmArrayProxy_New(self, 1, &naxis, PyArray_DOUBLE,
-                                self->x->crota);
+  return PyArrayProxy_New((PyObject*)self, 1, &naxis, PyArray_DOUBLE,
+                          self->x->crota);
 }
 
 static int
@@ -1929,6 +1824,7 @@ PyWcsprm_set_crota(PyWcsprm* self, PyObject* value, void* closure) {
 
   if (PyArray_DIM(value_array, 0) != self->x->naxis) {
     PyErr_SetString(PyExc_ValueError, "len(crota) != naxis");
+    Py_DECREF(value_array);
     return -1;
   }
 
@@ -1951,8 +1847,8 @@ PyWcsprm_get_crpix(PyWcsprm* self, void* closure) {
 
   naxis = self->x->naxis;
 
-  return PyWcsprmArrayProxy_New(self, 1, &naxis, PyArray_DOUBLE,
-                                self->x->crpix);
+  return PyArrayProxy_New((PyObject*)self, 1, &naxis, PyArray_DOUBLE,
+                          self->x->crpix);
 }
 
 static int
@@ -1977,6 +1873,7 @@ PyWcsprm_set_crpix(PyWcsprm* self, PyObject* value, void* closure) {
 
   if (PyArray_DIM(value_array, 0) != self->x->naxis) {
     PyErr_SetString(PyExc_ValueError, "len(crpix) != naxis");
+    Py_DECREF(value_array);
     return -1;
   }
 
@@ -1998,8 +1895,8 @@ PyWcsprm_get_crval(PyWcsprm* self, void* closure) {
 
   naxis = self->x->naxis;
 
-  return PyWcsprmArrayProxy_New(self, 1, &naxis, PyArray_DOUBLE,
-                                self->x->crval);
+  return PyArrayProxy_New((PyObject*)self, 1, &naxis, PyArray_DOUBLE,
+                          self->x->crval);
 }
 
 static int
@@ -2023,6 +1920,7 @@ PyWcsprm_set_crval(PyWcsprm* self, PyObject* value, void* closure) {
 
   if (PyArray_DIM(value_array, 0) != self->x->naxis) {
     PyErr_SetString(PyExc_ValueError, "len(crval) != naxis");
+    Py_DECREF(value_array);
     return -1;
   }
 
@@ -2044,8 +1942,8 @@ PyWcsprm_get_csyer(PyWcsprm* self, void* closure) {
 
   naxis = self->x->naxis;
 
-  return PyWcsprmArrayProxy_New(self, 1, &naxis, PyArray_DOUBLE,
-                                self->x->csyer);
+  return PyArrayProxy_New((PyObject*)self, 1, &naxis, PyArray_DOUBLE,
+                          self->x->csyer);
 }
 
 static int
@@ -2070,6 +1968,7 @@ PyWcsprm_set_csyer(PyWcsprm* self, PyObject* value, void* closure) {
 
   if (PyArray_DIM(value_array, 0) != self->x->naxis) {
     PyErr_SetString(PyExc_ValueError, "len(csyer) != naxis");
+    Py_DECREF(value_array);
     return -1;
   }
 
@@ -2087,7 +1986,7 @@ PyWcsprm_get_ctype(PyWcsprm* self, void* closure) {
     return NULL;
   }
 
-  return PyWcsprmListProxy_New(self, self->x->naxis, self->x->ctype);
+  return PyWcsprmListProxy_New((PyObject*)self, self->x->naxis, self->x->ctype);
 }
 
 static int
@@ -2174,7 +2073,7 @@ PyWcsprm_get_cunit(PyWcsprm* self, void* closure) {
     return NULL;
   }
 
-  return PyWcsprmListProxy_New(self, self->x->naxis, self->x->cunit);
+  return PyWcsprmListProxy_New((PyObject*)self, self->x->naxis, self->x->cunit);
 }
 
 static int
@@ -2337,8 +2236,8 @@ PyWcsprm_get_imgpix_matrix(PyWcsprm* self, void* closure) {
     return NULL;
   }
 
-  return PyWcsprmArrayProxy_New(self, 2, dims, PyArray_DOUBLE,
-                                self->x->lin.imgpix);
+  return PyArrayProxy_New((PyObject*)self, 2, dims, PyArray_DOUBLE,
+                          self->x->lin.imgpix);
 }
 
 static PyObject*
@@ -2550,8 +2449,8 @@ PyWcsprm_get_obsgeo(PyWcsprm* self, void* closure) {
     return NULL;
   }
 
-  return PyWcsprmArrayProxy_New(self, 1, &size, PyArray_DOUBLE,
-                                self->x->obsgeo);
+  return PyArrayProxy_New((PyObject*)self, 1, &size, PyArray_DOUBLE,
+                          self->x->obsgeo);
 }
 
 static int
@@ -2576,6 +2475,7 @@ PyWcsprm_set_obsgeo(PyWcsprm* self, PyObject* value, void* closure) {
 
   if (PyArray_DIM(value_array, 0) != 3) {
     PyErr_SetString(PyExc_ValueError, "len(obsgeo) != 3");
+    Py_DECREF(value_array);
     return -1;
   }
 
@@ -2600,7 +2500,7 @@ PyWcsprm_get_pc(PyWcsprm* self, void* closure) {
     return NULL;
   }
 
-  return PyWcsprmArrayProxy_New(self, 2, dims, PyArray_DOUBLE, self->x->pc);
+  return PyArrayProxy_New((PyObject*)self, 2, dims, PyArray_DOUBLE, self->x->pc);
 }
 
 static int
@@ -2625,6 +2525,7 @@ PyWcsprm_set_pc(PyWcsprm* self, PyObject* value, void* closure) {
 
   if (PyArray_DIM(value_array, 0) != 2 || PyArray_DIM(value_array, 1) != 2) {
     PyErr_SetString(PyExc_ValueError, "pc must be a 2x2 array");
+    Py_DECREF(value_array);
     return -1;
   }
 
@@ -2675,8 +2576,8 @@ PyWcsprm_get_piximg_matrix(PyWcsprm* self, void* closure) {
     return NULL;
   }
 
-  return PyWcsprmArrayProxy_New(self, 2, dims, PyArray_DOUBLE,
-                                self->x->lin.piximg);
+  return PyArrayProxy_New((PyObject*)self, 2, dims, PyArray_DOUBLE,
+                          self->x->lin.piximg);
 }
 
 static PyObject*
@@ -3199,8 +3100,8 @@ PyWcsprmListProxy_clear(PyWcsprmListProxy *self)
   return 0;
 }
 
-static PyObject *
-PyWcsprmListProxy_New(PyWcsprm* owner, Py_ssize_t size, char (*array)[72]) {
+PyObject *
+PyWcsprmListProxy_New(PyObject* owner, Py_ssize_t size, char (*array)[72]) {
   PyWcsprmListProxy* self = NULL;
 
   self = (PyWcsprmListProxy*)PyWcsprmListProxyType.tp_alloc(&PyWcsprmListProxyType, 0);
@@ -3208,7 +3109,7 @@ PyWcsprmListProxy_New(PyWcsprm* owner, Py_ssize_t size, char (*array)[72]) {
     return NULL;
 
   Py_INCREF(owner);
-  self->pywcsprm = (PyObject*)owner;
+  self->pywcsprm = owner;
   self->size = size;
   self->array = array;
   return (PyObject*)self;
@@ -3360,6 +3261,8 @@ static PyMethodDef module_methods[] = {
     return; \
   PyModule_AddObject(m, #exc "Error", WcsExc_##exc); \
 
+/* Defined in distortion_wrap.c */
+void _setup_distortion_type(PyObject* m);
 
 #ifndef PyMODINIT_FUNC	/* declarations for DLL import/export */
 #define PyMODINIT_FUNC void
@@ -3384,6 +3287,8 @@ init_pywcs(void)
 
   Py_INCREF(&PyWcsprmType);
   PyModule_AddObject(m, "_WCS", (PyObject *)&PyWcsprmType);
+
+  _setup_distortion_type(m);
 
   DEFINE_EXCEPTION(SingularMatrix);
   DEFINE_EXCEPTION(InconsistentAxisTypes);
