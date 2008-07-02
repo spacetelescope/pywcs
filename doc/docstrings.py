@@ -257,8 +257,20 @@ more than half a day then C{ValueError} is raised.
 @return: C{0} for success; C{-1} if no change required.
 """
 
+Distortion = """
+
+"""
+
 DistortionLookupTable = """
-TODO
+Represents a single lookup table for a distortion (Paper IV)
+transformation.
+
+These objects are used for setting the cpdis and cqdis lookup tables
+in a Distortion object.
+"""
+
+distortion_p2s = """
+TODO: Write me
 """
 
 equinox = """

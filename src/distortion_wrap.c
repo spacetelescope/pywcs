@@ -510,7 +510,7 @@ PyDistortion_get_pv(PyDistortion* self, PyObject* args, PyObject* kwds) {
 }
 
 static PyObject*
-PyDistortion_set_pv(PyDistortion* self, PyObject* arg, PyObject* kwds) {
+PyDistortion_set_pv(PyDistortion* self, PyObject* arg) {
   if (is_null(self->x.wcs.ps)) {
     return NULL;
   }
@@ -523,10 +523,45 @@ PyDistortion_set_pv(PyDistortion* self, PyObject* arg, PyObject* kwds) {
   return Py_None;
 }
 
-/* static PyObject* */
-/* PyDistortion_get_offset(PyDistLookup* self, PyObject* args, PyObject* kwds) { */
-/*   /\* TODO: Python2C and C2Python around call *\/ */
-/* } */
+static PyObject*
+PyDistortion_p2s(PyDistortion* self, PyObject* arg) {
+  PyArrayObject* pixcrd = NULL;
+  PyArrayObject* world = NULL;
+  int status = 1;
+
+  pixcrd = (PyArrayObject*)PyArray_ContiguousFromAny(arg, PyArray_DOUBLE, 2, 2);
+  if (pixcrd == NULL) {
+    return NULL;
+  }
+
+  if (PyArray_DIM(pixcrd, 0) != 2) {
+    PyErr_SetString(PyExc_ValueError, "Input pixel array must be of size (2, n)");
+    goto __PyDistortion_p2s_exit;
+  }
+
+  /* Now allocate an array for the results */
+  world = (PyArrayObject*)PyArray_SimpleNew(2, PyArray_DIMS(pixcrd), PyArray_DOUBLE);
+  if (world == NULL) {
+    goto __PyDistortion_p2s_exit;
+  }
+
+  wcsprm_python2c(&self->x.wcs);
+  distortion_pipeline(&self->x,
+                      PyArray_DIM(pixcrd, 1),
+                      PyArray_DATA(pixcrd),
+                      PyArray_DATA(world));
+  wcsprm_c2python(&self->x.wcs);
+
+ __PyDistortion_p2s_exit:
+  Py_XDECREF(pixcrd);
+
+  if (status) {
+    Py_XDECREF(world);
+    return NULL;
+  }
+
+  return (PyObject*)world;
+}
 
 static PyMemberDef PyDistortion_members[] = {
   {NULL}
@@ -546,6 +581,7 @@ static PyGetSetDef PyDistortion_getset[] = {
 
 static PyMethodDef PyDistortion_methods[] = {
   {"get_pv", (PyCFunction)PyDistortion_get_pv, METH_NOARGS, doc_get_pv},
+  {"p2s",    (PyCFunction)PyDistortion_p2s,    METH_O,      doc_distortion_p2s},
   {"set_pv", (PyCFunction)PyDistortion_set_pv, METH_O,      doc_set_pv},
   {NULL}
 };
@@ -553,8 +589,8 @@ static PyMethodDef PyDistortion_methods[] = {
 static PyTypeObject PyDistortionType = {
   PyObject_HEAD_INIT(NULL)
   0,                          /*ob_size*/
-  "pywcs._WCS",               /*tp_name*/
-  sizeof(PyDistortion),           /*tp_basicsize*/
+  "pywcs.Distortion",         /*tp_name*/
+  sizeof(PyDistortion),       /*tp_basicsize*/
   0,                          /*tp_itemsize*/
   (destructor)PyDistortion_dealloc, /*tp_dealloc*/
   0,                          /*tp_print*/
@@ -572,7 +608,7 @@ static PyTypeObject PyDistortionType = {
   0,                          /*tp_setattro*/
   0,                          /*tp_as_buffer*/
   Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
-  doc_WCS,                    /* tp_doc */
+  doc_Distortion,             /* tp_doc */
   0,                          /* tp_traverse */
   0,                          /* tp_clear */
   0,                          /* tp_richcompare */
