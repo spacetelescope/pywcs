@@ -104,6 +104,12 @@ void undefined2nan(double* value, size_t nvalues) {
 int
 is_null(void *);
 
+void
+wcsprm_c2python(struct wcsprm* x);
+
+void
+wcsprm_python2c(struct wcsprm* x);
+
 /***************************************************************************
   Property helpers
  ***************************************************************************/

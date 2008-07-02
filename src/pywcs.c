@@ -142,52 +142,6 @@ typedef struct {
   struct wcsprm* x;
 } PyWcsprm;
 
-
-/* wcslib represents undefined values using its own special constant,
-   UNDEFINED.  To be consistent with the Pythonic way of doing things,
-   it's nicer to represent undefined values using NaN.  Unfortunately,
-   in order to get nice mutable arrays in Python, Python must be able
-   to edit the wcsprm values directly.  The solution is to store NaNs
-   in the struct "canonically", but convert those NaNs to/from
-   UNDEFINED around every call into a wcslib function.  It's not as
-   computationally expensive as it sounds, as all these arrays are
-   quite small.
-*/
-typedef void (*value_fixer_t)(double*, size_t);
-
-static void
-_PyWcsprm_fix_values(PyWcsprm* self, value_fixer_t value_fixer) {
-  struct wcsprm* x     = self->x;
-  int            naxis = x->naxis;
-
-  value_fixer(x->cd, 4);
-  value_fixer(x->cdelt, naxis);
-  value_fixer(x->crder, naxis);
-  value_fixer(x->crota, naxis);
-  value_fixer(x->crpix, naxis);
-  value_fixer(x->crval, naxis);
-  value_fixer(x->csyer, naxis);
-  value_fixer(&x->equinox, 1);
-  value_fixer(&x->mjdavg, 1);
-  value_fixer(&x->mjdobs, 1);
-  value_fixer(x->obsgeo, 3);
-  value_fixer(&x->restfrq, 1);
-  value_fixer(&x->restwav, 1);
-  value_fixer(&x->velangl, 1);
-  value_fixer(&x->velosys, 1);
-  value_fixer(&x->zsource, 1);
-}
-
-static void
-PyWcsprm_Python2C(PyWcsprm* self) {
-  _PyWcsprm_fix_values(self, &nan2undefined);
-}
-
-static void
-PyWcsprm_C2Python(PyWcsprm* self) {
-  _PyWcsprm_fix_values(self, &undefined2nan);
-}
-
 /***************************************************************************
  * PyWcsprm methods
  */
@@ -278,7 +232,7 @@ PyWcsprm_init(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     }
 
     self->x = obj;
-    PyWcsprm_C2Python(self);
+    wcsprm_c2python(obj);
 
     return 0;
   } else { /* header != NULL */
@@ -345,7 +299,7 @@ PyWcsprm_init(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     }
 
     self->x = obj;
-    PyWcsprm_C2Python(self);
+    wcsprm_c2python(obj);
     wcsvfree(&nwcs, &wcs);
     return 0;
   }
@@ -406,9 +360,9 @@ PyWcsprm_celfix(PyWcsprm* self) {
     return NULL;
   }
 
-  PyWcsprm_Python2C(self);
+  wcsprm_python2c(self->x);
   status = celfix(self->x);
-  PyWcsprm_C2Python(self);
+  wcsprm_c2python(self->x);
 
   if (status == -1 || status == 0) {
     return PyInt_FromLong(status);
@@ -454,9 +408,9 @@ PyWcsprm_cylfix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     naxis = (int*)PyArray_DATA(naxis_array);
   }
 
-  PyWcsprm_Python2C(self);
+  wcsprm_python2c(self->x);
   status = cylfix(naxis, self->x);
-  PyWcsprm_C2Python(self);
+  wcsprm_c2python(self->x);
 
   Py_XDECREF(naxis_array);
 
@@ -547,9 +501,9 @@ PyWcsprm_fix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     naxis = (int*)PyArray_DATA(naxis_array);
   }
 
-  PyWcsprm_Python2C(self);
+  wcsprm_python2c(self->x);
   status = wcsfix(ctrl, naxis, self->x, stat);
-  PyWcsprm_C2Python(self);
+  wcsprm_c2python(self->x);
 
   /* We're done with this already, so deref now so we don't have to remember
      later */
@@ -757,7 +711,7 @@ PyWcsprm_mix_generic(PyWcsprm* self, PyObject* args, PyObject* kwds, int do_shif
   /* Convert pixel coordinates to 1-based */
   if (do_shift)
     offset_array(pixcrd, 1.0);
-  PyWcsprm_Python2C(self);
+  wcsprm_python2c(self->x);
   status = wcsmix(self->x,
                   mixpix,
                   mixcel,
@@ -769,7 +723,7 @@ PyWcsprm_mix_generic(PyWcsprm* self, PyObject* args, PyObject* kwds, int do_shif
                   (double*)PyArray_DATA(theta),
                   (double*)PyArray_DATA(imgcrd),
                   (double*)PyArray_DATA(pixcrd));
-  PyWcsprm_C2Python(self);
+  wcsprm_c2python(self->x);
   /* Convert pixel coordinates back to 0-based) */
   if (do_shift)
     offset_array(pixcrd, -1.0);
@@ -877,7 +831,7 @@ PyWcsprm_p2s_generic(PyWcsprm* self, PyObject* arg, int do_shift) {
     offset_array(pixcrd, 1.0);
 
   /* Make the call */
-  PyWcsprm_Python2C(self);
+  wcsprm_python2c(self->x);
   status = wcsp2s(self->x,
                   PyArray_DIM(pixcrd, 0),
                   PyArray_DIM(pixcrd, 1),
@@ -887,7 +841,7 @@ PyWcsprm_p2s_generic(PyWcsprm* self, PyObject* arg, int do_shift) {
                   (double*)PyArray_DATA(theta),
                   (double*)PyArray_DATA(world),
                   (int*)PyArray_DATA(stat));
-  PyWcsprm_C2Python(self);
+  wcsprm_c2python(self->x);
   /* Adjust pixel coordinates back to 0-based */
   if (do_shift)
     offset_array(pixcrd, -1.0);
@@ -996,7 +950,7 @@ PyWcsprm_s2p_generic(PyWcsprm* self, PyObject* arg, int do_shift) {
   }
 
   /* Make the call */
-  PyWcsprm_Python2C(self);
+  wcsprm_python2c(self->x);
   status = wcss2p(self->x,
                   PyArray_DIM(world, 0),
                   PyArray_DIM(world, 1),
@@ -1006,7 +960,7 @@ PyWcsprm_s2p_generic(PyWcsprm* self, PyObject* arg, int do_shift) {
                   (double*)PyArray_DATA(imgcrd),
                   (double*)PyArray_DATA(pixcrd),
                   (int*)PyArray_DATA(stat));
-  PyWcsprm_C2Python(self);
+  wcsprm_c2python(self->x);
 
   /* Adjust pixel coordinates to be zero-based */
   if (do_shift)
@@ -1056,9 +1010,9 @@ PyWcsprm_s2p_fits(PyWcsprm* self, PyObject* arg) {
 static int
 PyWcsprm_cset(PyWcsprm* self) {
   int status = 0;
-  PyWcsprm_Python2C(self);
+  wcsprm_python2c(self->x);
   status = wcsset(self->x);
-  PyWcsprm_C2Python(self);
+  wcsprm_c2python(self->x);
 
   if (status == 0) {
     return 0;
@@ -1121,9 +1075,9 @@ PyWcsprm_print_contents(PyWcsprm* self) {
   if (PyWcsprm_set(self) == NULL)
     return NULL;
 
-  PyWcsprm_Python2C(self);
+  wcsprm_python2c(self->x);
   wcsprt(self->x);
-  PyWcsprm_C2Python(self);
+  wcsprm_c2python(self->x);
 
   Py_INCREF(Py_None);
   return Py_None;
@@ -1137,9 +1091,9 @@ PyWcsprm_spcfix(PyWcsprm* self) {
     return NULL;
   }
 
-  PyWcsprm_Python2C(self);
+  wcsprm_python2c(self->x);
   status = spcfix(self->x);
-  PyWcsprm_C2Python(self);
+  wcsprm_c2python(self->x);
 
   if (status == -1 || status == 0) {
     return PyInt_FromLong(status);
@@ -1176,9 +1130,9 @@ PyWcsprm_sptr(PyWcsprm* self, PyObject* args, PyObject* kwds) {
 
   strncpy(ctype, py_ctype, 9);
 
-  PyWcsprm_Python2C(self);
+  wcsprm_python2c(self->x);
   status = wcssptr(self->x, &i, ctype);
-  PyWcsprm_C2Python(self);
+  wcsprm_c2python(self->x);
 
   if (status == 0) {
     Py_INCREF(Py_None);
@@ -1213,9 +1167,9 @@ PyWcsprm_to_header(PyWcsprm* self, PyObject* args, PyObject* kwds) {
   if (relax)
     relax = -1;
 
-  PyWcsprm_Python2C(self);
+  wcsprm_python2c(self->x);
   status = wcshdo(relax, self->x, &nkeyrec, &header);
-  PyWcsprm_C2Python(self);
+  wcsprm_c2python(self->x);
 
   if (status != 0) {
     PyErr_SetString(PyExc_RuntimeError,

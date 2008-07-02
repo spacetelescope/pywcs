@@ -116,6 +116,50 @@ is_null(void *p) {
   return 0;
 }
 
+/* wcslib represents undefined values using its own special constant,
+   UNDEFINED.  To be consistent with the Pythonic way of doing things,
+   it's nicer to represent undefined values using NaN.  Unfortunately,
+   in order to get nice mutable arrays in Python, Python must be able
+   to edit the wcsprm values directly.  The solution is to store NaNs
+   in the struct "canonically", but convert those NaNs to/from
+   UNDEFINED around every call into a wcslib function.  It's not as
+   computationally expensive as it sounds, as all these arrays are
+   quite small.
+*/
+typedef void (*value_fixer_t)(double*, size_t);
+
+static void
+wcsprm_fix_values(struct wcsprm* x, value_fixer_t value_fixer) {
+  int naxis = x->naxis;
+
+  value_fixer(x->cd, 4);
+  value_fixer(x->cdelt, naxis);
+  value_fixer(x->crder, naxis);
+  value_fixer(x->crota, naxis);
+  value_fixer(x->crpix, naxis);
+  value_fixer(x->crval, naxis);
+  value_fixer(x->csyer, naxis);
+  value_fixer(&x->equinox, 1);
+  value_fixer(&x->mjdavg, 1);
+  value_fixer(&x->mjdobs, 1);
+  value_fixer(x->obsgeo, 3);
+  value_fixer(&x->restfrq, 1);
+  value_fixer(&x->restwav, 1);
+  value_fixer(&x->velangl, 1);
+  value_fixer(&x->velosys, 1);
+  value_fixer(&x->zsource, 1);
+}
+
+void
+wcsprm_c2python(struct wcsprm* x) {
+  wcsprm_fix_values(x, &undefined2nan);
+}
+
+void
+wcsprm_python2c(struct wcsprm* x) {
+  wcsprm_fix_values(x, &nan2undefined);
+}
+
 /***************************************************************************
   Property helpers
  ***************************************************************************/

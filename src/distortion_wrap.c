@@ -285,7 +285,10 @@ PyDistortion_new(PyTypeObject* type, PyObject* args, PyObject* kwds) {
 
 static int
 PyDistortion_init(PyDistortion* self, PyObject* args, PyObject* kwds) {
-  /* TODO: Write me */
+  if (PySequence_Size(args) != 0) {
+    PyErr_SetString(PyExc_IndexError, "Distortion.__init__ takes exactly 0 arguments");
+    return -1;
+  }
 
   return 0;
 }
@@ -498,10 +501,6 @@ PyDistortion_set_pc(PyDistortion* self, PyObject* value, void* closure) {
 
 static PyObject*
 PyDistortion_get_pv(PyDistortion* self, PyObject* args, PyObject* kwds) {
-  PyObject* result    = NULL;
-  PyObject* subresult = NULL;
-  int       i         = 0;
-
   if (self->x.wcs.pv == NULL) {
     PyErr_SetString(PyExc_AssertionError, "No PVi_ma records present.");
     return NULL;
@@ -512,13 +511,6 @@ PyDistortion_get_pv(PyDistortion* self, PyObject* args, PyObject* kwds) {
 
 static PyObject*
 PyDistortion_set_pv(PyDistortion* self, PyObject* arg, PyObject* kwds) {
-  PyObject*  subvalue  = NULL;
-  int        i         = 0;
-  Py_ssize_t size      = 0;
-  int        ival      = 0;
-  int        mval      = 0;
-  double     value     = 0;
-
   if (is_null(self->x.wcs.ps)) {
     return NULL;
   }
@@ -530,6 +522,11 @@ PyDistortion_set_pv(PyDistortion* self, PyObject* arg, PyObject* kwds) {
   Py_INCREF(Py_None);
   return Py_None;
 }
+
+/* static PyObject* */
+/* PyDistortion_get_offset(PyDistLookup* self, PyObject* args, PyObject* kwds) { */
+/*   /\* TODO: Python2C and C2Python around call *\/ */
+/* } */
 
 static PyMemberDef PyDistortion_members[] = {
   {NULL}
