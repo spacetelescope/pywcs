@@ -37,18 +37,29 @@ DAMAGE.
 #ifndef __UTIL_H__
 #define __UTIL_H__
 
+#define PY_ARRAY_UNIQUE_SYMBOL pywcs_numpy_api
+
 #include <Python.h>
 #include <numpy/arrayobject.h>
+#include <wcs.h>
 #include <wcsmath.h>
 
 #include "isnan.h"
+#include "str_list_proxy.h"
 
+/* Py_ssize_t for old Pythons */
+/* This code is as recommended by: */
+/* http://www.python.org/dev/peps/pep-0353/#conversion-guidelines */
+#if PY_VERSION_HEX < 0x02050000 && !defined(PY_SSIZE_T_MIN)
+typedef int Py_ssize_t;
+# define PY_SSIZE_T_MAX INT_MAX
+# define PY_SSIZE_T_MIN INT_MIN
+#endif
+
+/* TODO: Remove me from public API */
 PyObject*
 PyArrayProxy_New(PyObject* self, int nd, const npy_intp* dims,
                  int typenum, const void* data);
-
-PyObject *
-PyWcsprmListProxy_New(PyObject* owner, Py_ssize_t size, char (*array)[72]);
 
 static inline void
 offset_c_array(double* value, size_t size, double offset) {
@@ -87,5 +98,104 @@ void undefined2nan(double* value, size_t nvalues) {
   }
 }
 
+/**
+ Returns TRUE if pointer is NULL, and sets Python exception
+*/
+int
+is_null(void *);
+
+/***************************************************************************
+  Property helpers
+ ***************************************************************************/
+static inline int
+check_delete(const char* propname, PyObject* value) {
+  if (value == NULL) {
+    PyErr_Format(PyExc_TypeError, "'%s' can not be deleted", propname);
+    return -1;
+  }
+
+  return 0;
+}
+
+static inline PyObject*
+get_string(const char* propname, const char* value) {
+  return PyString_FromString(value);
+}
+
+int
+set_string(const char* propname, PyObject* value,
+           char* dest, Py_ssize_t maxlen);
+
+static inline PyObject*
+get_bool(const char* propname, long value) {
+  return PyBool_FromLong(value);
+}
+
+int
+set_bool(const char* propname, PyObject* value, int* dest);
+
+static inline PyObject*
+get_int(const char* propname, long value) {
+  return PyInt_FromLong(value);
+}
+
+int
+set_int(const char* propname, PyObject* value, int* dest);
+
+static inline PyObject*
+get_double(const char* propname, double value) {
+  return PyFloat_FromDouble(value);
+}
+
+int
+set_double(const char* propname, PyObject* value, double* dest);
+
+static inline PyObject*
+get_double_array(const char* propname, double* value,
+                 npy_int ndims, const npy_intp* dims, PyObject* owner) {
+  return PyArrayProxy_New(owner, ndims, dims, PyArray_DOUBLE, value);
+}
+
+int
+set_double_array(const char* propname, PyObject* value, npy_int ndims,
+                 const npy_intp* dims, double* dest);
+
+static inline PyObject*
+get_int_array(const char* propname, int* value,
+              npy_int ndims, const npy_intp* dims, PyObject* owner) {
+  return PyArrayProxy_New(owner, ndims, dims, PyArray_INT, value);
+}
+
+int
+set_int_array(const char* propname, PyObject* value, npy_int ndims,
+              const npy_intp* dims, int* dest);
+
+/* Defined in str_list_proxy.h */
+PyObject *
+PyStrListProxy_New(PyObject* owner, Py_ssize_t size, char (*array)[72]);
+
+static inline PyObject*
+get_str_list(const char* propname, char (*array)[72], Py_ssize_t len,
+             PyObject* owner) {
+  return PyStrListProxy_New(owner, len, array);
+}
+
+int
+set_str_list(const char* propname, PyObject* value, Py_ssize_t len,
+             Py_ssize_t maxlen, char (*dest)[72]);
+
+PyObject*
+get_pscards(const char* propname, struct pscard* ps, int nps);
+
+int
+set_pscards(const char* propname, PyObject* value, struct pscard** ps,
+            int *nps, int *npsmax);
+
+PyObject*
+get_pvcards(const char* propname, struct pvcard* pv, int npv);
+
+int
+set_pvcards(const char* propname, PyObject* value, struct pvcard** pv,
+            int *npv, int *npvmax);
 
 #endif /* __UTIL_H__ */

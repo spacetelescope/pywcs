@@ -34,11 +34,14 @@ DAMAGE.
          mdroe@stsci.edu
 */
 
-#include "distortion.h"
-#include "docstrings.h"
+/* util.h must be imported first */
 #include "util.h"
 
-#include <structmember.h>
+#include "distortion.h"
+#include "docstrings.h"
+#include "str_list_proxy.h"
+
+#include <structmember.h> /* From Python */
 
 static PyTypeObject PyDistLookupType;
 
@@ -95,108 +98,42 @@ static PyObject*
 PyDistLookup_get_cdelt(PyDistLookup* self, void* closure) {
   Py_ssize_t naxis = 2;
 
-  return PyArrayProxy_New((PyObject*)self, 1, &naxis, PyArray_DOUBLE,
-                          self->x.cdelt);
+  return get_double_array("cdelt", self->x.cdelt, 1, &naxis, (PyObject*)self);
 }
 
 static int
 PyDistLookup_set_cdelt(PyDistLookup* self, PyObject* value, void* closure) {
-  PyArrayObject* value_array = NULL;
+  Py_ssize_t naxis = 2;
 
-  if (value == NULL) {
-    PyErr_SetString(PyExc_TypeError, "Cannot delete the cdelt attribute");
-    return -1;
-  }
-
-  value_array = (PyArrayObject*)PyArray_ContiguousFromAny(value,
-                                                          PyArray_DOUBLE,
-                                                          1, 1);
-
-  if (value_array == NULL)
-    return -1;
-
-  if (PyArray_DIM(value_array, 0) != 2) {
-    PyErr_SetString(PyExc_ValueError, "len(cdelt) != 2");
-    Py_DECREF(value_array);
-    return -1;
-  }
-
-  copy_array_to_c_double(value_array, self->x.cdelt);
-
-  Py_DECREF(value_array);
-
-  return 0;
+  return set_double_array("cdelt", value, 1, &naxis, self->x.cdelt);
 }
 
 static PyObject*
 PyDistLookup_get_crpix(PyDistLookup* self, void* closure) {
   Py_ssize_t naxis = 2;
 
-  return PyArrayProxy_New((PyObject*)self, 1, &naxis, PyArray_DOUBLE,
-                          self->x.crpix);
+  return get_double_array("crpix", self->x.crpix, 1, &naxis, (PyObject*)self);
 }
 
 static int
 PyDistLookup_set_crpix(PyDistLookup* self, PyObject* value, void* closure) {
-  PyArrayObject* value_array = NULL;
+  Py_ssize_t naxis = 2;
 
-  if (value == NULL) {
-    PyErr_SetString(PyExc_TypeError, "Cannot delete the crpix attribute");
-    return -1;
-  }
-
-  value_array = (PyArrayObject*)PyArray_ContiguousFromAny(value,
-                                                          PyArray_DOUBLE,
-                                                          1, 1);
-  if (value_array == NULL)
-    return -1;
-
-  if (PyArray_DIM(value_array, 0) != 2) {
-    PyErr_SetString(PyExc_ValueError, "len(crpix) != 2");
-    return -1;
-  }
-
-  copy_array_to_c_double(value_array, self->x.crpix);
-
-  Py_DECREF(value_array);
-
-  return 0;
+  return set_double_array("crpix", value, 1, &naxis, self->x.crpix);
 }
 
 static PyObject*
 PyDistLookup_get_crval(PyDistLookup* self, void* closure) {
   Py_ssize_t naxis = 2;
 
-  return PyArrayProxy_New((PyObject*)self, 1, &naxis, PyArray_DOUBLE,
-                          self->x.crval);
+  return get_double_array("crval", self->x.crval, 1, &naxis, (PyObject*)self);
 }
 
 static int
 PyDistLookup_set_crval(PyDistLookup* self, PyObject* value, void* closure) {
-  PyArrayObject* value_array = NULL;
+  Py_ssize_t naxis = 2;
 
-  if (value == NULL) {
-    PyErr_SetString(PyExc_TypeError, "Cannot delete the crval attribute");
-    return -1;
-  }
-
-  value_array = (PyArrayObject*)PyArray_ContiguousFromAny(value,
-                                                          PyArray_DOUBLE,
-                                                          1, 1);
-  if (value_array == NULL)
-    return -1;
-
-  if (PyArray_DIM(value_array, 0) != 2) {
-    PyErr_SetString(PyExc_ValueError, "len(crval) != 2");
-    Py_DECREF(value_array);
-    return -1;
-  }
-
-  copy_array_to_c_double(value_array, self->x.crval);
-
-  Py_DECREF(value_array);
-
-  return 0;
+  return set_double_array("crval", value, 1, &naxis, self->x.crval);
 }
 
 static PyObject*
@@ -209,8 +146,9 @@ PyDistLookup_set_data(PyDistLookup* self, PyObject* value, void* closure) {
   PyArrayObject* value_array = NULL;
 
   if (value == NULL) {
-    PyErr_SetString(PyExc_TypeError, "Cannot delete the data attribute");
-    return -1;
+    Py_XDECREF(self->py_data);
+    self->py_data = NULL;
+    self->x.data = NULL;
   }
 
   value_array = (PyArrayObject*)PyArray_ContiguousFromAny(value, 2, 2, PyArray_DOUBLE);
@@ -233,6 +171,12 @@ PyDistLookup_get_offset(PyDistLookup* self, PyObject* args, PyObject* kwds) {
   double coord[NAXES];
   double result;
 
+  if (self->x.data == NULL) {
+    PyErr_SetString(PyExc_RuntimeError,
+                    "No data has been set for the lookup table");
+    return NULL;
+  }
+
   if (!PyArg_ParseTuple(args, "dd", &coord[0], &coord[1])) {
     return NULL;
   }
@@ -249,7 +193,7 @@ static PyGetSetDef PyDistLookup_getset[] = {
   {"cdelt", (getter)PyDistLookup_get_cdelt, (setter)PyDistLookup_set_cdelt, (char *)doc_cdelt},
   {"crpix", (getter)PyDistLookup_get_crpix, (setter)PyDistLookup_set_crpix, (char *)doc_crpix},
   {"crval", (getter)PyDistLookup_get_crval, (setter)PyDistLookup_set_crval, (char *)doc_crval},
-  {"data", (getter)PyDistLookup_get_data, (setter)PyDistLookup_set_data, (char *)doc_data},
+  {"data",  (getter)PyDistLookup_get_data,  (setter)PyDistLookup_set_data,  (char *)doc_data},
   {NULL}
 };
 
@@ -355,34 +299,23 @@ PyDistortion_get_cd(PyDistortion* self, void* closure) {
     return NULL;
   }
 
-  return PyArrayProxy_New((PyObject*)self, 2, dims, PyArray_DOUBLE, self->x.pc);
+  return get_double_array("cd", self->x.pc, 2, dims, (PyObject*)self);
 }
 
 static int
 PyDistortion_set_cd(PyDistortion* self, PyObject* value, void* closure) {
-  PyArrayObject* value_array = NULL;
+  const npy_intp dims[2] = {2, 2};
 
   if (value == NULL) { /* deletion */
     self->x.has_pc = 1;
     return 0;
   }
 
-  value_array = (PyArrayObject*)PyArray_ContiguousFromAny(value,
-                                                          PyArray_DOUBLE,
-                                                          2, 2);
-  if (value_array == NULL)
-    return -1;
-
-  if (PyArray_DIM(value_array, 0) != 2 || PyArray_DIM(value_array, 1) != 2) {
-    PyErr_SetString(PyExc_ValueError, "cd must be a 2x2 array");
-    Py_DECREF(value_array);
+  if (set_double_array("cd", value, 2, dims, self->x.pc)) {
     return -1;
   }
 
-  copy_array_to_c_double(value_array, &(self->x.pc[0][0]));
   self->x.has_pc = 0;
-
-  Py_DECREF(value_array);
 
   return 0;
 }
@@ -396,231 +329,141 @@ PyDistortion_get_cdelt(PyDistortion* self, void* closure) {
     return NULL;
   }
 
-  return PyArrayProxy_New((PyObject*)self, 1, &naxis, PyArray_DOUBLE,
-                          self->x.cdelt);
+  return get_double_array("cdelt", self->x.cdelt, 1, &naxis, (PyObject*)self);
 }
 
 static int
 PyDistortion_set_cdelt(PyDistortion* self, PyObject* value, void* closure) {
-  PyArrayObject* value_array = NULL;
+  Py_ssize_t naxis = 2;
 
   if (value == NULL) { /* deletion */
     self->x.has_pc = 0;
     return 0;
   }
 
-  value_array = (PyArrayObject*)PyArray_ContiguousFromAny(value,
-                                                          PyArray_DOUBLE,
-                                                          1, 1);
-
-  if (value_array == NULL)
-    return -1;
-
-  if (PyArray_DIM(value_array, 0) != 2) {
-    PyErr_SetString(PyExc_ValueError, "len(cdelt) != 2");
-    Py_DECREF(value_array);
+  if (set_double_array("cdelt", value, 1, &naxis, self->x.cdelt)) {
     return -1;
   }
 
-  copy_array_to_c_double(value_array, self->x.cdelt);
   self->x.has_pc = 1;
 
-  Py_DECREF(value_array);
+  return 0;
+}
+
+static inline PyObject*
+get_lookup_tables(const char* propname, PyObject **tables) {
+  return Py_BuildValue("OO", tables[0], tables[1]);
+}
+
+static inline int
+set_lookup_tables(const char* propname, PyObject* value,
+                  PyObject** py_tables,
+                  struct distortion_lookup_t* tables[]) {
+  Py_ssize_t i;
+  PyObject* subvalue = NULL;
+
+  if (check_delete(propname, value)) {
+    return -1;
+  }
+
+  if (!PySequence_Check(value) || PySequence_Size(value) != 2) {
+    PyErr_Format(PyExc_TypeError, "'%s' must be a 2-length sequence", propname);
+    return -1;
+  }
+
+  for (i = 0; i < NAXES; ++i) {
+    subvalue = PySequence_GetItem(value, i);
+    if (!PyObject_TypeCheck(subvalue, &PyDistLookupType)) {
+      Py_XDECREF(subvalue);
+      PyErr_Format(PyExc_TypeError, "'%s' must be a 2-length sequence of DistortionLookupTable instances.", propname);
+      return -1;
+    }
+
+    Py_DECREF(subvalue);
+  }
+
+  for (i = 0; i < NAXES; ++i) {
+    subvalue = PySequence_GetItem(value, i);
+    Py_XDECREF(py_tables[i]);
+    py_tables[i] = subvalue;
+    tables[i] = &(((PyDistLookup *)subvalue)->x);
+  }
 
   return 0;
 }
 
 static PyObject*
 PyDistortion_get_cpdis(PyDistortion* self, void* closure) {
-  return Py_BuildValue("OO", self->py_pre_dist[0], self->py_pre_dist[1]);
+  return get_lookup_tables("cpdis", self->py_pre_dist);
 }
 
 static int
 PyDistortion_set_cpdis(PyDistortion* self, PyObject* value, void* closure) {
-  Py_ssize_t i;
-  PyObject* subvalue = NULL;
-
-  if (!PySequence_Check(value) || PySequence_Size(value) != 2) {
-    PyErr_SetString(PyExc_TypeError, "cpdis must be a 2-length sequence");
-    return -1;
-  }
-
-  for (i = 0; i < NAXES; ++i) {
-    subvalue = PySequence_GetItem(value, i);
-    if (!PyObject_TypeCheck(subvalue, &PyDistLookupType)) {
-      Py_XDECREF(subvalue);
-      PyErr_SetString(PyExc_TypeError, "cpdis must be a 2-length sequence of DistortionLookupTable instances.");
-      return -1;
-    }
-
-    Py_XDECREF(self->py_pre_dist[i]);
-    self->py_pre_dist[i] = subvalue;
-    self->x.pre_dist[i] = &(((PyDistLookup *)subvalue)->x);
-  }
-
-  return 0;
+  return set_lookup_tables("cpdis", value, self->py_pre_dist, self->x.pre_dist);
 }
 
 static PyObject*
 PyDistortion_get_cqdis(PyDistortion* self, void* closure) {
-  return Py_BuildValue("OO", self->py_post_dist[0], self->py_post_dist[1]);
+  return get_lookup_tables("cqdis", self->py_post_dist);
 }
 
 static int
 PyDistortion_set_cqdis(PyDistortion* self, PyObject* value, void* closure) {
-  Py_ssize_t i;
-  PyObject* subvalue = NULL;
-
-  if (!PySequence_Check(value) || PySequence_Size(value) != 2) {
-    PyErr_SetString(PyExc_TypeError, "cqdis must be a 2-length sequence");
-    return -1;
-  }
-
-  for (i = 0; i < NAXES; ++i) {
-    subvalue = PySequence_GetItem(value, i);
-    if (!PyObject_TypeCheck(subvalue, &PyDistLookupType)) {
-      Py_XDECREF(subvalue);
-      PyErr_SetString(PyExc_TypeError, "cqdis must be a 2-length sequence of DistortionLookupTable instances.");
-      return -1;
-    }
-
-    Py_XDECREF(self->py_post_dist[i]);
-    self->py_post_dist[i] = subvalue;
-    self->x.post_dist[i] = &(((PyDistLookup *)subvalue)->x);
-  }
-
-  return 0;
+  return set_lookup_tables("cqdis", value, self->py_post_dist, self->x.post_dist);
 }
 
 static PyObject*
 PyDistortion_get_crpix(PyDistortion* self, void* closure) {
   Py_ssize_t naxis = 2;
 
-  return PyArrayProxy_New((PyObject*)self, 1, &naxis, PyArray_DOUBLE,
-                          self->x.crpix);
+  return get_double_array("crpix", self->x.crpix, 1, &naxis, (PyObject*)self);
 }
 
 static int
 PyDistortion_set_crpix(PyDistortion* self, PyObject* value, void* closure) {
-  PyArrayObject* value_array = NULL;
+  Py_ssize_t naxis = 2;
 
-  if (value == NULL) {
-    PyErr_SetString(PyExc_TypeError, "Cannot delete the crpix attribute");
-    return -1;
-  }
-
-  value_array = (PyArrayObject*)PyArray_ContiguousFromAny(value,
-                                                          PyArray_DOUBLE,
-                                                          1, 1);
-  if (value_array == NULL)
-    return -1;
-
-  if (PyArray_DIM(value_array, 0) != 2) {
-    PyErr_SetString(PyExc_ValueError, "len(crpix) != 2");
-    Py_DECREF(value_array);
-    return -1;
-  }
-
-  copy_array_to_c_double(value_array, self->x.crpix);
-
-  Py_DECREF(value_array);
-
-  return 0;
+  return set_double_array("crpix", value, 1, &naxis, self->x.crpix);
 }
 
 static PyObject*
 PyDistortion_get_crval(PyDistortion* self, void* closure) {
   Py_ssize_t naxis = 2;
 
-  if (self->x.wcs.crval == NULL) {
-    PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
+  if (is_null(self->x.wcs.crval)) {
     return NULL;
   }
 
-  return PyArrayProxy_New((PyObject*)self, 1, &naxis, PyArray_DOUBLE,
-                          self->x.wcs.crval);
+  return get_double_array("crval", self->x.wcs.crval, 1, &naxis, (PyObject*)self);
 }
 
 static int
 PyDistortion_set_crval(PyDistortion* self, PyObject* value, void* closure) {
-  PyArrayObject* value_array = NULL;
+  Py_ssize_t naxis = 2;
 
-  if (self->x.wcs.crval == NULL) {
-    PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
+  if (is_null(self->x.wcs.crval)) {
     return -1;
   }
 
-  if (value == NULL) {
-    PyErr_SetString(PyExc_TypeError, "Cannot delete the crval attribute");
-    return -1;
-  }
-
-  value_array = (PyArrayObject*)PyArray_ContiguousFromAny(value, PyArray_DOUBLE,
-                                                          1, 1);
-  if (value_array == NULL)
-    return -1;
-
-  if (PyArray_DIM(value_array, 0) != 2) {
-    PyErr_SetString(PyExc_ValueError, "len(crval) != 2");
-    Py_DECREF(value_array);
-    return -1;
-  }
-
-  copy_array_to_c_double(value_array, self->x.wcs.crval);
-
-  Py_DECREF(value_array);
-
-  return 0;
+  return set_double_array("crval", value, 1, &naxis, self->x.wcs.crval);
 }
 
 static PyObject*
 PyDistortion_get_ctype(PyDistortion* self, void* closure) {
-  return PyWcsprmListProxy_New((PyObject*)self, 2, self->x.wcs.ctype);
+  if (is_null(self->x.wcs.ctype)) {
+    return NULL;
+  }
+
+  return get_str_list("ctype", self->x.wcs.ctype, 2, (PyObject*)self);
 }
 
 static int
 PyDistortion_set_ctype(PyDistortion* self, PyObject* value, void* closure) {
-  PyObject*  str      = NULL;
-  char*      str_char = NULL;
-  Py_ssize_t str_len  = 0;
-  int        i        = 0;
-
-  if (self->x.wcs.ctype == NULL) {
-    PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
+  if (is_null(self->x.wcs.ctype)) {
     return -1;
   }
 
-  if (!PySequence_Check(value)) {
-    PyErr_SetString(PyExc_TypeError, "ctype must be a sequence of strings");
-    return -1;
-  }
-
-  if (PySequence_Size(value) != 2) {
-    PyErr_SetString(PyExc_ValueError, "len(ctype) != 2");
-    return -1;
-  }
-
-  for (i = 0; i < 2; ++i) {
-    str = PySequence_GetItem(value, i);
-    if (str == NULL)
-      return -1;
-
-    if (PyString_AsStringAndSize(str, &str_char, &str_len))
-      return -1;
-
-    if (str_len > 68) {
-      PyErr_SetString(PyExc_ValueError,
-                      "Each string must be less than 68 characters");
-      Py_DECREF(str);
-      return -1;
-    }
-
-    strncpy(self->x.wcs.ctype[i], str_char, 72);
-
-    Py_DECREF(str);
-  }
-
-  return 0;
+  return set_str_list("ctype", value, 2, 0, self->x.wcs.ctype);
 }
 
 static PyObject*
@@ -632,34 +475,23 @@ PyDistortion_get_pc(PyDistortion* self, void* closure) {
     return NULL;
   }
 
-  return PyArrayProxy_New((PyObject*)self, 2, dims, PyArray_DOUBLE, self->x.pc);
+  return get_double_array("pc", self->x.pc, 2, dims, (PyObject*)self);
 }
 
 static int
 PyDistortion_set_pc(PyDistortion* self, PyObject* value, void* closure) {
-  PyArrayObject* value_array = NULL;
+  const npy_intp dims[2] = {2, 2};
 
   if (value == NULL) { /* deletion */
     self->x.has_pc = 0;
     return 0;
   }
 
-  value_array = (PyArrayObject*)PyArray_ContiguousFromAny(value,
-                                                          PyArray_DOUBLE,
-                                                          2, 2);
-  if (value_array == NULL)
-    return -1;
-
-  if (PyArray_DIM(value_array, 0) != 2 || PyArray_DIM(value_array, 1) != 2) {
-    PyErr_SetString(PyExc_ValueError, "pc must be a 2x2 array");
-    Py_DECREF(value_array);
+  if (set_double_array("pc", value, 2, dims, self->x.pc)) {
     return -1;
   }
 
-  copy_array_to_c_double(value_array, &(self->x.pc[0][0]));
   self->x.has_pc = 1;
-
-  Py_DECREF(value_array);
 
   return 0;
 }
@@ -675,22 +507,7 @@ PyDistortion_get_pv(PyDistortion* self, PyObject* args, PyObject* kwds) {
     return NULL;
   }
 
-  result = PyList_New(self->x.wcs.npv);
-  if (result == NULL)
-    return NULL;
-
-  for (i = 0; i < self->x.wcs.npv; ++i) {
-    subresult = Py_BuildValue("iid",
-                              self->x.wcs.pv[i].i,
-                              self->x.wcs.pv[i].m,
-                              self->x.wcs.pv[i].value);
-    if (subresult == NULL || PyList_SetItem(result, i, subresult)) {
-      Py_DECREF(result);
-      return NULL;
-    }
-  }
-
-  return result;
+  return get_pvcards("pv", self->x.wcs.pv, self->x.wcs.npv);
 }
 
 static PyObject*
@@ -702,50 +519,12 @@ PyDistortion_set_pv(PyDistortion* self, PyObject* arg, PyObject* kwds) {
   int        mval      = 0;
   double     value     = 0;
 
-  if (self->x.wcs.ps == NULL) {
-    PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
+  if (is_null(self->x.wcs.ps)) {
     return NULL;
   }
 
-  if (!PySequence_Check(arg))
+  if (set_pvcards("pv", arg, &self->x.wcs.pv, &self->x.wcs.npv, &self->x.wcs.npvmax)) {
     return NULL;
-  size = PySequence_Size(arg);
-
-  /* Verify the entire list for correct types first, so we don't have
-     to undo anything copied into the canonical array. */
-  for (i = 0; i < size; ++i) {
-    subvalue = PySequence_GetItem(arg, i);
-    if (subvalue == NULL)
-      return NULL;
-    if (!PyArg_ParseTuple(subvalue, "iid", &ival, &mval, &value))
-      return NULL;
-    Py_DECREF(subvalue);
-  }
-
-  if (size > self->x.wcs.npvmax) {
-    free(self->x.wcs.pv);
-    self->x.wcs.pv = malloc(sizeof(struct pscard) * size);
-    if (self->x.wcs.pv == NULL) {
-      PyErr_SetString(PyExc_MemoryError, "Could not allocate memory.");
-      return NULL;
-    }
-    self->x.wcs.npvmax = size;
-  }
-
-  for (i = 0; i < size; ++i) {
-    subvalue = PySequence_GetItem(arg, i);
-    if (subvalue == NULL)
-      return NULL;
-    if (!PyArg_ParseTuple(subvalue, "iid", &ival, &mval, &value)) {
-      Py_DECREF(subvalue);
-      return NULL;
-    }
-    Py_DECREF(subvalue);
-
-    self->x.wcs.pv[i].i = ival;
-    self->x.wcs.pv[i].m = mval;
-    self->x.wcs.pv[i].value = value;
-    self->x.wcs.npv = i + 1;
   }
 
   Py_INCREF(Py_None);
@@ -770,7 +549,7 @@ static PyGetSetDef PyDistortion_getset[] = {
 
 static PyMethodDef PyDistortion_methods[] = {
   {"get_pv", (PyCFunction)PyDistortion_get_pv, METH_NOARGS, doc_get_pv},
-  {"set_pv", (PyCFunction)PyDistortion_set_pv, METH_O, doc_set_pv},
+  {"set_pv", (PyCFunction)PyDistortion_set_pv, METH_O,      doc_set_pv},
   {NULL}
 };
 

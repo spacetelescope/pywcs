@@ -71,7 +71,7 @@ struct distortion_t {
      and CDELT should be set to 1's.
   */
   double crpix[NAXES];
-  double pc[NAXES][NAXES];
+  double *pc;
   int has_pc;
 
   /* Step III:
