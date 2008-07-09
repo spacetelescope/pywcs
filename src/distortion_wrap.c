@@ -64,7 +64,8 @@ PyDistLookup_new(PyTypeObject* type, PyObject* args, PyObject* kwds) {
 
   self = (PyDistLookup*)type->tp_alloc(type, 0);
   if (self != NULL) {
-    distortion_lookup_t_init(&self->x);
+    if (distortion_lookup_t_init(&self->x))
+      return NULL;
     self->py_data = NULL;
   }
   return (PyObject*)self;

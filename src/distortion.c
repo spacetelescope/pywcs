@@ -40,7 +40,7 @@ DAMAGE.
 #include <math.h>
 #include <stdlib.h>
 
-void
+int
 distortion_lookup_t_init(struct distortion_lookup_t* lookup) {
   unsigned int i;
 
@@ -52,11 +52,13 @@ distortion_lookup_t_init(struct distortion_lookup_t* lookup) {
   }
 
   lookup->data = NULL;
+
+  return 0;
 }
 
-void
+int
 distortion_lookup_t_free(struct distortion_lookup_t* lookup) {
-
+  return 0;
 }
 
 int

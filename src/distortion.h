@@ -59,7 +59,7 @@ struct distortion_lookup_t {
 /**
  * Initialize a lookup table to reasonable default values.
  */
-void
+int
 distortion_lookup_t_init(struct distortion_lookup_t* lookup);
 
 /**
@@ -68,7 +68,7 @@ distortion_lookup_t_init(struct distortion_lookup_t* lookup);
  * the lookup table.  It does not free the data pointed to be the
  * lookup table -- it is the user's responsibility to free that array.
  */
-void
+int
 distortion_lookup_t_free(struct distortion_lookup_t* lookup);
 
 /**
