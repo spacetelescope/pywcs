@@ -95,43 +95,6 @@ is_valid_alt_key(const char* key) {
 }
 
 /***************************************************************************
- * Exceptions                                                              *
- ***************************************************************************/
-
-static PyObject* WcsExc_SingularMatrix;
-static PyObject* WcsExc_InconsistentAxisTypes;
-static PyObject* WcsExc_InvalidTransform;
-static PyObject* WcsExc_InvalidCoordinate;
-static PyObject* WcsExc_NoSolution;
-static PyObject* WcsExc_InvalidSubimageSpecification;
-static PyObject* WcsExc_NonseparableSubimageCoordinateSystem;
-
-/* This is an array mapping the wcs status codes to Python exception
- * types.  The exception string is stored as part of wcslib itself in
- * wcs_errmsg.
- */
-static PyObject** wcs_errexc[] = {
-  /* 0 */ NULL,                         /* Success */
-  /* 1 */ &PyExc_MemoryError,           /* Null wcsprm pointer passed */
-  /* 2 */ &PyExc_MemoryError,           /* Memory allocation failed */
-  /* 3 */ &WcsExc_SingularMatrix,       /* Linear transformation matrix is singular */
-  /* 4 */ &WcsExc_InconsistentAxisTypes, /* Inconsistent or unrecognized coordinate axis types */
-  /* 5 */ &PyExc_ValueError,            /* Invalid parameter value */
-  /* 6 */ &WcsExc_InvalidTransform,     /* Invalid coordinate transformation parameters */
-  /* 7 */ &WcsExc_InvalidTransform,     /* Ill-conditioned coordinate transformation parameters */
-  /* 8 */ &WcsExc_InvalidCoordinate,    /* One or more of the pixel coordinates were invalid, */
-                                        /* as indicated by the stat vector */
-  /* 9 */ &WcsExc_InvalidCoordinate,    /* One or more of the world coordinates were invalid, */
-                                        /* as indicated by the stat vector */
-  /*10 */ &WcsExc_InvalidCoordinate,    /* Invalid world coordinate */
-  /*11 */ &WcsExc_NoSolution,           /* no solution found in the specified interval */
-  /*12 */ &WcsExc_InvalidSubimageSpecification, /* Invalid subimage specification (no spectral axis) */
-  /*13 */ &WcsExc_NonseparableSubimageCoordinateSystem /* Non-separable subimage coordinate system */
-};
-#define WCS_ERRMSG_MAX 14
-#define WCSFIX_ERRMSG_MAX 11
-
-/***************************************************************************
  * PyWcsprm object
  ***************************************************************************/
 
@@ -2248,12 +2211,6 @@ static PyMethodDef module_methods[] = {
   {NULL}
 };
 
-#define DEFINE_EXCEPTION(exc) \
-  WcsExc_##exc = PyErr_NewException("_pywcs." #exc "Error", PyExc_ValueError, NULL); \
-  if (WcsExc_##exc == NULL) \
-    return; \
-  PyModule_AddObject(m, #exc "Error", WcsExc_##exc); \
-
 /* Defined in distortion_wrap.c */
 int _setup_distortion_type(PyObject* m);
 
@@ -2282,14 +2239,8 @@ init_pywcs(void)
     return;
   if (_setup_distortion_type(m))
     return;
-
-  DEFINE_EXCEPTION(SingularMatrix);
-  DEFINE_EXCEPTION(InconsistentAxisTypes);
-  DEFINE_EXCEPTION(InvalidTransform);
-  DEFINE_EXCEPTION(InvalidCoordinate);
-  DEFINE_EXCEPTION(NoSolution);
-  DEFINE_EXCEPTION(InvalidSubimageSpecification);
-  DEFINE_EXCEPTION(NonseparableSubimageCoordinateSystem);
+  if (_define_exceptions(m))
+    return;
 
   PyModule_AddObject(m, "__docformat__", PyString_FromString("epytext"));
 }

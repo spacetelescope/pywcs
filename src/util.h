@@ -111,6 +111,29 @@ void
 wcsprm_python2c(struct wcsprm* x);
 
 /***************************************************************************
+ * Exceptions                                                              *
+ ***************************************************************************/
+
+extern PyObject* WcsExc_SingularMatrix;
+extern PyObject* WcsExc_InconsistentAxisTypes;
+extern PyObject* WcsExc_InvalidTransform;
+extern PyObject* WcsExc_InvalidCoordinate;
+extern PyObject* WcsExc_NoSolution;
+extern PyObject* WcsExc_InvalidSubimageSpecification;
+extern PyObject* WcsExc_NonseparableSubimageCoordinateSystem;
+
+/* This is an array mapping the wcs status codes to Python exception
+ * types.  The exception string is stored as part of wcslib itself in
+ * wcs_errmsg.
+ */
+extern PyObject** wcs_errexc[14];
+#define WCS_ERRMSG_MAX 14
+#define WCSFIX_ERRMSG_MAX 11
+
+int
+_define_exceptions(PyObject* m);
+
+/***************************************************************************
   Property helpers
  ***************************************************************************/
 static inline int

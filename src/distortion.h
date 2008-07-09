@@ -39,24 +39,46 @@ DAMAGE.
 
 #include "wcs.h"
 
-// TODO: This is all two-dimensional.  Should be made
-// multi-dimensional in the future.
+/* TODO: This is all two-dimensional.  Should be made
+   multi-dimensional in the future. */
 #define NAXES 2
 
+/**
+ * A structure to contain the information for a single distortion lookup table
+ */
 struct distortion_lookup_t {
-  unsigned int  naxis[NAXES];   // size of distortion image
+  unsigned int  naxis[NAXES];   /* size of distortion image */
   double        crpix[NAXES];
   double        crval[NAXES];
   double        cdelt[NAXES];
+  /* The data is not "owned" by this structure.  It is the user's
+     responsibility to free it. */
   double       *data;
 };
 
+/**
+ * Initialize a lookup table to reasonable default values.
+ */
 void
 distortion_lookup_t_init(struct distortion_lookup_t* lookup);
 
+/**
+ * Cleanup after a lookup table.  Currently does nothing, but may do
+ * something in the future, so please call it when you are done with
+ * the lookup table.  It does not free the data pointed to be the
+ * lookup table -- it is the user's responsibility to free that array.
+ */
 void
 distortion_lookup_t_free(struct distortion_lookup_t* lookup);
 
+/**
+ * A structure to hold the parameters for a transformation based on
+ * Paper IV.  Only -TAB distortions (not polynomial or spline) are
+ * supported.
+ *
+ * Step V is performed by wcslib, so just delegates to a wcsprm
+ * object.
+ */
 struct distortion_t {
   /* Step I:
      The CPDISja/DPja pre-linear tranformation distortion
@@ -97,22 +119,37 @@ struct distortion_t {
  *
  * (Only lookup table distortions are supported, not polynomial ones.)
  *
- * TODO: docstring
+ * @return wcsini result codes
  */
-void
+int
 distortion_t_init(
     struct distortion_t* dist);
 
-void
+/**
+ * Cleanup after a distortion_t object.
+ */
+int
 distortion_t_free(
     struct distortion_t* dist);
 
+/**
+ * Lookup the distortion offset for a particular pixel coordinate in
+ * the lookup table.
+ */
 double
 get_distortion_offset(
     const struct distortion_lookup_t *lookup,
     const double img[NAXES]);
 
-void
+/**
+ * Perform the pipeline of transformations and distortions outlined in Paper IV.
+ *
+ * Only -TAB distortions (not polynomial or spline) are
+ * supported.
+ *
+ * @return Status codes from wcslib's wcsp2s function.
+ */
+int
 distortion_pipeline(
     const struct distortion_t *dist,
     const unsigned int nelem,

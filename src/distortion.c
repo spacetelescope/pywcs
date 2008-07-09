@@ -59,17 +59,10 @@ distortion_lookup_t_free(struct distortion_lookup_t* lookup) {
 
 }
 
-/**
- * Initialize a distortion_t object, that describes an
- * entire transformation pipeline of Figure 1 in Paper IV.
- *
- * (Only lookup table distortions are supported, not polynomial ones.)
- *
- * TODO: docstring
- */
-void
+int
 distortion_t_init(struct distortion_t* dist) {
-  unsigned int i, j;
+  unsigned int i;
+  int status;
 
   assert(dist);
 
@@ -82,11 +75,10 @@ distortion_t_init(struct distortion_t* dist) {
     dist->crpix[i] = 0.0;
   }
 
-  for (i = 0; i < NAXES; ++i) {
-    for (j = 0; j < NAXES; ++j) {
-      dist->pc[i][j] = (i == j) ? 1.0 : 0.0;
-    }
-  }
+  dist->pc[0] = 1.0;
+  dist->pc[1] = 0.0;
+  dist->pc[2] = 0.0;
+  dist->pc[3] = 1.0;
 
   for (i = 0; i < NAXES; ++i) {
     dist->post_dist[i] = NULL;
@@ -98,22 +90,26 @@ distortion_t_init(struct distortion_t* dist) {
 
   dist->has_pc = 0;
 
-  /* TODO: Error handling */
-  wcsini(1, NAXES, &dist->wcs);
+  status = wcsini(1, NAXES, &dist->wcs);
   assert(dist->wcs->cdelt[0] == 1.0);
   assert(dist->wcs->cdelt[1] == 1.0);
   assert(dist->wcs->crpix[0] == 0.0);
   assert(dist->wcs->crpix[1] == 0.0);
-  assert(dist->wcs->pc[0] == 1.0);
+  assert(dist->wcs->pc[0]    == 1.0);
+  return status;
 }
 
-void
+int
 distortion_t_free(
     struct distortion_t* dist) {
-  /* TODO: Error handling */
-  wcsfree(&dist->wcs);
+  return wcsfree(&dist->wcs);
 }
 
+/**
+ * Get a value at a specific integral location in the lookup table.
+ * (This is nothing more special than an array lookup with range
+ * checking.)
+ */
 static inline double
 get_dist(
     const struct distortion_lookup_t *lookup,
@@ -121,9 +117,14 @@ get_dist(
   size_t i;
   for (i = 0; i < NAXES; ++i)
     assert(coord[i] < lookup->naxis[i]);
+
   return *(lookup->data + (lookup->naxis[0] * coord[1]) + coord[0]);
 }
 
+/**
+ * Converts a pixel coordinate to a fractional coordinate in the
+ * lookup table on a single axis
+ */
 static inline double
 image_coord_to_distortion_coord(
     const struct distortion_lookup_t *lookup,
@@ -138,7 +139,7 @@ image_coord_to_distortion_coord(
       ((img - lookup->crval[axis]) / lookup->cdelt[axis]) +
       lookup->crpix[axis]);
 
-  // TODO: Should we just fail here?
+  /* TODO: Should we just fail here? */
   if (result < 0.0)
     result = 0.0;
   else if (result >= lookup->naxis[axis])
@@ -147,6 +148,10 @@ image_coord_to_distortion_coord(
   return result;
 }
 
+/**
+ * Converts a pixel coordinate to a fractional coordinate in the
+ * lookup table.
+ */
 static inline void
 image_coords_to_distortion_coords(
     const struct distortion_lookup_t *lookup,
@@ -164,6 +169,9 @@ image_coords_to_distortion_coords(
   }
 }
 
+/**
+ * Helper function for get_distortion_offset
+ */
 static inline double
 calculate_weight(double iw, unsigned int i0, double jw, unsigned int j0) {
   if (!i0)
@@ -173,9 +181,6 @@ calculate_weight(double iw, unsigned int i0, double jw, unsigned int j0) {
   return iw * jw;
 }
 
-/**
- * Get the interpolated distortion offset
- */
 double
 get_distortion_offset(
     const struct distortion_lookup_t *lookup,
@@ -212,7 +217,7 @@ get_distortion_offset(
   return result;
 }
 
-void
+int
 distortion_pipeline(
     const struct distortion_t *dist,
     const unsigned int nelem,
@@ -221,20 +226,29 @@ distortion_pipeline(
     double *world /* [NAXES][nelem] */) {
   const double *xi;
   const double *yi;
-  double *xo, *yo;
-  double offset;
-  double pixcrd[NAXES];
-  double pre_dist;
-  double inter[NAXES];
-  double post_dist;
-  double scaled[NAXES];
-  double worldcrd[NAXES];
-  int stat[NAXES];
-  size_t i, j, k;
+  double       *xo, *yo;
+  double        offset;
+  double        pixcrd[NAXES];
+  double        pre_dist;
+  double        inter[NAXES];
+  double        post_dist;
+  double        scaled[NAXES];
+  double        worldcrd[NAXES];
+  int           stat[NAXES];
+  int           status;
+  size_t        i, j, k;
 
   assert(dist);
   assert(pix);
   assert(world);
+
+  if (dist->pc[0] == 0.0 || dist->pc[3] == 0.0) {
+    return 3; // linear transformation matrix is singular
+  }
+
+  if (dist->cdelt[0] == 0.0 || dist->cdelt[1] == 0.0) {
+    return 6; // Invalid coordinate transformation parameters
+  }
 
   xi = pix;
   yi = pix + nelem;
@@ -259,7 +273,7 @@ distortion_pipeline(
       inter[i] = 0.0;
       offset = pre_dist - dist->crpix[i];
       for (j = 0; j < NAXES; ++j) {
-        inter[i] += dist->pc[i][j] * offset;
+        inter[i] += dist->pc[(i<<1)+j] * offset;
       }
     }
 
@@ -281,10 +295,14 @@ distortion_pipeline(
     /* STEP V: CTYPE coordinate computation per agreement */
     /* This is the most complicated part -- so we defer to wcslib */
     /* TODO: Error handling */
-    wcsp2s((struct wcsprm *)&dist->wcs, NAXES, 1,
-           scaled, pixcrd, pixcrd, pixcrd, worldcrd, stat);
+    status = wcsp2s((struct wcsprm *)&dist->wcs, NAXES, 1,
+                    scaled, pixcrd, pixcrd, pixcrd, worldcrd, stat);
+    if (status != 0 && status != 8)
+      return status;
 
     *xo = worldcrd[0];
     *yo = worldcrd[1];
   }
+
+  return 0;
 }

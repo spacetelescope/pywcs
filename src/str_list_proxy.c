@@ -66,8 +66,7 @@ PyStrListProxy_new(PyTypeObject* type, PyObject* args, PyObject* kwds) {
 }
 
 static int
-PyStrListProxy_traverse(PyStrListProxy* self, visitproc visit, void *arg)
-{
+PyStrListProxy_traverse(PyStrListProxy* self, visitproc visit, void *arg) {
   int vret;
 
   if (self->pyobject) {
@@ -80,8 +79,7 @@ PyStrListProxy_traverse(PyStrListProxy* self, visitproc visit, void *arg)
 }
 
 static int
-PyStrListProxy_clear(PyStrListProxy *self)
-{
+PyStrListProxy_clear(PyStrListProxy *self) {
   PyObject *tmp;
 
   tmp = self->pyobject;

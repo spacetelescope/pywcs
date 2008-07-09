@@ -258,7 +258,14 @@ more than half a day then C{ValueError} is raised.
 """
 
 Distortion = """
+A class to perform the transformations and distortions outlined in
+Paper IV.
 
+Currently, only one direction -- from pixel to world coordinates -- is
+supported.
+
+Additionally, only lookup table distortions ("-TAB") are supported,
+not polynomial or spline distortions.
 """
 
 DistortionLookupTable = """
@@ -270,7 +277,41 @@ in a Distortion object.
 """
 
 distortion_p2s = """
-TODO: Write me
+p2s(pixcrd) -> world
+
+Converts pixel to world coordinates using the transformations and
+distortions outlined in Paper IV.
+
+B{The pixel coordinates given are 0-based (like array indices in C and
+Python).  If your pixel coordinates are 1-based (like array indices in
+Fortran), use L{p2s_fits} instead.}
+
+@param pixcrd: Array of pixel coordinates.
+
+@type pixcrd: numpy array[ncoord][nelem] of double
+
+@return: array[ncoord][nelem] of double
+
+Array of world coordinates.  For celestial axes,
+C{world[][self.L{lng}]} and C{world[][self.L{lat}]} are the celestial
+longitude and latitude, in decimal degrees.  For spectral axes,
+C{world[][self.L{spec}]} is the intermediate spectral coordinate, in
+SI units.
+
+@raises MemoryError: Memory allocation failed.
+@raises SingularMatrixError: Linear transformation matrix is singular.
+@raises InconsistentAxisTypesError: Inconsistent or unrecognized
+    coordinate axis types.
+@raises ValueError: Invalid parameter value.
+@raises ValueError: x- and y-coordinate arrays are not the same size.
+@raises InvalidTransformError: Invalid coordinate transformation
+    parameters.
+@raises InvalidTransformError: Ill-conditioned coordinate transformation
+    parameters.
+"""
+
+distortion_pixel2world = """
+An alias for L{p2s}.
 """
 
 equinox = """

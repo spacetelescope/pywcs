@@ -505,6 +505,7 @@ int wcshdo(int relax, struct wcsprm *wcs, int *nkeyrec, char **header)
       col0 = colax[0];
    } else {
       primage = 1;
+      col0 = 0;
    }
 
 

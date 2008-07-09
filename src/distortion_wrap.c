@@ -274,7 +274,12 @@ PyDistortion_new(PyTypeObject* type, PyObject* args, PyObject* kwds) {
 
   self = (PyDistortion*)type->tp_alloc(type, 0);
   if (self != NULL) {
-    distortion_t_init(&self->x);
+    if (distortion_t_init(&self->x)) {
+      PyErr_SetString(PyExc_MemoryError,
+                      "Could not initialize wcsprm object");
+      return NULL;
+    }
+
     for (i = 0; i < NAXES; ++i) {
       self->py_pre_dist[i] = NULL;
       self->py_post_dist[i] = NULL;
@@ -527,7 +532,7 @@ static PyObject*
 PyDistortion_p2s(PyDistortion* self, PyObject* arg) {
   PyArrayObject* pixcrd = NULL;
   PyArrayObject* world = NULL;
-  int status = 1;
+  int status = 0;
 
   pixcrd = (PyArrayObject*)PyArray_ContiguousFromAny(arg, PyArray_DOUBLE, 2, 2);
   if (pixcrd == NULL) {
@@ -536,6 +541,7 @@ PyDistortion_p2s(PyDistortion* self, PyObject* arg) {
 
   if (PyArray_DIM(pixcrd, 0) != 2) {
     PyErr_SetString(PyExc_ValueError, "Input pixel array must be of size (2, n)");
+    status = -1;
     goto __PyDistortion_p2s_exit;
   }
 
@@ -546,21 +552,29 @@ PyDistortion_p2s(PyDistortion* self, PyObject* arg) {
   }
 
   wcsprm_python2c(&self->x.wcs);
-  distortion_pipeline(&self->x,
-                      PyArray_DIM(pixcrd, 1),
-                      PyArray_DATA(pixcrd),
-                      PyArray_DATA(world));
+  status = distortion_pipeline(&self->x,
+                               PyArray_DIM(pixcrd, 1),
+                               PyArray_DATA(pixcrd),
+                               PyArray_DATA(world));
   wcsprm_c2python(&self->x.wcs);
 
  __PyDistortion_p2s_exit:
   Py_XDECREF(pixcrd);
 
-  if (status) {
-    Py_XDECREF(world);
-    return NULL;
+  if (status == 0 || status == 8) {
+    return (PyObject*)world;
   }
 
-  return (PyObject*)world;
+  Py_XDECREF(world);
+
+  if (status > 0 && status < WCS_ERRMSG_MAX) {
+    PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
+  } else if (status != -1) {
+    PyErr_SetString(PyExc_RuntimeError,
+                    "Unknown error occurred.  Something is seriously wrong.");
+  }
+
+  return NULL;
 }
 
 static PyMemberDef PyDistortion_members[] = {
@@ -580,9 +594,10 @@ static PyGetSetDef PyDistortion_getset[] = {
 };
 
 static PyMethodDef PyDistortion_methods[] = {
-  {"get_pv", (PyCFunction)PyDistortion_get_pv, METH_NOARGS, doc_get_pv},
-  {"p2s",    (PyCFunction)PyDistortion_p2s,    METH_O,      doc_distortion_p2s},
-  {"set_pv", (PyCFunction)PyDistortion_set_pv, METH_O,      doc_set_pv},
+  {"get_pv",      (PyCFunction)PyDistortion_get_pv, METH_NOARGS, doc_get_pv},
+  {"p2s",         (PyCFunction)PyDistortion_p2s,    METH_O,      doc_distortion_p2s},
+  {"pixel2world", (PyCFunction)PyDistortion_p2s,    METH_O,      doc_distortion_pixel2world}, /* alias for p2s */
+  {"set_pv",      (PyCFunction)PyDistortion_set_pv, METH_O,      doc_set_pv},
   {NULL}
 };
 
