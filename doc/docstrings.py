@@ -17,9 +17,9 @@ cd = """
 C{CDi_ja} linear transformation matrix.
 
 For historical compatibility, two alternate specifications of the
-C{CDi_ja} and C{CROTAia} keywords.  Although these may not formally
-co-exist with C{PCi_ja}, the approach here is simply to ignore them if
-given in conjunction with C{PCi_ja}.
+C{CDi_ja} and C{CROTAia} keywords are supported.  Although these may
+not formally co-exist with C{PCi_ja}, the approach here is simply to
+ignore them if given in conjunction with C{PCi_ja}.
 
 L{has_pci_ja}, L{has_cdi_ja} and L{has_crotaia} can be used to
 determine which of these alternatives are present in the header.
@@ -90,13 +90,13 @@ Creates a deep copy of the WCS object.
 """
 
 cpdis = """
-The pre-linear transformation distortion lookup tables.
+The pre-linear transformation distortion lookup tables, C{CPDIS}.
 
 This is a 2-tuple of the form (x, y)
 """
 
 cqdis = """
-The post-linear transformation distortion lookup tables.
+The post-linear transformation distortion lookup tables, C{CQDIS}.
 
 This is a 2-tuple of the form (x, y)
 """
@@ -121,15 +121,20 @@ matrix, maintained for historical compatibility.
 @type: array[naxis] of double
 """
 
-crpix = """
+_crpix_generic = """
 Coordinate reference pixels (C{CRPIXja}) for each pixel axis.
 
 B{Note that this coordinate is 1-based, and will be set/returned
-exactly as in the header.}  This means that L{p2s}(crpix) will not be
-correct, and one should use L{p2s_fits}(crpix) instead.
+exactly as in the header.}
+
+%s
 
 @type: array[naxis] of double
 """
+
+crpix = _crpix_generic % """
+This means that L{p2s}(crpix) will not be correct, and one should use
+L{p2s_fits}(crpix) instead."""
 
 crval = """
 Coordinate reference values (C{CRVALia}) for each coordinate axis.
@@ -276,6 +281,28 @@ These objects are used for setting the cpdis and cqdis lookup tables
 in a Distortion object.
 """
 
+distortion_cd = """
+C{CDi_ja} linear transformation matrix.
+
+For historical compatibility, either a single C{CDi_ja} matrix is
+supported or a C{PCi_ja} matrix and C{CDELTia} keywords.
+
+L{has_pc} can be used to determine which of these alternatives are
+present in the header.
+
+Setting C{cd} resets L{cdelt} to unity.
+
+@type: array[2][2] of double
+"""
+
+distortion_crpix = _crpix_generic % ""
+
+distortion_has_pc = """
+has_pc() -> bool
+
+Returns True if the distortion is using PC/CDELT, otherwise it is using CD.
+"""
+
 distortion_p2s = """
 p2s(pixcrd) -> world
 
@@ -292,11 +319,7 @@ Fortran), use L{p2s_fits} instead.}
 
 @return: array[ncoord][nelem] of double
 
-Array of world coordinates.  For celestial axes,
-C{world[][self.L{lng}]} and C{world[][self.L{lat}]} are the celestial
-longitude and latitude, in decimal degrees.  For spectral axes,
-C{world[][self.L{spec}]} is the intermediate spectral coordinate, in
-SI units.
+Array of world coordinates.
 
 @raises MemoryError: Memory allocation failed.
 @raises SingularMatrixError: Linear transformation matrix is singular.
@@ -308,6 +331,14 @@ SI units.
     parameters.
 @raises InvalidTransformError: Ill-conditioned coordinate transformation
     parameters.
+"""
+
+distortion_p2s_fits = """
+p2s_fits(pixcrd) -> world
+
+Identical to L{p2s}, except pixel coordinates are 1-based (like array
+indices in Fortran), instead of 0-based (like array indices C and
+Python).
 """
 
 distortion_pixel2world = """

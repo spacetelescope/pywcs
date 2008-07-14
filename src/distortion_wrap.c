@@ -506,6 +506,17 @@ PyDistortion_set_pc(PyDistortion* self, PyObject* value, void* closure) {
 }
 
 static PyObject*
+PyDistortion_has_pc(PyDistortion* self, PyObject* arg) {
+  if (self->x.has_pc) {
+    Py_INCREF(Py_True);
+    return Py_True;
+  } else {
+    Py_INCREF(Py_False);
+    return Py_False;
+  }
+}
+
+static PyObject*
 PyDistortion_get_pv(PyDistortion* self, PyObject* args, PyObject* kwds) {
   if (self->x.wcs.pv == NULL) {
     PyErr_SetString(PyExc_AssertionError, "No PVi_ma records present.");
@@ -530,7 +541,7 @@ PyDistortion_set_pv(PyDistortion* self, PyObject* arg) {
 }
 
 static PyObject*
-PyDistortion_p2s(PyDistortion* self, PyObject* arg) {
+PyDistortion_p2s_generic(PyDistortion* self, PyObject* arg, int do_shift) {
   PyArrayObject* pixcrd = NULL;
   PyArrayObject* world = NULL;
   int status = 0;
@@ -552,12 +563,16 @@ PyDistortion_p2s(PyDistortion* self, PyObject* arg) {
     goto __PyDistortion_p2s_exit;
   }
 
+  if (do_shift)
+    offset_array(pixcrd, 1.0);
   wcsprm_python2c(&self->x.wcs);
   status = distortion_pipeline(&self->x,
                                PyArray_DIM(pixcrd, 1),
                                PyArray_DATA(pixcrd),
                                PyArray_DATA(world));
   wcsprm_c2python(&self->x.wcs);
+  if (do_shift)
+    offset_array(pixcrd, -1.0);
 
  __PyDistortion_p2s_exit:
   Py_XDECREF(pixcrd);
@@ -578,16 +593,26 @@ PyDistortion_p2s(PyDistortion* self, PyObject* arg) {
   return NULL;
 }
 
+static PyObject*
+PyDistortion_p2s(PyDistortion* self, PyObject* arg) {
+  return PyDistortion_p2s_generic(self, arg, 1);
+}
+
+static PyObject*
+PyDistortion_p2s_fits(PyDistortion* self, PyObject* arg) {
+  return PyDistortion_p2s_generic(self, arg, 0);
+}
+
 static PyMemberDef PyDistortion_members[] = {
   {NULL}
 };
 
 static PyGetSetDef PyDistortion_getset[] = {
-  {"cd",    (getter)PyDistortion_get_cd,    (setter)PyDistortion_set_cd,    (char *)doc_cd},
+  {"cd",    (getter)PyDistortion_get_cd,    (setter)PyDistortion_set_cd,    (char *)doc_distortion_cd},
   {"cdelt", (getter)PyDistortion_get_cdelt, (setter)PyDistortion_set_cdelt, (char *)doc_cdelt},
   {"cpdis", (getter)PyDistortion_get_cpdis, (setter)PyDistortion_set_cpdis, (char *)doc_cpdis},
   {"cqdis", (getter)PyDistortion_get_cqdis, (setter)PyDistortion_set_cqdis, (char *)doc_cqdis},
-  {"crpix", (getter)PyDistortion_get_crpix, (setter)PyDistortion_set_crpix, (char *)doc_crpix},
+  {"crpix", (getter)PyDistortion_get_crpix, (setter)PyDistortion_set_crpix, (char *)doc_distortion_crpix},
   {"crval", (getter)PyDistortion_get_crval, (setter)PyDistortion_set_crval, (char *)doc_crval},
   {"ctype", (getter)PyDistortion_get_ctype, (setter)PyDistortion_set_ctype, (char *)doc_ctype},
   {"pc",    (getter)PyDistortion_get_pc,    (setter)PyDistortion_set_pc,    (char *)doc_pc},
@@ -595,10 +620,12 @@ static PyGetSetDef PyDistortion_getset[] = {
 };
 
 static PyMethodDef PyDistortion_methods[] = {
-  {"get_pv",      (PyCFunction)PyDistortion_get_pv, METH_NOARGS, doc_get_pv},
-  {"p2s",         (PyCFunction)PyDistortion_p2s,    METH_O,      doc_distortion_p2s},
-  {"pixel2world", (PyCFunction)PyDistortion_p2s,    METH_O,      doc_distortion_pixel2world}, /* alias for p2s */
-  {"set_pv",      (PyCFunction)PyDistortion_set_pv, METH_O,      doc_set_pv},
+  {"get_pv",      (PyCFunction)PyDistortion_get_pv,   METH_NOARGS, doc_get_pv},
+  {"has_pc",      (PyCFunction)PyDistortion_has_pc,   METH_NOARGS, doc_distortion_has_pc},
+  {"p2s",         (PyCFunction)PyDistortion_p2s,      METH_O,      doc_distortion_p2s},
+  {"p2s_fits",    (PyCFunction)PyDistortion_p2s_fits, METH_O,      doc_distortion_p2s_fits},
+  {"pixel2world", (PyCFunction)PyDistortion_p2s,      METH_O,      doc_distortion_pixel2world}, /* alias for p2s */
+  {"set_pv",      (PyCFunction)PyDistortion_set_pv,   METH_O,      doc_set_pv},
   {NULL}
 };
 

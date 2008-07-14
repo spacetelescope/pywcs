@@ -41,6 +41,8 @@ except ImportError:
 # This is here for the sake of epydoc
 WCSBase = _pywcs._WCS
 
+Distortion = _pywcs.Distortion
+
 # A wrapper around the C WCS type
 class WCS(WCSBase):
     """%s""" % _pywcs._WCS.__doc__

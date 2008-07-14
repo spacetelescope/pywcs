@@ -104,6 +104,8 @@ void undefined2nan(double* value, size_t nvalues) {
 int
 is_null(void *);
 
+typedef void (*value_fixer_t)(double*, size_t);
+
 void
 wcsprm_c2python(struct wcsprm* x);
 

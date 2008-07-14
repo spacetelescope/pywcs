@@ -126,7 +126,6 @@ is_null(void *p) {
    computationally expensive as it sounds, as all these arrays are
    quite small.
 */
-typedef void (*value_fixer_t)(double*, size_t);
 
 static void
 wcsprm_fix_values(struct wcsprm* x, value_fixer_t value_fixer) {
