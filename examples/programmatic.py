@@ -1,5 +1,5 @@
-# Load the WCS information from a fits header, and use it
-# to convert pixel coordinates to world coordinates.
+# Set the WCS information manually by setting properties of the WCS
+# object.
 
 import numpy
 import pywcs
