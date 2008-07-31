@@ -490,7 +490,7 @@ set_pscards(const char* propname, PyObject* value, struct pscard** ps,
     if (subvalue == NULL) {
       return -1;
     }
-    if (!PyArg_ParseTuple(subvalue, "iis", &ival, &mval, &value)) {
+    if (!PyArg_ParseTuple(subvalue, "iis", &ival, &mval, &strvalue)) {
       return -1;
     }
     Py_DECREF(subvalue);
@@ -575,7 +575,7 @@ set_pvcards(const char* propname, PyObject* value, struct pvcard** pv,
     if (subvalue == NULL) {
       return -1;
     }
-    if (!PyArg_ParseTuple(subvalue, "iid", &ival, &mval, &value)) {
+    if (!PyArg_ParseTuple(subvalue, "iid", &ival, &mval, &dblvalue)) {
       return -1;
     }
     Py_DECREF(subvalue);
@@ -590,6 +590,8 @@ set_pvcards(const char* propname, PyObject* value, struct pvcard** pv,
     }
     *npvmax = size;
   }
+
+  printf("HERE");
 
   for (i = 0; i < size; ++i) {
     subvalue = PySequence_GetItem(value, i);
@@ -607,6 +609,8 @@ set_pvcards(const char* propname, PyObject* value, struct pvcard** pv,
     (*pv)[i].value = dblvalue;
     (*npv) = i + 1;
   }
+
+  printf("DONE");
 
   return 0;
 }
