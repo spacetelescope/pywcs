@@ -41,7 +41,7 @@ assert numpy.max(numpy.abs(pixcrd - pixcrd2)) < 1e-6
 # Now, write out the WCS object as a FITS header
 header = wcs.to_header()
 
-# header is a PyFITS header object.  We can use it to create a new
+# header is a PyFITS Header object.  We can use it to create a new
 # PrimaryHDU and write it to a file.
 hdu = pyfits.PrimaryHDU(header=header)
 hdu.writeto('test.fits')

@@ -76,7 +76,8 @@ PyDistLookup_init(PyDistLookup* self, PyObject* args, PyObject* kwds) {
   PyObject* py_array_obj = NULL;
   PyArrayObject* array_obj = NULL;
 
-  if (!PyArg_ParseTuple(args, "O(dd)(dd)(dd)", &py_array_obj,
+  if (!PyArg_ParseTuple(args, "O(dd)(dd)(dd):Distortion.__init__",
+                        &py_array_obj,
                         &(self->x.crpix[0]), &(self->x.crpix[1]),
                         &(self->x.crval[0]), &(self->x.crval[1]),
                         &(self->x.cdelt[0]), &(self->x.cdelt[1]))) {
@@ -178,7 +179,7 @@ PyDistLookup_get_offset(PyDistLookup* self, PyObject* args, PyObject* kwds) {
     return NULL;
   }
 
-  if (!PyArg_ParseTuple(args, "dd", &coord[0], &coord[1])) {
+  if (!PyArg_ParseTuple(args, "dd:get_offset", &coord[0], &coord[1])) {
     return NULL;
   }
 
@@ -625,6 +626,7 @@ static PyMethodDef PyDistortion_methods[] = {
   {"p2s",         (PyCFunction)PyDistortion_p2s,      METH_O,      doc_distortion_p2s},
   {"p2s_fits",    (PyCFunction)PyDistortion_p2s_fits, METH_O,      doc_distortion_p2s_fits},
   {"pixel2world", (PyCFunction)PyDistortion_p2s,      METH_O,      doc_distortion_pixel2world}, /* alias for p2s */
+  {"pixel2world_fits", (PyCFunction)PyDistortion_p2s,      METH_O,      doc_distortion_pixel2world_fits}, /* alias for p2s_fits */
   {"set_pv",      (PyCFunction)PyDistortion_set_pv,   METH_O,      doc_set_pv},
   {NULL}
 };

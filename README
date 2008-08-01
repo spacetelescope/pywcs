@@ -72,7 +72,7 @@ After installing pywcs, type::
 
 The API documentation is also available online at:
 
-    http://stsdas.stsci.edu/astrolib/pywcs-1.1a2-4.3_api/index.html
+    http://stsdas.stsci.edu/astrolib/pywcs/index.html
 
 General usage instructions
 --------------------------
@@ -94,4 +94,4 @@ The basic workflow is as follows:
     convert coordinates using the ``.p2s()`` or ``.s2p()`` methods.
 
 See the API documentation for usage details about these methods.
-
+There are also examples in the examples/ directory.

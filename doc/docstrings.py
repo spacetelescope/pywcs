@@ -300,7 +300,8 @@ distortion_crpix = _crpix_generic % ""
 distortion_has_pc = """
 has_pc() -> bool
 
-Returns True if the distortion is using PC/CDELT, otherwise it is using CD.
+Returns True if the distortion is using C{PC}/C{CDELT}, otherwise it
+is using C{CD}.
 """
 
 distortion_p2s = """
@@ -343,6 +344,10 @@ Python).
 
 distortion_pixel2world = """
 An alias for L{p2s}.
+"""
+
+distortion_pixel2world_fits = """
+An alias for L{p2s_fits}.
 """
 
 equinox = """
