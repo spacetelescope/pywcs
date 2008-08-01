@@ -3,6 +3,7 @@
 
 import numpy
 import pywcs
+import pyfits
 import sys
 
 # Create a new WCS object.  The number of axes must be set
@@ -36,3 +37,11 @@ print pixcrd2
 # These should be the same as the original pixel coordinates, modulo
 # some floating-point error.
 assert numpy.max(numpy.abs(pixcrd - pixcrd2)) < 1e-6
+
+# Now, write out the WCS object as a FITS header
+header = wcs.to_header()
+
+# header is a PyFITS header object.  We can use it to create a new
+# PrimaryHDU and write it to a file.
+hdu = pyfits.PrimaryHDU(header=header)
+hdu.writeto('test.fits')

@@ -158,3 +158,69 @@ class WCS(WCSBase):
         """
         return self._world2pixel_generic(self.s2p_fits, *args)
 
+    if _has_pyfits:
+        def to_header(self, relax=False):
+            """
+            Generate a PyFITS header object with the WCS information
+            stored in this object.
+
+            The output header will almost certainly differ from the
+            input in a number of respects:
+
+              1. The output header only contains WCS-related keywords.
+                 In particular, it does not contain
+                 syntactically-required keywords such as C{SIMPLE},
+                 C{NAXIS}, C{BITPIX}, or C{END}.
+
+              2. Deprecated (e.g. C{CROTAn}) or non-standard usage
+                 will be translated to standard (this is partially
+                 dependent on whether L{fix} was applied).
+
+              3. Quantities will be converted to the units used
+                 internally, basically SI with the addition of
+                 degrees.
+
+              4. Floating-point quantities may be given to a different
+                 decimal precision.
+
+              5. Elements of the C{PCi_j} matrix will be written if
+                 and only if they differ from the unit matrix.  Thus,
+                 if the matrix is unity then no elements will be
+                 written.
+
+              6. Additional keywords such as C{WCSAXES}, C{CUNITia},
+                 C{LONPOLEa} and C{LATPOLEa} may appear.
+
+              7. The original keycomments will be lost, although
+                 L{to_header} tries hard to write meaningful comments.
+
+              8. Keyword order may be changed.
+
+            @param relax: Degree of permissiveness:
+
+              - C{False}: Recognize only FITS keywords defined by the
+                published WCS standard.
+
+              - C{True}: Admit all recognized informal extensions of
+                the WCS standard.
+
+            @type relax: bool
+
+            @return: A PyFITS Header object.
+            """
+            header_string = WCSBase.to_header(self, relax)
+            cards = pyfits.CardList()
+            for i in range(0, len(header_string), 80):
+                card_string = header_string[i:i+80]
+                card = pyfits.Card()
+                card.fromstring(card_string)
+                cards.append(card)
+            return pyfits.Header(cards)
+    else:
+        def to_header(self, *args, **kwargs):
+            raise NotImplementedError(
+                "PyFITS must be installed to generate a FITS header")
+
+    def to_header_string(self, relax=False):
+        return WCSBase.to_header(self, relax)
+    to_header_string.__doc__ = WCSBase.to_header.__doc__
