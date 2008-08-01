@@ -416,6 +416,7 @@ set_str_list(const char* propname, PyObject* value, Py_ssize_t len,
       Py_DECREF(str);
       return -1;
     }
+
     Py_DECREF(str);
   }
 
@@ -424,6 +425,7 @@ set_str_list(const char* propname, PyObject* value, Py_ssize_t len,
     if (str == NULL) {
       /* Theoretically, something has gone really wrong here, since
          we've already verified the list. */
+      PyErr_Format(PyExc_RuntimeError, "Input values have changed underneath us.  Something is seriously wrong.");
       return -1;
     }
 
@@ -431,6 +433,8 @@ set_str_list(const char* propname, PyObject* value, Py_ssize_t len,
     if (PyString_AsStringAndSize(str, &str_char, &str_len)) {
       /* Theoretically, something has gone really wrong here, since
          we've already verified the list. */
+      PyErr_Format(PyExc_RuntimeError, "Input values have changed underneath us.  Something is seriously wrong.");
+      Py_DECREF(str);
       return -1;
     }
 
@@ -591,8 +595,6 @@ set_pvcards(const char* propname, PyObject* value, struct pvcard** pv,
     *npvmax = size;
   }
 
-  printf("HERE");
-
   for (i = 0; i < size; ++i) {
     subvalue = PySequence_GetItem(value, i);
     if (subvalue == NULL) {
@@ -609,8 +611,6 @@ set_pvcards(const char* propname, PyObject* value, struct pvcard** pv,
     (*pv)[i].value = dblvalue;
     (*npv) = i + 1;
   }
-
-  printf("DONE");
 
   return 0;
 }
