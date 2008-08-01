@@ -144,30 +144,52 @@ PyStrListProxy_setitem(PyStrListProxy* self, Py_ssize_t index, PyObject* arg) {
 
 static PyObject*
 PyStrListProxy_repr(PyStrListProxy* self) {
-  char*      buffer = NULL;
-  char*      wp     = NULL;
-  char*      rp     = NULL;
-  Py_ssize_t i      = 0;
-  Py_ssize_t j      = 0;
-  PyObject*  result = NULL;
+  char*       buffer  = NULL;
+  char*       wp      = NULL;
+  char*       rp      = NULL;
+  Py_ssize_t  i       = 0;
+  Py_ssize_t  j       = 0;
+  PyObject*   result  = NULL;
+  /* These are in descending order, so we can exit the loop quickly.  They
+     are in pairs: (char_to_escape, char_escaped) */
+  const char* escapes = "\\\\''\rr\ff\vv\nn\tt\bb\aa";
+  const char* e       = NULL;
+  char        next_char = 0;
 
-  /* Overallocating, of course, to be safe */
-  buffer = malloc(self->size*80 + 2);
+  /* Overallocating to allow for escaped characters */
+  buffer = malloc(self->size*80*2 + 2);
   if (buffer == NULL) {
     PyErr_SetString(PyExc_MemoryError, "Could not allocate memory.");
     return NULL;
   }
 
-  buffer[0] = '[';
-  wp = buffer + 1;
+  wp = buffer;
+  *wp++ = '[';
 
   for (i = 0; i < self->size; ++i) {
     *wp++ = '\'';
     rp = self->array[i];
-    for (j = 0; j < 68 && *rp != 0; ++j)
-      *wp++ = *rp++;
+    for (j = 0; j < 68 && *rp != 0; ++j) {
+      /* Check if this character should be escaped */
+      e = escapes;
+      next_char = *rp++;
+      do {
+        if (next_char > *e) {
+          break;
+        } else if (next_char == *e) {
+          *wp++ = '\\';
+          next_char = *(++e);
+          break;
+        } else {
+          e += 2;
+        }
+      } while (*e != 0);
+
+      *wp++ = next_char;
+    }
     *wp++ = '\'';
 
+    /* Add a comma for all but the last one */
     if (i != self->size - 1) {
       *wp++ = ',';
       *wp++ = ' ';
@@ -197,7 +219,7 @@ static PySequenceMethods PyStrListProxy_sequence_methods = {
 static PyTypeObject PyStrListProxyType = {
   PyObject_HEAD_INIT(NULL)
   0,                          /*ob_size*/
-  "pywcs.ListProxy",          /*tp_name*/
+  "pywcs.StrListProxy",       /*tp_name*/
   sizeof(PyStrListProxy),  /*tp_basicsize*/
   0,                          /*tp_itemsize*/
   (destructor)PyStrListProxy_dealloc, /*tp_dealloc*/
