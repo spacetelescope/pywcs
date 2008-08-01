@@ -56,8 +56,8 @@ at the fiducial point.
 celfix = """
 celfix() -> int
 
-Translates AIPS-convention celestial projection types, C{-NCP}
-and C{-GLS}.
+Translates AIPS-convention celestial projection types, C{-NCP} and
+C{-GLS}.
 
 @return: C{0} for success; C{-1} if no change required.
 """
@@ -793,10 +793,6 @@ pywcs = """
 The routines in this module implement the FITS World Coordinate System
 (WCS) standard which defines methods to be used for computing world
 coordinates from image pixel coordinates, and vice versa.
-
-B{Note that pixel coordinates are always given and returned with a base
-of zero, to be consistent with Numpy and PyFITS indexing, not base one
-as the FITS standard.}
 
 The basic workflow is as follows:
 

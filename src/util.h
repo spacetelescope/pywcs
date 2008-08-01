@@ -56,7 +56,6 @@ typedef int Py_ssize_t;
 # define PY_SSIZE_T_MIN INT_MIN
 #endif
 
-/* TODO: Remove me from public API */
 PyObject*
 PyArrayProxy_New(PyObject* self, int nd, const npy_intp* dims,
                  int typenum, const void* data);

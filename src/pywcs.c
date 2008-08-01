@@ -46,8 +46,6 @@ DAMAGE.
 #include "isnan.h"
 #include "str_list_proxy.h"
 
-/* TODO: Refactor the setters and getters */
-
 /*
  It gets to be really tedious to type long docstrings in ANSI C syntax (since
  multi-line strings literals are not valid).  Therefore, the docstrings are
@@ -55,10 +53,6 @@ DAMAGE.
  docstrings.h, which we include here.
 */
 #include "docstrings.h"
-
-/* TODO: What does this need to read the tables for, and how does that
- * work?
- */
 
 /***************************************************************************
  * Helper functions                                                        *
@@ -159,8 +153,9 @@ PyWcsprm_init(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     self->x = NULL;
   }
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "|Osii", (char **)keywords,
-                                   &header_obj, &key, &relax, &naxis))
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "|Osii:WCSBase.__init__",
+                                   (char **)keywords, &header_obj, &key,
+                                   &relax, &naxis))
     return -1;
 
   if (header_obj == NULL || header_obj == Py_None) {
@@ -351,7 +346,7 @@ PyWcsprm_cylfix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     return NULL;
   }
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "|O", (char **)keywords,
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "|O:cylfix", (char **)keywords,
                                    &naxis_obj))
     return NULL;
 
@@ -441,7 +436,7 @@ PyWcsprm_fix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     return NULL;
   }
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "|sO", (char **)keywords,
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "|sO:fix", (char **)keywords,
                                    &translate_units, &naxis_obj))
     return NULL;
 
@@ -591,7 +586,7 @@ PyWcsprm_mix_generic(PyWcsprm* self, PyObject* args, PyObject* kwds, int do_shif
     return NULL;
   }
 
-  if (!PyArg_ParseTuple(args, "ii(dd)diOO",
+  if (!PyArg_ParseTuple(args, "ii(dd)diOO:mix",
                         &mixpix, &mixcel, &vspan[0], &vspan[1],
                         &vstep, &viter, &world_obj, &pixcrd_obj))
     return NULL;
@@ -1082,7 +1077,7 @@ PyWcsprm_sptr(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     return NULL;
   }
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "s|i", (char **)keywords,
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "s|i:sptr", (char **)keywords,
                                    &py_ctype, &i))
     return NULL;
 
@@ -1123,8 +1118,8 @@ PyWcsprm_to_header(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     return NULL;
   }
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "|i", (char **)keywords,
-                                   &relax))
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "|i:to_header",
+                                   (char **)keywords, &relax))
     return NULL;
 
   if (relax)
@@ -1161,7 +1156,7 @@ PyWcsprm_unitfix(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     return NULL;
   }
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "|s", (char **)keywords,
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "|s:unitfix", (char **)keywords,
                                    &translate_units))
     return NULL;
 
