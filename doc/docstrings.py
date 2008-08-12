@@ -92,13 +92,15 @@ Creates a deep copy of the WCS object.
 cpdis = """
 The pre-linear transformation distortion lookup tables, C{CPDIS}.
 
-This is a 2-tuple of the form (x, y), where each object
+This is a 2-tuple of the form (x, y), where each object is a
+L{DistortionLookupTable} object.
 """
 
 cqdis = """
 The post-linear transformation distortion lookup tables, C{CQDIS}.
 
-This is a 2-tuple of the form (x, y), where each object
+This is a 2-tuple of the form (x, y), where each object is a
+L{DistortionLookupTable} object.
 """
 
 crder = """
