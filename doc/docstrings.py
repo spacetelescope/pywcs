@@ -276,19 +276,19 @@ not polynomial or spline distortions.
 DistortionLookupTable = """
 DistortionLookupTable(table, crpix, crval, cdelt)
 
-*table* is a 2-dimensional array for the distortion lookup table.
+@param table: 2-dimensional array for the distortion lookup table.
 
-*crpix* is the distortion array reference pixel (a 2-tuple)
+@param crpix: the distortion array reference pixel (a 2-tuple)
 
-*crval* is the image array pixel coordinate (a 2-tuple)
+@param crval: is the image array pixel coordinate (a 2-tuple)
 
-*cdelt* is the grid step size (a 2-tuple)
+@param cdelt: is the grid step size (a 2-tuple)
 
 Represents a single lookup table for a distortion (Paper IV)
 transformation.
 
-These objects are used for setting the cpdis and cqdis lookup tables
-in a Distortion object.
+These objects are used for setting the C{CPDIS} and C{CQDIS} lookup
+tables in a C{Distortion} object.
 """
 
 distortion_cd = """
