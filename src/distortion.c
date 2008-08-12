@@ -97,6 +97,8 @@ distortion_t_init(struct distortion_t* dist) {
   assert(dist->wcs->cdelt[1] == 1.0);
   assert(dist->wcs->crpix[0] == 0.0);
   assert(dist->wcs->crpix[1] == 0.0);
+  assert(dist->wcs->crval[0] == 0.0);
+  assert(dist->wcs->crval[1] == 0.0);
   assert(dist->wcs->pc[0]    == 1.0);
   return status;
 }
@@ -297,7 +299,7 @@ distortion_pipeline(
     /* STEP V: CTYPE coordinate computation per agreement */
     /* This is the most complicated part -- so we defer to wcslib */
     /* TODO: Error handling */
-    status = wcsp2s((struct wcsprm *)&dist->wcs, NAXES, 1,
+    status = wcsp2s((struct wcsprm *)&(dist->wcs), 1, NAXES,
                     scaled, pixcrd, pixcrd, pixcrd, worldcrd, stat);
     if (status != 0 && status != 8)
       return status;

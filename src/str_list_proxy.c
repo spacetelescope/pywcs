@@ -97,7 +97,7 @@ PyStrListProxy_New(PyObject* owner, Py_ssize_t size, char (*array)[72]) {
   if (self == NULL)
     return NULL;
 
-  Py_INCREF(owner);
+  Py_XINCREF(owner);
   self->pyobject = owner;
   self->size = size;
   self->array = array;

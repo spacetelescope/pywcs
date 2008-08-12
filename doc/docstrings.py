@@ -92,13 +92,13 @@ Creates a deep copy of the WCS object.
 cpdis = """
 The pre-linear transformation distortion lookup tables, C{CPDIS}.
 
-This is a 2-tuple of the form (x, y)
+This is a 2-tuple of the form (x, y), where each object
 """
 
 cqdis = """
 The post-linear transformation distortion lookup tables, C{CQDIS}.
 
-This is a 2-tuple of the form (x, y)
+This is a 2-tuple of the form (x, y), where each object
 """
 
 crder = """
@@ -274,6 +274,16 @@ not polynomial or spline distortions.
 """
 
 DistortionLookupTable = """
+DistortionLookupTable(table, crpix, crval, cdelt)
+
+*table* is a 2-dimensional array for the distortion lookup table.
+
+*crpix* is the distortion array reference pixel (a 2-tuple)
+
+*crval* is the image array pixel coordinate (a 2-tuple)
+
+*cdelt* is the grid step size (a 2-tuple)
+
 Represents a single lookup table for a distortion (Paper IV)
 transformation.
 

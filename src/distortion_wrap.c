@@ -76,7 +76,7 @@ PyDistLookup_init(PyDistLookup* self, PyObject* args, PyObject* kwds) {
   PyObject* py_array_obj = NULL;
   PyArrayObject* array_obj = NULL;
 
-  if (!PyArg_ParseTuple(args, "O(dd)(dd)(dd):Distortion.__init__",
+  if (!PyArg_ParseTuple(args, "O(dd)(dd)(dd):DistortionLookupTable.__init__",
                         &py_array_obj,
                         &(self->x.crpix[0]), &(self->x.crpix[1]),
                         &(self->x.crval[0]), &(self->x.crval[1]),
@@ -84,7 +84,7 @@ PyDistLookup_init(PyDistLookup* self, PyObject* args, PyObject* kwds) {
     return -1;
   }
 
-  array_obj = (PyArrayObject*)PyArray_ContiguousFromAny(py_array_obj, 2, 2, PyArray_DOUBLE);
+  array_obj = (PyArrayObject*)PyArray_ContiguousFromAny(py_array_obj, PyArray_DOUBLE, 2, 2);
   if (array_obj == NULL)
     return -1;
 
@@ -151,9 +151,10 @@ PyDistLookup_set_data(PyDistLookup* self, PyObject* value, void* closure) {
     Py_XDECREF(self->py_data);
     self->py_data = NULL;
     self->x.data = NULL;
+    return 0;
   }
 
-  value_array = (PyArrayObject*)PyArray_ContiguousFromAny(value, 2, 2, PyArray_DOUBLE);
+  value_array = (PyArrayObject*)PyArray_ContiguousFromAny(value, PyArray_DOUBLE, 2, 2);
 
   if (value_array == NULL)
     return -1;
@@ -362,7 +363,13 @@ PyDistortion_set_cdelt(PyDistortion* self, PyObject* value, void* closure) {
 
 static inline PyObject*
 get_lookup_tables(const char* propname, PyObject **tables) {
-  return Py_BuildValue("OO", tables[0], tables[1]);
+  PyObject* tables0 = tables[0];
+  PyObject* tables1 = tables[1];
+  if (tables0 == NULL)
+    tables0 = Py_None;
+  if (tables1 == NULL)
+    tables1 = Py_None;
+  return Py_BuildValue("OO", tables0, tables1);
 }
 
 static inline int
@@ -383,9 +390,9 @@ set_lookup_tables(const char* propname, PyObject* value,
 
   for (i = 0; i < NAXES; ++i) {
     subvalue = PySequence_GetItem(value, i);
-    if (!PyObject_TypeCheck(subvalue, &PyDistLookupType)) {
+    if (!(subvalue == Py_None || PyObject_TypeCheck(subvalue, &PyDistLookupType))) {
       Py_XDECREF(subvalue);
-      PyErr_Format(PyExc_TypeError, "'%s' must be a 2-length sequence of DistortionLookupTable instances.", propname);
+      PyErr_Format(PyExc_TypeError, "'%s' must be a 2-length sequence of DistortionLookupTable instances or None.", propname);
       return -1;
     }
 
@@ -395,8 +402,13 @@ set_lookup_tables(const char* propname, PyObject* value,
   for (i = 0; i < NAXES; ++i) {
     subvalue = PySequence_GetItem(value, i);
     Py_XDECREF(py_tables[i]);
-    py_tables[i] = subvalue;
-    tables[i] = &(((PyDistLookup *)subvalue)->x);
+    if (subvalue == Py_None) {
+      py_tables[i] = NULL;
+      tables[i] = NULL;
+    } else {
+      py_tables[i] = subvalue;
+      tables[i] = &(((PyDistLookup *)subvalue)->x);
+    }
   }
 
   return 0;
@@ -464,7 +476,7 @@ PyDistortion_get_ctype(PyDistortion* self, void* closure) {
     return NULL;
   }
 
-  return get_str_list("ctype", self->x.wcs.ctype, 2, (PyObject*)self);
+  return get_str_list("ctype", self->x.wcs.ctype, NAXES, (PyObject*)self);
 }
 
 static int
@@ -473,7 +485,7 @@ PyDistortion_set_ctype(PyDistortion* self, PyObject* value, void* closure) {
     return -1;
   }
 
-  return set_str_list("ctype", value, 2, 0, self->x.wcs.ctype);
+  return set_str_list("ctype", value, NAXES, 0, self->x.wcs.ctype);
 }
 
 static PyObject*
@@ -546,13 +558,30 @@ PyDistortion_p2s_generic(PyDistortion* self, PyObject* arg, int do_shift) {
   PyArrayObject* pixcrd = NULL;
   PyArrayObject* world = NULL;
   int status = 0;
+  unsigned int i = 0;
+
+  for (i = 0; i < NAXES; ++i) {
+    if (self->x.pre_dist[i] && self->x.pre_dist[i]->data == NULL) {
+      PyErr_Format(PyExc_ValueError, "CPDIS DistortionLookupTable %d does not actually have a data array",
+                   i);
+      return NULL;
+    }
+  }
+
+  for (i = 0; i < NAXES; ++i) {
+    if (self->x.post_dist[i] && self->x.post_dist[i]->data == NULL) {
+      PyErr_Format(PyExc_ValueError, "CQDIS DistortionLookupTable %d does not actually have a data array",
+                   i);
+      return NULL;
+    }
+  }
 
   pixcrd = (PyArrayObject*)PyArray_ContiguousFromAny(arg, PyArray_DOUBLE, 2, 2);
   if (pixcrd == NULL) {
     return NULL;
   }
 
-  if (PyArray_DIM(pixcrd, 0) != 2) {
+  if (PyArray_DIM(pixcrd, 0) != NAXES) {
     PyErr_SetString(PyExc_ValueError, "Input pixel array must be of size (2, n)");
     status = -1;
     goto __PyDistortion_p2s_exit;
