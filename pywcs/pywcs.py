@@ -48,19 +48,64 @@ DistortionLookupTable = _pywcs.DistortionLookupTable
 class WCS(WCSBase):
     """%s""" % _pywcs._WCS.__doc__
 
-    def __init__(self, header=None, key=' ', relax=False, naxis=2):
+    def __init__(self, header=None, fobj=None, key=' ', relax=False, naxis=2):
         if _has_pyfits:
             if isinstance(header, pyfits.NP_pyfits.Header):
+                pyfits_hdr = header.copy()
                 header = str(header.ascardlist())
 
         WCSBase.__init__(self, header=header, key=key, relax=relax, naxis=naxis)
-
+        self.addDistortion(pyfits_hdr, fobj)
+        
         if header is None:
             # Set some reasonable defaults.
             self.crpix = numpy.zeros((self.naxis,), numpy.double)
             self.crval = numpy.zeros((self.naxis,), numpy.double)
             self.ctype = ['RA---TAN', 'DEC--TAN']
-
+        
+    def addDistortion(self, header=None, fobj=None):
+        """
+        Adds distortion information as per WCS paper IV.
+        """
+        assert isinstance(header, pyfits.NP_pyfits.Header)
+        d_keys = []
+        for i in range(1+self.naxis+1):
+            d_keys.append('CPDIS'+str(i))
+            d_keys.append('CQDIS'+str(i))
+        d_val = numpy.array([header.has_key(k) for k in d_keys])
+        if d_val.any():
+        
+            for dist in ['CPDIS', 'CQDIS']:
+                self.readDistortionKw(header, fobj, dist)
+            
+    def readDistortionKw(self, header, fobj, dist=""):
+        """
+        Reads paper IV distortion keywords and data.
+        """
+        if dist == 'CPDIS':
+            d_kw= 'DP'
+        else:
+            d_kw = 'DQ'
+            
+        for i in range(1, self.naxis+1):
+            distortion = dist+str(i)
+            if header.has_key(distortion):
+                dis = header[distortion].lower()
+            if dis == 'lookup':
+                assert isinstance(fobj, pyfits.NP_pyfits.HDUList), 'A pyfits HDUList is required for Lookup table distrtion.'
+                dp = d_kw+str(i)
+                d_extver = header[dp+'.EXTVER']
+                d_data = fobj['WCSDVARR', d_extver].data
+                d_header = fobj['WCSDVARR', d_extver].header
+                d_crpix = (d_header['CRPIX1'], d_header['CRPIX2'])
+                d_crval = (d_header['CRVAL1'], d_header['CRVAL2'])
+                d_cdelt = (d_header['CDELT1'], d_header['CDELT2'])
+                d_lookup = DistortionLookupTable(d_data, d_crpix, d_crval, d_cdelt)
+                setattr(self, distortion.lower(), d_lookup)
+            else:
+                print 'Polynomial distortion is not implemented.\n'
+                
+    
     def _pixel2world_generic(self, func, *args):
         if len(args) == 1:
             return func(args[0])['world']

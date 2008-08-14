@@ -44,7 +44,10 @@ class SIP(WCS):
     @param header: A PyFITS header object or a string containing the raw
         FITS header data.
     @type header: PyFITS header object or string
-
+    
+    @param fobj: A PyFITS file object 
+    @type fobj: PyFITS HDUList object or None
+    
     @param relax: Degree of permissiveness:
         - C{False}: Recognize only FITS keywords defined by the
           published WCS standard.
@@ -57,7 +60,7 @@ class SIP(WCS):
     @raises ValueError: Header does not contain SIP information.
     @raises KeyError: Key not found in FITS header.
     """
-    def __init__(self, header, relax=False):
+    def __init__(self, header, fobj=None, relax=False):
         assert isinstance(header, pyfits.NP_pyfits.Header)
 
         if header.has_key("A_ORDER"):
@@ -110,7 +113,7 @@ class SIP(WCS):
             self._ap = None
             self._bp = None
 
-        WCS.__init__(self, header, key=" ", relax=relax)
+        WCS.__init__(self, header, fobj=fobj, key=" ", relax=relax)
 
     def foc2pix(self, x, y=None):
         """
