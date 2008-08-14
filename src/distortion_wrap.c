@@ -97,14 +97,14 @@ PyDistLookup_init(PyDistLookup* self, PyObject* args, PyObject* kwds) {
     return -1;
   }
 
-  array_obj = (PyArrayObject*)PyArray_ContiguousFromAny(py_array_obj, PyArray_DOUBLE, 2, 2);
+  array_obj = (PyArrayObject*)PyArray_ContiguousFromAny(py_array_obj, PyArray_FLOAT32, 2, 2);
   if (array_obj == NULL)
     return -1;
 
   self->py_data = array_obj;
   self->x.naxis[0] = PyArray_DIM(array_obj, 0);
   self->x.naxis[1] = PyArray_DIM(array_obj, 1);
-  self->x.data = (double *)PyArray_DATA(array_obj);
+  self->x.data = (float *)PyArray_DATA(array_obj);
 
   return 0;
 }
@@ -168,7 +168,7 @@ PyDistLookup_set_data(PyDistLookup* self, PyObject* value, void* closure) {
     return 0;
   }
 
-  value_array = (PyArrayObject*)PyArray_ContiguousFromAny(value, PyArray_DOUBLE, 2, 2);
+  value_array = (PyArrayObject*)PyArray_ContiguousFromAny(value, PyArray_FLOAT32, 2, 2);
 
   if (value_array == NULL)
     return -1;
@@ -178,7 +178,7 @@ PyDistLookup_set_data(PyDistLookup* self, PyObject* value, void* closure) {
   self->py_data = value_array;
   self->x.naxis[0] = PyArray_DIM(value_array, 0);
   self->x.naxis[1] = PyArray_DIM(value_array, 1);
-  self->x.data = (double *)PyArray_DATA(value_array);
+  self->x.data = (float *)PyArray_DATA(value_array);
 
   return 0;
 }

@@ -53,7 +53,7 @@ struct distortion_lookup_t {
   double        cdelt[NAXES];
   /* The data is not "owned" by this structure.  It is the user's
      responsibility to free it. */
-  double       *data;
+  float         *data;
 };
 
 /**

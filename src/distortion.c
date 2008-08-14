@@ -114,7 +114,7 @@ distortion_t_free(
  * (This is nothing more special than an array lookup with range
  * checking.)
  */
-static inline double
+static inline float
 get_dist(
     const struct distortion_lookup_t *lookup,
     const unsigned int coord[NAXES]) {
@@ -213,7 +213,7 @@ get_distortion_offset(
     for (l = 0; l < 2; ++l) {
       coord[0] = dist_i[0] + l;
       coord[1] = dist_i[1] + k;
-      result += (get_dist(lookup, coord) *
+      result += ((double)get_dist(lookup, coord) *
                  calculate_weight(dist_weight[0], l, dist_weight[1], k));
     }
   }
