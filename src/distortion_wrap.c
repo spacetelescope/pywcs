@@ -781,7 +781,7 @@ PyWcs_do_distortion(PyObject* self, PyObject* args, PyObject* kwds) {
 
  _exit:
 
-  Py_XDECREF(pix_obj);
+  Py_XDECREF(pix_array);
 
   return result;
 }
