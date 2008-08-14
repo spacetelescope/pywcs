@@ -153,6 +153,7 @@ PyDistLookup_set_crval(PyDistLookup* self, PyObject* value, void* closure) {
 
 static PyObject*
 PyDistLookup_get_data(PyDistLookup* self, void* closure) {
+  Py_INCREF(self->py_data);
   return (PyObject*)self->py_data;
 }
 
