@@ -142,7 +142,8 @@ get_distortion_offset(
     const double img[NAXES]);
 
 /**
- * Perform the pipeline of transformations and distortions outlined in Paper IV.
+ * Perform the pipeline of transformations and distortions outlined in
+ * Figure 1 in Paper IV.
  *
  * Only -TAB distortions (not polynomial or spline) are
  * supported.
@@ -156,5 +157,18 @@ distortion_pipeline(
     const double *pix /* [NAXES][nelem] */,
     /* Output parameters */
     double *world /* [NAXES][nelem] */);
+
+/**
+ * Perform just the distortion table part of Paper IV.
+ *
+ * @return Non-zero if an error occurred
+ */
+int
+do_distortion(
+    const unsigned int naxes,
+    const struct distortion_lookup_t** lookups, /* [NAXES] */
+    const unsigned int nelem,
+    const double* pix, /* [NAXES][nelem] */
+    double *foc /* [NAXES][nelem] */);
 
 #endif /* __DISTORTION_H__ */

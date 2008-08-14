@@ -362,6 +362,25 @@ distortion_pixel2world_fits = """
 An alias for L{p2s_fits}.
 """
 
+do_distortion = """
+Given a L{DistortionLookupTable} for each axis, distort the incoming
+pixel coordinates according to Paper IV.
+
+B{At the moment, only 2-dimensional coordinates are supported.}
+
+@param lookup_tables: A lookup table for each axis.
+
+@type lookup_tables: Sequence of L{DistortionLookupTable}
+
+@param pixcrd: Array of pixel coordinates.
+
+@type pixcrd: numpy array[ncoord][nelem] of double
+
+@return array[ncoord][nelem] of double
+
+Array of focal plane coordinates.
+"""
+
 equinox = """
 The equinox associated with dynamical equatorial or ecliptic
 coordinate systems, C{EQUINOXa} (or C{EPOCH} in older headers).  Not

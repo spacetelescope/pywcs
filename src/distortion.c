@@ -310,3 +310,32 @@ distortion_pipeline(
 
   return 0;
 }
+
+int
+do_distortion(
+    const unsigned int naxes,
+    const struct distortion_lookup_t **lookup, /* [NAXES] */
+    const unsigned int nelem,
+    const double* pix, /* [NAXES][nelem] */
+    double *foc /* [NAXES][nelem] */) {
+  unsigned int i, j;
+
+  assert(naxes == NAXES);
+  assert(lookup);
+  for (i = 0; i < naxes; ++i) {
+    assert(lookup[i]);
+  }
+  assert(pix);
+  assert(foc);
+
+  for (j = 0; j < nelem; ++j) {
+    for (i = 0; i < NAXES; ++i) {
+      foc[i] = pix[i] + get_distortion_offset(lookup[i], pix);
+    }
+    pix += naxes;
+    foc += naxes;
+  }
+
+  return 0;
+}
+

@@ -2202,7 +2202,12 @@ static PyTypeObject PyWcsprmType = {
  * Module-level
  ***************************************************************************/
 
+/* In distortion_wrap.c */
+PyObject*
+PyWcs_do_distortion(PyObject* self, PyObject* args, PyObject* kwds);
+
 static PyMethodDef module_methods[] = {
+  {"do_distortion", (PyCFunction)PyWcs_do_distortion, METH_VARARGS, doc_do_distortion},
   {NULL}
 };
 
