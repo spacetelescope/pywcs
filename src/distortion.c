@@ -40,6 +40,8 @@ DAMAGE.
 #include <math.h>
 #include <stdlib.h>
 
+/* TODO: n-dimensional support */
+
 int
 distortion_lookup_t_init(struct distortion_lookup_t* lookup) {
   unsigned int i;
@@ -61,6 +63,7 @@ distortion_lookup_t_free(struct distortion_lookup_t* lookup) {
   return 0;
 }
 
+#ifdef DISTORTION_PIPELINE
 int
 distortion_t_init(struct distortion_t* dist) {
   unsigned int i;
@@ -108,6 +111,7 @@ distortion_t_free(
     struct distortion_t* dist) {
   return wcsfree(&dist->wcs);
 }
+#endif
 
 /**
  * Get a value at a specific integral location in the lookup table.
@@ -118,11 +122,14 @@ static inline float
 get_dist(
     const struct distortion_lookup_t *lookup,
     const unsigned int coord[NAXES]) {
-  size_t i;
-  for (i = 0; i < NAXES; ++i)
-    assert(coord[i] < lookup->naxis[i]);
+  unsigned int cropped[NAXES];
+  unsigned int i;
 
-  return *(lookup->data + (lookup->naxis[0] * coord[1]) + coord[0]);
+  for (i = 0; i < NAXES; ++i) {
+    cropped[i] = coord[i] >= lookup->naxis[i] ? lookup->naxis[i] - 1 : coord[i];
+  }
+
+  return *(lookup->data + (lookup->naxis[0] * cropped[1]) + cropped[0]);
 }
 
 /**
@@ -178,10 +185,11 @@ image_coords_to_distortion_coords(
  */
 static inline double
 calculate_weight(double iw, unsigned int i0, double jw, unsigned int j0) {
-  if (!i0)
-    iw = 1.0 - iw;
-  if (!j0)
-    jw = 1.0 - jw;
+  assert(iw >= 0.0 && iw < 1.0);
+  assert(jw >= 0.0 && jw < 1.0);
+
+  if (!i0) iw = 1.0 - iw;
+  if (!j0) jw = 1.0 - jw;
   return iw * jw;
 }
 
@@ -191,7 +199,7 @@ get_distortion_offset(
     const double img[NAXES]) {
   double       dist[NAXES];
   double       dist_floor[NAXES];
-  unsigned int dist_i[NAXES];
+  unsigned int dist_ifloor[NAXES];
   unsigned int coord[NAXES];
   double       dist_weight[NAXES];
   double       result;
@@ -204,15 +212,15 @@ get_distortion_offset(
 
   for (i = 0; i < NAXES; ++i) {
     dist_floor[i] = floor(dist[i]);
-    dist_i[i] = (unsigned int)dist_floor[i];
+    dist_ifloor[i] = (unsigned int)dist_floor[i];
     dist_weight[i] = dist[i] - dist_floor[i];
   }
 
   result = 0.0;
   for (k = 0; k < 2; ++k) {
     for (l = 0; l < 2; ++l) {
-      coord[0] = dist_i[0] + l;
-      coord[1] = dist_i[1] + k;
+      coord[0] = dist_ifloor[0] + l;
+      coord[1] = dist_ifloor[1] + k;
       result += ((double)get_dist(lookup, coord) *
                  calculate_weight(dist_weight[0], l, dist_weight[1], k));
     }
@@ -221,6 +229,7 @@ get_distortion_offset(
   return result;
 }
 
+#ifdef DISTORTION_PIPELINE
 int
 distortion_pipeline(
     const struct distortion_t *dist,
@@ -310,6 +319,7 @@ distortion_pipeline(
 
   return 0;
 }
+#endif
 
 int
 do_distortion(
@@ -322,9 +332,12 @@ do_distortion(
 
   assert(naxes == NAXES);
   assert(lookup);
+#ifndef NDEBUG
   for (i = 0; i < naxes; ++i) {
     assert(lookup[i]);
+    assert(lookup[i]->data);
   }
+#endif
   assert(pix);
   assert(foc);
 

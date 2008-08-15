@@ -34,14 +34,33 @@ DAMAGE.
          mdroe@stsci.edu
 */
 
+/*
+ MGDTODO: It's preferable to do the pipelining of SIP + Paper IV
+ distortion + WCS in Python.  In which case, it's much easier to drop
+ the Distortion class (which does the whole pipeline of Paper IV,
+ Figure 1), in favor of just doing the first box in that figure.
+
+ The complication is that it is hard to insert steps into the wcslib
+ processing, so CQDIS becomes harder (or impossible) to handle.  For
+ now, we are assuming we don't need CQDIS.  If that really is the
+ case, the whole Distortion class (but not DistortionLookupTable)
+ could be removed.
+
+ Define DISTORTION_PIPELINE to compile the old Distortion class.
+*/
+
 #ifndef __DISTORTION_H__
 #define __DISTORTION_H__
 
+#ifdef DISTORTION_PIPELINE
 #include "wcs.h"
+#endif
 
 /* TODO: This is all two-dimensional.  Should be made
    multi-dimensional in the future. */
 #define NAXES 2
+
+#define MAXAXES 6
 
 /**
  * A structure to contain the information for a single distortion lookup table
@@ -71,6 +90,7 @@ distortion_lookup_t_init(struct distortion_lookup_t* lookup);
 int
 distortion_lookup_t_free(struct distortion_lookup_t* lookup);
 
+#ifdef DISTORTION_PIPELINE
 /**
  * A structure to hold the parameters for a transformation based on
  * Paper IV.  Only -TAB distortions (not polynomial or spline) are
@@ -131,6 +151,7 @@ distortion_t_init(
 int
 distortion_t_free(
     struct distortion_t* dist);
+#endif
 
 /**
  * Lookup the distortion offset for a particular pixel coordinate in
@@ -141,6 +162,7 @@ get_distortion_offset(
     const struct distortion_lookup_t *lookup,
     const double img[NAXES]);
 
+#ifdef DISTORTION_PIPELINE
 /**
  * Perform the pipeline of transformations and distortions outlined in
  * Figure 1 in Paper IV.
@@ -157,6 +179,7 @@ distortion_pipeline(
     const double *pix /* [NAXES][nelem] */,
     /* Output parameters */
     double *world /* [NAXES][nelem] */);
+#endif
 
 /**
  * Perform just the distortion table part of Paper IV.

@@ -8,6 +8,10 @@ from distutils.core import setup, Extension
 from os.path import join
 
 ######################################################################
+# CONFIGURATION
+USE_ASSERTS = True
+
+######################################################################
 # NUMPY
 try:
     import numpy
@@ -115,6 +119,13 @@ fd.close()
 
 ######################################################################
 # DISTUTILS SETUP
+if USE_ASSERTS:
+    define_macros = [('DEBUG', None)]
+    undef_macros = [('NDEBUG')]
+else:
+    define_macros = [('NDEBUG', None)]
+    undef_macros = [('DEBUG')]
+
 setup(name="pywcs",
       version="1.1a2-%s" % WCSVERSION,
       description="Python wrappers to WCSLIB",
@@ -131,7 +142,9 @@ setup(name="pywcs",
                     numpy_include,
                     WCSLIBC,
                     "src"
-                    ]
+                    ],
+                  define_macros=define_macros,
+                  undef_macros=undef_macros
                   )
       ]
       )

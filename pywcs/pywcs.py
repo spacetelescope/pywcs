@@ -41,7 +41,8 @@ except ImportError:
 # This is here for the sake of epydoc
 WCSBase = _pywcs._WCS
 
-Distortion = _pywcs.Distortion
+if hasattr(_pywcs, "Distortion"):
+    Distortion = _pywcs.Distortion
 DistortionLookupTable = _pywcs.DistortionLookupTable
 
 # A wrapper around the C WCS type

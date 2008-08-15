@@ -34,25 +34,14 @@ DAMAGE.
          mdroe@stsci.edu
 */
 
-/*
- MGDTODO: It's possible that we want to do the pipelining of SIP +
- Paper IV distortion + WCS in Python.  In which case, it's much easier
- to drop the Distortion class (which does the whole pipeline of Paper
- IV, Figure 1), in favor of just doing the first box in that figure.
-
- The complication is that it is hard to insert steps into the wcslib
- processing, so CQDIS becomes harder (or impossible) to handle.  For
- now, we are assuming we don't need CQDIS.  If that really is the
- case, the whole Distortion class (but not DistortionLookupTable)
- could be removed.
-*/
-
 /* util.h must be imported first */
 #include "util.h"
 
 #include "distortion.h"
 #include "docstrings.h"
+#ifdef DISTORTION_PIPELINE
 #include "str_list_proxy.h"
+#endif
 
 #include <structmember.h> /* From Python */
 
@@ -261,6 +250,7 @@ static PyTypeObject PyDistLookupType = {
   PyDistLookup_new,               /* tp_new */
 };
 
+#ifdef DISTORTION_PIPELINE
 static PyTypeObject PyDistortionType;
 
 typedef struct {
@@ -715,31 +705,31 @@ static PyTypeObject PyDistortionType = {
   0,                          /* tp_alloc */
   PyDistortion_new,               /* tp_new */
 };
+#endif // DISTORTION_PIPELINE
 
 PyObject*
 PyWcs_do_distortion(PyObject* self, PyObject* args, PyObject* kwds) {
-  PyObject* lookups_obj = NULL;
+  PyObject* lookups_seq = NULL;
   PyObject* lookup_obj = NULL;
-  PyDistLookup* lookup = NULL;
   const struct distortion_lookup_t* lookups[] = { NULL, NULL };
-  PyObject* pix_obj = NULL;
-  PyArrayObject* pix_array = NULL;
-  PyArrayObject* foc_array = NULL;
+  PyObject* pixcrd_obj = NULL;
+  PyArrayObject* pixcrd = NULL;
+  PyArrayObject* foccrd = NULL;
   Py_ssize_t i = 0;
   PyObject* result = NULL;
 
   if (!PyArg_ParseTuple(args, "OO:do_distortion",
-                        &lookups_obj, &pix_obj)) {
+                        &lookups_seq, &pixcrd_obj)) {
     return NULL;
   }
 
-  if (!PySequence_Check(lookups_obj) || PySequence_Size(lookups_obj) != 2) {
+  if (!PySequence_Check(lookups_seq) || PySequence_Size(lookups_seq) != 2) {
     PyErr_SetString(PyExc_ValueError, "First arg must be a 2-length sequence of DistortionLookupTable objects.");
     return NULL;
   }
 
-  for (i = 0; i < 2; ++i) {
-    lookup_obj = PySequence_GetItem(lookups_obj, i);
+  for (i = 0; i < NAXES; ++i) {
+    lookup_obj = PySequence_GetItem(lookups_seq, i);
     if (!lookup_obj) {
       return NULL;
     }
@@ -750,51 +740,52 @@ PyWcs_do_distortion(PyObject* self, PyObject* args, PyObject* kwds) {
       return NULL;
     }
 
-    lookup = (PyDistLookup*)lookup_obj;
-    lookups[i] = &(lookup->x);
+    lookups[i] = &(((PyDistLookup*)lookup_obj)->x);
     Py_DECREF(lookup_obj);
   }
 
-  pix_array = (PyArrayObject*)PyArray_ContiguousFromAny(pix_obj, PyArray_DOUBLE, 2, 2);
-  if (pix_array == NULL) {
+  pixcrd = (PyArrayObject*)PyArray_ContiguousFromAny(pixcrd_obj, PyArray_DOUBLE, 2, 2);
+  if (pixcrd == NULL) {
     goto _exit;
   }
 
-  if (PyArray_DIM(pix_array, 1) != 2) {
+  if (PyArray_DIM(pixcrd, 1) != NAXES) {
     PyErr_SetString(PyExc_ValueError, "Pixel array must be an Nx2 array");
     goto _exit;
   }
 
-  foc_array = (PyArrayObject*)PyArray_SimpleNew(2, PyArray_DIMS(pix_array), PyArray_DOUBLE);
-  if (foc_array == NULL) {
+  foccrd = (PyArrayObject*)PyArray_SimpleNew(2, PyArray_DIMS(pixcrd), PyArray_DOUBLE);
+  if (foccrd == NULL) {
     goto _exit;
   }
 
-  if (do_distortion(2, lookups, PyArray_DIM(pix_array, 0),
-                    PyArray_DATA(pix_array), PyArray_DATA(foc_array))) {
+  if (do_distortion(2, lookups, PyArray_DIM(pixcrd, 0),
+                    PyArray_DATA(pixcrd), PyArray_DATA(foccrd))) {
     PyErr_SetString(PyExc_RuntimeError, "Error performing distortion");
-    Py_XDECREF(foc_array);
+    Py_XDECREF(foccrd);
     goto _exit;
   }
 
-  result = (PyObject*)foc_array;
+  result = (PyObject*)foccrd;
 
  _exit:
 
-  Py_XDECREF(pix_array);
+  Py_XDECREF(pixcrd);
 
   return result;
 }
 
 void _setup_distortion_type(PyObject* m) {
+#ifdef DISTORTION_PIPELINE
   if (PyType_Ready(&PyDistortionType) < 0)
-    return;
-
-  if (PyType_Ready(&PyDistLookupType) < 0)
     return;
 
   Py_INCREF(&PyDistortionType);
   PyModule_AddObject(m, "Distortion", (PyObject *)&PyDistortionType);
+#endif
+
+  if (PyType_Ready(&PyDistLookupType) < 0)
+    return;
 
   Py_INCREF(&PyDistLookupType);
   PyModule_AddObject(m, "DistortionLookupTable", (PyObject *)&PyDistLookupType);
