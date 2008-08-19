@@ -50,23 +50,23 @@ class WCS(WCSBase):
     """%s""" % _pywcs._WCS.__doc__
 
     def __init__(self, header=None, fobj=None, key=' ', relax=False, naxis=2):
-        if _has_pyfits:
-            if isinstance(header, pyfits.NP_pyfits.Header):
-                pyfits_hdr = header.copy()
-                header = str(header.ascardlist())
-
-        WCSBase.__init__(self, header=header, key=key, relax=relax, naxis=naxis)
-        self.addDistortion(pyfits_hdr, fobj)
+        if isinstance(header, pyfits.NP_pyfits.Header):
+            WCSBase.__init__(self, header=str(header.ascardlist()), key=key, relax=relax, naxis=naxis)
+            self.addDistortion(header, fobj)
+        else:        
+            WCSBase.__init__(self, header=header, key=key, relax=relax, naxis=naxis)
         
         if header is None:
             # Set some reasonable defaults.
             self.crpix = numpy.zeros((self.naxis,), numpy.double)
             self.crval = numpy.zeros((self.naxis,), numpy.double)
             self.ctype = ['RA---TAN', 'DEC--TAN']
-        
+            self.cd = numpy.array([[1.0, 0.0], [0.0, 1.0]])
+            
     def addDistortion(self, header=None, fobj=None):
         """
         Adds distortion information as per WCS paper IV.
+        Only Lookup table distortion is implemented sofar.
         """
         assert isinstance(header, pyfits.NP_pyfits.Header)
         d_keys = []
@@ -93,7 +93,7 @@ class WCS(WCSBase):
             if header.has_key(distortion):
                 dis = header[distortion].lower()
             if dis == 'lookup':
-                assert isinstance(fobj, pyfits.NP_pyfits.HDUList), 'A pyfits HDUList is required for Lookup table distrtion.'
+                assert isinstance(fobj, pyfits.NP_pyfits.HDUList), 'A pyfits HDUList is required for Lookup table distortion.'
                 dp = d_kw+str(i)
                 d_extver = header[dp+'.EXTVER']
                 d_data = fobj['WCSDVARR', d_extver].data

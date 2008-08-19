@@ -1188,7 +1188,7 @@ An undefined value is represented by NaN.
 """
 
 WCS = """
-WCS(header=None, key=' ', relax=False, naxes=2)
+WCS(header=None, key=' ', relax=False, naxis=2)
 
 WCS objects convert between pixel and world coordinates, based on
 the WCS settings in a FITS file.
@@ -1204,6 +1204,11 @@ keywords.
     initialized to default values.
 @type header: PyFITS header object or string
 
+@param fobj: A PyFITS file object. It is needed when header keywords 
+    point to a Lookup table distortion stored in a different extension
+    as per WCS paper IV.
+@type fobj: PyFITS HDUList object
+
 @param key: The key referring to a particular WCS transform in the
     header.  This may be either C{' '} or C{'A'}-C{'Z'} and
     corresponds to the C{"a"} part of C{"CTYPEia"}.  (C{key}
@@ -1218,13 +1223,15 @@ keywords.
     (C{relax} may be provided only if C{header} is also provided.)
 @type relax: bool
 
-@param naxes: The number of world coordinates axes for the object.
-    (C{naxes} may only be provided if C{header} is C{None}.)
-@type naxes: int
+@param naxis: The number of world coordinates axes for the object.
+    (C{naxis} may only be provided if C{header} is C{None}.)
+@type naxis: int
 
 @raises MemoryError: Memory allocation failed.
 @raises ValueError: Invalid key.
 @raises KeyError: Key not found in FITS header.
+@raises AssertionError: Lookup table distortion present in the header but fobj not provided.
+
 """
 
 zsource = """
