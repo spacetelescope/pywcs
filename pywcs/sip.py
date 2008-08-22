@@ -60,61 +60,62 @@ class SIP(WCS):
     @raises ValueError: Header does not contain SIP information.
     @raises KeyError: Key not found in FITS header.
     """
-    def __init__(self, header, fobj=None, relax=False):
-        assert isinstance(header, pyfits.NP_pyfits.Header)
+    def __init__(self, header=None, fobj=None, relax=False):
+        if header:
+            assert isinstance(header, pyfits.NP_pyfits.Header)
+            if header.has_key("A_ORDER"):
+                m = int(header["A_ORDER"])
+                self._a = numpy.zeros((m+1, m+1))
+                for i in range(m+1):
+                    for j in range(m-i+1):
+                        self._a[i, j] = header.get("A_%d_%d" % (i, j), 0.0)
 
-        if header.has_key("A_ORDER"):
-            m = int(header["A_ORDER"])
-            self._a = numpy.zeros((m+1, m+1))
-            for i in range(m+1):
-                for j in range(m-i+1):
-                    self._a[i, j] = header.get("A_%d_%d" % (i, j), 0.0)
+                if not header.has_key("B_ORDER"):
+                    raise ValueError(
+                        "A_ORDER provided without corresponding B_ORDER "
+                        "keyword for SIP distortion")
 
-            if not header.has_key("B_ORDER"):
+                m = int(header["B_ORDER"])
+                self._b = numpy.zeros((m+1, m+1))
+                for i in range(m+1):
+                    for j in range(m-i+1):
+                        self._b[i, j] = header.get("B_%d_%d" % (i, j), 0.0)
+            elif header.has_key("B_ORDER"):
                 raise ValueError(
-                    "A_ORDER provided without corresponding B_ORDER "
+                    "B_ORDER provided without corresponding A_ORDER "
                     "keyword for SIP distortion")
+            else:
+                self._a = None
+                self._b = None
 
-            m = int(header["B_ORDER"])
-            self._b = numpy.zeros((m+1, m+1))
-            for i in range(m+1):
-                for j in range(m-i+1):
-                    self._b[i, j] = header.get("B_%d_%d" % (i, j), 0.0)
-        elif header.has_key("B_ORDER"):
-            raise ValueError(
-                "B_ORDER provided without corresponding A_ORDER "
-                "keyword for SIP distortion")
-        else:
-            self._a = None
-            self._b = None
+            if header.has_key("AP_ORDER"):
+                m = int(header["AP_ORDER"])
+                self._ap = numpy.zeros((m+1, m+1))
+                for i in range(m+1):
+                    for j in range(m-i+1):
+                        self._ap[i, j] = header.get("AP_%d_%d" % (i, j), 0.0)
 
-        if header.has_key("AP_ORDER"):
-            m = int(header["AP_ORDER"])
-            self._ap = numpy.zeros((m+1, m+1))
-            for i in range(m+1):
-                for j in range(m-i+1):
-                    self._ap[i, j] = header.get("AP_%d_%d" % (i, j), 0.0)
+                if not header.has_key("BP_ORDER"):
+                    raise ValueError(
+                        "AP_ORDER provided without corresponding BP_ORDER "
+                        "keyword for SIP distortion")
 
-            if not header.has_key("BP_ORDER"):
+                m = int(header["BP_ORDER"])
+                self._bp = numpy.zeros((m+1, m+1))
+                for i in range(m+1):
+                    for j in range(m-i+1):
+                        self._bp[i, j] = header.get("BP_%d_%d" % (i, j), 0.0)
+            elif header.has_key("BP_ORDER"):
                 raise ValueError(
-                    "AP_ORDER provided without corresponding BP_ORDER "
+                    "BP_ORDER provided without corresponding AP_ORDER "
                     "keyword for SIP distortion")
-
-            m = int(header["BP_ORDER"])
-            self._bp = numpy.zeros((m+1, m+1))
-            for i in range(m+1):
-                for j in range(m-i+1):
-                    self._bp[i, j] = header.get("BP_%d_%d" % (i, j), 0.0)
-        elif header.has_key("BP_ORDER"):
-            raise ValueError(
-                "BP_ORDER provided without corresponding AP_ORDER "
-                "keyword for SIP distortion")
-        else:
-            self._ap = None
-            self._bp = None
-
+            else:
+                self._ap = None
+                self._bp = None
+            
         WCS.__init__(self, header, fobj=fobj, key=" ", relax=relax)
 
+    
     def foc2pix(self, x, y=None):
         """
         Convert focal plane coordinates to pixel coordinates.
