@@ -61,12 +61,12 @@ class WCS(WCSBase):
             self.crpix = numpy.zeros((self.naxis,), numpy.double)
             self.crval = numpy.zeros((self.naxis,), numpy.double)
             self.ctype = ['RA---TAN', 'DEC--TAN']
-            self.cd = numpy.array([[1.0, 0.0], [0.0, 1.0]])
+            self.cd = numpy.array([[1.0, 0.0], [0.0, 1.0]], numpy.double)
             
     def addDistortion(self, header=None, fobj=None):
         """
         Adds distortion information as per WCS paper IV.
-        Only Lookup table distortion is implemented sofar.
+        Only lookup table distortion is omplemented sofar.
         """
         assert isinstance(header, pyfits.NP_pyfits.Header)
         d_keys = []
@@ -92,19 +92,21 @@ class WCS(WCSBase):
             distortion = dist+str(i)
             if header.has_key(distortion):
                 dis = header[distortion].lower()
-            if dis == 'lookup':
-                assert isinstance(fobj, pyfits.NP_pyfits.HDUList), 'A pyfits HDUList is required for Lookup table distortion.'
-                dp = d_kw+str(i)
-                d_extver = header[dp+'.EXTVER']
-                d_data = fobj['WCSDVARR', d_extver].data
-                d_header = fobj['WCSDVARR', d_extver].header
-                d_crpix = (d_header['CRPIX1'], d_header['CRPIX2'])
-                d_crval = (d_header['CRVAL1'], d_header['CRVAL2'])
-                d_cdelt = (d_header['CDELT1'], d_header['CDELT2'])
-                d_lookup = DistortionLookupTable(d_data, d_crpix, d_crval, d_cdelt)
-                setattr(self, distortion.lower(), d_lookup)
+                if dis == 'lookup':
+                    assert isinstance(fobj, pyfits.NP_pyfits.HDUList), 'A pyfits HDUList is required for Lookup table distrtion.'
+                    dp = d_kw+str(i)
+                    d_extver = header[dp+'.EXTVER']
+                    d_data = fobj['WCSDVARR', d_extver].data
+                    d_header = fobj['WCSDVARR', d_extver].header
+                    d_crpix = (d_header['CRPIX1'], d_header['CRPIX2'])
+                    d_crval = (d_header['CRVAL1'], d_header['CRVAL2'])
+                    d_cdelt = (d_header['CDELT1'], d_header['CDELT2'])
+                    d_lookup = DistortionLookupTable(d_data, d_crpix, d_crval, d_cdelt)
+                    setattr(self, distortion.lower(), d_lookup)
+                else:
+                    print 'Polynomial distortion is not implemented.\n'
             else:
-                print 'Polynomial distortion is not implemented.\n'
+                pass
                 
     
     def _pixel2world_generic(self, func, *args):
