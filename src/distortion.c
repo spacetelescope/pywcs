@@ -221,8 +221,8 @@ get_distortion_offset(
     for (l = 0; l < 2; ++l) {
       coord[0] = dist_ifloor[0] + l;
       coord[1] = dist_ifloor[1] + k;
-      result += ((double)get_dist(lookup, coord) *
-                 calculate_weight(dist_weight[0], l, dist_weight[1], k));
+      result += (double)get_dist(lookup, coord) * \
+                calculate_weight(dist_weight[0], l, dist_weight[1], k);
     }
   }
 
@@ -340,6 +340,7 @@ do_distortion(
 #endif
   assert(pix);
   assert(foc);
+  assert(pix != foc);
 
   for (j = 0; j < nelem; ++j) {
     for (i = 0; i < NAXES; ++i) {

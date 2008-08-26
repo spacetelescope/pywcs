@@ -127,7 +127,7 @@ else:
     undef_macros = [('DEBUG')]
 
 setup(name="pywcs",
-      version="1.1a2-%s" % WCSVERSION,
+      version="1.1a3-%s" % WCSVERSION,
       description="Python wrappers to WCSLIB",
       author=CONTACT,
       author_email=EMAIL,
