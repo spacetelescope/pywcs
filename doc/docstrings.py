@@ -1,8 +1,94 @@
+# Copyright (C) 2008 Association of Universities for Research in Astronomy (AURA)
+
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+
+#     1. Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+
+#     2. Redistributions in binary form must reproduce the above
+#       copyright notice, this list of conditions and the following
+#       disclaimer in the documentation and/or other materials provided
+#       with the distribution.
+
+#     3. The name of AURA and its representatives may not be used to
+#       endorse or promote products derived from this software without
+#       specific prior written permission.
+
+# THIS SOFTWARE IS PROVIDED BY AURA ``AS IS'' AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL AURA BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+# OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+# TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+# USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+# DAMAGE.
+
+###########################################################################
+
 # It gets to be really tedious to type long docstrings in ANSI C
 # syntax (since multi-line strings literals are not valid).
 # Therefore, the docstrings are written here in doc/docstrings.py,
 # which are then converted by setup.py into docstrings.h, which is
 # included by pywcs.c
+
+import _docutil as __
+
+a = """
+Get the SIP A_i_j matrix used for pixel to focal plane transformation
+as a numpy array.  Its values may be changed in place, but it may not
+be resized, without creating a new Sip object.
+
+@type: numpy double array[m+1][m+1]
+"""
+
+a_order = """
+Get the order of the polynomial in the SIP A_i_j array (A_ORDER).
+
+@type: int
+"""
+
+all_pix2sky = """
+all_pix2sky(pixcrd) -> numpy array[ncoord][nelem] of double
+
+Transforms pixel coordinates to sky coordinates by doing all of the
+following in order:
+
+    - SIP distortion correction (optionally)
+
+    - Paper IV distortion correction (optionally)
+
+    - wcslib WCS transformation
+
+%s
+
+@param pixcrd: Array of pixel coordinates.
+
+@type pixcrd: numpy array[ncoord][nelem] of double
+
+@return: Array of sky coordinates.
+
+@raises MemoryError: Memory allocation failed.
+@raises SingularMatrixError: Linear transformation matrix is singular.
+@raises InconsistentAxisTypesError: Inconsistent or unrecognized
+    coordinate axis types.
+@raises ValueError: Invalid parameter value.
+@raises ValueError: Invalid coordinate transformation parameters.
+@raises ValueError: x- and y-coordinate arrays are not the same size.
+@raises InvalidTransformError: Invalid coordinate transformation
+
+@raises InvalidTransformError: Ill-conditioned coordinate
+    transformation parameters.
+""" % __.FITS_EQUIVALENT('all_pix2sky')
+
+all_pix2sky_fits = """
+all_pix2sky_fits(*args) -> sky
+
+%s
+""" % __.NON_FITS_EQUIVALENT('all_pix2sky')
 
 alt = """
 Character code for alternate coordinate descriptions.  For example,
@@ -11,6 +97,48 @@ the primary coordinate description, or one of the 26 upper-case
 letters, A-Z.
 
 @type: string
+"""
+
+ap = """
+Get the SIP AP_i_j matrix used for focal plane to pixel transformation
+as a numpy array.  Its values may be changed in place, but it may not
+be resized, without creating a new Sip object.
+
+@type: numpy double array[m+1][m+1]
+"""
+
+ap_order = """
+Get the order of the polynomial in the SIP AP_i_j array (AP_ORDER).
+
+@type: int
+"""
+
+b = """
+Get the SIP B_i_j matrix used for pixel to focal plane transformation
+as a numpy array.  Its values may be changed in place, but it may not
+be resized, without creating a new Sip object.
+
+@type: numpy double array[m+1][m+1]
+"""
+
+b_order = """
+Get the order of the polynomial in the SIP B_i_j array (B_ORDER).
+
+@type: int
+"""
+
+bp = """
+Get the SIP BP_i_j matrix used for focal plane to pixel transformation
+as a numpy array.  Its values may be changed in place, but it may not
+be resized, without creating a new Sip object.
+
+@type: numpy double array[m+1][m+1]
+"""
+
+bp_order = """
+Get the order of the polynomial in the SIP BP_i_j array (BP_ORDER).
+
+@type: int
 """
 
 cd = """
@@ -89,18 +217,12 @@ copy()
 Creates a deep copy of the WCS object.
 """
 
-cpdis = """
-The pre-linear transformation distortion lookup tables, C{CPDIS}.
-
-This is a 2-tuple of the form (x, y), where each object is a
-L{DistortionLookupTable} object.
+cpdis1 = """
+The pre-linear transformation distortion lookup table, C{CPDIS1}.
 """
 
-cqdis = """
-The post-linear transformation distortion lookup tables, C{CQDIS}.
-
-This is a 2-tuple of the form (x, y), where each object is a
-L{DistortionLookupTable} object.
+cpdis2 = """
+The pre-linear transformation distortion lookup table, C{CPDIS2}.
 """
 
 crder = """
@@ -123,20 +245,17 @@ matrix, maintained for historical compatibility.
 @type: array[naxis] of double
 """
 
-_crpix_generic = """
+crpix = """
 Coordinate reference pixels (C{CRPIXja}) for each pixel axis.
 
 B{Note that this coordinate is 1-based, and will be set/returned
 exactly as in the header.}
 
-%s
+This means that C{p2s(crpix)} will not be correct, and one should use
+C{p2s_fits(crpix)} instead.
 
 @type: array[naxis] of double
 """
-
-crpix = _crpix_generic % """
-This means that L{p2s}(crpix) will not be correct, and one should use
-L{p2s_fits}(crpix) instead."""
 
 crval = """
 Coordinate reference values (C{CRVALia}) for each coordinate axis.
@@ -182,8 +301,8 @@ in FITS in either of two ways:
                                        5
 
       Faces 2, 3 and 4 may appear on one side or the other (or both).
-      The world-to-pixel routines map faces 2, 3 and 4 to the left but
-      the pixel-to-world routines accept them on either side.
+      The sky-to-pixel routines map faces 2, 3 and 4 to the left but
+      the pixel-to-sky routines accept them on either side.
 
     - The C{"COBE"} convention in which the six faces are stored in a
       three-dimensional structure using a C{"CUBEFACE"} axis indexed
@@ -232,8 +351,9 @@ Fixes WCS keyvalues for malformed cylindrical projections.
 """
 
 data = """
-The array data for the distortion lookup table.  Should be a 2D numpy
-double array.
+The array data for the distortion lookup table.
+
+@type: numpy array of floats
 """
 
 dateavg = """
@@ -264,17 +384,6 @@ more than half a day then C{ValueError} is raised.
 @return: C{0} for success; C{-1} if no change required.
 """
 
-Distortion = """
-A class to perform the transformations and distortions outlined in
-Paper IV.
-
-Currently, only one direction -- from pixel to world coordinates -- is
-supported.
-
-Additionally, only lookup table distortions ("-TAB") are supported,
-not polynomial or spline distortions.
-"""
-
 DistortionLookupTable = """
 DistortionLookupTable(table, crpix, crval, cdelt)
 
@@ -291,94 +400,6 @@ transformation.
 
 These objects are used for setting the C{CPDIS} and C{CQDIS} lookup
 tables in a C{Distortion} object.
-"""
-
-distortion_cd = """
-C{CDi_ja} linear transformation matrix.
-
-For historical compatibility, either a single C{CDi_ja} matrix is
-supported or a C{PCi_ja} matrix and C{CDELTia} keywords.
-
-L{has_pc} can be used to determine which of these alternatives are
-present in the header.
-
-Setting C{cd} resets L{cdelt} to unity.
-
-@type: array[2][2] of double
-"""
-
-distortion_crpix = _crpix_generic % ""
-
-distortion_has_pc = """
-has_pc() -> bool
-
-Returns True if the distortion is using C{PC}/C{CDELT}, otherwise it
-is using C{CD}.
-"""
-
-distortion_p2s = """
-p2s(pixcrd) -> world
-
-Converts pixel to world coordinates using the transformations and
-distortions outlined in Paper IV.
-
-B{The pixel coordinates given are 0-based (like array indices in C and
-Python).  If your pixel coordinates are 1-based (like array indices in
-Fortran), use L{p2s_fits} instead.}
-
-@param pixcrd: Array of pixel coordinates.
-
-@type pixcrd: numpy array[ncoord][nelem] of double
-
-@return: array[ncoord][nelem] of double
-
-Array of world coordinates.
-
-@raises MemoryError: Memory allocation failed.
-@raises SingularMatrixError: Linear transformation matrix is singular.
-@raises InconsistentAxisTypesError: Inconsistent or unrecognized
-    coordinate axis types.
-@raises ValueError: Invalid parameter value.
-@raises ValueError: x- and y-coordinate arrays are not the same size.
-@raises InvalidTransformError: Invalid coordinate transformation
-    parameters.
-@raises InvalidTransformError: Ill-conditioned coordinate transformation
-    parameters.
-"""
-
-distortion_p2s_fits = """
-p2s_fits(pixcrd) -> world
-
-Identical to L{p2s}, except pixel coordinates are 1-based (like array
-indices in Fortran), instead of 0-based (like array indices C and
-Python).
-"""
-
-distortion_pixel2world = """
-An alias for L{p2s}.
-"""
-
-distortion_pixel2world_fits = """
-An alias for L{p2s_fits}.
-"""
-
-do_distortion = """
-Given a L{DistortionLookupTable} for each axis, distort the incoming
-pixel coordinates according to Paper IV.
-
-B{At the moment, only 2-dimensional coordinates are supported.}
-
-@param lookup_tables: A lookup table for each axis.
-
-@type lookup_tables: Sequence of L{DistortionLookupTable}
-
-@param pixcrd: Array of pixel coordinates.
-
-@type pixcrd: numpy array[ncoord][nelem] of double
-
-@return array[ncoord][nelem] of double
-
-Array of focal plane coordinates.
 """
 
 equinox = """
@@ -526,7 +547,7 @@ I{This value may not be correct until after L{set} is called.}
 """
 
 lat = """
-The index into the world coordinate array containing latitude values.
+The index into the sky coordinate array containing latitude values.
 B{[Read only]}.
 
 @see: L{lng}
@@ -550,7 +571,7 @@ I{This value may not be correct until after L{set} is called.}
 """
 
 lng = """
-The index into the world coordinate array containing longitude values.
+The index into the sky coordinate array containing longitude values.
 B{[Read only]}.
 
 @see: L{lat}
@@ -729,11 +750,9 @@ An undefined value is represented by NaN.
 p2s = """
 p2s(pixcrd) -> dict
 
-Converts pixel to world coordinates.
+Converts pixel to sky coordinates.
 
-B{The pixel coordinates given are 0-based (like array indices in C and
-Python).  If your pixel coordinates are 1-based (like array indices in
-Fortran), use L{p2s_fits} instead.}
+%s
 
 @param pixcrd: Array of pixel coordinates.
 
@@ -741,34 +760,33 @@ Fortran), use L{p2s_fits} instead.}
 
 @return: A dictionary with the following keys:
 
-        - C{imgcrd} (array[ncoord][nelem] of double)
+    - C{imgcrd} (array[ncoord][nelem] of double)
 
-            - Array of intermediate world coordinates.  For celestial
-              axes, C{imgcrd[][self.L{lng}]} and
-              C{imgcrd[][self.L{lat}]} are the projected I{x}-, and
-              I{y}-coordinates, in decimal degrees.  For spectral
-              axes, C{imgcrd[][self.L{spec}]} is the intermediate
-              spectral coordinate, in SI units.
+        - Array of intermediate sky coordinates.  For celestial axes,
+          C{imgcrd[][self.L{lng}]} and C{imgcrd[][self.L{lat}]} are
+          the projected I{x}-, and I{y}-coordinates, in decimal
+          degrees.  For spectral axes, C{imgcrd[][self.L{spec}]} is
+          the intermediate spectral coordinate, in SI units.
 
-        - C{phi} (array[ncoord] of double)
+    - C{phi} (array[ncoord] of double)
 
-        - C{theta} (array[ncoord] of double)
+    - C{theta} (array[ncoord] of double)
 
-            - Longitude and latitude in the native coordinate system
-              of the projection, in degrees.
+        - Longitude and latitude in the native coordinate system of
+          the projection, in degrees.
 
-        - C{world} (array[ncoord][nelem] of double)
+    - C{world} (array[ncoord][nelem] of double)
 
-            - Array of world coordinates.  For celestial axes,
-              C{world[][self.L{lng}]} and C{world[][self.L{lat}]} are
-              the celestial longitude and latitude, in decimal
-              degrees.  For spectral axes, C{world[][self.L{spec}]} is
-              the intermediate spectral coordinate, in SI units.
+        - Array of sky coordinates.  For celestial axes,
+          C{world[][self.L{lng}]} and C{world[][self.L{lat}]} are the
+          celestial longitude and latitude, in decimal degrees.  For
+          spectral axes, C{world[][self.L{spec}]} is the intermediate
+          spectral coordinate, in SI units.
 
-        - C{stat} (array[ncoord] of int)
+    - C{stat} (array[ncoord] of int)
 
-            - Status return value for each coordinate. C{0} for success, C{1}
-              for invalid pixel coordinate.
+        - Status return value for each coordinate. C{0} for success,
+          C{1} for invalid pixel coordinate.
 
 @raises MemoryError: Memory allocation failed.
 @raises SingularMatrixError: Linear transformation matrix is singular.
@@ -778,17 +796,39 @@ Fortran), use L{p2s_fits} instead.}
 @raises ValueError: x- and y-coordinate arrays are not the same size.
 @raises InvalidTransformError: Invalid coordinate transformation
     parameters.
-@raises InvalidTransformError: Ill-conditioned coordinate transformation
-    parameters.
-"""
+@raises InvalidTransformError: Ill-conditioned coordinate
+    transformation parameters.
+""" % __.FITS_EQUIVALENT('p2s')
 
 p2s_fits = """
 p2s_fits(pixcrd) -> dict
 
-Identical to L{p2s}, except pixel coordinates are 1-based (like array
-indices in Fortran), instead of 0-based (like array indices C and
-Python).
-"""
+%s
+""" % __.NON_FITS_EQUIVALENT('s2p')
+
+p4_pix2foc = """
+p4_pix2foc(pixcrd) -> numpy array[ncoord][nelem] of double
+
+Convert pixel coordinates to focal plane coordinates using Paper IV
+lookup-table distortion correction.
+
+%s
+
+@param pixcrd: Array of pixel coordinates.
+
+@type pixcrd: numpy array[ncoord][nelem] of double
+
+@return: Array of focal plane coordinates.
+
+@raises MemoryError: Memory allocation failed.
+@raises ValueError: Invalid coordinate transformation parameters.
+""" % __.FITS_EQUIVALENT('p4_pix2foc')
+
+p4_pix2foc_fits = """
+p4_pix2foc_fits(pixcrd) -> foccrd
+
+%s
+""" % __.NON_FITS_EQUIVALENT('p4_pix2foc')
 
 pc = """
 The C{PCi_ja} (pixel coordinate) transformation matrix.  The order is::
@@ -809,6 +849,30 @@ default.
 @type: float
 """
 
+pix2foc = """
+pix2foc(pixcrd) -> numpy array[ncoord][nelem] of double
+
+Perform both SIP polynomial and Paper IV lookup-table distortion
+correction, in that order.
+
+%s
+
+@param pixcrd: Array of pixel coordinates.
+
+@type pixcrd: numpy array[ncoord][nelem] of double
+
+@return: Array of focal plane coordinates.
+
+@raises MemoryError: Memory allocation failed.
+@raises ValueError: Invalid coordinate transformation parameters.
+""" % __.FITS_EQUIVALENT('pix2foc')
+
+pix2foc_fits = """
+pix2foc_fits(pixcrd) -> foccrd
+
+%s
+""" % __.NON_FITS_EQUIVALENT('pix2foc')
+
 piximg_matrix = """
 Matrix containing the product of the C{CDELTia} diagonal matrix and
 the C{PCi_ja} matrix.
@@ -826,9 +890,10 @@ for debugging purposes, and may be removed in the future.
 """
 
 pywcs = """
-The routines in this module implement the FITS World Coordinate System
-(WCS) standard which defines methods to be used for computing world
-coordinates from image pixel coordinates, and vice versa.
+Pywcs provides transformations following the SIP conventions, Paper IV
+table lookup distortion, and the core WCS functionality provided by
+wcslib.  Each of these transformations can be used independently or
+together in a standard pipeline.
 
 The basic workflow is as follows:
 
@@ -837,32 +902,28 @@ The basic workflow is as follows:
     2. Call the C{pywcs.WCS} constructor with a PyFITS header object.
 
     3. Optionally, if the FITS file uses any deprecated or
-    non-standard features, you may need to call one of the C{fix}
-    methods on the object.
+       non-standard features, you may need to call one of the C{fix}
+       methods on the object.
 
-    4. Convert coordinates using the C{pixel2world()} or
-    C{world2pixel()} methods.
+    4. Use one of the following transformation methods:
 
-Short example::
+       - all_pix2sky: Perform all three transformations from pixel to
+         sky coords.
 
-    import numpy
-    import pywcs
-    import pyfits
+       - wcs_pix2sky: Perform just the core WCS transformation from
+         pixel to sky coords.
 
-    hdulist = pyfits.open("test.fits")
+       - wcs_sky2pix: Perform just the core WCS transformation from
+         sky to pixel coords.
 
-    # Parse the WCS keywords in the primary HDU
-    wcs = pywcs.WCS(hdulist[0].header)
+       - sip_pix2foc: Convert from pixel to focal plane coords using
+         the SIP polynomial coefficients.
 
-    # Print out the "name" of the WCS, as defined in the FITS header
-    print wcs.name
+       - sip_foc2pix: Convert from focal plane to pixel coords using
+         the SIP polynomial coefficients.
 
-    # Some interesting pixel coordinates
-    pixcrd = numpy.array([[0,0],[24,38],[45,98]], numpy.float_)
-
-    # Convert pixel coordinates to world coordinates
-    world = wcs.pixel2world(pixcrd)
-    print world
+       - p4_pix2foc: Convert from pixel to focal plane coords using
+         the table lookup distortion method described in Paper IV.
 """
 
 radesys = """
@@ -890,17 +951,15 @@ An undefined value is represented by NaN.
 """
 
 s2p = """
-s2p(world) -> dict
+s2p(sky) -> dict
 
-Transforms world coordinates to pixel coordinates.
+Transforms sky coordinates to pixel coordinates.
 
-B{The pixel coordinates returned are 0-based (like array indices in C
-and Python).  If you require pixel coordinates to be 1-based (like
-array indices in Fortran), use L{s2p_fits} instead.}
+%s
 
-@param world: Array of world coordinates, in decimal degrees.
+@param sky: Array of sky coordinates, in decimal degrees.
 
-@type world: array[ncoord][nelem] of double
+@type sky: array[ncoord][nelem] of double
 
 @return: A dictionary with the following keys:
         - C{phi} (array[ncoord] of double)
@@ -911,7 +970,7 @@ array indices in Fortran), use L{s2p_fits} instead.}
 
         - C{imgcrd} (array[ncoord][nelem] of double)
 
-            - Array of intermediate world coordinates.  For celestial
+            - Array of intermediate sky coordinates.  For celestial
               axes, C{imgcrd[][self.L{lng}]} and
               C{imgcrd[][self.L{lat}]} are the projected I{x}-, and
               I{y}-coordinates, in "degrees".  For quadcube
@@ -939,15 +998,13 @@ array indices in Fortran), use L{s2p_fits} instead.}
     parameters.
 @raises InvalidTransformError: Ill-conditioned coordinate
     transformation parameters.
-"""
+""" % (__.FITS_EQUIVALENT('s2p'))
 
 s2p_fits = """
 s2p_fits(pixcrd) -> dict
 
-Identical to L{s2p}, except pixel coordinates are 1-based (like array
-indices in Fortran), instead of 0-based (like array indices C and
-Python).
-"""
+%s
+""" % (__.NON_FITS_EQUIVALENT('s2p'))
 
 set = """
 set()
@@ -1001,6 +1058,88 @@ sequence of tuples of the form (I{i}, I{m}, I{value}):
     - I{m}: parameter number, as in C{PVi_ma}, (i.e. 0-relative)
     - I{value}: parameter value (as a string)
 """
+
+sip = """
+Get/set the Sip object for performing SIP distortion correction.
+"""
+
+Sip = """
+Sip(a, b, ap, bp, crpix)
+
+The Sip class performs polynomial distortion correction using the SIP
+convention in both directions.
+
+Shupe, D. L., M. Moshir, J. Li, D. Makovoz and R. Narron.  2005.
+"The SIP Convention for Representing Distortion in FITS Image
+Headers."  ADASS XIV.
+
+@param a: The A_i_j polynomial for pixel to focal plane
+    transformation.  Its size must be (m+1, m+1) where m = A_ORDER.
+@type a: numpy array[m+1][m+1] of double
+
+@param b: The B_i_j polynomial for pixel to focal plane
+    transformation.  Its size must be (m+1, m+1) where m = B_ORDER.
+@type b: numpy array[m+1][m+1] of double
+
+@param ap: The AP_i_j polynomial for focal plane to pixel
+    transformation.  Its size must be (m+1, m+1) where m = AP_ORDER.
+@type ap: numpy array[m+1][m+1] of double
+
+@param bp: The BP_i_j polynomial for focal plane to pixel
+    transformation.  Its size must be (m+1, m+1) where m = BP_ORDER.
+@type bp: numpy array[m+1][m+1] of double
+
+@param crpix: The reference pixel.
+@type crpix: numpy array[2] of double
+"""
+
+sip_foc2pix = """
+sip_foc2pix(foccrd) -> numpy array[ncoord][nelem] of double
+
+Convert focal plane coordinates to pixel coordinates using the SIP
+polynomial distortion convention.
+
+%s
+
+@param foccrd: Array of focal plane coordinates.
+
+@type foccrd: numpy array[ncoord][nelem] of double
+
+@return: Array of pixel coordinates.
+
+@raises MemoryError: Memory allocation failed.
+@raises ValueError: Invalid coordinate transformation parameters.
+""" % __.FITS_EQUIVALENT('foc2pix')
+
+sip_foc2pix_fits = """
+sip_foc2pix_fits(foccrd) -> pixel
+
+%s
+""" % __.NON_FITS_EQUIVALENT('foc2pix')
+
+sip_pix2foc = """
+sip_pix2foc(pixcrd) -> numpy array[ncoord][nelem] of double
+
+Convert pixel coordinates to focal plane coordinates using the SIP
+polynomial distortion convention.
+
+%s
+
+@param pixcrd: Array of pixel coordinates.
+
+@type pixcrd: numpy array[ncoord][nelem] of double
+
+@return: Array of focal plane coordinates.
+
+@raises MemoryError: Memory allocation failed.
+@raises ValueError: Invalid coordinate transformation parameters.
+""" % __.FITS_EQUIVALENT('pix2foc')
+
+sip_pix2foc_fits = """
+sip_pix2foc_fits(pixcrd) -> focal plane
+
+%s
+""" % __.NON_FITS_EQUIVALENT('pix2foc')
 
 spcfix = """
 spcfix() -> int
@@ -1187,11 +1326,35 @@ An undefined value is represented by NaN.
 @type: float
 """
 
-WCS = """
-WCS(header=None, key=' ', relax=False, naxis=2)
+wcs = """
+A Wcsprm object to perform the basic wcslib WCS tranformation.
+"""
 
-WCS objects convert between pixel and world coordinates, based on
-the WCS settings in a FITS file.
+Wcs = """
+Wcs(sip, cpdis, wcsprm)
+
+Wcs objects amalgamate basic WCS (as provided by wcslib), with SIP and
+Paper IV distortion operations.
+
+To perform all distortion corrections and WCS tranformation, use
+L{_all_pix2sky}.
+
+@param sip:
+@type sip: A Sip object
+
+@param cpdis:
+@type cpdis: A 2-tuple of DistortionLookupTable objects, or (None,
+    None)
+
+@param wcsprm:
+@type wcsprm: A Wcsprm object
+"""
+
+Wcsprm = """
+Wcsprm(header=None, key=' ', relax=False, naxis=2)
+
+Wcsprm is a direct wrapper around wcslib, and provides access to the
+core WCS transformations that it supports.
 
 The FITS header parsing enforces correct FITS "keyword = value" syntax
 with regard to C{"= "} occurring in columns 9 and 10.  However, it
@@ -1204,11 +1367,6 @@ keywords.
     initialized to default values.
 @type header: PyFITS header object or string
 
-@param fobj: A PyFITS file object. It is needed when header keywords 
-    point to a Lookup table distortion stored in a different extension
-    as per WCS paper IV.
-@type fobj: PyFITS HDUList object
-
 @param key: The key referring to a particular WCS transform in the
     header.  This may be either C{' '} or C{'A'}-C{'Z'} and
     corresponds to the C{"a"} part of C{"CTYPEia"}.  (C{key}
@@ -1216,22 +1374,22 @@ keywords.
 @type key: string
 
 @param relax: Degree of permissiveness:
-    - C{False}: Recognize only FITS keywords defined by the
-      published WCS standard.
-    - C{True}: Admit all recognized informal extensions of the
+
+    - C{False}: Recognize only FITS keywords defined by the published
       WCS standard.
-    (C{relax} may be provided only if C{header} is also provided.)
+
+    - C{True}: Admit all recognized informal extensions of the WCS
+      standard.
+
 @type relax: bool
 
-@param naxis: The number of world coordinates axes for the object.
+@param naxis: The number of sky coordinates axes for the object.
     (C{naxis} may only be provided if C{header} is C{None}.)
 @type naxis: int
 
 @raises MemoryError: Memory allocation failed.
 @raises ValueError: Invalid key.
 @raises KeyError: Key not found in FITS header.
-@raises AssertionError: Lookup table distortion present in the header but fobj not provided.
-
 """
 
 zsource = """

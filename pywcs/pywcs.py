@@ -31,69 +31,100 @@ __docformat__ = "epytext"
 
 import numpy
 
+import _docutil as __
 import _pywcs
-try:
-    import pyfits
-    _has_pyfits = True
-except ImportError:
-    _has_pyfits = False
+import pyfits
 
 # This is here for the sake of epydoc
-WCSBase = _pywcs._WCS
-
-if hasattr(_pywcs, "Distortion"):
-    Distortion = _pywcs.Distortion
+WCSBase = _pywcs._Wcs
 DistortionLookupTable = _pywcs.DistortionLookupTable
+Sip = _pywcs.Sip
 
 # A wrapper around the C WCS type
 class WCS(WCSBase):
-    """%s""" % _pywcs._WCS.__doc__
-
     def __init__(self, header=None, fobj=None, key=' ', relax=False, naxis=2):
-        if isinstance(header, pyfits.NP_pyfits.Header):
-            WCSBase.__init__(self, header=str(header.ascardlist()), key=key, relax=relax, naxis=naxis)
-            self.addDistortion(header, fobj)
-        else:        
-            WCSBase.__init__(self, header=header, key=key, relax=relax, naxis=naxis)
-        
+        """
+        WCS(header=None, fobj=None, key=' ', relax=False, naxis=2)
+
+        WCS objects correct for SIP and Paper IV table-lookup
+        distortions and transform pixel to/from sky coordinates, based
+        on the WCS keywords and data in a FITS file.
+
+        @param header: A PyFITS header object.  If header is not
+            provided, the object will be initialized to default
+            values.
+        @type header: PyFITS header object
+
+        @param fobj: A PyFITS file object. It is needed when header
+            keywords point to a Lookup table distortion stored in a
+            different extension as per WCS paper IV.
+        @type fobj: PyFITS HDUList object
+
+        @param key: The key referring to a particular WCS transform in
+           the header.  This may be either C{' '} or C{'A'}-C{'Z'} and
+           corresponds to the C{"a"} part of C{"CTYPEia"}.  (C{key}
+           may only be provided if C{header} is also provided.)
+        @type key: string
+
+        @param relax: Degree of permissiveness:
+            - C{False}: Recognize only FITS keywords defined by the
+              published WCS standard.
+            - C{True}: Admit all recognized informal extensions of the
+              WCS standard.
+        @type relax: bool
+
+        @param naxis: The number of sky coordinates axes for the
+            object.  (C{naxis} may only be provided if C{header} is
+            C{None}.)  The only number of axis currently supported is 2.
+        @type naxis: int
+
+        @raises MemoryError: Memory allocation failed.
+        @raises ValueError: Invalid key.
+        @raises KeyError: Key not found in FITS header.
+        @raises AssertionError: Lookup table distortion present in the
+            header but fobj not provided.
+        """
+        if naxis != 2:
+            raise ValueError("Only 2 axes are supported");
+        self.naxis = naxis
+
         if header is None:
+            wcsprm = _pywcs._Wcsprm(header=None, key=key, relax=relax, naxis=naxis)
             # Set some reasonable defaults.
-            self.crpix = numpy.zeros((self.naxis,), numpy.double)
-            self.crval = numpy.zeros((self.naxis,), numpy.double)
-            self.ctype = ['RA---TAN', 'DEC--TAN']
-            self.cd = numpy.array([[1.0, 0.0], [0.0, 1.0]], numpy.double)
-            
-    def addDistortion(self, header=None, fobj=None):
+            wcsprm.crpix = numpy.zeros((self.naxis,), numpy.double)
+            wcsprm.crval = numpy.zeros((self.naxis,), numpy.double)
+            wcsprm.ctype = ['RA---TAN', 'DEC--TAN']
+            wcsprm.cd = numpy.array([[1.0, 0.0], [0.0, 1.0]], numpy.double)
+            cpdis = (None, None)
+        else:
+            wcsprm = _pywcs._Wcsprm(header=str(header.ascardlist()), key=key,
+                                    relax=relax, naxis=naxis)
+            cpdis = self._read_distortion_kw(header, fobj, dist='CPDIS')
+            sip = self._read_sip_kw(header)
+
+        WCSBase.__init__(self, sip, cpdis, wcsprm)
+
+    def _read_distortion_kw(self, header, fobj, dist='CPDIS'):
         """
-        Adds distortion information as per WCS paper IV.
-        Only lookup table distortion is omplemented sofar.
-        """
-        assert isinstance(header, pyfits.NP_pyfits.Header)
-        d_keys = []
-        for i in range(1+self.naxis+1):
-            d_keys.append('CPDIS'+str(i))
-            d_keys.append('CQDIS'+str(i))
-        d_val = numpy.array([header.has_key(k) for k in d_keys])
-        if d_val.any():
-        
-            for dist in ['CPDIS', 'CQDIS']:
-                self.readDistortionKw(header, fobj, dist)
-            
-    def readDistortionKw(self, header, fobj, dist=""):
-        """
-        Reads paper IV distortion keywords and data.
+        Reads paper IV table-lookup distortion keywords and data, and
+        returns a 2-tuple of DistortionLookupTable objects.
+
+        If no Paper IV distortion keywords are found, (None, None) is
+        returned.
         """
         if dist == 'CPDIS':
             d_kw= 'DP'
         else:
             d_kw = 'DQ'
-            
+
+        tables = {}
         for i in range(1, self.naxis+1):
             distortion = dist+str(i)
             if header.has_key(distortion):
                 dis = header[distortion].lower()
                 if dis == 'lookup':
-                    assert isinstance(fobj, pyfits.NP_pyfits.HDUList), 'A pyfits HDUList is required for Lookup table distrtion.'
+                    assert isinstance(fobj, pyfits.NP_pyfits.HDUList), \
+                        'A pyfits HDUList is required for Lookup table distortion.'
                     dp = d_kw+str(i)
                     d_extver = header[dp+'.EXTVER']
                     d_data = fobj['WCSDVARR', d_extver].data
@@ -102,172 +133,382 @@ class WCS(WCSBase):
                     d_crval = (d_header['CRVAL1'], d_header['CRVAL2'])
                     d_cdelt = (d_header['CDELT1'], d_header['CDELT2'])
                     d_lookup = DistortionLookupTable(d_data, d_crpix, d_crval, d_cdelt)
-                    setattr(self, distortion.lower(), d_lookup)
+                    tables[i] = d_lookup
                 else:
                     print 'Polynomial distortion is not implemented.\n'
             else:
                 pass
-                
-    
-    def _pixel2world_generic(self, func, *args):
+
+        if len(tables) == 2:
+            return (tables[0], tables[1])
+        return (None, None)
+
+    def _read_sip_kw(self, header):
+        """
+        Reads SIP header keywords and returns a Sip object.
+
+        If no SIP header keywords are found, None is returned.
+        """
+        if header.has_key("A_ORDER"):
+            if not header.has_key("B_ORDER"):
+                raise ValueError(
+                    "A_ORDER provided without corresponding B_ORDER "
+                    "keyword for SIP distortion")
+
+            m = int(header["A_ORDER"])
+            a = numpy.zeros((m+1, m+1))
+            for i in range(m+1):
+                for j in range(m-i+1):
+                    a[i, j] = header.get("A_%d_%d" % (i, j), 0.0)
+
+            m = int(header["B_ORDER"])
+            b = numpy.zeros((m+1, m+1))
+            for i in range(m+1):
+                for j in range(m-i+1):
+                    b[i, j] = header.get("B_%d_%d" % (i, j), 0.0)
+        elif header.has_key("B_ORDER"):
+            raise ValueError(
+                "B_ORDER provided without corresponding A_ORDER "
+                "keyword for SIP distortion")
+        else:
+            a = None
+            b = None
+
+        if header.has_key("AP_ORDER"):
+            if not header.has_key("BP_ORDER"):
+                raise ValueError(
+                    "AP_ORDER provided without corresponding BP_ORDER "
+                    "keyword for SIP distortion")
+
+            m = int(header["AP_ORDER"])
+            ap = numpy.zeros((m+1, m+1))
+            for i in range(m+1):
+                for j in range(m-i+1):
+                    ap[i, j] = header.get("AP_%d_%d" % (i, j), 0.0)
+
+            m = int(header["BP_ORDER"])
+            bp = numpy.zeros((m+1, m+1))
+            for i in range(m+1):
+                for j in range(m-i+1):
+                    bp[i, j] = header.get("BP_%d_%d" % (i, j), 0.0)
+        elif header.has_key("BP_ORDER"):
+            raise ValueError(
+                "BP_ORDER provided without corresponding AP_ORDER "
+                "keyword for SIP distortion")
+        else:
+            ap = None
+            bp = None
+
+        if a is None and b is None and ap is None and bp is None:
+            return None
+
+        return Sip(a, b, ap, bp, self.wcs.crpix)
+
+    def _array_converter(self, func, *args):
         if len(args) == 1:
-            return func(args[0])['world']
+            return func(args[0])
         elif len(args) == 2:
             x, y = args
-            assert len(x) == len(y)
+            if len(x) != len(y):
+                raise ValueError("x and y arrays are not the same size")
             length = len(x)
             xy = numpy.hstack((x.reshape((length, 1)),
                                y.reshape((length, 1))))
-            world = func(xy)['world']
-            return [world[:, i] for i in range(world.shape[1])]
+            sky = func(xy)
+            return [sky[:, i] for i in range(sky.shape[1])]
         raise TypeError("Expected 1 or 2 arguments, %d given" % len(args))
 
-    def pixel2world(self, *args):
+    def all_pix2sky(self, *args):
+        return self._array_converter(self._all_pix2sky, *args)
+    all_pix2sky.__doc__ = """
+        all_pix2sky(*args) -> sky
+
+        Transforms pixel coordinates to sky coordinates by doing all
+        of the following in order:
+
+            - SIP distortion correction (optionally)
+
+            - Paper IV table-lookup distortion correction (optionally)
+
+            - wcslib WCS transformation
+
+        %s
+
+        %s
+
+        @raises MemoryError: Memory allocation failed.
+        @raises SingularMatrixError: Linear transformation matrix is
+            singular.
+        @raises InconsistentAxisTypesError: Inconsistent or
+            unrecognized coordinate axis types.
+        @raises ValueError: Invalid parameter value.
+        @raises ValueError: Invalid coordinate transformation
+            parameters.
+        @raises ValueError: x- and y-coordinate arrays are not the
+            same size.
+        @raises InvalidTransformError: Invalid coordinate
+            transformation parameters.
+        @raises InvalidTransformError: Ill-conditioned coordinate
+            transformation parameters.
+        """ % (__.FITS_EQUIVALENT('all_pix2sky', 8),
+               __.ONE_OR_TWO_ARGS('pixel', 8))
+
+    def all_pix2sky_fits(self, *args):
+        return self._array_converter(self._all_pix2sky_fits, *args)
+    all_pix2sky_fits.__doc__ = """
+        all_pix2sky_fits(*args) -> sky
+
+        %s
+        """ % (__.NON_FITS_EQUIVALENT('all_pix2sky', 8))
+
+    def wcs_pix2sky(self, *args):
+        if self.wcs is None:
+            raise ValueError("No basic WCS settings were created.")
+        return self._array_converter(lambda x: self.wcs.p2s(x)['world'], *args)
+    wcs_pix2sky.__doc__ = """
+        wcs_pix2sky(*args) -> sky
+
+        Transforms pixel coordinates to sky coordinates by doing only
+        the basic wcslib transformation.  No SIP or Paper IV table
+        lookup distortion correction is applied.  To perform
+        distortion correction, see L{all_pix2sky}, L{sip_pix2foc},
+        L{p4_pix2foc}, and L{pix2foc}.
+
+        %s
+
+        %s
+
+        @raises MemoryError: Memory allocation failed.
+        @raises SingularMatrixError: Linear transformation matrix is
+            singular.
+        @raises InconsistentAxisTypesError: Inconsistent or
+            unrecognized coordinate axis types.
+        @raises ValueError: Invalid parameter value.
+        @raises ValueError: Invalid coordinate transformation
+            parameters.
+        @raises ValueError: x- and y-coordinate arrays are not the
+            same size.
+        @raises InvalidTransformError: Invalid coordinate
+            transformation parameters.
+        @raises InvalidTransformError: Ill-conditioned coordinate
+            transformation parameters.
+        """ % (__.FITS_EQUIVALENT('wcs_pix2sky', 8),
+               __.ONE_OR_TWO_ARGS('sky', 8))
+
+    def wcs_pix2sky_fits(self, *args):
+        return self._array_converter(lambda x: self.wcs.p2s(x)['world'], *args)
+    wcs_pix2sky_fits.__doc__ = """
+        wcs_pix2sky_fits(*args) -> sky
+
+        %s
+        """ % (__.NON_FITS_EQUIVALENT('wcs_pix2sky', 8))
+
+    def wcs_sky2pix(self, *args):
+        if self.wcs is None:
+            raise ValueError("No basic WCS settings were created.")
+        return self._array_converter(lambda x: self.wcs.s2p(x)['pixel'], *args)
+    wcs_sky2pix.__doc__ = """
+        wcs_sky2pix(*args) -> pixel
+
+        Transforms sky coordinates to pixel coordinates, using only
+        the basic libwcs WCS transformation.  No SIP or Paper IV table
+        lookup distortion is applied.
+
+        %s
+
+        %s
+
+        @raises MemoryError: Memory allocation failed.
+        @raises SingularMatrixError: Linear transformation matrix is
+            singular.
+        @raises InconsistentAxisTypesError: Inconsistent or
+            unrecognized coordinate axis types.
+        @raises ValueError: Invalid parameter value.
+        @raises InvalidTransformError: Invalid coordinate
+            transformation parameters.
+        @raises InvalidTransformError: Ill-conditioned coordinate
+            transformation parameters.
+        """ % (__.FITS_EQUIVALENT('wcs_sky2pix', 8),
+               __.ONE_OR_TWO_ARGS('pixel', 8))
+
+    def wcs_sky2pix_fits(self, *args):
+        if self.wcs is None:
+            raise ValueError("No basic WCS settings were created.")
+        return self._array_converter(lambda x: self.wcs.s2p_fits(x)['pixel'], *args)
+    wcs_sky2pix_fits.__doc__ = """
+        wcs_sky2pix_fits(*args) -> pixel
+
+        %s
+        """ % (__.NON_FITS_EQUIVALENT('wcs_sky2pix', 8))
+
+    def pix2foc(self, *args):
+        return self._array_converter(self._pix2foc, *args)
+    pix2foc.__doc__ = """
+        pix2foc(*args) -> focal plane
+
+        Convert pixel coordinates to focal plane coordinates using the
+        SIP polynomial distortion convention and Paper IV table-lookup
+        distortion correction.
+
+        %s
+
+        %s
+
+        @raises MemoryError: Memory allocation failed.
+        @raises ValueError: Invalid coordinate transformation parameters.
+        """ % (__.FITS_EQUIVALENT('pix2foc', 8),
+               __.ONE_OR_TWO_ARGS('pixel', 8))
+
+    def pix2foc_fits(self, *args):
+        return self._array_converter(self._pix2foc_fits, *args)
+    pix2foc_fits.__doc__ = """
+        pix2foc_fits(*args) -> focal plane
+
+        %s
+        """ % (__.NON_FITS_EQUIVALENT('pix2foc', 8))
+
+    def p4_pix2foc(self, *args):
+        return self._array_converter(self._p4_pix2foc, *args)
+    p4_pix2foc.__doc__ = """
+        p4_pix2foc(*args) -> focal plane
+
+        Convert pixel coordinates to focal plane coordinates using
+        Paper IV table-lookup distortion correction.
+
+        %s
+
+        %s
+
+        @raises MemoryError: Memory allocation failed.
+        @raises ValueError: Invalid coordinate transformation parameters.
+        """ % (__.FITS_EQUIVALENT('p4_pix2foc', 8),
+               __.ONE_OR_TWO_ARGS('pixel', 8))
+
+    def p4_pix2foc_fits(self, *args):
+        return self._array_converter(self._p4_pix2foc_fits, *args)
+    p4_pix2foc_fits.__doc__ = """
+        p4_pix2foc_fits(*args) -> focal plane
+
+        %s
+        """ % (__.NON_FITS_EQUIVALENT('p4_pix2foc', 8))
+
+    def sip_pix2foc(self, *args):
+        return self._array_converter(self.sip.pix2foc, *args)
+    sip_pix2foc.__doc__ = """
+        sip_pix2foc(*args) -> focal plane
+
+        Convert pixel coordinates to focal plane coordinates using the
+        SIP polynomial distortion convention.
+
+        Paper IV table lookup distortion correction is not applied,
+        even if that information existed in the FITS file that
+        initialized this L{WCS} object.  To correct for that use
+        L{pix2foc} or L{p4_pix2foc}.
+
+        %s
+
+        %s
+
+        @raises MemoryError: Memory allocation failed.
+        @raises ValueError: Invalid coordinate transformation parameters.
+        """ % (__.FITS_EQUIVALENT('sip_pix2foc', 8),
+               __.ONE_OR_TWO_ARGS('pixel', 8))
+
+    def sip_pix2foc_fits(self, *args):
+        return self._array_converter(self.sip.pix2foc_fits, *args)
+    sip_pix2foc_fits.__doc__ = """
+        sip_pix2foc_fits(*args) -> focal plane
+
+        %s
+        """ % (__.NON_FITS_EQUIVALENT('sip_pix2foc', 8))
+
+    def sip_foc2pix(self, *args):
+        return self._array_converter(self.sip.foc2pix, *args)
+    sip_foc2pix.__doc__ = """
+        sip_foc2pix(*args) -> pixel
+
+        Convert focal plane coordinates to pixel coordinates using the
+        SIP polynomial distortion convention.
+
+        Paper IV table lookup distortion correction is not applied,
+        even if that information existed in the FITS file that
+        initialized this L{WCS} object.
+
+        %s
+
+        %s
+
+        @raises MemoryError: Memory allocation failed.
+        @raises ValueError: Invalid coordinate transformation parameters.
+        """ % (__.FITS_EQUIVALENT('sip_foc2pix', 8),
+               __.ONE_OR_TWO_ARGS('focal plane', 8))
+
+    def sip_foc2pix_fits(self, *args):
+        return self._array_converter(self.sip.foc2pix_fits, *args)
+    sip_foc2pix_fits.__doc__ = """
+        sip_foc2pix_fits(*args) -> pixels
+
+        %s
+        """ % (__.NON_FITS_EQUIVALENT('sip_foc2pix', 8))
+
+    def to_header(self, relax=False):
         """
-        pixel2world(*args) -> world
+        Generate a PyFITS header object with the WCS information stored in
+        this object.
 
-        Transforms world coordinates to pixel coordinates.
+        B{This function does not write out SIP or Paper IV distortion
+        keywords, yet, only the core WCS support by wcslib.}
 
-        L{pixel2world} is a convenience wrapper around L{p2s}.  If
-        intermediate values from the transform are needed, use the
-        more complex L{p2s} directly.
+        The output header will almost certainly differ from the input in a
+        number of respects:
 
-        B{The pixel coordinates given are 0-based (like array indices
-        in C and Python).  If your pixel coordinates are 1-based (like
-        array indices in Fortran), use L{pixel2world_fits} instead.}
+          1. The output header only contains WCS-related keywords.  In
+             particular, it does not contain syntactically-required
+             keywords such as C{SIMPLE}, C{NAXIS}, C{BITPIX}, or C{END}.
 
-        Either one or two arguments may be provided.
+          2. Deprecated (e.g. C{CROTAn}) or non-standard usage will be
+             translated to standard (this is partially dependent on
+             whether C{fix} was applied).
 
-          - one argument: An Nx2 array of I{x}- and I{y}-coordinates.
+          3. Quantities will be converted to the units used internally,
+             basically SI with the addition of degrees.
 
-          - two arguments: Two one-dimensional arrays of I{x} and I{y}
-            coordinates.
+          4. Floating-point quantities may be given to a different decimal
+             precision.
 
-        @return: Returns the world coordinates.  If the input was a
-            single array, a single array is returned, otherwise a
-            tuple of arrays is returned.
+          5. Elements of the C{PCi_j} matrix will be written if and only
+             if they differ from the unit matrix.  Thus, if the matrix is
+             unity then no elements will be written.
+
+          6. Additional keywords such as C{WCSAXES}, C{CUNITia},
+             C{LONPOLEa} and C{LATPOLEa} may appear.
+
+          7. The original keycomments will be lost, although L{to_header}
+             tries hard to write meaningful comments.
+
+          8. Keyword order may be changed.
+
+        @param relax: Degree of permissiveness:
+
+          - C{False}: Recognize only FITS keywords defined by the
+            published WCS standard.
+
+          - C{True}: Admit all recognized informal extensions of the WCS
+            standard.
+
+        @type relax: bool
+
+        @return: A PyFITS Header object.
         """
-        return self._pixel2world_generic(self.p2s, *args)
-
-    def pixel2world_fits(self, *args):
-        """
-        pixel2world_fits(*args) -> world
-
-        Identical to L{pixel2world}, except pixel coordinates are
-        1-based (like array indices in Fortran), instead of 0-based
-        (like array indices C and Python).
-        """
-        return self._pixel2world_generic(self.p2s_fits, *args)
-
-    def _world2pixel_generic(self, func, *args):
-        if len(args) == 1:
-            return func(args[0])['pixcrd']
-        elif len(args) == self.naxis:
-            length = len(args[0])
-            combined = numpy.hstack([x.reshape((length, 1)) for x in args])
-            pixcrd = func(combined)['pixcrd']
-            return pixcrd[:, 0], pixcrd[:, 1]
-        raise TypeError("Expected 1 or %d arguments, %d given" %
-                        (self.naxis, len(args)))
-
-    def world2pixel(self, *args):
-        """
-        world2pixel(*args) -> pixel
-
-        Transforms world coordinates to pixel coordinates.
-        L{world2pixel} is a convenience wrapper around L{s2p}.  If
-        intermediate values from the transform are needed, use the
-        more complex L{s2p} directly.
-
-        B{The pixel coordinates returned are 0-based (like array
-        indices in C and Python).  If you require pixel coordinates to
-        be 1-based (like array indices in Fortran), use
-        L{world2pixel_fits} instead.}
-
-        Either one or L{naxis} arguments may be provided.
-
-          - one argument: An NxL{naxis} array of world coordinates.
-
-          - L{naxis} arguments: L{naxis} one-dimensional arrays of
-            world coordinates.
-
-        @return: Returns the pixel coordinates.  If the input was a
-            single array, a single array is returned, otherwise a
-            tuple of arrays is returned.
-        """
-        return self._world2pixel_generic(self.s2p, *args)
-
-    def world2pixel_fits(self, *args):
-        """
-        pixel2world_fits(*args) -> world
-
-        Identical to L{world2pixel}, except pixel coordinates are
-        1-based (like array indices in Fortran), instead of 0-based
-        (like array indices C and Python).
-        """
-        return self._world2pixel_generic(self.s2p_fits, *args)
-
-    if _has_pyfits:
-        def to_header(self, relax=False):
-            header_string = WCSBase.to_header(self, relax)
-            cards = pyfits.CardList()
-            for i in range(0, len(header_string), 80):
-                card_string = header_string[i:i+80]
-                card = pyfits.Card()
-                card.fromstring(card_string)
-                cards.append(card)
-            return pyfits.Header(cards)
-    else:
-        def to_header(self, *args, **kwargs):
-            raise NotImplementedError(
-                "PyFITS must be installed to generate a FITS header")
-
-    to_header.__doc__ = """
-    Generate a PyFITS header object with the WCS information stored in
-    this object.
-
-    The output header will almost certainly differ from the input in a
-    number of respects:
-
-      1. The output header only contains WCS-related keywords.  In
-         particular, it does not contain syntactically-required
-         keywords such as C{SIMPLE}, C{NAXIS}, C{BITPIX}, or C{END}.
-
-      2. Deprecated (e.g. C{CROTAn}) or non-standard usage will be
-         translated to standard (this is partially dependent on
-         whether L{fix} was applied).
-
-      3. Quantities will be converted to the units used internally,
-         basically SI with the addition of degrees.
-
-      4. Floating-point quantities may be given to a different decimal
-         precision.
-
-      5. Elements of the C{PCi_j} matrix will be written if and only
-         if they differ from the unit matrix.  Thus, if the matrix is
-         unity then no elements will be written.
-
-      6. Additional keywords such as C{WCSAXES}, C{CUNITia},
-         C{LONPOLEa} and C{LATPOLEa} may appear.
-
-      7. The original keycomments will be lost, although L{to_header}
-         tries hard to write meaningful comments.
-
-      8. Keyword order may be changed.
-
-    @param relax: Degree of permissiveness:
-
-      - C{False}: Recognize only FITS keywords defined by the
-        published WCS standard.
-
-      - C{True}: Admit all recognized informal extensions of the WCS
-        standard.
-
-    @type relax: bool
-
-    @return: A PyFITS Header object.
-    """
+        header_string = self.wcs.to_header(relax)
+        cards = pyfits.CardList()
+        for i in range(0, len(header_string), 80):
+            card_string = header_string[i:i+80]
+            card = pyfits.Card()
+            card.fromstring(card_string)
+            cards.append(card)
+        return pyfits.Header(cards)
 
     def to_header_string(self, relax=False):
-        return WCSBase.to_header(self, relax)
-    to_header_string.__doc__ = WCSBase.to_header.__doc__
+        return self.to_header(self, relax).to_string()
+    to_header_string.__doc__ = to_header.__doc__

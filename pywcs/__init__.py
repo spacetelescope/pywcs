@@ -30,9 +30,9 @@
 """
 %s
 
-@author: Michael Droettboom (Python wrappers)
-@organization: Space Telescope Science Institute (Python wrappers)
-@license: BSD-like (Python wrappers)
+@author: Michael Droettboom, Nadia Dencheva (Python wrappers, SIP, Paper IV support)
+@organization: Space Telescope Science Institute (Python wrappers, SIP, Paper IV support)
+@license: BSD-like (Python wrappers, SIP, Paper IV support)
 @author: Mark Calabretta (wcslib)
 @organization: Australia Telescope National Facility, CSIRO (wcslib)
 @license: LGPL (wcslib)

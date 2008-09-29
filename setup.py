@@ -102,6 +102,7 @@ fd.close()
 
 ######################################################################
 # GENERATE DOCSTRINGS IN C
+sys.path.append("./pywcs")
 docstrings = {}
 execfile("doc/docstrings.py", docstrings)
 keys = docstrings.keys()
@@ -126,6 +127,18 @@ else:
     define_macros = [('NDEBUG', None)]
     undef_macros = [('DEBUG')]
 
+PYWCS_SOURCES = [ # List of pywcs files to compile
+    'distortion.c',
+    'distortion_wrap.c',
+    'pipeline.c',
+    'pywcs.c',
+    'sip.c',
+    'sip_wrap.c',
+    'str_list_proxy.c',
+    'util.c',
+    'wcslib_wrap.c']
+PYWCS_SOURCES = [join('src', x) for x in PYWCS_SOURCES]
+
 setup(name="pywcs",
       version="1.1a3-%s" % WCSVERSION,
       description="Python wrappers to WCSLIB",
@@ -135,9 +148,7 @@ setup(name="pywcs",
       packages=['pywcs'],
       ext_modules=[
         Extension('pywcs._pywcs',
-                  ['src/pywcs.c', 'src/distortion.c', 'src/distortion_wrap.c',
-                   'src/str_list_proxy.c', 'src/util.c'] +
-                  WCSFILES,
+                  WCSFILES + PYWCS_SOURCES,
                   include_dirs=[
                     numpy_include,
                     WCSLIBC,
