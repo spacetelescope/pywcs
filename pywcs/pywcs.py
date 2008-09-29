@@ -1,31 +1,70 @@
-# Copyright (C) 2008 Association of Universities for Research in Astronomy (AURA)
-
+# Copyright (C) 2008 Association of Universities for Research in
+# Astronomy (AURA)
+#
 # Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-
-#     1. Redistributions of source code must retain the above copyright
-#       notice, this list of conditions and the following disclaimer.
-
+# modification, are permitted provided that the following conditions
+# are met:
+#
+#     1. Redistributions of source code must retain the above
+#       copyright notice, this list of conditions and the following
+#       disclaimer.
+#
 #     2. Redistributions in binary form must reproduce the above
 #       copyright notice, this list of conditions and the following
-#       disclaimer in the documentation and/or other materials provided
-#       with the distribution.
-
+#       disclaimer in the documentation and/or other materials
+#       provided with the distribution.
+#
 #     3. The name of AURA and its representatives may not be used to
 #       endorse or promote products derived from this software without
 #       specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY AURA ``AS IS'' AND ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL AURA BE LIABLE FOR ANY DIRECT,
+# INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+# STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+# OF THE POSSIBILITY OF SUCH DAMAGE.
+"""
+Pywcs provides transformations following the SIP conventions, Paper IV
+table lookup distortion, and the core WCS functionality provided by
+wcslib.  Each of these transformations can be used independently or
+together in a standard pipeline.
 
-# THIS SOFTWARE IS PROVIDED BY AURA ``AS IS'' AND ANY EXPRESS OR IMPLIED
-# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-# DISCLAIMED. IN NO EVENT SHALL AURA BE LIABLE FOR ANY DIRECT, INDIRECT,
-# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
-# OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
-# TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-# USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
-# DAMAGE.
+The basic workflow is as follows:
+
+    1. C{import pywcs}
+
+    2. Call the C{pywcs.WCS} constructor with a PyFITS header object.
+
+    3. Optionally, if the FITS file uses any deprecated or
+       non-standard features, you may need to call one of the C{fix}
+       methods on the object.
+
+    4. Use one of the following transformation methods:
+
+       - all_pix2sky: Perform all three transformations from pixel to
+         sky coords.
+
+       - wcs_pix2sky: Perform just the core WCS transformation from
+         pixel to sky coords.
+
+       - wcs_sky2pix: Perform just the core WCS transformation from
+         sky to pixel coords.
+
+       - sip_pix2foc: Convert from pixel to focal plane coords using
+         the SIP polynomial coefficients.
+
+       - sip_foc2pix: Convert from focal plane to pixel coords using
+         the SIP polynomial coefficients.
+
+       - p4_pix2foc: Convert from pixel to focal plane coords using
+         the table lookup distortion method described in Paper IV.
+"""
 
 __docformat__ = "epytext"
 
@@ -39,16 +78,19 @@ import pyfits
 WCSBase = _pywcs._Wcs
 DistortionLookupTable = _pywcs.DistortionLookupTable
 Sip = _pywcs.Sip
+Wcsprm = _pywcs._Wcsprm
 
 # A wrapper around the C WCS type
 class WCS(WCSBase):
+    """
+    WCS objects correct for SIP and Paper IV table-lookup distortions
+    and transform pixel to/from sky coordinates, based on the WCS
+    keywords and data in a FITS file.
+    """
+
     def __init__(self, header=None, fobj=None, key=' ', relax=False, naxis=2):
         """
         WCS(header=None, fobj=None, key=' ', relax=False, naxis=2)
-
-        WCS objects correct for SIP and Paper IV table-lookup
-        distortions and transform pixel to/from sky coordinates, based
-        on the WCS keywords and data in a FITS file.
 
         @param header: A PyFITS header object.  If header is not
             provided, the object will be initialized to default
@@ -85,11 +127,12 @@ class WCS(WCSBase):
             header but fobj not provided.
         """
         if naxis != 2:
-            raise ValueError("Only 2 axes are supported");
+            raise ValueError("Only 2 axes are supported")
         self.naxis = naxis
 
         if header is None:
-            wcsprm = _pywcs._Wcsprm(header=None, key=key, relax=relax, naxis=naxis)
+            wcsprm = _pywcs._Wcsprm(header=None, key=key,
+                                    relax=relax, naxis=naxis)
             # Set some reasonable defaults.
             wcsprm.crpix = numpy.zeros((self.naxis,), numpy.double)
             wcsprm.crval = numpy.zeros((self.naxis,), numpy.double)
@@ -113,7 +156,7 @@ class WCS(WCSBase):
         returned.
         """
         if dist == 'CPDIS':
-            d_kw= 'DP'
+            d_kw = 'DP'
         else:
             d_kw = 'DQ'
 
@@ -124,7 +167,7 @@ class WCS(WCSBase):
                 dis = header[distortion].lower()
                 if dis == 'lookup':
                     assert isinstance(fobj, pyfits.NP_pyfits.HDUList), \
-                        'A pyfits HDUList is required for Lookup table distortion.'
+                    'A pyfits HDUList is required for Lookup table distortion.'
                     dp = d_kw+str(i)
                     d_extver = header[dp+'.EXTVER']
                     d_data = fobj['WCSDVARR', d_extver].data
@@ -132,7 +175,8 @@ class WCS(WCSBase):
                     d_crpix = (d_header['CRPIX1'], d_header['CRPIX2'])
                     d_crval = (d_header['CRVAL1'], d_header['CRVAL2'])
                     d_cdelt = (d_header['CDELT1'], d_header['CDELT2'])
-                    d_lookup = DistortionLookupTable(d_data, d_crpix, d_crval, d_cdelt)
+                    d_lookup = DistortionLookupTable(d_data, d_crpix,
+                                                     d_crval, d_cdelt)
                     tables[i] = d_lookup
                 else:
                     print 'Polynomial distortion is not implemented.\n'
@@ -334,7 +378,8 @@ class WCS(WCSBase):
     def wcs_sky2pix_fits(self, *args):
         if self.wcs is None:
             raise ValueError("No basic WCS settings were created.")
-        return self._array_converter(lambda x: self.wcs.s2p_fits(x)['pixel'], *args)
+        return self._array_converter(lambda x: self.wcs.s2p_fits(x)['pixel'],
+                                     *args)
     wcs_sky2pix_fits.__doc__ = """
         wcs_sky2pix_fits(*args) -> pixel
 

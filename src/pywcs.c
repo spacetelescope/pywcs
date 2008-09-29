@@ -561,7 +561,7 @@ init_pywcs(void)
 {
   PyObject* m;
 
-  m = Py_InitModule3("_pywcs", NULL, doc_pywcs);
+  m = Py_InitModule3("_pywcs", NULL, NULL);
 
   if (m == NULL)
     return;

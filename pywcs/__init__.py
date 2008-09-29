@@ -41,6 +41,7 @@
 __docformat__ = "epytext"
 
 from pywcs import *
+import pywcs
 import _pywcs
 
-__doc__ = __doc__ % _pywcs.__doc__
+__doc__ = __doc__ % pywcs.__doc__

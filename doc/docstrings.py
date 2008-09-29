@@ -889,43 +889,6 @@ Print the contents of the WCS object to stdout.  Probably only useful
 for debugging purposes, and may be removed in the future.
 """
 
-pywcs = """
-Pywcs provides transformations following the SIP conventions, Paper IV
-table lookup distortion, and the core WCS functionality provided by
-wcslib.  Each of these transformations can be used independently or
-together in a standard pipeline.
-
-The basic workflow is as follows:
-
-    1. C{import pywcs}
-
-    2. Call the C{pywcs.WCS} constructor with a PyFITS header object.
-
-    3. Optionally, if the FITS file uses any deprecated or
-       non-standard features, you may need to call one of the C{fix}
-       methods on the object.
-
-    4. Use one of the following transformation methods:
-
-       - all_pix2sky: Perform all three transformations from pixel to
-         sky coords.
-
-       - wcs_pix2sky: Perform just the core WCS transformation from
-         pixel to sky coords.
-
-       - wcs_sky2pix: Perform just the core WCS transformation from
-         sky to pixel coords.
-
-       - sip_pix2foc: Convert from pixel to focal plane coords using
-         the SIP polynomial coefficients.
-
-       - sip_foc2pix: Convert from focal plane to pixel coords using
-         the SIP polynomial coefficients.
-
-       - p4_pix2foc: Convert from pixel to focal plane coords using
-         the table lookup distortion method described in Paper IV.
-"""
-
 radesys = """
 The equatorial or ecliptic coordinate system type, C{RADESYSa}.
 

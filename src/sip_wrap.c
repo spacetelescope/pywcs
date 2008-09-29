@@ -96,7 +96,8 @@ PySip_init(PySip* self, PyObject* args, PyObject* kwds) {
     goto PySip_init_exit;
   }
 
-  crpix = (PyArrayObject*)PyArray_ContiguousFromAny(py_crpix, PyArray_DOUBLE, 1, 1);
+  crpix = (PyArrayObject*)PyArray_ContiguousFromAny(py_crpix, PyArray_DOUBLE,
+                                                    1, 1);
   if (crpix == NULL) {
     result = -1;
     goto PySip_init_exit;
@@ -315,6 +316,13 @@ PySip_get_bp_order(PySip* self, void* closure) {
   return get_int("bp_order", self->x.bp_order);
 }
 
+static PyObject*
+PySip_get_crpix(PySip* self, void* closure) {
+  Py_ssize_t naxis = 2;
+
+  return get_double_array("crpix", self->x.crpix, 1, &naxis, (PyObject*)self);
+}
+
 static PyGetSetDef PySip_getset[] = {
   {"a", (getter)PySip_get_a, NULL, (char *)doc_a},
   {"a_order", (getter)PySip_get_a_order, NULL, (char *)doc_a_order},
@@ -324,6 +332,7 @@ static PyGetSetDef PySip_getset[] = {
   {"ap_order", (getter)PySip_get_ap_order, NULL, (char *)doc_ap_order},
   {"bp", (getter)PySip_get_bp, NULL, (char *)doc_bp},
   {"bp_order", (getter)PySip_get_bp_order, NULL, (char *)doc_bp_order},
+  {"crpix", (getter)PySip_get_crpix, NULL, (char *)doc_crpix},
   {NULL}
 };
 
