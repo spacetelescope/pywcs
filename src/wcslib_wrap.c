@@ -221,15 +221,6 @@ PyWcsprm_init(PyWcsprm* self, PyObject* args, PyObject* kwds) {
 }
 
 static PyObject*
-PyWcsprm_repr(PyWcsprm* self) {
-  if (is_null(self->x.wcsname)) {
-    return NULL;
-  }
-
-  return PyString_FromFormat("<Wcsprm object '%s'>", self->x.wcsname);
-}
-
-static PyObject*
 PyWcsprm_copy(PyWcsprm* self) {
   PyWcsprm*      copy      = NULL;
   int            status;
@@ -1813,10 +1804,6 @@ PyWcsprm_set_zsource(PyWcsprm* self, PyObject* value, void* closure) {
  * PyWcsprm definition structures
  */
 
-static PyMemberDef PyWcsprm_members[] = {
-  {NULL}
-};
-
 static PyGetSetDef PyWcsprm_getset[] = {
   {"alt", (getter)PyWcsprm_get_alt, (setter)PyWcsprm_set_alt, (char *)doc_alt},
   {"cd", (getter)PyWcsprm_get_cd, (setter)PyWcsprm_set_cd, (char *)doc_cd},
@@ -1906,13 +1893,13 @@ PyTypeObject PyWcsprmType = {
   0,                            /*tp_getattr*/
   0,                            /*tp_setattr*/
   0,                            /*tp_compare*/
-  (reprfunc)PyWcsprm_repr,      /*tp_repr*/
+  0,                            /*tp_repr*/
   0,                            /*tp_as_number*/
   0,                            /*tp_as_sequence*/
   0,                            /*tp_as_mapping*/
   0,                            /*tp_hash */
   0,                            /*tp_call*/
-  (reprfunc)PyWcsprm_repr,      /*tp_str*/
+  0,                            /*tp_str*/
   0,                            /*tp_getattro*/
   0,                            /*tp_setattro*/
   0,                            /*tp_as_buffer*/
@@ -1925,7 +1912,7 @@ PyTypeObject PyWcsprmType = {
   0,                            /* tp_iter */
   0,                            /* tp_iternext */
   PyWcsprm_methods,             /* tp_methods */
-  PyWcsprm_members,             /* tp_members */
+  0,                            /* tp_members */
   PyWcsprm_getset,              /* tp_getset */
   0,                            /* tp_base */
   0,                            /* tp_dict */

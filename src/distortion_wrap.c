@@ -177,10 +177,6 @@ PyDistLookup_get_offset(PyDistLookup* self, PyObject* args, PyObject* kwds) {
   return PyFloat_FromDouble(result);
 }
 
-static PyMemberDef PyDistLookup_members[] = {
-  {NULL}
-};
-
 static PyGetSetDef PyDistLookup_getset[] = {
   {"cdelt", (getter)PyDistLookup_get_cdelt, (setter)PyDistLookup_set_cdelt, (char *)doc_cdelt},
   {"crpix", (getter)PyDistLookup_get_crpix, (setter)PyDistLookup_set_crpix, (char *)doc_crpix},
@@ -224,7 +220,7 @@ PyTypeObject PyDistLookupType = {
   0,                            /* tp_iter */
   0,                            /* tp_iternext */
   PyDistLookup_methods,         /* tp_methods */
-  PyDistLookup_members,         /* tp_members */
+  0,                            /* tp_members */
   PyDistLookup_getset,          /* tp_getset */
   0,                            /* tp_base */
   0,                            /* tp_dict */

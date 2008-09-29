@@ -135,7 +135,9 @@ pipeline_all_pixel2world(
     status = wcsp2s(pipeline->wcs, ncoord, nelem,
                     wcs_input, imgcrd, phi, theta, wcs_output, stat);
   } else {
-    status = pipeline_pix2foc(pipeline, ncoord, nelem, pixcrd, world);
+    if (has_sip || has_p4) {
+      status = pipeline_pix2foc(pipeline, ncoord, nelem, pixcrd, world);
+    }
   }
 
  pipeline_pixel2world_exit:

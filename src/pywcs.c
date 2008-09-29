@@ -155,11 +155,6 @@ PyWcs_init(PyWcs* self, PyObject* args, PyObject* kwds) {
 }
 
 static PyObject*
-PyWcs_repr(PyWcs* self) {
-  return PyString_FromFormat("<Wcs object>");
-}
-
-static PyObject*
 PyWcs_all_pix2sky_generic(PyWcs* self, PyObject* arg, int do_shift) {
   PyArrayObject* pixcrd  = NULL;
   PyArrayObject* world   = NULL;
@@ -485,10 +480,6 @@ PyWcs_set_sip(PyWcs* self, PyObject* value, void* closure) {
  * PyWcs definition structures
  */
 
-static PyMemberDef PyWcs_members[] = {
-  {NULL}
-};
-
 static PyGetSetDef PyWcs_getset[] = {
   {"cpdis1", (getter)PyWcs_get_cpdis1, (setter)PyWcs_set_cpdis1, (char *)doc_cpdis1},
   {"cpdis2", (getter)PyWcs_get_cpdis2, (setter)PyWcs_set_cpdis2, (char *)doc_cpdis2},
@@ -518,13 +509,13 @@ PyTypeObject PyWcsType = {
   0,                            /*tp_getattr*/
   0,                            /*tp_setattr*/
   0,                            /*tp_compare*/
-  (reprfunc)PyWcs_repr,         /*tp_repr*/
+  0,                            /*tp_repr*/
   0,                            /*tp_as_number*/
   0,                            /*tp_as_sequence*/
   0,                            /*tp_as_mapping*/
   0,                            /*tp_hash */
   0,                            /*tp_call*/
-  (reprfunc)PyWcs_repr,         /*tp_str*/
+  0,                            /*tp_str*/
   0,                            /*tp_getattro*/
   0,                            /*tp_setattro*/
   0,                            /*tp_as_buffer*/
@@ -537,7 +528,7 @@ PyTypeObject PyWcsType = {
   0,                            /* tp_iter */
   0,                            /* tp_iternext */
   PyWcs_methods,                /* tp_methods */
-  PyWcs_members,                /* tp_members */
+  0,                            /* tp_members */
   PyWcs_getset,                 /* tp_getset */
   0,                            /* tp_base */
   0,                            /* tp_dict */

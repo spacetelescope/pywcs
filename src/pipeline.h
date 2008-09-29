@@ -48,14 +48,14 @@ typedef struct {
 } pipeline_t;
 
 /**
- Initialize all the values in a pipeline_t to NULL.
+Initialize all the values in a pipeline_t to NULL.
 */
 void
 pipeline_clear(
     pipeline_t* pipeline);
 
 /**
- Set all the values of a pipeline_t.
+Set all the values of a pipeline_t.
 */
 void
 pipeline_init(
