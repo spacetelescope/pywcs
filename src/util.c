@@ -38,8 +38,9 @@ DAMAGE.
 #include "util.h"
 
 PyObject*
-PyArrayProxy_New(PyObject* self, int nd, const npy_intp* dims,
-                 int typenum, const void* data) {
+PyArrayProxy_New(
+    PyObject* self, int nd, const npy_intp* dims,
+    int typenum, const void* data) {
   PyArray_Descr* type_descr = NULL;
   PyObject*      result     = NULL;
 
@@ -47,10 +48,14 @@ PyArrayProxy_New(PyObject* self, int nd, const npy_intp* dims,
   if (type_descr == NULL)
     return NULL;
 
-  result = (PyObject*)PyArray_NewFromDescr(&PyArray_Type, type_descr,
-                                           nd, (npy_intp*)dims, NULL, (void*)data,
-                                           NPY_CONTIGUOUS | NPY_WRITEABLE,
-                                           NULL);
+  result = (PyObject*)PyArray_NewFromDescr(
+      &PyArray_Type,
+      type_descr,
+      nd, (npy_intp*)dims,
+      NULL,
+      (void*)data,
+      NPY_CONTIGUOUS | NPY_WRITEABLE,
+      NULL);
 
   if (result == NULL)
     return NULL;
@@ -127,7 +132,7 @@ is_null(void *p) {
    quite small.
 */
 
-static void
+static inline void
 wcsprm_fix_values(struct wcsprm* x, value_fixer_t value_fixer) {
   int naxis = x->naxis;
 
@@ -372,7 +377,7 @@ set_str_list(const char* propname, PyObject* value, Py_ssize_t len,
   PyObject*  str      = NULL;
   char*      str_char = NULL;
   Py_ssize_t str_len  = 0;
-  int i = 0;
+  int        i        = 0;
 
   if (check_delete(propname, value)) {
     return -1;
@@ -425,7 +430,9 @@ set_str_list(const char* propname, PyObject* value, Py_ssize_t len,
     if (str == NULL) {
       /* Theoretically, something has gone really wrong here, since
          we've already verified the list. */
-      PyErr_Format(PyExc_RuntimeError, "Input values have changed underneath us.  Something is seriously wrong.");
+      PyErr_Format(
+          PyExc_RuntimeError,
+          "Input values have changed underneath us.  Something is seriously wrong.");
       return -1;
     }
 
@@ -433,7 +440,9 @@ set_str_list(const char* propname, PyObject* value, Py_ssize_t len,
     if (PyString_AsStringAndSize(str, &str_char, &str_len)) {
       /* Theoretically, something has gone really wrong here, since
          we've already verified the list. */
-      PyErr_Format(PyExc_RuntimeError, "Input values have changed underneath us.  Something is seriously wrong.");
+      PyErr_Format(
+          PyExc_RuntimeError,
+          "Input values have changed underneath us.  Something is seriously wrong.");
       Py_DECREF(str);
       return -1;
     }
@@ -448,9 +457,9 @@ set_str_list(const char* propname, PyObject* value, Py_ssize_t len,
 
 PyObject*
 get_pscards(const char* propname, struct pscard* ps, int nps) {
-  PyObject* result = NULL;
+  PyObject* result    = NULL;
   PyObject* subresult = NULL;
-  int i = 0;
+  int       i         = 0;
 
   result = PyList_New(nps);
   if (result == NULL) {
@@ -533,9 +542,9 @@ set_pscards(const char* propname, PyObject* value, struct pscard** ps,
 
 PyObject*
 get_pvcards(const char* propname, struct pvcard* pv, int npv) {
-  PyObject* result = NULL;
+  PyObject* result    = NULL;
   PyObject* subresult = NULL;
-  int i = 0;
+  int       i         = 0;
 
   result = PyList_New(npv);
   if (result == NULL) {

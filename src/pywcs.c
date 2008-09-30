@@ -99,8 +99,9 @@ PyWcs_init(PyWcs* self, PyObject* args, PyObject* kwds) {
                         &py_sip,
                         &py_distortion_lookup[0],
                         &py_distortion_lookup[1],
-                        &py_wcsprm))
+                        &py_wcsprm)) {
     return -1;
+  }
 
   /* Check and set SIP */
   if (py_sip != NULL && py_sip != Py_None) {
@@ -239,8 +240,9 @@ PyWcs_p4_pix2foc_generic(PyWcs* self, PyObject* arg, int do_shift) {
     goto _exit;
   }
 
-  if (do_shift)
+  if (do_shift) {
     offset_array(pixcrd, 1.0);
+  }
 
   status = p4_pix2foc(2, (void *)self->x.cpdis, PyArray_DIM(pixcrd, 0),
                       PyArray_DATA(pixcrd), PyArray_DATA(foccrd));
@@ -250,8 +252,9 @@ PyWcs_p4_pix2foc_generic(PyWcs* self, PyObject* arg, int do_shift) {
     goto _exit;
   }
 
-  if (do_shift)
+  if (do_shift) {
     offset_array(pixcrd, -1.0);
+  }
 
  _exit:
 
@@ -302,8 +305,9 @@ PyWcs_pix2foc_generic(PyWcs* self, PyObject* arg, int do_shift) {
     goto _exit;
   }
 
-  if (do_shift)
+  if (do_shift) {
     offset_array(pixcrd, 1.0);
+  }
 
   status = pipeline_pix2foc(&self->x,
                             PyArray_DIM(pixcrd, 0),
@@ -316,8 +320,9 @@ PyWcs_pix2foc_generic(PyWcs* self, PyObject* arg, int do_shift) {
     goto _exit;
   }
 
-  if (do_shift)
+  if (do_shift) {
     offset_array(pixcrd, -1.0);
+  }
 
  _exit:
 
