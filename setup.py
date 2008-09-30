@@ -143,7 +143,7 @@ PYWCS_SOURCES = [ # List of pywcs files to compile
 PYWCS_SOURCES = [join('src', x) for x in PYWCS_SOURCES]
 
 setup(name="pywcs",
-      version="1.1a3-%s" % WCSVERSION,
+      version="1.2a1-%s" % WCSVERSION,
       description="Python wrappers to WCSLIB",
       author=CONTACT,
       author_email=EMAIL,
