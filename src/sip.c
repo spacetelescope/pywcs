@@ -40,7 +40,8 @@ DAMAGE.
 #include <stdlib.h>
 #include <string.h>
 
-void sip_clear(sip_t* sip) {
+void
+sip_clear(sip_t* sip) {
   assert(sip);
 
   sip->a_order = 0;
@@ -51,6 +52,9 @@ void sip_clear(sip_t* sip) {
   sip->ap = NULL;
   sip->bp_order = 0;
   sip->bp = NULL;
+  sip->crpix[0] = 0.0;
+  sip->crpix[1] = 0.0;
+  sip->scratch = NULL;
 }
 
 int
@@ -61,23 +65,19 @@ sip_init(
     const unsigned int ap_order, const double* ap,
     const unsigned int bp_order, const double* bp,
     const double crpix[2]) {
-  int status = 0;
-  size_t a_size = 0;
-  size_t b_size = 0;
-  size_t ap_size = 0;
-  size_t bp_size = 0;
-  unsigned int scratch_sizes[4];
-  size_t i;
+  unsigned int a_size       = 0;
+  unsigned int b_size       = 0;
+  unsigned int ap_size      = 0;
+  unsigned int bp_size      = 0;
   unsigned int scratch_size = 0;
+  int          status       = 0;
 
   assert(sip);
-  assert(sip->a == NULL);
-  assert(sip->b == NULL);
-  assert(sip->ap == NULL);
-  assert(sip->bp == NULL);
+  sip_clear(sip);
 
-  if (!((a == NULL) ^ (b == NULL)) ||
-      !((ap == NULL) ^ (bp == NULL))) {
+  /* We we have one of A/B or AP/BP, we must have both. */
+  if (((a == NULL) ^ (b == NULL)) ||
+      ((ap == NULL) ^ (bp == NULL))) {
     return 6;
   }
 
@@ -87,18 +87,24 @@ sip_init(
     sip->a = malloc(a_size);
     if (sip->a == NULL) {
       status = 2;
-      goto sip_init_exit;
+      goto exit;
     }
     memcpy(sip->a, a, a_size);
+    if (a_order > scratch_size) {
+      scratch_size = a_order;
+    }
 
     sip->b_order = b_order;
     b_size = (b_order + 1) * (b_order + 1) * sizeof(double);
     sip->b = malloc(b_size);
     if (sip->b == NULL) {
       status = 2;
-      goto sip_init_exit;
+      goto exit;
     }
     memcpy(sip->b, b, b_size);
+    if (b_order > scratch_size) {
+      scratch_size = b_order;
+    }
   }
 
   if (ap != NULL) {
@@ -107,41 +113,39 @@ sip_init(
     sip->ap = malloc(ap_size);
     if (sip->ap == NULL) {
       status = 2;
-      goto sip_init_exit;
+      goto exit;
     }
     memcpy(sip->ap, ap, ap_size);
+    if (ap_order > scratch_size) {
+      scratch_size = ap_order;
+    }
 
     sip->bp_order = bp_order;
     bp_size = (bp_order + 1) * (bp_order + 1) * sizeof(double);
     sip->bp = malloc(bp_size);
     if (sip->bp == NULL) {
       status = 2;
-      goto sip_init_exit;
+      goto exit;
     }
     memcpy(sip->bp, bp, bp_size);
+    if (bp_order > scratch_size) {
+      scratch_size = bp_order;
+    }
+  }
+
+  if (scratch_size > 0) {
+    scratch_size = (scratch_size + 1) * sizeof(double);
+    sip->scratch = malloc(scratch_size);
+    if (sip->scratch == NULL) {
+      status = 2;
+      goto exit;
+    }
   }
 
   sip->crpix[0] = crpix[0];
   sip->crpix[1] = crpix[1];
 
-  /* Find the maximum order to create for our scratch memory space */
-  scratch_sizes[0] = a_order + 1;
-  scratch_sizes[1] = b_order + 1;
-  scratch_sizes[2] = ap_order + 1;
-  scratch_sizes[3] = bp_order + 1;
-  for (i = 0; i < 4; ++i) {
-    if (scratch_size > scratch_sizes[i]) {
-      scratch_size = scratch_sizes[i];
-    }
-  }
-
-  sip->scratch = malloc(scratch_size * sizeof(double));
-  if (sip->scratch == NULL) {
-    status = 2;
-    goto sip_init_exit;
-  }
-
- sip_init_exit:
+ exit:
   if (status != 0) {
     sip_free(sip);
   }
@@ -167,27 +171,30 @@ static inline double
 lu(
     const unsigned int order,
     const double* matrix,
-    const unsigned int x,
-    const unsigned int y) {
-  assert(x <= order);
-  assert(y <= order);
+    const int x,
+    const int y) {
+  int index;
+  assert(x >= 0 && x <= order);
+  assert(y >= 0 && y <= order);
+  index = x * (order + 1) + y;
+  assert(index >= 0 && index < (order + 1) * (order + 1));
 
-  return matrix[y * (order + 1) + x];
+  return matrix[index];
 }
 
 static int
 sip_compute(
     const unsigned int naxes,
     const unsigned int nelem,
-    const unsigned int a_order,
+    const unsigned int m,
     const double* a,
-    const unsigned int b_order,
+    const unsigned int n,
     const double* b,
     const double crpix[2],
     double* tmp,
     const double* input /* [NAXES][nelem] */,
     double* output /* [NAXES][nelem] */) {
-  size_t i, j, k;
+  int i, j, k;
   double x, y, tmp_x, tmp_y;
   double sum;
 
@@ -198,44 +205,57 @@ sip_compute(
   assert(input);
   assert(output);
 
-  if (a == NULL || b == NULL) {
-    return 6;
-  }
-
-  if (input == NULL || output == NULL) {
+  /* Avoid segfaults */
+  if (input == NULL || output == NULL || tmp == NULL || crpix == NULL) {
     return 1;
   }
 
+  /* If we have one, we must have both... */
+  if ((a == NULL) ^ (b == NULL)) {
+    return 6;
+  }
+
+  /* If no distortion, just copy values */
+  if (a == NULL /* && b == NULL ... implied */) {
+    for (i = 0; i < nelem; ++i) {
+      output[i << 1] = input[i << 1];
+      output[(i << 1) + 1] = input[(i << 1) + 1];
+    }
+    return 0;
+  }
+
   for (i = 0; i < nelem; ++i) {
-    x = input[i << 1] + 1.0;
-    y = input[(i << 1) + 1] + 1.0;
+    x = input[i << 1];
+    y = input[(i << 1) + 1];
 
-    tmp_x = crpix[0] - x;
-    tmp_y = crpix[1] - y;
+    tmp_x = x - crpix[0];
+    tmp_y = y - crpix[1];
 
-    for (j = 0; j <= a_order; ++j) {
-      tmp[j] = lu(a_order, a, a_order - j, j);
-      for (k = j - 1; k >= 0; --k) {
-        tmp[j] = tmp_y * tmp[j] + lu(a_order, a, a_order - j, k);
+    for (j = 0; j <= m; ++j) {
+      tmp[j] = lu(m, a, m-j, j);
+      for (k = j-1; k >= 0; --k) {
+        tmp[j] = (tmp_y * tmp[j]) + lu(m, a, m-j, k);
       }
     }
 
+    /* Don't know why this loop is convoluted */
     sum = tmp[0];
-    for (i = a_order; i > 0; --i) {
-      sum = tmp_x * sum + tmp[a_order - i + 1];
+    for (j = m; j > 0; --j) {
+      sum = tmp_x * sum + tmp[m - j + 1];
     }
     output[i << 1] = sum + x;
 
-    for (j = 0; j <= b_order; ++j) {
-      tmp[j] = lu(b_order, b, b_order - j, j);
-      for (k = j - 1; k >= 0; --k) {
-        tmp[j] = tmp_y * tmp[j] + lu(b_order, b, b_order - j, k);
+    for (j = 0; j <= n; ++j) {
+      tmp[j] = lu(n, b, n-j, j);
+      for (k = j-1; k >= 0; --k) {
+        tmp[j] = tmp_y * tmp[j] + lu(n, b, n-j, k);
       }
     }
 
+    /* Don't know why this loop is convoluted */
     sum = tmp[0];
-    for (i = b_order; i > 0; --i) {
-      sum = tmp_x * sum + tmp[b_order - i + 1];
+    for (j = n; j > 0; --j) {
+      sum = tmp_x * sum + tmp[n - j + 1];
     }
     output[(i << 1) + 1] = sum + y;
   }
@@ -258,7 +278,7 @@ sip_pix2foc(
                      sip->a_order, sip->a,
                      sip->b_order, sip->b,
                      sip->crpix,
-                     sip->scratch,
+                     (double *)sip->scratch,
                      pix, foc);
 }
 
@@ -277,7 +297,7 @@ sip_foc2pix(
                      sip->ap_order, sip->ap,
                      sip->bp_order, sip->bp,
                      sip->crpix,
-                     sip->scratch,
+                     (double *)sip->scratch,
                      foc, pix);
 }
 

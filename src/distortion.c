@@ -70,7 +70,7 @@ distortion_lookup_t_free( distortion_lookup_t* lookup) {
  */
 static inline float
 get_dist(
-    const  distortion_lookup_t *lookup,
+    const distortion_lookup_t *lookup,
     const unsigned int coord[NAXES]) {
   unsigned int cropped[NAXES];
   unsigned int i;
@@ -88,7 +88,7 @@ get_dist(
  */
 static inline double
 image_coord_to_distortion_coord(
-    const  distortion_lookup_t *lookup,
+    const distortion_lookup_t *lookup,
     const unsigned int axis,
     const double img) {
   double result;
@@ -100,10 +100,11 @@ image_coord_to_distortion_coord(
       ((img - lookup->crval[axis]) / lookup->cdelt[axis]) +
       lookup->crpix[axis]);
 
-  if (result < 0.0)
+  if (result < 0.0) {
     result = 0.0;
-  else if (result >= lookup->naxis[axis])
+  } else if (result >= lookup->naxis[axis]) {
     result = lookup->naxis[axis] - 1.0;
+  }
 
   return result;
 }
@@ -114,7 +115,7 @@ image_coord_to_distortion_coord(
  */
 static inline void
 image_coords_to_distortion_coords(
-    const  distortion_lookup_t *lookup,
+    const distortion_lookup_t *lookup,
     const double img[NAXES],
     /* Output parameters */
     double dist[NAXES]) {
@@ -171,7 +172,7 @@ get_distortion_offset(
       coord[0] = dist_ifloor[0] + l;
       coord[1] = dist_ifloor[1] + k;
       result += (double)get_dist(lookup, coord) * \
-                calculate_weight(dist_weight[0], l, dist_weight[1], k);
+        calculate_weight(dist_weight[0], l, dist_weight[1], k);
     }
   }
 

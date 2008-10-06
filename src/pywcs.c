@@ -65,12 +65,23 @@ int _setup_pywcs_type(PyObject* m);
  * PyWcs methods
  */
 
+static int
+PyWcs_traverse(PyWcs* self, visitproc visit, void* arg) {
+  Py_VISIT(self->py_sip);
+  Py_VISIT(self->py_distortion_lookup[0]);
+  Py_VISIT(self->py_distortion_lookup[1]);
+  Py_VISIT(self->py_wcsprm);
+
+  return 0;
+}
+
 static void
 PyWcs_dealloc(PyWcs* self) {
   Py_XDECREF(self->py_sip);
   Py_XDECREF(self->py_distortion_lookup[0]);
   Py_XDECREF(self->py_distortion_lookup[1]);
   Py_XDECREF(self->py_wcsprm);
+  pipeline_free(&self->x);
   self->ob_type->tp_free((PyObject*)self);
 }
 
@@ -168,12 +179,13 @@ PyWcs_all_pix2sky_generic(PyWcs* self, PyObject* arg, int do_shift) {
 
   world = (PyArrayObject*)PyArray_SimpleNew(2, PyArray_DIMS(pixcrd), PyArray_DOUBLE);
   if (world == NULL) {
-    goto _exit;
+    goto exit;
   }
 
   /* Adjust pixel coordinates to be 1-based */
-  if (do_shift)
+  if (do_shift) {
     offset_array(pixcrd, 1.0);
+  }
 
   /* Make the call */
   wcsprm_python2c(self->x.wcs);
@@ -184,23 +196,27 @@ PyWcs_all_pix2sky_generic(PyWcs* self, PyObject* arg, int do_shift) {
                                     (double*)PyArray_DATA(world));
   wcsprm_c2python(self->x.wcs);
   /* Adjust pixel coordinates back to 0-based */
-  if (do_shift)
+  if (do_shift) {
     offset_array(pixcrd, -1.0);
+  }
 
- _exit:
+ exit:
   Py_XDECREF(pixcrd);
 
   if (status == 0 || status == 8) {
     return (PyObject*)world;
-  } else if (status > 0 && status < WCS_ERRMSG_MAX) {
-    PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
-    return NULL;
-  } else if (status == -1) {
-    return NULL;
   } else {
-    PyErr_SetString(PyExc_RuntimeError,
-                    "Unknown error occurred.  Something is seriously wrong.");
-    return NULL;
+    Py_DECREF(world);
+    if (status > 0 && status < WCS_ERRMSG_MAX) {
+      PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
+      return NULL;
+    } else if (status == -1) {
+      return NULL;
+    } else {
+      PyErr_SetString(PyExc_RuntimeError,
+                      "Unknown error occurred.  Something is seriously wrong.");
+      return NULL;
+    }
   }
 }
 
@@ -232,12 +248,13 @@ PyWcs_p4_pix2foc_generic(PyWcs* self, PyObject* arg, int do_shift) {
 
   if (PyArray_DIM(pixcrd, 1) != NAXES) {
     PyErr_SetString(PyExc_ValueError, "Pixel array must be an Nx2 array");
-    goto _exit;
+    goto exit;
   }
 
   foccrd = (PyArrayObject*)PyArray_SimpleNew(2, PyArray_DIMS(pixcrd), PyArray_DOUBLE);
   if (foccrd == NULL) {
-    goto _exit;
+    status = 2;
+    goto exit;
   }
 
   if (do_shift) {
@@ -247,30 +264,28 @@ PyWcs_p4_pix2foc_generic(PyWcs* self, PyObject* arg, int do_shift) {
   status = p4_pix2foc(2, (void *)self->x.cpdis, PyArray_DIM(pixcrd, 0),
                       PyArray_DATA(pixcrd), PyArray_DATA(foccrd));
 
-  if (status) {
-    Py_XDECREF(foccrd);
-    goto _exit;
-  }
-
   if (do_shift) {
     offset_array(pixcrd, -1.0);
   }
 
- _exit:
+ exit:
 
   Py_XDECREF(pixcrd);
 
-  if (status == 0 || status == 8) {
+  if (status == 0) {
     return (PyObject*)foccrd;
-  } else if (status > 0 && status < WCS_ERRMSG_MAX) {
-    PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
-    return NULL;
-  } else if (status == -1) {
-    return NULL;
   } else {
-    PyErr_SetString(PyExc_RuntimeError,
-                    "Unknown error occurred.  Something is seriously wrong.");
-    return NULL;
+    Py_XDECREF(foccrd);
+    if (status > 0 && status < WCS_ERRMSG_MAX) {
+      PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
+      return NULL;
+    } else if (status == -1) {
+      return NULL;
+    } else {
+      PyErr_SetString(PyExc_RuntimeError,
+                      "Unknown error occurred.  Something is seriously wrong.");
+      return NULL;
+    }
   }
 }
 
@@ -281,7 +296,7 @@ PyWcs_p4_pix2foc(PyWcs* self, PyObject* arg, PyObject* kwds) {
 
 static PyObject*
 PyWcs_p4_pix2foc_fits(PyWcs* self, PyObject* arg, PyObject* kwds) {
-  return PyWcs_p4_pix2foc_generic(self, arg, 1);
+  return PyWcs_p4_pix2foc_generic(self, arg, 0);
 }
 
 static PyObject*
@@ -315,11 +330,6 @@ PyWcs_pix2foc_generic(PyWcs* self, PyObject* arg, int do_shift) {
                             (double*)PyArray_DATA(pixcrd),
                             (double*)PyArray_DATA(foccrd));
 
-  if (status) {
-    Py_DECREF(foccrd);
-    goto _exit;
-  }
-
   if (do_shift) {
     offset_array(pixcrd, -1.0);
   }
@@ -328,17 +338,20 @@ PyWcs_pix2foc_generic(PyWcs* self, PyObject* arg, int do_shift) {
 
   Py_XDECREF(pixcrd);
 
-  if (status == 0 || status == 8) {
+  if (status == 0) {
     return (PyObject*)foccrd;
-  } else if (status > 0 && status < WCS_ERRMSG_MAX) {
-    PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
-    return NULL;
-  } else if (status == -1) {
-    return NULL;
   } else {
-    PyErr_SetString(PyExc_RuntimeError,
-                    "Unknown error occurred.  Something is seriously wrong.");
-    return NULL;
+    Py_XDECREF(foccrd);
+    if (status > 0 && status < WCS_ERRMSG_MAX) {
+      PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
+      return NULL;
+    } else if (status == -1) {
+      return NULL;
+    } else {
+      PyErr_SetString(PyExc_RuntimeError,
+                      "Unknown error occurred.  Something is seriously wrong.");
+      return NULL;
+    }
   }
 }
 
@@ -349,7 +362,7 @@ PyWcs_pix2foc(PyWcs* self, PyObject* arg, PyObject* kwds) {
 
 static PyObject*
 PyWcs_pix2foc_fits(PyWcs* self, PyObject* arg, PyObject* kwds) {
-  return PyWcs_pix2foc_generic(self, arg, 1);
+  return PyWcs_pix2foc_generic(self, arg, 0);
 }
 
 static PyObject*

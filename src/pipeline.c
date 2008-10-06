@@ -45,6 +45,15 @@ pipeline_clear(pipeline_t* pipeline) {
   pipeline->cpdis[0] = NULL;
   pipeline->cpdis[1] = NULL;
   pipeline->wcs = NULL;
+
+  /* Temporary buffers */
+  pipeline->alloc_ncoord = 0;
+  pipeline->alloc_nelem = 0;
+  pipeline->tmp = NULL;
+  pipeline->imgcrd = NULL;
+  pipeline->phi = NULL;
+  pipeline->theta = NULL;
+  pipeline->stat = NULL;
 }
 
 void
@@ -59,6 +68,72 @@ pipeline_init(
   pipeline->wcs = wcs;
 }
 
+static void
+pipeline_free_tmp(pipeline_t* pipeline) {
+  /* Free all temporary buffers and reset pointers to NULL */
+  free(pipeline->tmp);
+  pipeline->tmp = NULL;
+  free(pipeline->imgcrd);
+  pipeline->imgcrd = NULL;
+  free(pipeline->phi);
+  pipeline->phi = NULL;
+  free(pipeline->theta);
+  pipeline->theta = NULL;
+  free(pipeline->stat);
+  pipeline->stat = NULL;
+}
+
+void
+pipeline_free(pipeline_t* pipeline) {
+  pipeline_free_tmp(pipeline);
+}
+
+static int
+pipeline_realloc(
+    pipeline_t* pipeline,
+    unsigned int ncoord,
+    unsigned int nelem) {
+  if (pipeline->alloc_ncoord < ncoord || pipeline->alloc_nelem < nelem) {
+    pipeline_free_tmp(pipeline);
+
+    pipeline->alloc_ncoord = ncoord;
+    pipeline->alloc_nelem = nelem;
+
+    pipeline->imgcrd = malloc(ncoord * nelem * sizeof(double));
+    if (pipeline->imgcrd == NULL) {
+      goto out_of_memory;
+    }
+
+    pipeline->phi = malloc(ncoord * sizeof(double));
+    if (pipeline->phi == NULL) {
+      goto out_of_memory;
+    }
+
+    pipeline->theta = malloc(ncoord * sizeof(double));
+    if (pipeline->theta == NULL) {
+      goto out_of_memory;
+    }
+
+    pipeline->stat = malloc(ncoord * nelem * sizeof(int));
+    if (pipeline->stat == NULL) {
+      goto out_of_memory;
+    }
+
+    pipeline->tmp = malloc(ncoord * nelem * sizeof(double));
+    if (pipeline->tmp == NULL) {
+      goto out_of_memory;
+    }
+  }
+
+  return 0;
+
+ out_of_memory:
+  pipeline->alloc_nelem = 0;
+  pipeline->alloc_ncoord = 0;
+  pipeline_free_tmp(pipeline);
+  return 2;
+}
+
 int
 pipeline_all_pixel2world(
     const pipeline_t* pipeline,
@@ -66,11 +141,6 @@ pipeline_all_pixel2world(
     const int nelem,
     const double* pixcrd /* [ncoord][nelem] */,
     double* world /* [ncoord][nelem] */) {
-  double*       tmp        = NULL;
-  double*       imgcrd     = NULL;
-  double*       phi        = NULL;
-  double*       theta      = NULL;
-  int*          stat       = NULL;
   const double* wcs_input  = NULL;
   double*       wcs_output = NULL;
   int           has_sip;
@@ -89,43 +159,18 @@ pipeline_all_pixel2world(
   has_wcs = pipeline->wcs != NULL;
 
   if (has_wcs) {
-    imgcrd = malloc(ncoord * nelem * sizeof(double));
-    if (imgcrd == NULL) {
-      status = 2;
-      goto pipeline_pixel2world_exit;
-    }
-
-    phi = malloc(ncoord * sizeof(double));
-    if (phi == NULL) {
-      status = 2;
-      goto pipeline_pixel2world_exit;
-    }
-
-    theta = malloc(ncoord * sizeof(double));
-    if (theta == NULL) {
-      status = 2;
-      goto pipeline_pixel2world_exit;
-    }
-
-    stat = malloc(ncoord * nelem * sizeof(int));
-    if (stat == NULL) {
-      status = 2;
-      goto pipeline_pixel2world_exit;
+    status = pipeline_realloc((pipeline_t*)pipeline, ncoord, nelem);
+    if (status != 0) {
+      goto exit;
     }
 
     if (has_sip || has_p4) {
-      tmp = malloc(ncoord * nelem * sizeof(double));
-      if (tmp == NULL) {
-        status = 2;
-        goto pipeline_pixel2world_exit;
-      }
-
-      status = pipeline_pix2foc(pipeline, ncoord, nelem, pixcrd, tmp);
+      status = pipeline_pix2foc(pipeline, ncoord, nelem, pixcrd, pipeline->tmp);
       if (status != 0) {
-        goto pipeline_pixel2world_exit;
+        goto exit;
       }
 
-      wcs_input = tmp;
+      wcs_input = pipeline->tmp;
       wcs_output = world;
     } else {
       wcs_input = pixcrd;
@@ -133,20 +178,16 @@ pipeline_all_pixel2world(
     }
 
     status = wcsp2s(pipeline->wcs, ncoord, nelem,
-                    wcs_input, imgcrd, phi, theta, wcs_output, stat);
+                    wcs_input, pipeline->imgcrd, pipeline->phi,
+                    pipeline->theta, wcs_output, pipeline->stat);
   } else {
     if (has_sip || has_p4) {
       status = pipeline_pix2foc(pipeline, ncoord, nelem, pixcrd, world);
     }
   }
 
- pipeline_pixel2world_exit:
-  free(tmp);
-  free(imgcrd);
-  free(phi);
-  free(theta);
-  free(stat);
-
+ exit:
+  /* We don't have any cleanup at the moment */
   return status;
 }
 
@@ -196,20 +237,19 @@ int pipeline_pix2foc(
   if (has_sip) {
     status = sip_pix2foc(pipeline->sip, 2, ncoord, sip_input, sip_output);
     if (status) {
-      goto pipeline_pix2foc_exit;
+      goto exit;
     }
   }
 
   if (has_p4) {
     status = p4_pix2foc(2, (void*)pipeline->cpdis, ncoord, p4_input, p4_output);
     if (status) {
-      goto pipeline_pix2foc_exit;
+      goto exit;
     }
   }
 
- pipeline_pix2foc_exit:
+ exit:
   /* We don't have any cleanup at the moment */
-
   return status;
 }
 

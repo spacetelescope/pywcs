@@ -200,13 +200,13 @@ class WCS(WCSBase):
                     "keyword for SIP distortion")
 
             m = int(header["A_ORDER"])
-            a = numpy.zeros((m+1, m+1))
+            a = numpy.zeros((m+1, m+1), numpy.double)
             for i in range(m+1):
                 for j in range(m-i+1):
                     a[i, j] = header.get("A_%d_%d" % (i, j), 0.0)
 
             m = int(header["B_ORDER"])
-            b = numpy.zeros((m+1, m+1))
+            b = numpy.zeros((m+1, m+1), numpy.double)
             for i in range(m+1):
                 for j in range(m-i+1):
                     b[i, j] = header.get("B_%d_%d" % (i, j), 0.0)
@@ -225,13 +225,13 @@ class WCS(WCSBase):
                     "keyword for SIP distortion")
 
             m = int(header["AP_ORDER"])
-            ap = numpy.zeros((m+1, m+1))
+            ap = numpy.zeros((m+1, m+1), numpy.double)
             for i in range(m+1):
                 for j in range(m-i+1):
                     ap[i, j] = header.get("AP_%d_%d" % (i, j), 0.0)
 
             m = int(header["BP_ORDER"])
-            bp = numpy.zeros((m+1, m+1))
+            bp = numpy.zeros((m+1, m+1), numpy.double)
             for i in range(m+1):
                 for j in range(m-i+1):
                     bp[i, j] = header.get("BP_%d_%d" % (i, j), 0.0)
@@ -246,7 +246,14 @@ class WCS(WCSBase):
         if a is None and b is None and ap is None and bp is None:
             return None
 
-        return Sip(a, b, ap, bp, self.wcs.crpix)
+        if not header.has_key("CRPIX1") or not header.has_key("CRPIX2"):
+            raise ValueError(
+                "Header has SIP keywords without CRPIX keywords")
+
+        crpix1 = header.get("CRPIX1")
+        crpix2 = header.get("CRPIX2")
+
+        return Sip(a, b, ap, bp, (crpix1, crpix2))
 
     def _array_converter(self, func, *args):
         if len(args) == 1:
@@ -340,7 +347,7 @@ class WCS(WCSBase):
                __.ONE_OR_TWO_ARGS('sky', 8))
 
     def wcs_pix2sky_fits(self, *args):
-        return self._array_converter(lambda x: self.wcs.p2s(x)['world'], *args)
+        return self._array_converter(lambda x: self.wcs.p2s_fits(x)['world'], *args)
     wcs_pix2sky_fits.__doc__ = """
         wcs_pix2sky_fits(*args) -> sky
 
@@ -350,7 +357,7 @@ class WCS(WCSBase):
     def wcs_sky2pix(self, *args):
         if self.wcs is None:
             raise ValueError("No basic WCS settings were created.")
-        return self._array_converter(lambda x: self.wcs.s2p(x)['pixel'], *args)
+        return self._array_converter(lambda x: self.wcs.s2p(x)['pixcrd'], *args)
     wcs_sky2pix.__doc__ = """
         wcs_sky2pix(*args) -> pixel
 
@@ -378,7 +385,7 @@ class WCS(WCSBase):
     def wcs_sky2pix_fits(self, *args):
         if self.wcs is None:
             raise ValueError("No basic WCS settings were created.")
-        return self._array_converter(lambda x: self.wcs.s2p_fits(x)['pixel'],
+        return self._array_converter(lambda x: self.wcs.s2p_fits(x)['pixcrd'],
                                      *args)
     wcs_sky2pix_fits.__doc__ = """
         wcs_sky2pix_fits(*args) -> pixel

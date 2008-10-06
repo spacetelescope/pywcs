@@ -36,6 +36,7 @@ DAMAGE.
 
 #include "sip_wrap.h"
 #include "docstrings.h"
+#include "wcs.h"
 
 static void
 PySip_dealloc(PySip* self) {
@@ -55,8 +56,20 @@ PySip_new(PyTypeObject* type, PyObject* args, PyObject* kwds) {
 }
 
 static int
-convert_matrix(PyObject* pyobj, PyArrayObject** array) {
-  *array = (PyArrayObject*)PyArray_ContiguousFromAny(pyobj, PyArray_DOUBLE, 2, 2);
+convert_matrix(
+    PyObject* pyobj,
+    PyArrayObject** array,
+    double** data,
+    size_t* order) {
+  if (pyobj == Py_None) {
+    *array = NULL;
+    *data = NULL;
+    *order = 0;
+    return 0;
+  }
+
+  *array = (PyArrayObject*)PyArray_ContiguousFromAny(
+      pyobj, PyArray_DOUBLE, 2, 2);
   if (*array == NULL)
     return -1;
 
@@ -65,6 +78,9 @@ convert_matrix(PyObject* pyobj, PyArrayObject** array) {
                     "Matrix must be square.");
     return -1;
   }
+
+  *data = (double*)PyArray_DATA(*array);
+  *order = PyArray_DIM(*array, 0) - 1;
 
   return 0;
 }
@@ -81,100 +97,131 @@ PySip_init(PySip* self, PyObject* args, PyObject* kwds) {
   PyArrayObject* ap       = NULL;
   PyArrayObject* bp       = NULL;
   PyArrayObject* crpix    = NULL;
-  int            result   = 0;
+  double*        a_data   = NULL;
+  double*        b_data   = NULL;
+  double*        ap_data  = NULL;
+  double*        bp_data  = NULL;
+  size_t         a_order  = 0;
+  size_t         b_order  = 0;
+  size_t         ap_order = 0;
+  size_t         bp_order = 0;
+  int            status   = -1;
 
   if (!PyArg_ParseTuple(args, "OOOOO:Sip.__init__",
                         &py_a, &py_b, &py_ap, &py_bp, &py_crpix)) {
     return -1;
   }
 
-  if (convert_matrix(py_a, &a) ||
-      convert_matrix(py_b, &b) ||
-      convert_matrix(py_ap, &ap) ||
-      convert_matrix(py_bp, &bp)) {
-    result = -1;
-    goto PySip_init_exit;
+  if (convert_matrix(py_a, &a, &a_data, &a_order) ||
+      convert_matrix(py_b, &b, &b_data, &b_order) ||
+      convert_matrix(py_ap, &ap, &ap_data, &ap_order) ||
+      convert_matrix(py_bp, &bp, &bp_data, &bp_order)) {
+    goto exit;
   }
 
   crpix = (PyArrayObject*)PyArray_ContiguousFromAny(py_crpix, PyArray_DOUBLE,
                                                     1, 1);
   if (crpix == NULL) {
-    result = -1;
-    goto PySip_init_exit;
+    goto exit;
   }
 
   if (PyArray_DIM(crpix, 0) != 2) {
-    PyErr_SetString(PyExc_ValueError,
-                    "CRPIX wrong length");
-    result = -1;
-    goto PySip_init_exit;
+    PyErr_SetString(PyExc_ValueError, "CRPIX wrong length");
+    goto exit;
   }
 
-  if (sip_init(&self->x,
-               PyArray_DIM(a, 0) - 1, PyArray_DATA(a),
-               PyArray_DIM(b, 0) - 1, PyArray_DATA(b),
-               PyArray_DIM(ap, 0) - 1, PyArray_DATA(ap),
-               PyArray_DIM(bp, 0) - 1, PyArray_DATA(bp),
-               PyArray_DATA(crpix))) {
-    result = -1;
-    goto PySip_init_exit;
-  }
+  status = sip_init(&self->x,
+                    a_order, a_data,
+                    b_order, b_data,
+                    ap_order, ap_data,
+                    bp_order, bp_data,
+                    PyArray_DATA(crpix));
 
- PySip_init_exit:
+ exit:
   Py_XDECREF(a);
   Py_XDECREF(b);
   Py_XDECREF(ap);
   Py_XDECREF(bp);
   Py_XDECREF(crpix);
 
-  return result;
+  if (status == 0) {
+    return 0;
+  } else if (status > 0 && status < WCS_ERRMSG_MAX) {
+    PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
+    return -1;
+  } else if (status == -1) {
+    return -1;
+  } else {
+    PyErr_SetString(PyExc_RuntimeError,
+                    "Unknown error occurred.  Something is seriously wrong.");
+    return -1;
+  }
 }
 
 static PyObject*
 PySip_pix2foc_generic(PySip* self, PyObject* arg, int do_shift) {
   PyArrayObject* pixcrd = NULL;
   PyArrayObject* foccrd = NULL;
-  PyObject* result = NULL;
+  int            status = -1;
+
+  if (self->x.a == NULL || self->x.b == NULL) {
+    PyErr_SetString(
+        PyExc_ValueError,
+        "SIP object does not have coefficients for pix2foc transformation (A and B)");
+    return NULL;
+  }
 
   pixcrd = (PyArrayObject*)PyArray_ContiguousFromAny(arg, PyArray_DOUBLE, 2, 2);
   if (pixcrd == NULL) {
-    goto _exit;
+    goto exit;
   }
 
   if (PyArray_DIM(pixcrd, 1) != 2) {
     PyErr_SetString(PyExc_ValueError, "Pixel array must be an Nx2 array");
-    goto _exit;
+    goto exit;
   }
 
   foccrd = (PyArrayObject*)PyArray_SimpleNew(2, PyArray_DIMS(pixcrd),
                                              PyArray_DOUBLE);
   if (foccrd == NULL) {
-    goto _exit;
+    status = 2;
+    goto exit;
   }
 
-  if (do_shift)
+  if (do_shift) {
     offset_array(pixcrd, 1.0);
-
-  if (sip_pix2foc(&self->x,
-                  PyArray_DIM(pixcrd, 0),
-                  PyArray_DIM(pixcrd, 1),
-                  (double*)PyArray_DATA(pixcrd),
-                  (double*)PyArray_DATA(foccrd))) {
-    PyErr_SetString(PyExc_RuntimeError, "Error correcting distortion");
-    Py_XDECREF(foccrd);
-    goto _exit;
   }
 
-  if (do_shift)
+  status = sip_pix2foc(&self->x,
+                       PyArray_DIM(pixcrd, 1),
+                       PyArray_DIM(pixcrd, 0),
+                       (const double*)PyArray_DATA(pixcrd),
+                       (double*)PyArray_DATA(foccrd));
+
+  if (do_shift) {
     offset_array(pixcrd, -1.0);
+  }
 
-  result = (PyObject*)foccrd;
-
- _exit:
+ exit:
 
   Py_XDECREF(pixcrd);
 
-  return result;
+  if (status == 0) {
+    return (PyObject*)foccrd;
+  } else {
+    Py_XDECREF(foccrd);
+    if (status == -1) {
+      return NULL;
+    } else if (status > 0 && status < WCS_ERRMSG_MAX) {
+      PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
+      return NULL;
+    } else {
+      PyErr_SetString(
+          PyExc_RuntimeError,
+          "Unknown error occurred.  Something is seriously wrong.");
+      return NULL;
+    }
+  }
 }
 
 static PyObject*
@@ -184,54 +231,73 @@ PySip_pix2foc(PySip* self, PyObject* arg, PyObject* kwds) {
 
 static PyObject*
 PySip_pix2foc_fits(PySip* self, PyObject* arg, PyObject* kwds) {
-  return PySip_pix2foc_generic(self, arg, 1);
+  return PySip_pix2foc_generic(self, arg, 0);
 }
 
 static PyObject*
 PySip_foc2pix_generic(PySip* self, PyObject* arg, int do_shift) {
   PyArrayObject* foccrd = NULL;
   PyArrayObject* pixcrd = NULL;
-  PyObject* result = NULL;
+  int            status = -1;
+
+  if (self->x.ap == NULL || self->x.bp == NULL) {
+    PyErr_SetString(
+        PyExc_ValueError,
+        "SIP object does not have coefficients for foc2pix transformation (AP and BP)");
+    return NULL;
+  }
 
   foccrd = (PyArrayObject*)PyArray_ContiguousFromAny(arg, PyArray_DOUBLE, 2, 2);
   if (foccrd == NULL) {
-    goto _exit;
+    goto exit;
   }
 
   if (PyArray_DIM(foccrd, 1) != 2) {
     PyErr_SetString(PyExc_ValueError, "Pixel array must be an Nx2 array");
-    goto _exit;
+    goto exit;
   }
 
   pixcrd = (PyArrayObject*)PyArray_SimpleNew(2, PyArray_DIMS(foccrd),
                                              PyArray_DOUBLE);
   if (pixcrd == NULL) {
-    goto _exit;
+    status = 2;
+    goto exit;
   }
 
-  if (do_shift)
+  if (do_shift) {
     offset_array(pixcrd, 1.0);
-
-  if (sip_foc2pix(&self->x,
-                  PyArray_DIM(pixcrd, 0),
-                  PyArray_DIM(pixcrd, 1),
-                  (double*)PyArray_DATA(foccrd),
-                  (double*)PyArray_DATA(pixcrd))) {
-    PyErr_SetString(PyExc_RuntimeError, "Error correcting distortion");
-    Py_XDECREF(foccrd);
-    goto _exit;
   }
 
-  if (do_shift)
+  status = sip_foc2pix(&self->x,
+                       PyArray_DIM(pixcrd, 1),
+                       PyArray_DIM(pixcrd, 0),
+                       (double*)PyArray_DATA(foccrd),
+                       (double*)PyArray_DATA(pixcrd));
+
+  if (do_shift) {
     offset_array(pixcrd, -1.0);
+  }
 
-  result = (PyObject*)pixcrd;
-
- _exit:
+ exit:
 
   Py_XDECREF(foccrd);
 
-  return result;
+  if (status == 0) {
+    return (PyObject*)pixcrd;
+  } else {
+    Py_XDECREF(pixcrd);
+    if (status == -1) {
+      return NULL;
+    } else if (status > 0 && status < WCS_ERRMSG_MAX) {
+      PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
+      return NULL;
+    } else {
+      PyErr_SetString(
+          PyExc_RuntimeError,
+          "Unknown error occurred.  Something is seriously wrong.");
+      return NULL;
+    }
+  }
 }
 
 static PyObject*
@@ -241,7 +307,7 @@ PySip_foc2pix(PySip* self, PyObject* arg, PyObject* kwds) {
 
 static PyObject*
 PySip_foc2pix_fits(PySip* self, PyObject* arg, PyObject* kwds) {
-  return PySip_foc2pix_generic(self, arg, 1);
+  return PySip_foc2pix_generic(self, arg, 0);
 }
 
 static PyObject*
@@ -337,10 +403,10 @@ static PyGetSetDef PySip_getset[] = {
 };
 
 static PyMethodDef PySip_methods[] = {
-  {"pix2foc", (PyCFunction)PySip_pix2foc, METH_VARARGS, doc_sip_pix2foc},
-  {"pix2foc_fits", (PyCFunction)PySip_pix2foc_fits, METH_VARARGS, doc_sip_pix2foc_fits},
-  {"foc2pix", (PyCFunction)PySip_foc2pix, METH_VARARGS, doc_sip_foc2pix},
-  {"foc2pix_fits", (PyCFunction)PySip_foc2pix_fits, METH_VARARGS, doc_sip_foc2pix_fits},
+  {"pix2foc", (PyCFunction)PySip_pix2foc, METH_O, doc_sip_pix2foc},
+  {"pix2foc_fits", (PyCFunction)PySip_pix2foc_fits, METH_O, doc_sip_pix2foc_fits},
+  {"foc2pix", (PyCFunction)PySip_foc2pix, METH_O, doc_sip_foc2pix},
+  {"foc2pix_fits", (PyCFunction)PySip_foc2pix_fits, METH_O, doc_sip_foc2pix_fits},
   {NULL}
 };
 

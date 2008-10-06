@@ -39,13 +39,13 @@ DAMAGE.
 
 typedef struct {
   unsigned int a_order;
-  double* a; /* [a_order+1][a_order+1] */
+  double* a;
   unsigned int b_order;
-  double* b; /* [b_order+1][b_order+1] */
+  double* b;
   unsigned int ap_order;
-  double* ap; /* [ap_order+1][ap_order+1] */
+  double* ap;
   unsigned int bp_order;
-  double* bp; /* [bp_order+1][bp_order+1] */
+  double* bp;
   double crpix[2];
   double* scratch;
 } sip_t;

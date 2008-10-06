@@ -122,14 +122,7 @@ for key in keys:
 fd.close()
 
 ######################################################################
-# DISTUTILS SETUP
-if USE_ASSERTS:
-    define_macros = [('DEBUG', None)]
-    undef_macros = [('NDEBUG')]
-else:
-    define_macros = [('NDEBUG', None)]
-    undef_macros = [('DEBUG')]
-
+# PYWCS-SPECIFIC AND WRAPPER SOURCE FILES
 PYWCS_SOURCES = [ # List of pywcs files to compile
     'distortion.c',
     'distortion_wrap.c',
@@ -141,6 +134,19 @@ PYWCS_SOURCES = [ # List of pywcs files to compile
     'util.c',
     'wcslib_wrap.c']
 PYWCS_SOURCES = [join('src', x) for x in PYWCS_SOURCES]
+
+######################################################################
+# DISTUTILS SETUP
+if USE_ASSERTS:
+    define_macros = [('DEBUG', None)]
+    undef_macros = [('NDEBUG')]
+    extra_compile_args = ["-fno-inline"]
+else:
+    # Define ECHO as nothing to prevent spurious newlines from
+    # printing within the libwcs parser
+    define_macros = [('NDEBUG', None), ('ECHO', None)]
+    undef_macros = [('DEBUG')]
+    extra_compile_args = []
 
 setup(name="pywcs",
       version="1.2a1-%s" % WCSVERSION,
@@ -158,7 +164,8 @@ setup(name="pywcs",
                     "src"
                     ],
                   define_macros=define_macros,
-                  undef_macros=undef_macros
+                  undef_macros=undef_macros,
+                  extra_compile_args=extra_compile_args
                   )
         ]
       )

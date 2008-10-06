@@ -45,6 +45,15 @@ typedef struct {
   sip_t* sip;
   distortion_lookup_t* cpdis[2];
   struct wcsprm* wcs;
+
+  /* Temporary buffers for performing calculations */
+  unsigned int alloc_ncoord;
+  unsigned int alloc_nelem;
+  double* tmp;
+  double* imgcrd;
+  double* phi;
+  double* theta;
+  int* stat;
 } pipeline_t;
 
 /**
@@ -63,6 +72,14 @@ pipeline_init(
     sip_t* sip,
     distortion_lookup_t* cpdis[2],
     struct wcsprm* wcs);
+
+/**
+Free all the temporary buffers of a pipeline_t.  It does not free
+the underlying sip_t, distortion_lookup_t or wcsprm objects.
+*/
+void
+pipeline_free(
+    pipeline_t* pipeline);
 
 /**
 Perform the entire pipeline from pixel coordinates to world
