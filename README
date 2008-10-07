@@ -38,6 +38,10 @@ mid-level interfaces of Dr. Mark Calabretta's WCSLIB available here:
 
   http://www.atnf.csiro.au/people/mcalabre/WCS/
 
+In addition, there are extensions (written in C) to support Spitzer
+Simple Imaging Polynomial (SIP) convention keywords and Paper IV table
+lookup distortion.
+
 pywcs is alpha-quality software.  Please direct any questions to:
 
   Michael Droettboom

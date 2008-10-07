@@ -9,7 +9,7 @@ from os.path import join
 
 ######################################################################
 # CONFIGURATION
-USE_ASSERTS = True
+DEBUG = True
 
 ######################################################################
 # NUMPY
@@ -71,21 +71,21 @@ WCSFILES = [join(WCSLIBC, x) for x in WCSFILES]
 # for them.
 def determine_64_bit_int():
     try:
-        import ctypes
-    except ImportError:
-        print "WARNING: Unable to determine a suitable 64-bit integer type."
-        print "         Defaulting to 'long long int', which should work with most"
-        print "         platforms, but your build may be broken."
-        print "         Please contact <%s> with details about your platform." % EMAIL
-        return "long long int"
+        try:
+            import ctypes
+        except ImportError:
+            raise ValueError()
 
-    if ctypes.sizeof(ctypes.c_longlong) == 8:
-        return "long long int"
-    elif ctypes.sizeof(ctypes.c_long) == 8:
-        return "long int"
-    elif ctypes.sizeof(ctypes.c_int) == 8:
-        return "int"
-    else:
+        if ctypes.sizeof(ctypes.c_longlong) == 8:
+            return "long long int"
+        elif ctypes.sizeof(ctypes.c_long) == 8:
+            return "long int"
+        elif ctypes.sizeof(ctypes.c_int) == 8:
+            return "int"
+        else:
+            raise ValueError()
+
+    except ValueError:
         print "WARNING: Could not find a suitable 64-bit integer type."
         print "         Defaulting to 'long long int', but your build may be broken."
         print "         Please contact <%s> with details about your platform." % EMAIL
@@ -137,7 +137,7 @@ PYWCS_SOURCES = [join('src', x) for x in PYWCS_SOURCES]
 
 ######################################################################
 # DISTUTILS SETUP
-if USE_ASSERTS:
+if DEBUG:
     define_macros = [('DEBUG', None)]
     undef_macros = [('NDEBUG')]
     extra_compile_args = ["-fno-inline"]

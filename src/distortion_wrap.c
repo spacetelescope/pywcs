@@ -39,6 +39,24 @@ DAMAGE.
 
 #include <structmember.h> /* From Python */
 
+static int
+PyDistLookup_traverse(PyDistLookup* self, visitproc visit, void* arg) {
+  Py_VISIT(self->py_data);
+
+  return 0;
+}
+
+static int
+PyDistLookup_clear(PyDistLookup* self) {
+  PyObject* tmp;
+
+  tmp = (PyObject*)self->py_data;
+  self->py_data = NULL;
+  Py_XDECREF(tmp);
+
+  return 0;
+}
+
 static void
 PyDistLookup_dealloc(PyDistLookup* self) {
   distortion_lookup_t_free(&self->x);
@@ -211,10 +229,10 @@ PyTypeObject PyDistLookupType = {
   0,                            /*tp_getattro*/
   0,                            /*tp_setattro*/
   0,                            /*tp_as_buffer*/
-  Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
+  Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_HAVE_GC, /*tp_flags*/
   doc_DistortionLookupTable,    /* tp_doc */
-  0,                            /* tp_traverse */
-  0,                            /* tp_clear */
+  (traverseproc)PyDistLookup_traverse, /* tp_traverse */
+  (inquiry)PyDistLookup_clear,  /* tp_clear */
   0,                            /* tp_richcompare */
   0,                            /* tp_weaklistoffset */
   0,                            /* tp_iter */

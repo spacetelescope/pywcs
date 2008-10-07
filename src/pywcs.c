@@ -75,12 +75,32 @@ PyWcs_traverse(PyWcs* self, visitproc visit, void* arg) {
   return 0;
 }
 
+static int
+PyWcs_clear(PyWcs* self) {
+  PyObject* tmp;
+
+  tmp = self->py_sip;
+  self->py_sip = NULL;
+  Py_XDECREF(tmp);
+
+  tmp = self->py_distortion_lookup[0];
+  self->py_distortion_lookup[0] = NULL;
+  Py_XDECREF(tmp);
+
+  tmp = self->py_distortion_lookup[1];
+  self->py_distortion_lookup[1] = NULL;
+  Py_XDECREF(tmp);
+
+  tmp = self->py_wcsprm;
+  self->py_wcsprm = NULL;
+  Py_XDECREF(tmp);
+
+  return 0;
+}
+
 static void
 PyWcs_dealloc(PyWcs* self) {
-  Py_XDECREF(self->py_sip);
-  Py_XDECREF(self->py_distortion_lookup[0]);
-  Py_XDECREF(self->py_distortion_lookup[1]);
-  Py_XDECREF(self->py_wcsprm);
+  PyWcs_clear(self);
   pipeline_free(&self->x);
   self->ob_type->tp_free((PyObject*)self);
 }
@@ -537,10 +557,10 @@ PyTypeObject PyWcsType = {
   0,                            /*tp_getattro*/
   0,                            /*tp_setattro*/
   0,                            /*tp_as_buffer*/
-  Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
+  Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_HAVE_GC, /*tp_flags*/
   doc_Wcs,                      /* tp_doc */
-  0,                            /* tp_traverse */
-  0,                            /* tp_clear */
+  (traverseproc)PyWcs_traverse, /* tp_traverse */
+  (inquiry)PyWcs_clear,         /* tp_clear */
   0,                            /* tp_richcompare */
   0,                            /* tp_weaklistoffset */
   0,                            /* tp_iter */
