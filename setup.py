@@ -140,7 +140,7 @@ PYWCS_SOURCES = [join('src', x) for x in PYWCS_SOURCES]
 if DEBUG:
     define_macros = [('DEBUG', None)]
     undef_macros = [('NDEBUG')]
-    extra_compile_args = ["-fno-inline"]
+    extra_compile_args = ["-fno-inline", "-O0", "-g"]
 else:
     # Define ECHO as nothing to prevent spurious newlines from
     # printing within the libwcs parser
