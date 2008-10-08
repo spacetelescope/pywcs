@@ -140,8 +140,12 @@ class WCS(WCSBase):
             wcsprm.cd = numpy.array([[1.0, 0.0], [0.0, 1.0]], numpy.double)
             cpdis = (None, None)
         else:
-            wcsprm = _pywcs._Wcsprm(header=str(header.ascardlist()), key=key,
-                                    relax=relax, naxis=naxis)
+            try:
+                wcsprm = _pywcs._Wcsprm(header=str(header.ascardlist()), key=key,
+                                        relax=relax, naxis=naxis)
+            except _pywcs.NoWcsKeywordsFoundError:
+                wcsprm = _pywcs._Wcsprm(header=None, key=key,
+                                        relax=relax, naxis=naxis)
             cpdis = self._read_distortion_kw(header, fobj, dist='CPDIS')
             sip = self._read_sip_kw(header)
 
@@ -167,7 +171,7 @@ class WCS(WCSBase):
                 dis = header[distortion].lower()
                 if dis == 'lookup':
                     assert isinstance(fobj, pyfits.NP_pyfits.HDUList), \
-                    'A pyfits HDUList is required for Lookup table distortion.'
+                        'A pyfits HDUList is required for Lookup table distortion.'
                     dp = d_kw+str(i)
                     d_extver = header[dp+'.EXTVER']
                     d_data = fobj['WCSDVARR', d_extver].data
@@ -184,7 +188,7 @@ class WCS(WCSBase):
                 pass
 
         if len(tables) == 2:
-            return (tables[0], tables[1])
+            return (tables[1], tables[2])
         return (None, None)
 
     def _read_sip_kw(self, header):

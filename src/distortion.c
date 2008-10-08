@@ -198,7 +198,6 @@ p4_pix2foc(
 #endif
   assert(pix);
   assert(foc);
-  assert(pix != foc);
 
   if (pix == NULL || foc == NULL || lookup[0] == NULL || lookup[1] == NULL) {
     return 1;

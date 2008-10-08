@@ -1,8 +1,9 @@
 import pywcs
 import pyfits
 import numpy
+import sys
 
-hdulist = pyfits.open("sip_reference.fits")
+hdulist = pyfits.open(sys.argv[-1])
 
 data1 = numpy.array([0,2,4,6])
 data2 = numpy.array([1,3,5,7])

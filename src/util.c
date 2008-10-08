@@ -175,6 +175,7 @@ PyObject* WcsExc_InvalidCoordinate;
 PyObject* WcsExc_NoSolution;
 PyObject* WcsExc_InvalidSubimageSpecification;
 PyObject* WcsExc_NonseparableSubimageCoordinateSystem;
+PyObject* WcsExc_NoWcsKeywordsFound;
 
 /* This is an array mapping the wcs status codes to Python exception
  * types.  The exception string is stored as part of wcslib itself in
@@ -214,6 +215,7 @@ _define_exceptions(PyObject* m) {
   DEFINE_EXCEPTION(NoSolution);
   DEFINE_EXCEPTION(InvalidSubimageSpecification);
   DEFINE_EXCEPTION(NonseparableSubimageCoordinateSystem);
+  DEFINE_EXCEPTION(NoWcsKeywordsFound);
   return 0;
 }
 

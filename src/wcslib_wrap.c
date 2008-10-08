@@ -209,7 +209,7 @@ PyWcsprm_init(PyWcsprm* self, PyObject* args, PyObject* kwds) {
     }
 
     if (nwcs == 0) {
-      PyErr_SetString(PyExc_KeyError,
+      PyErr_SetString(WcsExc_NoWcsKeywordsFound,
                       "No WCS keywords found in the given header");
       return -1;
     }
