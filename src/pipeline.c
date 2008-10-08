@@ -71,6 +71,8 @@ pipeline_init(
 static void
 pipeline_free_tmp(pipeline_t* pipeline) {
   /* Free all temporary buffers and reset pointers to NULL */
+  pipeline->alloc_nelem = 0;
+  pipeline->alloc_ncoord = 0;
   free(pipeline->tmp);
   pipeline->tmp = NULL;
   free(pipeline->imgcrd);
@@ -93,11 +95,9 @@ pipeline_realloc(
     pipeline_t* pipeline,
     unsigned int ncoord,
     unsigned int nelem) {
-  if (pipeline->alloc_ncoord < ncoord || pipeline->alloc_nelem < nelem) {
+  if (pipeline->alloc_ncoord < ncoord ||
+      pipeline->alloc_nelem * pipeline->alloc_ncoord < nelem * ncoord) {
     pipeline_free_tmp(pipeline);
-
-    pipeline->alloc_ncoord = ncoord;
-    pipeline->alloc_nelem = nelem;
 
     pipeline->imgcrd = malloc(ncoord * nelem * sizeof(double));
     if (pipeline->imgcrd == NULL) {
@@ -123,6 +123,9 @@ pipeline_realloc(
     if (pipeline->tmp == NULL) {
       goto out_of_memory;
     }
+
+    pipeline->alloc_ncoord = ncoord;
+    pipeline->alloc_nelem = nelem;
   }
 
   return 0;
