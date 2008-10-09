@@ -38,16 +38,16 @@ DAMAGE.
 #define __SIP_H__
 
 typedef struct {
-  unsigned int a_order;
-  double* a;
-  unsigned int b_order;
-  double* b;
-  unsigned int ap_order;
-  double* ap;
-  unsigned int bp_order;
-  double* bp;
-  double crpix[2];
-  double* scratch;
+  unsigned int                    a_order;
+  /*@null@*/ /*@shared@*/ double* a;
+  unsigned int                    b_order;
+  /*@null@*/ /*@shared@*/ double* b;
+  unsigned int                    ap_order;
+  /*@null@*/ /*@shared@*/ double* ap;
+  unsigned int                    bp_order;
+  /*@null@*/ /*@shared@*/ double* bp;
+  double                          crpix[2];
+  /*@null@*/ double*              scratch;
 } sip_t;
 
 /**
@@ -90,7 +90,7 @@ sip_init(
     const unsigned int b_order, const double* b,
     const unsigned int ap_order, const double* ap,
     const unsigned int bp_order, const double* bp,
-    const double crpix[2]);
+    const double* crpix /* [2] */);
 
 /**
 Frees the memory allocated for the sip_t struct.

@@ -81,6 +81,8 @@ The API documentation is also available online at:
 General usage instructions
 --------------------------
 
+TODO: The information below is out-of-date.
+
 The basic workflow is as follows:
 
     1. ``import pywcs``

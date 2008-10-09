@@ -43,7 +43,9 @@ DAMAGE.
 /* TODO: n-dimensional support */
 
 int
-distortion_lookup_t_init( distortion_lookup_t* lookup) {
+distortion_lookup_t_init(
+    distortion_lookup_t* lookup) {
+
   unsigned int i;
 
   for (i = 0; i < NAXES; ++i) {
@@ -58,9 +60,11 @@ distortion_lookup_t_init( distortion_lookup_t* lookup) {
   return 0;
 }
 
-int
-distortion_lookup_t_free( distortion_lookup_t* lookup) {
-  return 0;
+void
+distortion_lookup_t_free(
+    /*@unused@*/ distortion_lookup_t* lookup) {
+
+  /*@empty@*/
 }
 
 /**
@@ -71,7 +75,8 @@ distortion_lookup_t_free( distortion_lookup_t* lookup) {
 static inline float
 get_dist(
     const distortion_lookup_t *lookup,
-    const unsigned int coord[NAXES]) {
+    const unsigned int *coord /* [NAXES] */) {
+
   unsigned int cropped[NAXES];
   unsigned int i;
 
@@ -91,9 +96,10 @@ image_coord_to_distortion_coord(
     const distortion_lookup_t *lookup,
     const unsigned int axis,
     const double img) {
+
   double result;
 
-  assert(lookup);
+  assert(lookup != NULL);
   assert(axis < NAXES);
 
   result = (
@@ -102,8 +108,8 @@ image_coord_to_distortion_coord(
 
   if (result < 0.0) {
     result = 0.0;
-  } else if (result >= lookup->naxis[axis]) {
-    result = lookup->naxis[axis] - 1.0;
+  } else if (result >= (double)lookup->naxis[axis]) {
+    result = (double)lookup->naxis[axis] - 1.0;
   }
 
   return result;
@@ -116,14 +122,15 @@ image_coord_to_distortion_coord(
 static inline void
 image_coords_to_distortion_coords(
     const distortion_lookup_t *lookup,
-    const double img[NAXES],
+    const double *img /* [NAXES] */,
     /* Output parameters */
-    double dist[NAXES]) {
-  size_t i;
+    /*@out@*/ double *dist /* [NAXES] */) {
 
-  assert(lookup);
-  assert(img);
-  assert(dist);
+  unsigned int i;
+
+  assert(lookup != NULL);
+  assert(img != NULL);
+  assert(dist != NULL);
 
   for (i = 0; i < NAXES; ++i) {
     dist[i] = image_coord_to_distortion_coord(lookup, i, img[i]);
@@ -134,29 +141,35 @@ image_coords_to_distortion_coords(
  * Helper function for get_distortion_offset
  */
 static inline double
-calculate_weight(double iw, unsigned int i0, double jw, unsigned int j0) {
+calculate_weight(
+    double iw,
+    const unsigned int i0,
+    double jw,
+    const unsigned int j0) {
+
   assert(iw >= 0.0 && iw < 1.0);
   assert(jw >= 0.0 && jw < 1.0);
 
-  if (!i0) iw = 1.0 - iw;
-  if (!j0) jw = 1.0 - jw;
+  if (i0 == 0) iw = 1.0 - iw;
+  if (j0 == 0) jw = 1.0 - jw;
   return iw * jw;
 }
 
 double
 get_distortion_offset(
     const distortion_lookup_t *lookup,
-    const double img[NAXES]) {
+    const double *img /*[NAXES]*/) {
+
   double       dist[NAXES];
   double       dist_floor[NAXES];
   unsigned int dist_ifloor[NAXES];
   unsigned int coord[NAXES];
   double       dist_weight[NAXES];
   double       result;
-  size_t       i, k, l;
+  unsigned int i, k, l;
 
-  assert(lookup);
-  assert(img);
+  assert(lookup != NULL);
+  assert(img != NULL);
 
   image_coords_to_distortion_coords(lookup, img, dist);
 
@@ -182,22 +195,23 @@ get_distortion_offset(
 int
 p4_pix2foc(
     const unsigned int naxes,
-    const distortion_lookup_t *lookup[NAXES], /* [NAXES] */
+    const distortion_lookup_t **lookup, /* [NAXES] */
     const unsigned int nelem,
     const double* pix, /* [NAXES][nelem] */
     double *foc /* [NAXES][nelem] */) {
+
   unsigned int i, j;
 
   assert(naxes == NAXES);
-  assert(lookup);
+  assert(lookup != NULL);
 #ifndef NDEBUG
   for (i = 0; i < naxes; ++i) {
-    assert(lookup[i]);
-    assert(lookup[i]->data);
+    assert(lookup[i] != NULL);
+    assert(lookup[i]->data != NULL);
   }
 #endif
-  assert(pix);
-  assert(foc);
+  assert(pix != NULL);
+  assert(foc != NULL);
 
   if (pix == NULL || foc == NULL || lookup[0] == NULL || lookup[1] == NULL) {
     return 1;

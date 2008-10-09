@@ -46,10 +46,14 @@ DAMAGE.
  *   char * list[];
  ***************************************************************************/
 
-PyObject *
-PyStrListProxy_New(PyObject* owner, Py_ssize_t size, char (*array)[72]);
+/*@null@*/ PyObject *
+PyStrListProxy_New(
+    PyObject* owner,
+    Py_ssize_t size,
+    char (*array)[72]);
 
 int
-_setup_str_list_proxy_type(PyObject* m);
+_setup_str_list_proxy_type(
+    PyObject* m);
 
 #endif /* __STR_LIST_PROXY_H__ */

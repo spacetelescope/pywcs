@@ -44,42 +44,56 @@ static PyTypeObject PyStrListProxyType;
 
 typedef struct {
   PyObject_HEAD
-  PyObject* pyobject;
+  /*@null@*/ /*@shared@*/ PyObject* pyobject;
   Py_ssize_t size;
   char (*array)[72];
 } PyStrListProxy;
 
 static void
-PyStrListProxy_dealloc(PyStrListProxy* self) {
+PyStrListProxy_dealloc(
+    PyStrListProxy* self) {
+
   Py_XDECREF(self->pyobject);
   self->ob_type->tp_free((PyObject*)self);
 }
 
-static PyObject *
-PyStrListProxy_new(PyTypeObject* type, PyObject* args, PyObject* kwds) {
+/*@null@*/ static PyObject *
+PyStrListProxy_new(
+    PyTypeObject* type,
+    /*@unused@*/ PyObject* args,
+    /*@unused@*/ PyObject* kwds) {
+
   PyStrListProxy* self = NULL;
 
   self = (PyStrListProxy*)type->tp_alloc(type, 0);
-  if (self != NULL)
+  if (self != NULL) {
     self->pyobject = NULL;
+  }
   return (PyObject*)self;
 }
 
 static int
-PyStrListProxy_traverse(PyStrListProxy* self, visitproc visit, void *arg) {
+PyStrListProxy_traverse(
+    PyStrListProxy* self,
+    visitproc visit,
+    void *arg) {
+
   int vret;
 
   if (self->pyobject) {
     vret = visit(self->pyobject, arg);
-    if (vret != 0)
+    if (vret != 0) {
       return vret;
+    }
   }
 
   return 0;
 }
 
 static int
-PyStrListProxy_clear(PyStrListProxy *self) {
+PyStrListProxy_clear(
+    PyStrListProxy *self) {
+
   PyObject *tmp;
 
   tmp = self->pyobject;
@@ -89,13 +103,18 @@ PyStrListProxy_clear(PyStrListProxy *self) {
   return 0;
 }
 
-PyObject *
-PyStrListProxy_New(PyObject* owner, Py_ssize_t size, char (*array)[72]) {
+/*@null@*/ PyObject *
+PyStrListProxy_New(
+    /*@shared@*/ PyObject* owner,
+    Py_ssize_t size,
+    char (*array)[72]) {
+
   PyStrListProxy* self = NULL;
 
   self = (PyStrListProxy*)PyStrListProxyType.tp_alloc(&PyStrListProxyType, 0);
-  if (self == NULL)
+  if (self == NULL) {
     return NULL;
+  }
 
   Py_XINCREF(owner);
   self->pyobject = owner;
@@ -105,12 +124,17 @@ PyStrListProxy_New(PyObject* owner, Py_ssize_t size, char (*array)[72]) {
 }
 
 static Py_ssize_t
-PyStrListProxy_len(PyStrListProxy* self) {
+PyStrListProxy_len(
+    PyStrListProxy* self) {
+
   return self->size;
 }
 
-static PyObject*
-PyStrListProxy_getitem(PyStrListProxy* self, Py_ssize_t index) {
+/*@null@*/ static PyObject*
+PyStrListProxy_getitem(
+    PyStrListProxy* self,
+    Py_ssize_t index) {
+
   if (index > self->size) {
     PyErr_SetString(PyExc_IndexError, "index out of range");
     return NULL;
@@ -120,7 +144,11 @@ PyStrListProxy_getitem(PyStrListProxy* self, Py_ssize_t index) {
 }
 
 static int
-PyStrListProxy_setitem(PyStrListProxy* self, Py_ssize_t index, PyObject* arg) {
+PyStrListProxy_setitem(
+    PyStrListProxy* self,
+    Py_ssize_t index,
+    PyObject* arg) {
+
   char* value;
   Py_ssize_t value_length;
 
@@ -129,8 +157,9 @@ PyStrListProxy_setitem(PyStrListProxy* self, Py_ssize_t index, PyObject* arg) {
     return -1;
   }
 
-  if (PyString_AsStringAndSize(arg, &value, &value_length))
+  if (PyString_AsStringAndSize(arg, &value, &value_length)) {
     return -1;
+  }
 
   if (value_length >= 68) {
     PyErr_SetString(PyExc_ValueError, "string must be less than 68 characters");
@@ -142,8 +171,10 @@ PyStrListProxy_setitem(PyStrListProxy* self, Py_ssize_t index, PyObject* arg) {
   return 0;
 }
 
-static PyObject*
-PyStrListProxy_repr(PyStrListProxy* self) {
+/*@null@*/ static PyObject*
+PyStrListProxy_repr(
+    PyStrListProxy* self) {
+
   char*       buffer  = NULL;
   char*       wp      = NULL;
   char*       rp      = NULL;
@@ -152,12 +183,12 @@ PyStrListProxy_repr(PyStrListProxy* self) {
   PyObject*   result  = NULL;
   /* These are in descending order, so we can exit the loop quickly.  They
      are in pairs: (char_to_escape, char_escaped) */
-  const char* escapes = "\\\\''\rr\ff\vv\nn\tt\bb\aa";
-  const char* e       = NULL;
-  char        next_char = 0;
+  const char* escapes   = "\\\\''\rr\ff\vv\nn\tt\bb\aa";
+  const char* e         = NULL;
+  char        next_char = '\0';
 
   /* Overallocating to allow for escaped characters */
-  buffer = malloc(self->size*80*2 + 2);
+  buffer = malloc((size_t)self->size*80*2 + 2);
   if (buffer == NULL) {
     PyErr_SetString(PyExc_MemoryError, "Could not allocate memory.");
     return NULL;
@@ -169,7 +200,7 @@ PyStrListProxy_repr(PyStrListProxy* self) {
   for (i = 0; i < self->size; ++i) {
     *wp++ = '\'';
     rp = self->array[i];
-    for (j = 0; j < 68 && *rp != 0; ++j) {
+    for (j = 0; j < 68 && *rp != '\0'; ++j) {
       /* Check if this character should be escaped */
       e = escapes;
       next_char = *rp++;
@@ -183,7 +214,7 @@ PyStrListProxy_repr(PyStrListProxy* self) {
         } else {
           e += 2;
         }
-      } while (*e != 0);
+      } while (*e != '\0');
 
       *wp++ = next_char;
     }
@@ -197,7 +228,7 @@ PyStrListProxy_repr(PyStrListProxy* self) {
   }
 
   *wp++ = ']';
-  *wp++ = 0;
+  *wp++ = '\0';
 
   result = PyString_FromString(buffer);
   free(buffer);
@@ -211,6 +242,7 @@ static PySequenceMethods PyStrListProxy_sequence_methods = {
   (ssizeargfunc)PyStrListProxy_getitem,
   NULL,
   (ssizeobjargproc)PyStrListProxy_setitem,
+  NULL,
   NULL,
   NULL,
   NULL
@@ -259,9 +291,12 @@ static PyTypeObject PyStrListProxyType = {
 };
 
 int
-_setup_str_list_proxy_type(PyObject* m) {
-  if (PyType_Ready(&PyStrListProxyType) < 0)
+_setup_str_list_proxy_type(
+    /*@unused@*/ PyObject* m) {
+
+  if (PyType_Ready(&PyStrListProxyType) < 0) {
     return 1;
+  }
 
   return 0;
 }

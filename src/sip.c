@@ -41,8 +41,10 @@ DAMAGE.
 #include <string.h>
 
 void
-sip_clear(sip_t* sip) {
-  assert(sip);
+sip_clear(
+    sip_t* sip) {
+
+  assert(sip != NULL);
 
   sip->a_order = 0;
   sip->a = NULL;
@@ -64,7 +66,8 @@ sip_init(
     const unsigned int b_order, const double* b,
     const unsigned int ap_order, const double* ap,
     const unsigned int bp_order, const double* bp,
-    const double crpix[2]) {
+    const double* crpix /* [2] */) {
+
   unsigned int a_size       = 0;
   unsigned int b_size       = 0;
   unsigned int ap_size      = 0;
@@ -72,7 +75,7 @@ sip_init(
   unsigned int scratch_size = 0;
   int          status       = 0;
 
-  assert(sip);
+  assert(sip != NULL);
   sip_clear(sip);
 
   /* We we have one of A/B or AP/BP, we must have both. */
@@ -173,37 +176,41 @@ lu(
     const double* matrix,
     const int x,
     const int y) {
+
   int index;
-  assert(x >= 0 && x <= order);
-  assert(y >= 0 && y <= order);
-  index = x * (order + 1) + y;
-  assert(index >= 0 && index < (order + 1) * (order + 1));
+  assert(x >= 0 && x <= (int)order);
+  assert(y >= 0 && y <= (int)order);
+
+  index = x * ((int)order + 1) + y;
+  assert(index >= 0 && index < ((int)order + 1) * ((int)order + 1));
 
   return matrix[index];
 }
 
 static int
 sip_compute(
-    const unsigned int naxes,
+    /*@unused@*/ const unsigned int naxes,
     const unsigned int nelem,
     const unsigned int m,
-    const double* a,
+    /*@null@*/ const double* a,
     const unsigned int n,
-    const double* b,
-    const double crpix[2],
-    double* tmp,
-    const double* input /* [NAXES][nelem] */,
-    double* output /* [NAXES][nelem] */) {
-  int i, j, k;
+    /*@null@*/ const double* b,
+    const double* crpix /* [2] */,
+    /*@null@*/ double* tmp,
+    /*@null@*/ const double* input /* [NAXES][nelem] */,
+    /*@null@*/ double* output /* [NAXES][nelem] */) {
+
+  unsigned int i;
+  int j, k;
   double x, y, tmp_x, tmp_y;
   double sum;
 
-  assert(a);
-  assert(b);
-  assert(crpix);
-  assert(tmp);
-  assert(input);
-  assert(output);
+  assert(a != NULL);
+  assert(b != NULL);
+  assert(crpix != NULL);
+  assert(tmp != NULL);
+  assert(input != NULL);
+  assert(output != NULL);
 
   /* Avoid segfaults */
   if (input == NULL || output == NULL || tmp == NULL || crpix == NULL) {
@@ -231,30 +238,30 @@ sip_compute(
     tmp_x = x - crpix[0];
     tmp_y = y - crpix[1];
 
-    for (j = 0; j <= m; ++j) {
-      tmp[j] = lu(m, a, m-j, j);
+    for (j = 0; j <= (int)m; ++j) {
+      tmp[j] = lu(m, a, (int)m-j, j);
       for (k = j-1; k >= 0; --k) {
-        tmp[j] = (tmp_y * tmp[j]) + lu(m, a, m-j, k);
+        tmp[j] = (tmp_y * tmp[j]) + lu(m, a, (int)m-j, k);
       }
     }
 
     /* Don't know why this loop is convoluted */
     sum = tmp[0];
-    for (j = m; j > 0; --j) {
-      sum = tmp_x * sum + tmp[m - j + 1];
+    for (j = (int)m; j > 0; --j) {
+      sum = tmp_x * sum + tmp[(int)m - j + 1];
     }
     output[i << 1] = sum + x;
 
-    for (j = 0; j <= n; ++j) {
-      tmp[j] = lu(n, b, n-j, j);
+    for (j = 0; j <= (int)n; ++j) {
+      tmp[j] = lu(n, b, (int)n-j, j);
       for (k = j-1; k >= 0; --k) {
-        tmp[j] = tmp_y * tmp[j] + lu(n, b, n-j, k);
+        tmp[j] = tmp_y * tmp[j] + lu(n, b, (int)n-j, k);
       }
     }
 
     /* Don't know why this loop is convoluted */
     sum = tmp[0];
-    for (j = n; j > 0; --j) {
+    for (j = (int)n; j > 0; --j) {
       sum = tmp_x * sum + tmp[n - j + 1];
     }
     output[(i << 1) + 1] = sum + y;
@@ -270,6 +277,7 @@ sip_pix2foc(
     const unsigned int nelem,
     const double* pix /* [NAXES][nelem] */,
     double* foc /* [NAXES][nelem] */) {
+
   if (sip == NULL) {
     return 1;
   }
@@ -289,6 +297,7 @@ sip_foc2pix(
     const unsigned int nelem,
     const double* foc /* [NAXES][nelem] */,
     double* pix /* [NAXES][nelem] */) {
+
   if (sip == NULL) {
     return 1;
   }

@@ -47,13 +47,13 @@ DAMAGE.
 A structure to contain the information for a single distortion lookup table
  */
 typedef struct {
-  unsigned int  naxis[NAXES];   /* size of distortion image */
-  double        crpix[NAXES];
-  double        crval[NAXES];
-  double        cdelt[NAXES];
+  unsigned int                   naxis[NAXES]; /* size of distortion image */
+  double                         crpix[NAXES];
+  double                         crval[NAXES];
+  double                         cdelt[NAXES];
   /* The data is not "owned" by this structure.  It is the user's
      responsibility to free it. */
-  float         *data;
+  /*@shared@*/ /*@null@*/ float *data;
 } distortion_lookup_t;
 
 /**
@@ -68,7 +68,7 @@ something in the future, so please call it when you are done with
 the lookup table.  It does not free the data pointed to be the
 lookup table -- it is the user's responsibility to free that array.
  */
-int
+void
 distortion_lookup_t_free(distortion_lookup_t* lookup);
 
 /**
@@ -85,7 +85,7 @@ lookup table
 double
 get_distortion_offset(
     const distortion_lookup_t *lookup,
-    const double img[NAXES]);
+    const double *img /* [NAXES] */);
 
 /**
 Perform just the distortion table part of Paper IV.
@@ -105,7 +105,7 @@ Perform just the distortion table part of Paper IV.
 int
 p4_pix2foc(
     const unsigned int naxes,
-    const distortion_lookup_t* lookups[NAXES], /* [NAXES] */
+    const distortion_lookup_t** lookups, /* [NAXES] */
     const unsigned int nelem,
     const double* pix, /* [NAXES][nelem] */
     double *foc /* [NAXES][nelem] */);

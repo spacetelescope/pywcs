@@ -40,7 +40,9 @@ DAMAGE.
 #include <string.h>
 
 void
-pipeline_clear(pipeline_t* pipeline) {
+pipeline_clear(
+    pipeline_t* pipeline) {
+
   pipeline->sip = NULL;
   pipeline->cpdis[0] = NULL;
   pipeline->cpdis[1] = NULL;
@@ -59,9 +61,10 @@ pipeline_clear(pipeline_t* pipeline) {
 void
 pipeline_init(
     pipeline_t* pipeline,
-    sip_t* sip,
-    distortion_lookup_t* cpdis[2],
-    struct wcsprm* wcs) {
+    /*@shared@*/ sip_t* sip,
+    /*@shared@*/ distortion_lookup_t** cpdis /* [2] */,
+    /*@shared@*/ struct wcsprm* wcs) {
+
   pipeline->sip = sip;
   pipeline->cpdis[0] = cpdis[0];
   pipeline->cpdis[1] = cpdis[1];
@@ -69,7 +72,9 @@ pipeline_init(
 }
 
 static void
-pipeline_free_tmp(pipeline_t* pipeline) {
+pipeline_free_tmp(
+    pipeline_t* pipeline) {
+
   /* Free all temporary buffers and reset pointers to NULL */
   pipeline->alloc_nelem = 0;
   pipeline->alloc_ncoord = 0;
@@ -86,7 +91,9 @@ pipeline_free_tmp(pipeline_t* pipeline) {
 }
 
 void
-pipeline_free(pipeline_t* pipeline) {
+pipeline_free(
+    pipeline_t* pipeline) {
+
   pipeline_free_tmp(pipeline);
 }
 
@@ -95,6 +102,7 @@ pipeline_realloc(
     pipeline_t* pipeline,
     unsigned int ncoord,
     unsigned int nelem) {
+
   if (pipeline->alloc_ncoord < ncoord ||
       pipeline->alloc_nelem * pipeline->alloc_ncoord < nelem * ncoord) {
     pipeline_free_tmp(pipeline);
@@ -140,10 +148,11 @@ pipeline_realloc(
 int
 pipeline_all_pixel2world(
     const pipeline_t* pipeline,
-    const int ncoord,
-    const int nelem,
+    const unsigned int ncoord,
+    const unsigned int nelem,
     const double* pixcrd /* [ncoord][nelem] */,
     double* world /* [ncoord][nelem] */) {
+
   const double* wcs_input  = NULL;
   double*       wcs_output = NULL;
   int           has_sip;
@@ -180,7 +189,7 @@ pipeline_all_pixel2world(
       wcs_output = world;
     }
 
-    status = wcsp2s(pipeline->wcs, ncoord, nelem,
+    status = wcsp2s(pipeline->wcs, (int)ncoord, (int)nelem,
                     wcs_input, pipeline->imgcrd, pipeline->phi,
                     pipeline->theta, wcs_output, pipeline->stat);
   } else {
@@ -196,10 +205,11 @@ pipeline_all_pixel2world(
 
 int pipeline_pix2foc(
     const pipeline_t* pipeline,
-    const int ncoord,
-    const int nelem,
+    const unsigned int ncoord,
+    const unsigned int nelem,
     const double* pixcrd /* [ncoord][nelem] */,
     double* foc /* [ncoord][nelem] */) {
+
   const double* sip_input  = NULL;
   double*       sip_output = NULL;
   const double* p4_input   = NULL;

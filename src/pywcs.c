@@ -48,17 +48,17 @@ DAMAGE.
  * Pywcs type
  ***************************************************************************/
 
-extern PyTypeObject PyWcsType;
+static PyTypeObject PyWcsType;
 
 typedef struct {
   PyObject_HEAD
   pipeline_t x;
-  PyObject* py_sip;
-  PyObject* py_distortion_lookup[2];
-  PyObject* py_wcsprm;
+  /*@null@*/ /*@shared@*/ PyObject* py_sip;
+  /*@shared@*/ PyObject*            py_distortion_lookup[2];
+  /*@null@*/ /*@shared@*/ PyObject* py_wcsprm;
 } PyWcs;
 
-int _setup_pywcs_type(PyObject* m);
+static int _setup_pywcs_type(PyObject* m);
 
 
 /***************************************************************************
@@ -66,7 +66,11 @@ int _setup_pywcs_type(PyObject* m);
  */
 
 static int
-PyWcs_traverse(PyWcs* self, visitproc visit, void* arg) {
+PyWcs_traverse(
+    PyWcs* self,
+    visitproc visit,
+    void* arg) {
+
   Py_VISIT(self->py_sip);
   Py_VISIT(self->py_distortion_lookup[0]);
   Py_VISIT(self->py_distortion_lookup[1]);
@@ -76,7 +80,9 @@ PyWcs_traverse(PyWcs* self, visitproc visit, void* arg) {
 }
 
 static int
-PyWcs_clear(PyWcs* self) {
+PyWcs_clear(
+    PyWcs* self) {
+
   PyObject* tmp;
 
   tmp = self->py_sip;
@@ -99,14 +105,21 @@ PyWcs_clear(PyWcs* self) {
 }
 
 static void
-PyWcs_dealloc(PyWcs* self) {
-  PyWcs_clear(self);
+PyWcs_dealloc(
+    PyWcs* self) {
+
+  int ignored;
+  ignored = PyWcs_clear(self);
   pipeline_free(&self->x);
   self->ob_type->tp_free((PyObject*)self);
 }
 
-static PyObject *
-PyWcs_new(PyTypeObject* type, PyObject* args, PyObject* kwds) {
+/*@null@*/ static PyObject *
+PyWcs_new(
+    PyTypeObject* type,
+    /*@unused@*/ PyObject* args,
+    /*@unused@*/ PyObject* kwds) {
+
   PyWcs* self;
   self = (PyWcs*)type->tp_alloc(type, 0);
   if (self != NULL) {
@@ -120,16 +133,20 @@ PyWcs_new(PyTypeObject* type, PyObject* args, PyObject* kwds) {
 }
 
 static int
-PyWcs_init(PyWcs* self, PyObject* args, PyObject* kwds) {
+PyWcs_init(
+    PyWcs* self,
+    PyObject* args,
+    /*@unused@*/ PyObject* kwds) {
+
   size_t    i;
   PyObject* py_sip;
   PyObject* py_wcsprm;
   PyObject* py_distortion_lookup[2];
 
   if (!PyArg_ParseTuple(args, "O(OO)O:Wcs.__init__",
-                        &py_sip,
-                        &py_distortion_lookup[0],
-                        &py_distortion_lookup[1],
+                       &py_sip,
+                       &py_distortion_lookup[0],
+                       &py_distortion_lookup[1],
                         &py_wcsprm)) {
     return -1;
   }
@@ -186,8 +203,12 @@ PyWcs_init(PyWcs* self, PyObject* args, PyObject* kwds) {
   return 0;
 }
 
-static PyObject*
-PyWcs_all_pix2sky_generic(PyWcs* self, PyObject* arg, int do_shift) {
+/*@null@*/ static PyObject*
+PyWcs_all_pix2sky_generic(
+    PyWcs* self,
+    PyObject* arg,
+    int do_shift) {
+
   PyArrayObject* pixcrd  = NULL;
   PyArrayObject* world   = NULL;
   int            status  = -1;
@@ -210,8 +231,8 @@ PyWcs_all_pix2sky_generic(PyWcs* self, PyObject* arg, int do_shift) {
   /* Make the call */
   wcsprm_python2c(self->x.wcs);
   status = pipeline_all_pixel2world(&self->x,
-                                    PyArray_DIM(pixcrd, 0),
-                                    PyArray_DIM(pixcrd, 1),
+                                    (unsigned int)PyArray_DIM(pixcrd, 0),
+                                    (unsigned int)PyArray_DIM(pixcrd, 1),
                                     (double*)PyArray_DATA(pixcrd),
                                     (double*)PyArray_DATA(world));
   wcsprm_c2python(self->x.wcs);
@@ -240,18 +261,28 @@ PyWcs_all_pix2sky_generic(PyWcs* self, PyObject* arg, int do_shift) {
   }
 }
 
-static PyObject*
-PyWcs_all_pix2sky(PyWcs* self, PyObject* arg) {
+/*@null@*/ static PyObject*
+PyWcs_all_pix2sky(
+    PyWcs* self,
+    PyObject* arg) {
+
   return PyWcs_all_pix2sky_generic(self, arg, 1);
 }
 
-static PyObject*
-PyWcs_all_pix2sky_fits(PyWcs* self, PyObject* arg) {
+/*@null@*/ static PyObject*
+PyWcs_all_pix2sky_fits(
+    PyWcs* self,
+    PyObject* arg) {
+
   return PyWcs_all_pix2sky_generic(self, arg, 0);
 }
 
-static PyObject*
-PyWcs_p4_pix2foc_generic(PyWcs* self, PyObject* arg, int do_shift) {
+/*@null@*/ static PyObject*
+PyWcs_p4_pix2foc_generic(
+    PyWcs* self,
+    /*@shared@*/ PyObject* arg,
+    int do_shift) {
+
   PyArrayObject* pixcrd = NULL;
   PyArrayObject* foccrd = NULL;
   int            status = -1;
@@ -281,8 +312,10 @@ PyWcs_p4_pix2foc_generic(PyWcs* self, PyObject* arg, int do_shift) {
     offset_array(pixcrd, 1.0);
   }
 
-  status = p4_pix2foc(2, (void *)self->x.cpdis, PyArray_DIM(pixcrd, 0),
-                      PyArray_DATA(pixcrd), PyArray_DATA(foccrd));
+  status = p4_pix2foc(2, (void *)self->x.cpdis,
+                      (unsigned int)PyArray_DIM(pixcrd, 0),
+                      (double*)PyArray_DATA(pixcrd),
+                      (double*)PyArray_DATA(foccrd));
 
   if (do_shift) {
     offset_array(pixcrd, -1.0);
@@ -309,18 +342,30 @@ PyWcs_p4_pix2foc_generic(PyWcs* self, PyObject* arg, int do_shift) {
   }
 }
 
-static PyObject*
-PyWcs_p4_pix2foc(PyWcs* self, PyObject* arg, PyObject* kwds) {
+/*@null@*/ static PyObject*
+PyWcs_p4_pix2foc(
+    PyWcs* self,
+    PyObject* arg,
+    /*@unused@*/ PyObject* kwds) {
+
   return PyWcs_p4_pix2foc_generic(self, arg, 1);
 }
 
-static PyObject*
-PyWcs_p4_pix2foc_fits(PyWcs* self, PyObject* arg, PyObject* kwds) {
+/*@null@*/ static PyObject*
+PyWcs_p4_pix2foc_fits(
+    PyWcs* self,
+    PyObject* arg,
+    /*@unused@*/ PyObject* kwds) {
+
   return PyWcs_p4_pix2foc_generic(self, arg, 0);
 }
 
-static PyObject*
-PyWcs_pix2foc_generic(PyWcs* self, PyObject* arg, int do_shift) {
+/*@null@*/ static PyObject*
+PyWcs_pix2foc_generic(
+    PyWcs* self,
+    PyObject* arg,
+    int do_shift) {
+
   PyArrayObject* pixcrd = NULL;
   PyArrayObject* foccrd = NULL;
   int            status = -1;
@@ -345,8 +390,8 @@ PyWcs_pix2foc_generic(PyWcs* self, PyObject* arg, int do_shift) {
   }
 
   status = pipeline_pix2foc(&self->x,
-                            PyArray_DIM(pixcrd, 0),
-                            PyArray_DIM(pixcrd, 1),
+                            (unsigned int)PyArray_DIM(pixcrd, 0),
+                            (unsigned int)PyArray_DIM(pixcrd, 1),
                             (double*)PyArray_DATA(pixcrd),
                             (double*)PyArray_DATA(foccrd));
 
@@ -375,18 +420,29 @@ PyWcs_pix2foc_generic(PyWcs* self, PyObject* arg, int do_shift) {
   }
 }
 
-static PyObject*
-PyWcs_pix2foc(PyWcs* self, PyObject* arg, PyObject* kwds) {
+/*@null@*/ static PyObject*
+PyWcs_pix2foc(
+    PyWcs* self,
+    PyObject* arg,
+    /*@unused@*/ PyObject* kwds) {
+
   return PyWcs_pix2foc_generic(self, arg, 1);
 }
 
-static PyObject*
-PyWcs_pix2foc_fits(PyWcs* self, PyObject* arg, PyObject* kwds) {
+/*@null@*/ static PyObject*
+PyWcs_pix2foc_fits(
+    PyWcs* self,
+    PyObject* arg,
+    /*@unused@*/ PyObject* kwds) {
+
   return PyWcs_pix2foc_generic(self, arg, 0);
 }
 
-static PyObject*
-PyWcs_get_wcs(PyWcs* self, void* closure) {
+/*@null@*/ static PyObject*
+PyWcs_get_wcs(
+    PyWcs* self,
+    /*@unused@*/ void* closure) {
+
   if (self->py_wcsprm) {
     Py_INCREF(self->py_wcsprm);
     return self->py_wcsprm;
@@ -397,7 +453,11 @@ PyWcs_get_wcs(PyWcs* self, void* closure) {
 }
 
 static int
-PyWcs_set_wcs(PyWcs* self, PyObject* value, void* closure) {
+PyWcs_set_wcs(
+    PyWcs* self,
+    /*@shared@*/ PyObject* value,
+    /*@unused@*/ void* closure) {
+
   Py_XDECREF(self->py_wcsprm);
   self->py_wcsprm = NULL;
   self->x.wcs = NULL;
@@ -418,7 +478,10 @@ PyWcs_set_wcs(PyWcs* self, PyObject* value, void* closure) {
 }
 
 static PyObject*
-PyWcs_get_cpdis1(PyWcs* self, void* closure) {
+PyWcs_get_cpdis1(
+    PyWcs* self,
+    /*@unused@*/ void* closure) {
+
   if (self->py_distortion_lookup[0]) {
     Py_INCREF(self->py_distortion_lookup[0]);
     return self->py_distortion_lookup[0];
@@ -429,7 +492,11 @@ PyWcs_get_cpdis1(PyWcs* self, void* closure) {
 }
 
 static int
-PyWcs_set_cpdis1(PyWcs* self, PyObject* value, void* closure) {
+PyWcs_set_cpdis1(
+    PyWcs* self,
+    /*@shared@*/ PyObject* value,
+    /*@unused@*/ void* closure) {
+
   Py_XDECREF(self->py_distortion_lookup[0]);
   self->py_distortion_lookup[0] = NULL;
   self->x.cpdis[0] = NULL;
@@ -449,8 +516,11 @@ PyWcs_set_cpdis1(PyWcs* self, PyObject* value, void* closure) {
   return 0;
 }
 
-static PyObject*
-PyWcs_get_cpdis2(PyWcs* self, void* closure) {
+/*@shared@*/ static PyObject*
+PyWcs_get_cpdis2(
+    PyWcs* self,
+    /*@unused@*/ void* closure) {
+
   if (self->py_distortion_lookup[1]) {
     Py_INCREF(self->py_distortion_lookup[1]);
     return self->py_distortion_lookup[1];
@@ -461,7 +531,11 @@ PyWcs_get_cpdis2(PyWcs* self, void* closure) {
 }
 
 static int
-PyWcs_set_cpdis2(PyWcs* self, PyObject* value, void* closure) {
+PyWcs_set_cpdis2(
+    PyWcs* self,
+    /*@shared@*/ PyObject* value,
+    /*@unused@*/ void* closure) {
+
   Py_XDECREF(self->py_distortion_lookup[1]);
   self->py_distortion_lookup[1] = NULL;
   self->x.cpdis[1] = NULL;
@@ -481,8 +555,11 @@ PyWcs_set_cpdis2(PyWcs* self, PyObject* value, void* closure) {
   return 0;
 }
 
-static PyObject*
-PyWcs_get_sip(PyWcs* self, void* closure) {
+/*@shared@*/ static PyObject*
+PyWcs_get_sip(
+    PyWcs* self,
+    /*@unused@*/ void* closure) {
+
   if (self->py_sip) {
     Py_INCREF(self->py_sip);
     return self->py_sip;
@@ -493,7 +570,11 @@ PyWcs_get_sip(PyWcs* self, void* closure) {
 }
 
 static int
-PyWcs_set_sip(PyWcs* self, PyObject* value, void* closure) {
+PyWcs_set_sip(
+    PyWcs* self,
+    /*@shared@*/ PyObject* value,
+    /*@unused@*/ void* closure) {
+
   Py_XDECREF(self->py_sip);
   self->py_sip = NULL;
   self->x.sip = NULL;
@@ -536,7 +617,7 @@ static PyMethodDef PyWcs_methods[] = {
   {NULL}
 };
 
-PyTypeObject PyWcsType = {
+static PyTypeObject PyWcsType = {
   PyObject_HEAD_INIT(NULL)
   0,                            /*ob_size*/
   "pywcs._Wcs",                 /*tp_name*/
@@ -583,7 +664,9 @@ PyTypeObject PyWcsType = {
  * Module-level
  ***************************************************************************/
 
-int _setup_pywcs_type(PyObject* m) {
+int _setup_pywcs_type(
+    PyObject* m) {
+
   if (PyType_Ready(&PyWcsType) < 0)
     return -1;
 
@@ -595,14 +678,14 @@ int _setup_pywcs_type(PyObject* m) {
 #define PyMODINIT_FUNC void
 #endif
 PyMODINIT_FUNC
-init_pywcs(void)
-{
+init_pywcs(void) {
   PyObject* m;
 
   m = Py_InitModule3("_pywcs", NULL, NULL);
 
-  if (m == NULL)
+  if (m == NULL) {
     return;
+  }
 
   import_array();
 
@@ -611,8 +694,10 @@ init_pywcs(void)
       _setup_distortion_type(m)     ||
       _setup_sip_type(m)            ||
       _setup_pywcs_type(m)          ||
-      _define_exceptions(m))
+      _define_exceptions(m)) {
+    Py_DECREF(m);
     return;
+  }
 
   PyModule_AddObject(m, "__docformat__", PyString_FromString("epytext"));
 }

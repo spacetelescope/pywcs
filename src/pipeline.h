@@ -42,18 +42,18 @@ DAMAGE.
 #include "wcs.h"
 
 typedef struct {
-  sip_t* sip;
-  distortion_lookup_t* cpdis[2];
-  struct wcsprm* wcs;
+  /*@shared@*/ /*@null@*/ sip_t*         sip;
+  distortion_lookup_t*                   cpdis[2];
+  /*@shared@*/ /*@null@*/ struct wcsprm* wcs;
 
   /* Temporary buffers for performing calculations */
-  unsigned int alloc_ncoord;
-  unsigned int alloc_nelem;
-  double* tmp;
-  double* imgcrd;
-  double* phi;
-  double* theta;
-  int* stat;
+  unsigned int                           alloc_ncoord;
+  unsigned int                           alloc_nelem;
+  /*@null@*/ double*                     tmp;
+  /*@null@*/ double*                     imgcrd;
+  /*@null@*/ double*                     phi;
+  /*@null@*/ double*                     theta;
+  /*@null@*/ int*                        stat;
 } pipeline_t;
 
 /**
@@ -69,9 +69,9 @@ Set all the values of a pipeline_t.
 void
 pipeline_init(
     pipeline_t* pipeline,
-    sip_t* sip,
-    distortion_lookup_t* cpdis[2],
-    struct wcsprm* wcs);
+    /*@shared@*/ sip_t* sip,
+    /*@shared@*/ distortion_lookup_t** cpdis /* [2] */,
+    /*@shared@*/ struct wcsprm* wcs);
 
 /**
 Free all the temporary buffers of a pipeline_t.  It does not free
@@ -104,8 +104,8 @@ coordinates, in the following order:
 int
 pipeline_all_pixel2world(
     const pipeline_t* pipeline,
-    const int ncoord,
-    const int nelem,
+    const unsigned int ncoord,
+    const unsigned int nelem,
     const double* pixcrd /* [ncoord][nelem] */,
     double* world /* [ncoord][nelem] */);
 
@@ -130,8 +130,8 @@ coordinates to focal plane coordinates.
 int
 pipeline_pix2foc(
     const pipeline_t* pipeline,
-    const int ncoord,
-    const int nelem,
+    const unsigned int ncoord,
+    const unsigned int nelem,
     const double* pixcrd /* [ncoord][nelem] */,
     double* foc /* [ncoord][nelem] */);
 

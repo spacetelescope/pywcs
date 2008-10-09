@@ -40,14 +40,20 @@ DAMAGE.
 #include <structmember.h> /* From Python */
 
 static int
-PyDistLookup_traverse(PyDistLookup* self, visitproc visit, void* arg) {
+PyDistLookup_traverse(
+    PyDistLookup* self,
+    visitproc visit,
+    void* arg) {
+
   Py_VISIT(self->py_data);
 
   return 0;
 }
 
 static int
-PyDistLookup_clear(PyDistLookup* self) {
+PyDistLookup_clear(
+    PyDistLookup* self) {
+
   PyObject* tmp;
 
   tmp = (PyObject*)self->py_data;
@@ -58,100 +64,145 @@ PyDistLookup_clear(PyDistLookup* self) {
 }
 
 static void
-PyDistLookup_dealloc(PyDistLookup* self) {
+PyDistLookup_dealloc(
+    PyDistLookup* self) {
+
   distortion_lookup_t_free(&self->x);
   Py_XDECREF(self->py_data);
   self->ob_type->tp_free((PyObject*)self);
 }
 
-static PyObject *
-PyDistLookup_new(PyTypeObject* type, PyObject* args, PyObject* kwds) {
+/*@null@*/ static PyObject *
+PyDistLookup_new(
+    PyTypeObject* type,
+    /*@unused@*/ PyObject* args,
+    /*@unused@*/ PyObject* kwds) {
+
   PyDistLookup* self;
 
   self = (PyDistLookup*)type->tp_alloc(type, 0);
   if (self != NULL) {
-    if (distortion_lookup_t_init(&self->x))
+    if (distortion_lookup_t_init(&self->x)) {
       return NULL;
+    }
     self->py_data = NULL;
   }
   return (PyObject*)self;
 }
 
 static int
-PyDistLookup_init(PyDistLookup* self, PyObject* args, PyObject* kwds) {
+PyDistLookup_init(
+    PyDistLookup* self,
+    PyObject* args,
+    /*@unused@*/ PyObject* kwds) {
+
   PyObject* py_array_obj = NULL;
   PyArrayObject* array_obj = NULL;
 
   if (!PyArg_ParseTuple(args, "O(dd)(dd)(dd):DistortionLookupTable.__init__",
-                        &py_array_obj,
-                        &(self->x.crpix[0]), &(self->x.crpix[1]),
-                        &(self->x.crval[0]), &(self->x.crval[1]),
+                       &py_array_obj,
+                       &(self->x.crpix[0]), &(self->x.crpix[1]),
+                       &(self->x.crval[0]), &(self->x.crval[1]),
                         &(self->x.cdelt[0]), &(self->x.cdelt[1]))) {
     return -1;
   }
 
   array_obj = (PyArrayObject*)PyArray_ContiguousFromAny(py_array_obj, PyArray_FLOAT32, 2, 2);
-  if (array_obj == NULL)
+  if (array_obj == NULL) {
     return -1;
+  }
 
   self->py_data = array_obj;
-  self->x.naxis[0] = PyArray_DIM(array_obj, 0);
-  self->x.naxis[1] = PyArray_DIM(array_obj, 1);
+  self->x.naxis[0] = (unsigned int)PyArray_DIM(array_obj, 0);
+  self->x.naxis[1] = (unsigned int)PyArray_DIM(array_obj, 1);
   self->x.data = (float *)PyArray_DATA(array_obj);
 
   return 0;
 }
 
 static PyObject*
-PyDistLookup_get_cdelt(PyDistLookup* self, void* closure) {
+PyDistLookup_get_cdelt(
+    PyDistLookup* self,
+    /*@unused@*/ void* closure) {
+
   Py_ssize_t naxis = 2;
 
   return get_double_array("cdelt", self->x.cdelt, 1, &naxis, (PyObject*)self);
 }
 
 static int
-PyDistLookup_set_cdelt(PyDistLookup* self, PyObject* value, void* closure) {
+PyDistLookup_set_cdelt(
+    PyDistLookup* self,
+    PyObject* value,
+    /*@unused@*/ void* closure) {
+
   Py_ssize_t naxis = 2;
 
   return set_double_array("cdelt", value, 1, &naxis, self->x.cdelt);
 }
 
 static PyObject*
-PyDistLookup_get_crpix(PyDistLookup* self, void* closure) {
+PyDistLookup_get_crpix(
+    PyDistLookup* self,
+    /*@unused@*/ void* closure) {
+
   Py_ssize_t naxis = 2;
 
   return get_double_array("crpix", self->x.crpix, 1, &naxis, (PyObject*)self);
 }
 
 static int
-PyDistLookup_set_crpix(PyDistLookup* self, PyObject* value, void* closure) {
+PyDistLookup_set_crpix(
+    PyDistLookup* self,
+    PyObject* value,
+    /*@unused@*/ void* closure) {
+
   Py_ssize_t naxis = 2;
 
   return set_double_array("crpix", value, 1, &naxis, self->x.crpix);
 }
 
 static PyObject*
-PyDistLookup_get_crval(PyDistLookup* self, void* closure) {
+PyDistLookup_get_crval(
+    PyDistLookup* self,
+    /*@unused@*/ void* closure) {
+
   Py_ssize_t naxis = 2;
 
   return get_double_array("crval", self->x.crval, 1, &naxis, (PyObject*)self);
 }
 
 static int
-PyDistLookup_set_crval(PyDistLookup* self, PyObject* value, void* closure) {
+PyDistLookup_set_crval(
+    PyDistLookup* self,
+    PyObject* value,
+    /*@unused@*/ void* closure) {
+
   Py_ssize_t naxis = 2;
 
   return set_double_array("crval", value, 1, &naxis, self->x.crval);
 }
 
-static PyObject*
-PyDistLookup_get_data(PyDistLookup* self, void* closure) {
-  Py_INCREF(self->py_data);
-  return (PyObject*)self->py_data;
+/*@shared@*/ static PyObject*
+PyDistLookup_get_data(
+    PyDistLookup* self,
+    /*@unused@*/ void* closure) {
+
+  if (self->py_data == NULL) {
+    Py_INCREF(Py_None);
+    return Py_None;
+  } else {
+    Py_INCREF(self->py_data);
+    return (PyObject*)self->py_data;
+  }
 }
 
 static int
-PyDistLookup_set_data(PyDistLookup* self, PyObject* value, void* closure) {
+PyDistLookup_set_data(
+    PyDistLookup* self,
+    PyObject* value,
+    /*@unused@*/ void* closure) {
+
   PyArrayObject* value_array = NULL;
 
   if (value == NULL) {
@@ -163,21 +214,26 @@ PyDistLookup_set_data(PyDistLookup* self, PyObject* value, void* closure) {
 
   value_array = (PyArrayObject*)PyArray_ContiguousFromAny(value, PyArray_FLOAT32, 2, 2);
 
-  if (value_array == NULL)
+  if (value_array == NULL) {
     return -1;
+  }
 
   Py_XDECREF(self->py_data);
 
   self->py_data = value_array;
-  self->x.naxis[0] = PyArray_DIM(value_array, 0);
-  self->x.naxis[1] = PyArray_DIM(value_array, 1);
+  self->x.naxis[0] = (unsigned int)PyArray_DIM(value_array, 0);
+  self->x.naxis[1] = (unsigned int)PyArray_DIM(value_array, 1);
   self->x.data = (float *)PyArray_DATA(value_array);
 
   return 0;
 }
 
-static PyObject*
-PyDistLookup_get_offset(PyDistLookup* self, PyObject* args, PyObject* kwds) {
+/*@null@*/ static PyObject*
+PyDistLookup_get_offset(
+    PyDistLookup* self,
+    PyObject* args,
+    /*@unused@*/ PyObject* kwds) {
+
   double coord[NAXES];
   double result;
 
@@ -250,9 +306,12 @@ PyTypeObject PyDistLookupType = {
   PyDistLookup_new,             /* tp_new */
 };
 
-int _setup_distortion_type(PyObject* m) {
-  if (PyType_Ready(&PyDistLookupType) < 0)
+int _setup_distortion_type(
+    PyObject* m) {
+
+  if (PyType_Ready(&PyDistLookupType) < 0) {
     return -1;
+  }
 
   Py_INCREF(&PyDistLookupType);
   return PyModule_AddObject(m, "DistortionLookupTable", (PyObject *)&PyDistLookupType);

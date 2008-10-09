@@ -39,13 +39,19 @@ DAMAGE.
 #include "wcs.h"
 
 static void
-PySip_dealloc(PySip* self) {
+PySip_dealloc(
+    PySip* self) {
+
   sip_free(&self->x);
   self->ob_type->tp_free((PyObject*)self);
 }
 
-static PyObject *
-PySip_new(PyTypeObject* type, PyObject* args, PyObject* kwds) {
+/*@null@*/ static PyObject *
+PySip_new(
+    PyTypeObject* type,
+    /*@unused@*/ PyObject* args,
+    /*@unused@*/ PyObject* kwds) {
+
   PySip* self;
 
   self = (PySip*)type->tp_alloc(type, 0);
@@ -57,10 +63,11 @@ PySip_new(PyTypeObject* type, PyObject* args, PyObject* kwds) {
 
 static int
 convert_matrix(
-    PyObject* pyobj,
+    /*@null@*/ PyObject* pyobj,
     PyArrayObject** array,
     double** data,
-    size_t* order) {
+    unsigned int* order) {
+
   if (pyobj == Py_None) {
     *array = NULL;
     *data = NULL;
@@ -70,8 +77,9 @@ convert_matrix(
 
   *array = (PyArrayObject*)PyArray_ContiguousFromAny(
       pyobj, PyArray_DOUBLE, 2, 2);
-  if (*array == NULL)
+  if (*array == NULL) {
     return -1;
+  }
 
   if (PyArray_DIM(*array, 0) != PyArray_DIM(*array, 1)) {
     PyErr_SetString(PyExc_ValueError,
@@ -80,13 +88,17 @@ convert_matrix(
   }
 
   *data = (double*)PyArray_DATA(*array);
-  *order = PyArray_DIM(*array, 0) - 1;
+  *order = (unsigned int)PyArray_DIM(*array, 0) - 1;
 
   return 0;
 }
 
 static int
-PySip_init(PySip* self, PyObject* args, PyObject* kwds) {
+PySip_init(
+    PySip* self,
+    PyObject* args,
+    /*@unused@*/ PyObject* kwds) {
+
   PyObject*      py_a     = NULL;
   PyObject*      py_b     = NULL;
   PyObject*      py_ap    = NULL;
@@ -101,10 +113,10 @@ PySip_init(PySip* self, PyObject* args, PyObject* kwds) {
   double*        b_data   = NULL;
   double*        ap_data  = NULL;
   double*        bp_data  = NULL;
-  size_t         a_order  = 0;
-  size_t         b_order  = 0;
-  size_t         ap_order = 0;
-  size_t         bp_order = 0;
+  unsigned int   a_order  = 0;
+  unsigned int   b_order  = 0;
+  unsigned int   ap_order = 0;
+  unsigned int   bp_order = 0;
   int            status   = -1;
 
   if (!PyArg_ParseTuple(args, "OOOOO:Sip.__init__",
@@ -158,8 +170,12 @@ PySip_init(PySip* self, PyObject* args, PyObject* kwds) {
   }
 }
 
-static PyObject*
-PySip_pix2foc_generic(PySip* self, PyObject* arg, int do_shift) {
+/*@null@*/ static PyObject*
+PySip_pix2foc_generic(
+    PySip* self,
+    PyObject* arg,
+    int do_shift) {
+
   PyArrayObject* pixcrd = NULL;
   PyArrayObject* foccrd = NULL;
   int            status = -1;
@@ -193,8 +209,8 @@ PySip_pix2foc_generic(PySip* self, PyObject* arg, int do_shift) {
   }
 
   status = sip_pix2foc(&self->x,
-                       PyArray_DIM(pixcrd, 1),
-                       PyArray_DIM(pixcrd, 0),
+                       (unsigned int)PyArray_DIM(pixcrd, 1),
+                       (unsigned int)PyArray_DIM(pixcrd, 0),
                        (const double*)PyArray_DATA(pixcrd),
                        (double*)PyArray_DATA(foccrd));
 
@@ -224,18 +240,30 @@ PySip_pix2foc_generic(PySip* self, PyObject* arg, int do_shift) {
   }
 }
 
-static PyObject*
-PySip_pix2foc(PySip* self, PyObject* arg, PyObject* kwds) {
+/*@null@*/ static PyObject*
+PySip_pix2foc(
+    PySip* self,
+    PyObject* arg,
+    /*@unused@*/ PyObject* kwds) {
+
   return PySip_pix2foc_generic(self, arg, 1);
 }
 
-static PyObject*
-PySip_pix2foc_fits(PySip* self, PyObject* arg, PyObject* kwds) {
+/*@null@*/ static PyObject*
+PySip_pix2foc_fits(
+    PySip* self,
+    PyObject* arg,
+    /*@unused@*/ PyObject* kwds) {
+
   return PySip_pix2foc_generic(self, arg, 0);
 }
 
-static PyObject*
-PySip_foc2pix_generic(PySip* self, PyObject* arg, int do_shift) {
+/*@null@*/ static PyObject*
+PySip_foc2pix_generic(
+    PySip* self,
+    PyObject* arg,
+    int do_shift) {
+
   PyArrayObject* foccrd = NULL;
   PyArrayObject* pixcrd = NULL;
   int            status = -1;
@@ -269,8 +297,8 @@ PySip_foc2pix_generic(PySip* self, PyObject* arg, int do_shift) {
   }
 
   status = sip_foc2pix(&self->x,
-                       PyArray_DIM(pixcrd, 1),
-                       PyArray_DIM(pixcrd, 0),
+                       (unsigned int)PyArray_DIM(pixcrd, 1),
+                       (unsigned int)PyArray_DIM(pixcrd, 0),
                        (double*)PyArray_DATA(foccrd),
                        (double*)PyArray_DATA(pixcrd));
 
@@ -279,7 +307,6 @@ PySip_foc2pix_generic(PySip* self, PyObject* arg, int do_shift) {
   }
 
  exit:
-
   Py_XDECREF(foccrd);
 
   if (status == 0) {
@@ -300,21 +327,32 @@ PySip_foc2pix_generic(PySip* self, PyObject* arg, int do_shift) {
   }
 }
 
-static PyObject*
-PySip_foc2pix(PySip* self, PyObject* arg, PyObject* kwds) {
+/*@null@*/ static PyObject*
+PySip_foc2pix(
+    PySip* self,
+    PyObject* arg,
+    /*@unused@*/ PyObject* kwds) {
+
   return PySip_foc2pix_generic(self, arg, 1);
 }
 
-static PyObject*
-PySip_foc2pix_fits(PySip* self, PyObject* arg, PyObject* kwds) {
+/*@null@*/ static PyObject*
+PySip_foc2pix_fits(
+    PySip* self,
+    PyObject* arg,
+    /*@unused@*/ PyObject* kwds) {
+
   return PySip_foc2pix_generic(self, arg, 0);
 }
 
-static PyObject*
-PySip_get_a(PySip* self, void* closure) {
+/*@null@*/ static PyObject*
+PySip_get_a(
+    PySip* self,
+    /*@unused@*/ void* closure) {
+
   const npy_intp dims[2] = {
-    self->x.a_order + 1,
-    self->x.a_order + 1 };
+    (npy_intp)self->x.a_order + 1,
+    (npy_intp)self->x.a_order + 1 };
 
   if (is_null(self->x.a)) {
     return NULL;
@@ -323,11 +361,14 @@ PySip_get_a(PySip* self, void* closure) {
   return get_double_array("a", self->x.a, 2, dims, (PyObject*)self);
 }
 
-static PyObject*
-PySip_get_b(PySip* self, void* closure) {
+/*@null@*/ static PyObject*
+PySip_get_b(
+    PySip* self,
+    /*@unused@*/ void* closure) {
+
   const npy_intp dims[2] = {
-    self->x.b_order + 1,
-    self->x.b_order + 1 };
+    (npy_intp)self->x.b_order + 1,
+    (npy_intp)self->x.b_order + 1 };
 
   if (is_null(self->x.b)) {
     return NULL;
@@ -336,11 +377,14 @@ PySip_get_b(PySip* self, void* closure) {
   return get_double_array("b", self->x.b, 2, dims, (PyObject*)self);
 }
 
-static PyObject*
-PySip_get_ap(PySip* self, void* closure) {
+/*@null@*/ static PyObject*
+PySip_get_ap(
+    PySip* self,
+    /*@unused@*/ void* closure) {
+
   const npy_intp dims[2] = {
-    self->x.ap_order + 1,
-    self->x.ap_order + 1 };
+    (npy_intp)self->x.ap_order + 1,
+    (npy_intp)self->x.ap_order + 1 };
 
   if (is_null(self->x.ap)) {
     return NULL;
@@ -349,11 +393,14 @@ PySip_get_ap(PySip* self, void* closure) {
   return get_double_array("ap", self->x.ap, 2, dims, (PyObject*)self);
 }
 
-static PyObject*
-PySip_get_bp(PySip* self, void* closure) {
+/*@null@*/ static PyObject*
+PySip_get_bp(
+    PySip* self,
+    /*@unused@*/ void* closure) {
+
   const npy_intp dims[2] = {
-    self->x.bp_order + 1,
-    self->x.bp_order + 1 };
+    (npy_intp)self->x.bp_order + 1,
+    (npy_intp)self->x.bp_order + 1 };
 
   if (is_null(self->x.bp)) {
     return NULL;
@@ -363,27 +410,42 @@ PySip_get_bp(PySip* self, void* closure) {
 }
 
 static PyObject*
-PySip_get_a_order(PySip* self, void* closure) {
-  return get_int("a_order", self->x.a_order);
+PySip_get_a_order(
+    PySip* self,
+    /*@unused@*/ void* closure) {
+
+  return get_int("a_order", (long int)self->x.a_order);
 }
 
 static PyObject*
-PySip_get_b_order(PySip* self, void* closure) {
-  return get_int("b_order", self->x.b_order);
+PySip_get_b_order(
+    PySip* self,
+    /*@unused@*/ void* closure) {
+
+  return get_int("b_order", (long int)self->x.b_order);
 }
 
 static PyObject*
-PySip_get_ap_order(PySip* self, void* closure) {
-  return get_int("ap_order", self->x.ap_order);
+PySip_get_ap_order(
+    PySip* self,
+    /*@unused@*/ void* closure) {
+
+  return get_int("ap_order", (long int)self->x.ap_order);
 }
 
 static PyObject*
-PySip_get_bp_order(PySip* self, void* closure) {
-  return get_int("bp_order", self->x.bp_order);
+PySip_get_bp_order(
+    PySip* self,
+    /*@unused@*/ void* closure) {
+
+  return get_int("bp_order", (long int)self->x.bp_order);
 }
 
 static PyObject*
-PySip_get_crpix(PySip* self, void* closure) {
+PySip_get_crpix(
+    PySip* self,
+    /*@unused@*/ void* closure) {
+
   Py_ssize_t naxis = 2;
 
   return get_double_array("crpix", self->x.crpix, 1, &naxis, (PyObject*)self);
@@ -452,7 +514,10 @@ PyTypeObject PySipType = {
   PySip_new,                    /* tp_new */
 };
 
-int _setup_sip_type(PyObject* m) {
+int
+_setup_sip_type(
+    PyObject* m) {
+
   if (PyType_Ready(&PySipType) < 0)
     return -1;
 

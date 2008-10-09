@@ -47,6 +47,8 @@ typedef struct {
   sip_t x;
 } PySip;
 
-int _setup_sip_type(PyObject* m);
+int
+_setup_sip_type(
+    PyObject* m);
 
 #endif

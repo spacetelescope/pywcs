@@ -37,16 +37,21 @@ DAMAGE.
 /* util.h must be imported first */
 #include "util.h"
 
-PyObject*
+/*@null@*/ PyObject*
 PyArrayProxy_New(
-    PyObject* self, int nd, const npy_intp* dims,
-    int typenum, const void* data) {
+    /*@shared@*/ PyObject* self,
+    int nd,
+    const npy_intp* dims,
+    int typenum,
+    const void* data) {
+
   PyArray_Descr* type_descr = NULL;
   PyObject*      result     = NULL;
 
   type_descr = (PyArray_Descr*)PyArray_DescrFromType(typenum);
-  if (type_descr == NULL)
+  if (type_descr == NULL) {
     return NULL;
+  }
 
   result = (PyObject*)PyArray_NewFromDescr(
       &PyArray_Type,
@@ -57,21 +62,26 @@ PyArrayProxy_New(
       NPY_CONTIGUOUS | NPY_WRITEABLE,
       NULL);
 
-  if (result == NULL)
+  if (result == NULL) {
     return NULL;
+  }
   Py_INCREF(self);
   PyArray_BASE(result) = (PyObject*)self;
   return result;
 }
 
 void
-offset_array(PyArrayObject* array, double value) {
-  int     size = 1;
-  int     i    = 0;
-  double* data = NULL;
+offset_array(
+    PyArrayObject* array,
+    double value) {
 
-  for (i = 0; i < PyArray_NDIM(array); ++i)
-    size *= PyArray_DIM(array, i);
+  unsigned int size = 1;
+  int          i    = 0;
+  double*      data = NULL;
+
+  for (i = 0; i < PyArray_NDIM(array); ++i) {
+    size *= (unsigned int)PyArray_DIM(array, i);
+  }
 
   data = (double*)PyArray_DATA(array);
 
@@ -79,41 +89,53 @@ offset_array(PyArrayObject* array, double value) {
 }
 
 void
-copy_array_to_c_double(PyArrayObject* array, double* dest) {
-  int     size = 1;
-  int     i    = 0;
-  double* data = NULL;
+copy_array_to_c_double(
+    PyArrayObject* array,
+    double* dest) {
+
+  unsigned int size = 1;
+  unsigned int i    = 0;
+  double*      data = NULL;
 
   data = (double*)PyArray_DATA(array);
 
-  for (i = 0; i < PyArray_NDIM(array); ++i)
-    size *= PyArray_DIM(array, i);
+  for (i = 0; i < (unsigned int)PyArray_NDIM(array); ++i) {
+    size *= (unsigned int)PyArray_DIM(array, i);
+  }
 
   for (i = 0; i < size; ++i, ++dest, ++data) {
-    if (isnan64(*data))
+    if (isnan64(*data)) {
       *dest = UNDEFINED;
-    else
+    } else {
       *dest = *data;
+    }
   }
 }
 
 void
-copy_array_to_c_int(PyArrayObject* array, int* dest) {
-  int  size = 1;
-  int  i    = 0;
-  int* data = NULL;
+copy_array_to_c_int(
+    PyArrayObject* array,
+    int* dest) {
+
+  unsigned int size = 1;
+  unsigned int i    = 0;
+  int*         data = NULL;
 
   data = (int*)PyArray_DATA(array);
 
-  for (i = 0; i < PyArray_NDIM(array); ++i)
-    size *= PyArray_DIM(array, i);
+  for (i = 0; i < (unsigned int)PyArray_NDIM(array); ++i) {
+    size *= (unsigned int)PyArray_DIM(array, i);
+  }
 
-  for (i = 0; i < size; ++i, ++dest, ++data)
+  for (i = 0; i < size; ++i, ++dest, ++data) {
     *dest = *data;
+  }
 }
 
 int
-is_null(void *p) {
+is_null(
+    /*@null@*/ void *p) {
+
   if (p == NULL) {
     PyErr_SetString(PyExc_AssertionError, "Underlying object is NULL.");
     return 1;
@@ -133,8 +155,11 @@ is_null(void *p) {
 */
 
 static inline void
-wcsprm_fix_values(struct wcsprm* x, value_fixer_t value_fixer) {
-  int naxis = x->naxis;
+wcsprm_fix_values(
+    struct wcsprm* x,
+    value_fixer_t value_fixer) {
+
+  unsigned int naxis = (unsigned int)x->naxis;
 
   value_fixer(x->cd, 4);
   value_fixer(x->cdelt, naxis);
@@ -155,13 +180,21 @@ wcsprm_fix_values(struct wcsprm* x, value_fixer_t value_fixer) {
 }
 
 void
-wcsprm_c2python(struct wcsprm* x) {
-  wcsprm_fix_values(x, &undefined2nan);
+wcsprm_c2python(
+    /*@null@*/ struct wcsprm* x) {
+
+  if (x != NULL) {
+    wcsprm_fix_values(x, &undefined2nan);
+  }
 }
 
 void
-wcsprm_python2c(struct wcsprm* x) {
-  wcsprm_fix_values(x, &nan2undefined);
+wcsprm_python2c(
+    /*@null@*/ struct wcsprm* x) {
+
+  if (x != NULL) {
+    wcsprm_fix_values(x, &nan2undefined);
+  }
 }
 
 /***************************************************************************
@@ -207,7 +240,9 @@ PyObject** wcs_errexc[] = {
   PyModule_AddObject(m, #exc "Error", WcsExc_##exc); \
 
 int
-_define_exceptions(PyObject* m) {
+_define_exceptions(
+    PyObject* m) {
+
   DEFINE_EXCEPTION(SingularMatrix);
   DEFINE_EXCEPTION(InconsistentAxisTypes);
   DEFINE_EXCEPTION(InvalidTransform);
@@ -226,17 +261,22 @@ _define_exceptions(PyObject* m) {
 /* get_string is inlined */
 
 int
-set_string(const char* propname, PyObject* value,
-           char* dest, Py_ssize_t maxlen) {
-  char* buffer;
+set_string(
+    const char* propname,
+    PyObject* value,
+    char* dest,
+    Py_ssize_t maxlen) {
+
+  char*      buffer;
   Py_ssize_t len;
 
   if (check_delete(propname, value)) {
     return -1;
   }
 
-  if (PyString_AsStringAndSize(value, &buffer, &len) == -1)
+  if (PyString_AsStringAndSize(value, &buffer, &len) == -1) {
     return -1;
+  }
 
   if (len > maxlen) {
     PyErr_Format(PyExc_ValueError, "'%s' must be less than %u characters",
@@ -244,7 +284,7 @@ set_string(const char* propname, PyObject* value,
     return -1;
   }
 
-  strncpy(dest, buffer, maxlen);
+  strncpy(dest, buffer, (size_t)maxlen);
 
   return 0;
 }
@@ -252,7 +292,10 @@ set_string(const char* propname, PyObject* value,
 /* get_bool is inlined */
 
 int
-set_bool(const char* propname, PyObject* value, int* dest) {
+set_bool(
+    const char* propname,
+    PyObject* value,
+    int* dest) {
   long value_int;
 
   if (check_delete(propname, value)) {
@@ -272,7 +315,10 @@ set_bool(const char* propname, PyObject* value, int* dest) {
 /* get_int is inlined */
 
 int
-set_int(const char* propname, PyObject* value, int* dest) {
+set_int(
+    const char* propname,
+    PyObject* value,
+    int* dest) {
   long value_int;
 
   if (check_delete(propname, value)) {
@@ -280,10 +326,15 @@ set_int(const char* propname, PyObject* value, int* dest) {
   }
 
   value_int = PyInt_AsLong(value);
-  if (value_int == -1 && PyErr_Occurred())
+  if (value_int == -1 && PyErr_Occurred()) {
     return -1;
+  }
 
-  *dest = value_int;
+  if (value_int > 0x7fffffff) {
+    return -1;
+  }
+
+  *dest = (int)value_int;
 
   return 0;
 }
@@ -291,7 +342,11 @@ set_int(const char* propname, PyObject* value, int* dest) {
 /* get_double is inlined */
 
 int
-set_double(const char* propname, PyObject* value, double* dest) {
+set_double(
+    const char* propname,
+    PyObject* value,
+    double* dest) {
+
   if (check_delete(propname, value)) {
     return -1;
   }
@@ -308,10 +363,16 @@ set_double(const char* propname, PyObject* value, double* dest) {
 /* get_double_array is inlined */
 
 int
-set_double_array(const char* propname, PyObject* value, npy_int ndims,
-                 const npy_intp* dims, double* dest) {
+set_double_array(
+    const char* propname,
+    PyObject* value,
+    npy_int ndims,
+    const npy_int* dims,
+    double* dest) {
+
   PyArrayObject* value_array = NULL;
-  npy_int i = 0;
+  npy_int        i           = 0;
+  PyObject*      ignored     = NULL;
 
   if (check_delete(propname, value)) {
     return -1;
@@ -319,13 +380,14 @@ set_double_array(const char* propname, PyObject* value, npy_int ndims,
 
   value_array = (PyArrayObject*)PyArray_ContiguousFromAny(value, PyArray_DOUBLE,
                                                           ndims, ndims);
-  if (value_array == NULL)
+  if (value_array == NULL) {
     return -1;
+  }
 
   if (dims != NULL) {
     for (i = 0; i < ndims; ++i) {
       if (PyArray_DIM(value_array, i) != dims[i]) {
-        PyErr_Format(PyExc_ValueError, "'%s' array is the wrong shape", propname);
+        ignored = PyErr_Format(PyExc_ValueError, "'%s' array is the wrong shape", propname);
         Py_DECREF(value_array);
         return -1;
       }
@@ -340,10 +402,15 @@ set_double_array(const char* propname, PyObject* value, npy_int ndims,
 }
 
 int
-set_int_array(const char* propname, PyObject* value, npy_int ndims,
-              const npy_intp* dims, int* dest) {
+set_int_array(
+    const char* propname,
+    PyObject* value,
+    npy_int ndims,
+    const npy_int* dims,
+    int* dest) {
   PyArrayObject* value_array = NULL;
-  npy_int i = 0;
+  npy_int        i           = 0;
+  PyObject*      ignored     = NULL;;
 
   if (check_delete(propname, value)) {
     return -1;
@@ -351,13 +418,14 @@ set_int_array(const char* propname, PyObject* value, npy_int ndims,
 
   value_array = (PyArrayObject*)PyArray_ContiguousFromAny(value, PyArray_INT,
                                                           ndims, ndims);
-  if (value_array == NULL)
+  if (value_array == NULL) {
     return -1;
+  }
 
   if (dims != NULL) {
     for (i = 0; i < ndims; ++i) {
       if (PyArray_DIM(value_array, i) != dims[i]) {
-        PyErr_Format(PyExc_ValueError, "'%s' array is the wrong shape", propname);
+        ignored = PyErr_Format(PyExc_ValueError, "'%s' array is the wrong shape", propname);
         Py_DECREF(value_array);
         return -1;
       }
@@ -374,12 +442,18 @@ set_int_array(const char* propname, PyObject* value, npy_int ndims,
 /* get_str_list is inlined */
 
 int
-set_str_list(const char* propname, PyObject* value, Py_ssize_t len,
-             Py_ssize_t maxlen, char (*dest)[72]) {
+set_str_list(
+    const char* propname,
+    PyObject* value,
+    Py_ssize_t len,
+    Py_ssize_t maxlen,
+    char (*dest)[72]) {
+
   PyObject*  str      = NULL;
   char*      str_char = NULL;
   Py_ssize_t str_len  = 0;
-  int        i        = 0;
+  Py_ssize_t i        = 0;
+  PyObject*  ignored  = NULL;
 
   if (check_delete(propname, value)) {
     return -1;
@@ -390,12 +464,12 @@ set_str_list(const char* propname, PyObject* value, Py_ssize_t len,
   }
 
   if (!PySequence_Check(value)) {
-    PyErr_Format(PyExc_TypeError, "'%s' must be a sequence of strings", propname);
+    ignored = PyErr_Format(PyExc_TypeError, "'%s' must be a sequence of strings", propname);
     return -1;
   }
 
   if (PySequence_Size(value) != len) {
-    PyErr_Format(PyExc_ValueError, "len(%s) != %u", propname, len);
+    ignored = PyErr_Format(PyExc_ValueError, "len(%s) != %u", propname, len);
     return -1;
   }
 
@@ -410,16 +484,16 @@ set_str_list(const char* propname, PyObject* value, Py_ssize_t len,
     }
 
     if (!PyString_CheckExact(str)) {
-      PyErr_Format(PyExc_TypeError,
-                   "'%s' must be a sequence of strings",
-                   propname);
+      ignored = PyErr_Format(PyExc_TypeError,
+                             "'%s' must be a sequence of strings",
+                             propname);
       Py_DECREF(str);
       return -1;
     }
     if (PyString_Size(str) > maxlen) {
-      PyErr_Format(PyExc_TypeError,
-                   "Each string in '%s' must be less than %u characters",
-                   propname, maxlen);
+      ignored = PyErr_Format(PyExc_TypeError,
+                             "Each string in '%s' must be less than %u characters",
+                             propname, maxlen);
       Py_DECREF(str);
       return -1;
     }
@@ -432,7 +506,7 @@ set_str_list(const char* propname, PyObject* value, Py_ssize_t len,
     if (str == NULL) {
       /* Theoretically, something has gone really wrong here, since
          we've already verified the list. */
-      PyErr_Format(
+      ignored = PyErr_Format(
           PyExc_RuntimeError,
           "Input values have changed underneath us.  Something is seriously wrong.");
       return -1;
@@ -442,14 +516,14 @@ set_str_list(const char* propname, PyObject* value, Py_ssize_t len,
     if (PyString_AsStringAndSize(str, &str_char, &str_len)) {
       /* Theoretically, something has gone really wrong here, since
          we've already verified the list. */
-      PyErr_Format(
+      ignored = PyErr_Format(
           PyExc_RuntimeError,
           "Input values have changed underneath us.  Something is seriously wrong.");
       Py_DECREF(str);
       return -1;
     }
 
-    strncpy(dest[i], str_char, maxlen);
+    strncpy(dest[i], str_char, (size_t)maxlen);
 
     Py_DECREF(str);
   }
@@ -457,18 +531,26 @@ set_str_list(const char* propname, PyObject* value, Py_ssize_t len,
   return 0;
 }
 
-PyObject*
-get_pscards(const char* propname, struct pscard* ps, int nps) {
-  PyObject* result    = NULL;
-  PyObject* subresult = NULL;
-  int       i         = 0;
+/*@null@*/ PyObject*
+get_pscards(
+    /*@unused@*/ const char* propname,
+    struct pscard* ps,
+    int nps) {
 
-  result = PyList_New(nps);
+  PyObject*  result    = NULL;
+  PyObject*  subresult = NULL;
+  Py_ssize_t i         = 0;
+
+  if (nps < 0) {
+    return NULL;
+  }
+
+  result = PyList_New((Py_ssize_t)nps);
   if (result == NULL) {
     return NULL;
   }
 
-  for (i = 0; i < nps; ++i) {
+  for (i = 0; i < (Py_ssize_t)nps; ++i) {
     subresult = Py_BuildValue("iis", ps[i].i, ps[i].m, ps[i].value);
     if (subresult == NULL) {
       return NULL;
@@ -485,10 +567,15 @@ get_pscards(const char* propname, struct pscard* ps, int nps) {
 }
 
 int
-set_pscards(const char* propname, PyObject* value, struct pscard** ps,
-            int *nps, int *npsmax) {
+set_pscards(
+    /*@unused@*/ const char* propname,
+    PyObject* value,
+    struct pscard** ps,
+    int *nps,
+    int *npsmax) {
+
   PyObject*  subvalue  = NULL;
-  int        i         = 0;
+  Py_ssize_t i         = 0;
   Py_ssize_t size      = 0;
   int        ival      = 0;
   int        mval      = 0;
@@ -497,6 +584,9 @@ set_pscards(const char* propname, PyObject* value, struct pscard** ps,
   if (!PySequence_Check(value))
     return -1;
   size = PySequence_Size(value);
+  if (size > 0x7fffffff) {
+    return -1;
+  }
 
   /* Verify the entire list for correct types first, so we don't have
      to undo anything copied into the canonical array. */
@@ -511,14 +601,14 @@ set_pscards(const char* propname, PyObject* value, struct pscard** ps,
     Py_DECREF(subvalue);
   }
 
-  if (size > *npsmax) {
+  if (size > (Py_ssize_t)*npsmax) {
     free(*ps);
     *ps = malloc(sizeof(struct pvcard) * size);
     if (*ps == NULL) {
       PyErr_SetString(PyExc_MemoryError, "Could not allocate memory.");
       return -1;
     }
-    *npsmax = size;
+    *npsmax = (int)size;
   }
 
   for (i = 0; i < size; ++i) {
@@ -535,25 +625,29 @@ set_pscards(const char* propname, PyObject* value, struct pscard** ps,
     (*ps)[i].i = ival;
     (*ps)[i].m = mval;
     strncpy((*ps)[i].value, strvalue, 72);
-    (*ps)[i].value[71] = 0;
+    (*ps)[i].value[71] = '\0';
     (*nps) = i + 1;
   }
 
   return 0;
 }
 
-PyObject*
-get_pvcards(const char* propname, struct pvcard* pv, int npv) {
-  PyObject* result    = NULL;
-  PyObject* subresult = NULL;
-  int       i         = 0;
+/*@null@*/ PyObject*
+get_pvcards(
+    /*@unused@*/ const char* propname,
+    struct pvcard* pv,
+    int npv) {
 
-  result = PyList_New(npv);
+  PyObject*  result    = NULL;
+  PyObject*  subresult = NULL;
+  Py_ssize_t i         = 0;
+
+  result = PyList_New((Py_ssize_t)npv);
   if (result == NULL) {
     return NULL;
   }
 
-  for (i = 0; i < npv; ++i) {
+  for (i = 0; i < (Py_ssize_t)npv; ++i) {
     subresult = Py_BuildValue("iid", pv[i].i, pv[i].m, pv[i].value);
     if (subresult == NULL) {
       return NULL;
@@ -570,8 +664,13 @@ get_pvcards(const char* propname, struct pvcard* pv, int npv) {
 }
 
 int
-set_pvcards(const char* propname, PyObject* value, struct pvcard** pv,
-            int *npv, int *npvmax) {
+set_pvcards(
+    /*@propname@*/ const char* propname,
+    PyObject* value,
+    struct pvcard** pv,
+    int *npv,
+    int *npvmax) {
+
   PyObject*  subvalue  = NULL;
   int        i         = 0;
   Py_ssize_t size      = 0;
@@ -579,9 +678,13 @@ set_pvcards(const char* propname, PyObject* value, struct pvcard** pv,
   int        mval      = 0;
   double     dblvalue  = 0.0;
 
-  if (!PySequence_Check(value))
+  if (!PySequence_Check(value)) {
     return -1;
+  }
   size = PySequence_Size(value);
+  if (size > 0x7fffffff) {
+    return -1;
+  }
 
   /* Verify the entire list for correct types first, so we don't have
      to undo anything copied into the canonical array. */
@@ -591,19 +694,20 @@ set_pvcards(const char* propname, PyObject* value, struct pvcard** pv,
       return -1;
     }
     if (!PyArg_ParseTuple(subvalue, "iid", &ival, &mval, &dblvalue)) {
+      Py_DECREF(subvalue);
       return -1;
     }
     Py_DECREF(subvalue);
   }
 
-  if (size > *npvmax) {
+  if (size > (Py_ssize_t)*npvmax) {
     free(*pv);
     *pv = malloc(sizeof(struct pvcard) * size);
     if (*pv == NULL) {
       PyErr_SetString(PyExc_MemoryError, "Could not allocate memory.");
       return -1;
     }
-    *npvmax = size;
+    *npvmax = (int)size;
   }
 
   for (i = 0; i < size; ++i) {
