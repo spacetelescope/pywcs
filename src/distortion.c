@@ -75,13 +75,19 @@ distortion_lookup_t_free(
 static inline float
 get_dist(
     const distortion_lookup_t *lookup,
-    const unsigned int *coord /* [NAXES] */) {
+    const int *coord /* [NAXES] */) {
 
   unsigned int cropped[NAXES];
   unsigned int i;
 
   for (i = 0; i < NAXES; ++i) {
-    cropped[i] = coord[i] >= lookup->naxis[i] ? lookup->naxis[i] - 1 : coord[i];
+    if (coord[i] >= lookup->naxis[i]) {
+      cropped[i] = lookup->naxis[i] - 1;
+    } else if (coord[i] < 0) {
+      cropped[i] = 0;
+    } else {
+      cropped[i] = coord[i];
+    }
   }
 
   return *(lookup->data + (lookup->naxis[0] * cropped[1]) + cropped[0]);
@@ -162,8 +168,8 @@ get_distortion_offset(
 
   double       dist[NAXES];
   double       dist_floor[NAXES];
-  unsigned int dist_ifloor[NAXES];
-  unsigned int coord[NAXES];
+  int          dist_ifloor[NAXES];
+  int          coord[NAXES];
   double       dist_weight[NAXES];
   double       result;
   unsigned int i, k, l;
@@ -175,15 +181,15 @@ get_distortion_offset(
 
   for (i = 0; i < NAXES; ++i) {
     dist_floor[i] = floor(dist[i]);
-    dist_ifloor[i] = (unsigned int)dist_floor[i];
+    dist_ifloor[i] = (int)dist_floor[i];
     dist_weight[i] = dist[i] - dist_floor[i];
   }
 
   result = 0.0;
-  for (k = 0; k < 2; ++k) {
-    for (l = 0; l < 2; ++l) {
-      coord[0] = dist_ifloor[0] + l;
-      coord[1] = dist_ifloor[1] + k;
+  for (k = 0; k < NAXES; ++k) {
+    for (l = 0; l < NAXES; ++l) {
+      coord[0] = dist_ifloor[0] + (int)l;
+      coord[1] = dist_ifloor[1] + (int)k;
       result += (double)get_dist(lookup, coord) * \
         calculate_weight(dist_weight[0], l, dist_weight[1], k);
     }
