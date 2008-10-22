@@ -406,7 +406,7 @@ set_int_array(
     const char* propname,
     PyObject* value,
     npy_int ndims,
-    const npy_int* dims,
+    const npy_intp* dims,
     int* dest) {
   PyArrayObject* value_array = NULL;
   npy_int        i           = 0;
