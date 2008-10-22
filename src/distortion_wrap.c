@@ -136,7 +136,7 @@ PyDistLookup_set_cdelt(
     PyObject* value,
     /*@unused@*/ void* closure) {
 
-  Py_ssize_t naxis = 2;
+  npy_intp naxis = 2;
 
   return set_double_array("cdelt", value, 1, &naxis, self->x.cdelt);
 }
@@ -157,7 +157,7 @@ PyDistLookup_set_crpix(
     PyObject* value,
     /*@unused@*/ void* closure) {
 
-  Py_ssize_t naxis = 2;
+  npy_intp naxis = 2;
 
   return set_double_array("crpix", value, 1, &naxis, self->x.crpix);
 }
@@ -178,7 +178,7 @@ PyDistLookup_set_crval(
     PyObject* value,
     /*@unused@*/ void* closure) {
 
-  Py_ssize_t naxis = 2;
+  npy_intp naxis = 2;
 
   return set_double_array("crval", value, 1, &naxis, self->x.crval);
 }

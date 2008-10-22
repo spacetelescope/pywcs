@@ -139,6 +139,7 @@ class WCS(WCSBase):
             wcsprm.ctype = ['RA---TAN', 'DEC--TAN']
             wcsprm.cd = numpy.array([[1.0, 0.0], [0.0, 1.0]], numpy.double)
             cpdis = (None, None)
+            sip = None
         else:
             try:
                 wcsprm = _pywcs._Wcsprm(header=str(header.ascardlist()), key=key,

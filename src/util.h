@@ -238,7 +238,7 @@ set_double(
 get_double_array(
     /*@unused@*/ const char* propname,
     double* value,
-    npy_int ndims,
+    npy_intp ndims,
     const npy_intp* dims,
     /*@shared@*/ PyObject* owner) {
 
@@ -250,7 +250,7 @@ set_double_array(
     const char* propname,
     PyObject* value,
     npy_int ndims,
-    const npy_int* dims,
+    const npy_intp* dims,
     double* dest);
 
 /*@null@*/ static inline PyObject*
@@ -269,7 +269,7 @@ set_int_array(
     const char* propname,
     PyObject* value,
     npy_int ndims,
-    const npy_int* dims,
+    const npy_intp* dims,
     int* dest);
 
 /* Defined in str_list_proxy.h */

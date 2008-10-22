@@ -1369,7 +1369,7 @@ PyWcsprm_set_cdelt(
     PyObject* value,
     /*@unused@*/ void* closure) {
 
-  npy_int dims;
+  npy_intp dims;
 
   if (is_null(self->x.cdelt)) {
     return -1;
@@ -1436,7 +1436,7 @@ PyWcsprm_set_colax(
     PyObject* value,
     /*@unused@*/ void* closure) {
 
-  Py_ssize_t naxis = 0;
+  npy_intp naxis = 0;
 
   if (is_null(self->x.colax)) {
     return -1;
@@ -1469,7 +1469,7 @@ PyWcsprm_set_crder(
     PyObject* value,
     /*@unused@*/ void* closure) {
 
-  Py_ssize_t naxis = 0;
+  npy_intp naxis = 0;
 
   if (is_null(self->x.crder)) {
     return -1;
@@ -1507,7 +1507,7 @@ PyWcsprm_set_crota(
     PyObject* value,
     /*@unused@*/ void* closure) {
 
-  Py_ssize_t naxis = 0;
+  npy_intp naxis = 0;
 
   if (is_null(self->x.crota)) {
     return -1;
@@ -1551,7 +1551,7 @@ PyWcsprm_set_crpix(
     PyObject* value,
     /*@unused@*/ void* closure) {
 
-  Py_ssize_t naxis = 0;
+  npy_intp naxis = 0;
 
   if (is_null(self->x.crpix)) {
     return -1;
@@ -1584,7 +1584,7 @@ PyWcsprm_set_crval(
     PyObject* value,
     /*@unused@*/ void* closure) {
 
-  Py_ssize_t naxis;
+  npy_intp naxis;
 
   if (is_null(self->x.crval)) {
     return -1;
@@ -1617,7 +1617,7 @@ PyWcsprm_set_csyer(
     PyObject* value,
     /*@unused@*/ void* closure) {
 
-  Py_ssize_t naxis;
+  npy_intp naxis;
 
   if (is_null(self->x.csyer)) {
     return -1;
@@ -1943,7 +1943,7 @@ PyWcsprm_set_obsgeo(
     PyObject* value,
     /*@unused@*/ void* closure) {
 
-  Py_ssize_t size = 3;
+  npy_intp size = 3;
 
   if (is_null(self->x.obsgeo)) {
     return -1;

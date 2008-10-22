@@ -367,7 +367,7 @@ set_double_array(
     const char* propname,
     PyObject* value,
     npy_int ndims,
-    const npy_int* dims,
+    const npy_intp* dims,
     double* dest) {
 
   PyArrayObject* value_array = NULL;
