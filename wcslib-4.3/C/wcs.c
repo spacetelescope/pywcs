@@ -1659,7 +1659,7 @@ int wcs_types(struct wcsprm *wcs)
       }
 
 
-      if (ctypei[4] != '-' || ctypei[8] != '\0') {
+      if (ctypei[4] != '-' || (ctypei[8] != '\0' && ctypei[8] != '-')) {
          /* Identify Stokes, celestial and spectral types. */
          if (strcmp(ctypei, "STOKES") == 0) {
             /* STOKES axis. */
@@ -1693,6 +1693,8 @@ int wcs_types(struct wcsprm *wcs)
             /* Spectral axis. */
             if (wcs->spec < 0) wcs->spec = i;
             wcs->types[i] += 3000;
+         } else {
+           return 4;
          }
 
          continue;

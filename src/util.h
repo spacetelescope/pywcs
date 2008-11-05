@@ -67,7 +67,7 @@ PyArrayProxy_New(
 static inline void
 offset_c_array(
     double* value,
-    unsigned int size,
+    npy_intp size,
     double offset) {
   double* end = value + size;
 

@@ -112,6 +112,11 @@ is_valid_alt_key(
  * PyWcsprm methods
  */
 
+static inline void
+note_change(PyWcsprm* self) {
+  self->x.flag = 0;
+}
+
 static void
 PyWcsprm_dealloc(
     PyWcsprm* self) {
@@ -1274,6 +1279,8 @@ PyWcsprm_set_alt(
 
   strncpy(self->x.alt, value_string, 2);
 
+  note_change(self);
+
   return 0;
 }
 
@@ -1319,6 +1326,8 @@ PyWcsprm_set_cd(
 
   self->x.altlin |= has_cd;
 
+  note_change(self);
+
   return 0;
 }
 
@@ -1339,10 +1348,11 @@ PyWcsprm_set_cname(
     PyWcsprm* self,
     PyObject* value,
     /*@unused@*/ void* closure) {
-
   if (is_null(self->x.cname)) {
     return -1;
   }
+
+  note_change(self);
 
   return set_str_list("cname", value, (Py_ssize_t)self->x.naxis, 0, self->x.cname);
 }
@@ -1377,6 +1387,8 @@ PyWcsprm_set_cdelt(
 
   dims = (npy_int)self->x.naxis;
 
+  note_change(self);
+
   return set_double_array("cdelt", value, 1, &dims, self->x.cdelt);
 }
 
@@ -1393,7 +1405,6 @@ PyWcsprm_set_cel_offset(
     PyWcsprm* self,
     PyObject* value,
     /*@unused@*/ void* closure) {
-
   return set_bool("cel_offset", value, &self->x.cel.offset);
 }
 
@@ -1410,6 +1421,8 @@ PyWcsprm_set_colnum(
     PyWcsprm* self,
     PyObject* value,
     /*@unused@*/ void* closure) {
+
+  note_change(self);
 
   return set_int("colnum", value, &self->x.colnum);
 }
@@ -1444,6 +1457,8 @@ PyWcsprm_set_colax(
 
   naxis = (Py_ssize_t)self->x.naxis;
 
+  note_change(self);
+
   return set_int_array("colax", value, 1, &naxis, self->x.colax);
 }
 
@@ -1476,6 +1491,8 @@ PyWcsprm_set_crder(
   }
 
   naxis = (Py_ssize_t)self->x.naxis;
+
+  note_change(self);
 
   return set_double_array("crder", value, 1, &naxis, self->x.crder);
 }
@@ -1526,6 +1543,8 @@ PyWcsprm_set_crota(
 
   self->x.altlin |= has_crota;
 
+  note_change(self);
+
   return 0;
 }
 
@@ -1558,6 +1577,8 @@ PyWcsprm_set_crpix(
   }
 
   naxis = (Py_ssize_t)self->x.naxis;
+
+  note_change(self);
 
   return set_double_array("crpix", value, 1, &naxis, self->x.crpix);
 }
@@ -1592,6 +1613,8 @@ PyWcsprm_set_crval(
 
   naxis = (Py_ssize_t)self->x.naxis;
 
+  note_change(self);
+
   return set_double_array("crval", value, 1, &naxis, self->x.crval);
 }
 
@@ -1625,6 +1648,8 @@ PyWcsprm_set_csyer(
 
   naxis = (Py_ssize_t)self->x.naxis;
 
+  note_change(self);
+
   return set_double_array("csyer", value, 1, &naxis, self->x.csyer);
 }
 
@@ -1650,6 +1675,8 @@ PyWcsprm_set_ctype(
     return -1;
   }
 
+  note_change(self);
+
   return set_str_list("ctype", value, (Py_ssize_t)self->x.naxis, 0, self->x.ctype);
 }
 
@@ -1666,6 +1693,8 @@ PyWcsprm_set_cubeface(
     PyWcsprm* self,
     PyObject* value,
     /*@unused@*/ void* closure) {
+
+  note_change(self);
 
   return set_bool("cubeface", value, &self->x.cubeface);
 }
@@ -1692,6 +1721,8 @@ PyWcsprm_set_cunit(
     return -1;
   }
 
+  note_change(self);
+
   return set_str_list("cunit", value, (Py_ssize_t)self->x.naxis, 0, self->x.cunit);
 }
 
@@ -1716,6 +1747,8 @@ PyWcsprm_set_dateavg(
   if (is_null(self->x.dateavg)) {
     return -1;
   }
+
+  note_change(self);
 
   return set_string("dateavg", value, self->x.dateavg, 72);
 }
@@ -1742,6 +1775,8 @@ PyWcsprm_set_dateobs(
     return -1;
   }
 
+  note_change(self);
+
   return set_string("dateobs", value, self->x.dateobs, 72);
 }
 
@@ -1763,6 +1798,8 @@ PyWcsprm_set_equinox(
     self->x.equinox = UNDEFINED;
     return 0;
   }
+
+  note_change(self);
 
   return set_double("equinox", value, &self->x.equinox);
 }
@@ -1803,6 +1840,8 @@ PyWcsprm_set_latpole(
     PyWcsprm* self,
     PyObject* value,
     /*@unused@*/ void* closure) {
+
+  note_change(self);
 
   return set_double("latpole", value, &self->x.latpole);
 }
@@ -1853,6 +1892,8 @@ PyWcsprm_set_lonpole(
     PyObject* value,
     /*@unused@*/ void* closure) {
 
+  note_change(self);
+
   return set_double("lonpole", value, &self->x.lonpole);
 }
 
@@ -1870,6 +1911,8 @@ PyWcsprm_set_mjdavg(
     PyObject* value,
     /*@unused@*/ void* closure) {
 
+  note_change(self);
+
   return set_double("mjdavg", value, &self->x.mjdavg);
 }
 
@@ -1886,6 +1929,8 @@ PyWcsprm_set_mjdobs(
     PyWcsprm* self,
     PyObject* value,
     /*@unused@*/ void* closure) {
+
+  note_change(self);
 
   return set_double("mjdobs", value, &self->x.mjdobs);
 }
@@ -1911,6 +1956,8 @@ PyWcsprm_set_name(
   if (is_null(self->x.wcsname)) {
     return -1;
   }
+
+  note_change(self);
 
   return set_string("name", value, self->x.wcsname, 72);
 }
@@ -1948,6 +1995,8 @@ PyWcsprm_set_obsgeo(
   if (is_null(self->x.obsgeo)) {
     return -1;
   }
+
+  note_change(self);
 
   return set_double_array("obsgeo", value, 1, &size, self->x.obsgeo);
 }
@@ -1994,6 +2043,8 @@ PyWcsprm_set_pc(
 
   self->x.altlin |= has_pc;
 
+  note_change(self);
+
   return 0;
 }
 
@@ -2010,6 +2061,8 @@ PyWcsprm_set_phi0(
     PyWcsprm* self,
     PyObject* value,
     /*@unused@*/ void* closure) {
+
+  note_change(self);
 
   return set_double("phi0", value, &(self->x.cel.phi0));
 }
@@ -2051,6 +2104,8 @@ PyWcsprm_set_radesys(
     return -1;
   }
 
+  note_change(self);
+
   return set_string("radesys", value, self->x.radesys, 72);
 }
 
@@ -2073,6 +2128,8 @@ PyWcsprm_set_restfrq(
     return 0;
   }
 
+  note_change(self);
+
   return set_double("restfrq", value, &self->x.restfrq);
 }
 
@@ -2094,6 +2151,8 @@ PyWcsprm_set_restwav(
     self->x.restwav = UNDEFINED;
     return 0;
   }
+
+  note_change(self);
 
   return set_double("restwav", value, &self->x.restwav);
 }
@@ -2128,6 +2187,8 @@ PyWcsprm_set_specsys(
     return -1;
   }
 
+  note_change(self);
+
   return set_string("specsys", value, self->x.specsys, 72);
 }
 
@@ -2152,6 +2213,8 @@ PyWcsprm_set_ssysobs(
   if (is_null(self->x.ssysobs)) {
     return -1;
   }
+
+  note_change(self);
 
   return set_string("ssysobs", value, self->x.ssysobs, 72);
 }
@@ -2178,6 +2241,8 @@ PyWcsprm_set_ssyssrc(
     return -1;
   }
 
+  note_change(self);
+
   return set_string("ssyssrc", value, self->x.ssyssrc, 72);
 }
 
@@ -2194,6 +2259,8 @@ PyWcsprm_set_theta0(
     PyWcsprm* self,
     PyObject* value,
     /*@unused@*/ void* closure) {
+
+  note_change(self);
 
   return set_double("theta0", value, &self->x.cel.theta0);
 }
@@ -2217,6 +2284,8 @@ PyWcsprm_set_velangl(
     return 0;
   }
 
+  note_change(self);
+
   return set_double("velangl", value, &self->x.velangl);
 }
 
@@ -2239,6 +2308,8 @@ PyWcsprm_set_velosys(
     return 0;
   }
 
+  note_change(self);
+
   return set_double("velosys", value, &self->x.velosys);
 }
 
@@ -2260,6 +2331,8 @@ PyWcsprm_set_zsource(
     self->x.zsource = UNDEFINED;
     return 0;
   }
+
+  note_change(self);
 
   return set_double("zsource", value, &self->x.zsource);
 }

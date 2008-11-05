@@ -75,16 +75,11 @@ offset_array(
     PyArrayObject* array,
     double value) {
 
-  unsigned int size = 1;
-  int          i    = 0;
-  double*      data = NULL;
+  npy_intp  size;
+  double   *data;
 
-  for (i = 0; i < PyArray_NDIM(array); ++i) {
-    size *= (unsigned int)PyArray_DIM(array, i);
-  }
-
+  size = PyArray_Size((PyObject*)array);
   data = (double*)PyArray_DATA(array);
-
   offset_c_array(data, size, value);
 }
 
@@ -93,15 +88,12 @@ copy_array_to_c_double(
     PyArrayObject* array,
     double* dest) {
 
-  unsigned int size = 1;
-  unsigned int i    = 0;
-  double*      data = NULL;
+  npy_intp size = 1;
+  npy_intp i;
+  double*  data = NULL;
 
+  size = PyArray_Size((PyObject*)array);
   data = (double*)PyArray_DATA(array);
-
-  for (i = 0; i < (unsigned int)PyArray_NDIM(array); ++i) {
-    size *= (unsigned int)PyArray_DIM(array, i);
-  }
 
   for (i = 0; i < size; ++i, ++dest, ++data) {
     if (isnan64(*data)) {
@@ -117,15 +109,12 @@ copy_array_to_c_int(
     PyArrayObject* array,
     int* dest) {
 
-  unsigned int size = 1;
-  unsigned int i    = 0;
-  int*         data = NULL;
+  npy_intp size = 1;
+  npy_intp i    = 0;
+  int*     data = NULL;
 
+  size = PyArray_Size((PyObject*)array);
   data = (int*)PyArray_DATA(array);
-
-  for (i = 0; i < (unsigned int)PyArray_NDIM(array); ++i) {
-    size *= (unsigned int)PyArray_DIM(array, i);
-  }
 
   for (i = 0; i < size; ++i, ++dest, ++data) {
     *dest = *data;
@@ -279,8 +268,11 @@ set_string(
   }
 
   if (len > maxlen) {
-    PyErr_Format(PyExc_ValueError, "'%s' must be less than %u characters",
-                 propname, maxlen);
+    PyErr_Format(
+        PyExc_ValueError,
+        "'%s' must be less than %u characters",
+        propname,
+        (unsigned int)maxlen);
     return -1;
   }
 
@@ -330,7 +322,7 @@ set_int(
     return -1;
   }
 
-  if (value_int > 0x7fffffff) {
+  if ((unsigned long)value_int > 0x7fffffff) {
     return -1;
   }
 
@@ -387,7 +379,10 @@ set_double_array(
   if (dims != NULL) {
     for (i = 0; i < ndims; ++i) {
       if (PyArray_DIM(value_array, i) != dims[i]) {
-        ignored = PyErr_Format(PyExc_ValueError, "'%s' array is the wrong shape", propname);
+        ignored = PyErr_Format(
+            PyExc_ValueError,
+            "'%s' array is the wrong shape",
+            propname);
         Py_DECREF(value_array);
         return -1;
       }
@@ -425,7 +420,10 @@ set_int_array(
   if (dims != NULL) {
     for (i = 0; i < ndims; ++i) {
       if (PyArray_DIM(value_array, i) != dims[i]) {
-        ignored = PyErr_Format(PyExc_ValueError, "'%s' array is the wrong shape", propname);
+        ignored = PyErr_Format(
+            PyExc_ValueError,
+            "'%s' array is the wrong shape",
+            propname);
         Py_DECREF(value_array);
         return -1;
       }
@@ -464,12 +462,19 @@ set_str_list(
   }
 
   if (!PySequence_Check(value)) {
-    ignored = PyErr_Format(PyExc_TypeError, "'%s' must be a sequence of strings", propname);
+    ignored = PyErr_Format(
+        PyExc_TypeError,
+        "'%s' must be a sequence of strings",
+        propname);
     return -1;
   }
 
   if (PySequence_Size(value) != len) {
-    ignored = PyErr_Format(PyExc_ValueError, "len(%s) != %u", propname, len);
+    ignored = PyErr_Format(
+        PyExc_ValueError,
+        "len(%s) != %u",
+        propname,
+        (unsigned int)len);
     return -1;
   }
 
@@ -484,16 +489,18 @@ set_str_list(
     }
 
     if (!PyString_CheckExact(str)) {
-      ignored = PyErr_Format(PyExc_TypeError,
-                             "'%s' must be a sequence of strings",
-                             propname);
+      ignored = PyErr_Format(
+          PyExc_TypeError,
+          "'%s' must be a sequence of strings",
+          propname);
       Py_DECREF(str);
       return -1;
     }
     if (PyString_Size(str) > maxlen) {
-      ignored = PyErr_Format(PyExc_TypeError,
-                             "Each string in '%s' must be less than %u characters",
-                             propname, maxlen);
+      ignored = PyErr_Format(
+          PyExc_TypeError,
+          "Each string in '%s' must be less than %u characters",
+          propname, (unsigned int)maxlen);
       Py_DECREF(str);
       return -1;
     }
