@@ -114,7 +114,7 @@ is_valid_alt_key(
 
 static inline void
 note_change(PyWcsprm* self) {
-  self->x.flag = 0;
+  self->x.flag = -1;
 }
 
 static void
@@ -187,7 +187,7 @@ PyWcsprm_init(
       return -1;
     }
 
-    self->x.flag = -1;
+    note_change(self);
     status = wcsini(1, naxis, &self->x);
 
     if (status != 0) {
@@ -259,7 +259,7 @@ PyWcsprm_init(
       return -1;
     }
 
-    self->x.flag = -1;
+    note_change(self);
     if (wcscopy(1, wcs + i, &self->x) != 0) {
       ignored_int = wcsfree(&self->x);
       ignored_int = wcsvfree(&nwcs, &wcs);
@@ -1051,6 +1051,8 @@ PyWcsprm_set_ps(
     return NULL;
   }
 
+  note_change(self);
+
   Py_INCREF(Py_None);
   return Py_None;
 }
@@ -1068,6 +1070,8 @@ PyWcsprm_set_pv(
   if (set_pvcards("pv", arg, &self->x.pv, &self->x.npv, &self->x.npvmax)) {
     return NULL;
   }
+
+  note_change(self);
 
   Py_INCREF(Py_None);
   return Py_None;
@@ -1269,7 +1273,7 @@ PyWcsprm_set_alt(
     return 0;
   }
 
-  if (set_string("propname", value, value_string, 2)) {
+  if (set_string("alt", value, value_string, 2)) {
     return -1;
   }
 
