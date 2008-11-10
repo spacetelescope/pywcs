@@ -55,13 +55,15 @@ all_pix2sky = """
 all_pix2sky(pixcrd) -> numpy array[ncoord][nelem] of double
 
 Transforms pixel coordinates to sky coordinates by doing all of the
-following in order:
+following:
 
     - SIP distortion correction (optionally)
 
     - Paper IV distortion correction (optionally)
 
     - wcslib WCS transformation
+
+The first two (the distortion corrections) are done in parallel.
 
 %s
 
@@ -853,7 +855,7 @@ pix2foc = """
 pix2foc(pixcrd) -> numpy array[ncoord][nelem] of double
 
 Perform both SIP polynomial and Paper IV lookup-table distortion
-correction, in that order.
+correction in parallel.
 
 %s
 

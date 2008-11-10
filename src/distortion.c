@@ -39,6 +39,7 @@ DAMAGE.
 #include <assert.h>
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
 
 /* TODO: n-dimensional support */
 
@@ -199,7 +200,7 @@ get_distortion_offset(
 }
 
 int
-p4_pix2foc(
+p4_pix2deltas(
     const unsigned int naxes,
     const distortion_lookup_t **lookup, /* [NAXES] */
     const unsigned int nelem,
@@ -225,12 +226,28 @@ p4_pix2foc(
 
   for (j = 0; j < nelem; ++j) {
     for (i = 0; i < NAXES; ++i) {
-      foc[i] = pix[i] + get_distortion_offset(lookup[i], pix);
+      foc[i] = get_distortion_offset(lookup[i], pix);
     }
     pix += naxes;
     foc += naxes;
   }
 
   return 0;
+}
+
+int
+p4_pix2foc(
+    const unsigned int naxes,
+    const distortion_lookup_t **lookup, /* [NAXES] */
+    const unsigned int nelem,
+    const double* pix, /* [NAXES][nelem] */
+    double *foc /* [NAXES][nelem] */) {
+
+  assert(pix);
+  assert(foc);
+
+  memcpy(foc, pix, sizeof(double) * naxes * nelem);
+
+  return p4_pix2deltas(naxes, lookup, nelem, pix, foc);
 }
 

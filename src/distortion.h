@@ -110,4 +110,28 @@ p4_pix2foc(
     const double* pix, /* [NAXES][nelem] */
     double *foc /* [NAXES][nelem] */);
 
+/**
+Perform just the distortion table part of Paper IV, by adding
+distortion to the values already in place in foc.
+
+@param naxes
+
+@param lookups A pair of lookup table objects
+
+@param nelem
+
+@param pix [in]: An array of pixel coordinates
+
+@param foc [in/out]: An array of focal plane coordinates
+
+@return A wcslib error code
+*/
+int
+p4_pix2deltas(
+    const unsigned int naxes,
+    const distortion_lookup_t** lookups, /* [NAXES] */
+    const unsigned int nelem,
+    const double* pix, /* [NAXES][nelem] */
+    double *foc /* [NAXES][nelem] */);
+
 #endif /* __DISTORTION_H__ */

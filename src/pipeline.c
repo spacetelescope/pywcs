@@ -210,10 +210,6 @@ int pipeline_pix2foc(
     const double* pixcrd /* [ncoord][nelem] */,
     double* foc /* [ncoord][nelem] */) {
 
-  const double* sip_input  = NULL;
-  double*       sip_output = NULL;
-  const double* p4_input   = NULL;
-  double*       p4_output  = NULL;
   int           has_sip;
   int           has_p4;
   int           status     = 0;
@@ -227,35 +223,19 @@ int pipeline_pix2foc(
   has_sip = pipeline->sip != NULL;
   has_p4  = pipeline->cpdis[0] != NULL && pipeline->cpdis[1] != NULL;
 
-  /* Build a plan for how to use the buffers. */
-  if (has_sip) {
-    if (has_p4) {
-      sip_input  = pixcrd;
-      sip_output = foc;
-      p4_input   = foc;
-      p4_output  = foc;
-    } else {
-      sip_input  = pixcrd;
-      sip_output = foc;
-    }
-  } else {
-    if (has_p4) {
-      p4_input  = pixcrd;
-      p4_output = foc;
-    } else {
-      return 0;
-    }
-  }
+  /* Copy pixcrd to foc as a starting point.  The "deltas" functions below will
+     undistort from there */
+  memcpy(foc, pixcrd, sizeof(double) * ncoord * nelem);
 
   if (has_sip) {
-    status = sip_pix2foc(pipeline->sip, 2, ncoord, sip_input, sip_output);
+    status = sip_pix2deltas(pipeline->sip, 2, ncoord, pixcrd, foc);
     if (status) {
       goto exit;
     }
   }
 
   if (has_p4) {
-    status = p4_pix2foc(2, (void*)pipeline->cpdis, ncoord, p4_input, p4_output);
+    status = p4_pix2deltas(2, (void*)pipeline->cpdis, ncoord, pixcrd, foc);
     if (status) {
       goto exit;
     }

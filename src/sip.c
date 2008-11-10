@@ -222,12 +222,8 @@ sip_compute(
     return 6;
   }
 
-  /* If no distortion, just copy values */
+  /* If no distortion, just return values */
   if (a == NULL /* && b == NULL ... implied */) {
-    for (i = 0; i < nelem; ++i) {
-      output[i << 1] = input[i << 1];
-      output[(i << 1) + 1] = input[(i << 1) + 1];
-    }
     return 0;
   }
 
@@ -250,7 +246,7 @@ sip_compute(
     for (j = (int)m; j > 0; --j) {
       sum = tmp_x * sum + tmp[(int)m - j + 1];
     }
-    output[i << 1] = sum + x;
+    output[i << 1] += sum;
 
     for (j = 0; j <= (int)n; ++j) {
       tmp[j] = lu(n, b, (int)n-j, j);
@@ -264,19 +260,19 @@ sip_compute(
     for (j = (int)n; j > 0; --j) {
       sum = tmp_x * sum + tmp[n - j + 1];
     }
-    output[(i << 1) + 1] = sum + y;
+    output[(i << 1) + 1] += sum;
   }
 
   return 0;
 }
 
 int
-sip_pix2foc(
+sip_pix2deltas(
     const sip_t* sip,
     const unsigned int naxes,
     const unsigned int nelem,
     const double* pix /* [NAXES][nelem] */,
-    double* foc /* [NAXES][nelem] */) {
+    double* deltas /* [NAXES][nelem] */) {
 
   if (sip == NULL) {
     return 1;
@@ -287,16 +283,16 @@ sip_pix2foc(
                      sip->b_order, sip->b,
                      sip->crpix,
                      (double *)sip->scratch,
-                     pix, foc);
+                     pix, deltas);
 }
 
 int
-sip_foc2pix(
+sip_foc2deltas(
     const sip_t* sip,
     const unsigned int naxes,
     const unsigned int nelem,
     const double* foc /* [NAXES][nelem] */,
-    double* pix /* [NAXES][nelem] */) {
+    double* deltas /* [NAXES][nelem] */) {
 
   if (sip == NULL) {
     return 1;
@@ -307,6 +303,36 @@ sip_foc2pix(
                      sip->bp_order, sip->bp,
                      sip->crpix,
                      (double *)sip->scratch,
-                     foc, pix);
+                     foc, deltas);
+}
+
+int
+sip_pix2foc(
+    const sip_t* sip,
+    const unsigned int naxes,
+    const unsigned int nelem,
+    const double* pix /* [NAXES][nelem] */,
+    double* foc /* [NAXES][nelem] */) {
+  assert(pix);
+  assert(foc);
+
+  memcpy(foc, pix, sizeof(double) * naxes * nelem);
+
+  return sip_pix2deltas(sip, naxes, nelem, pix, foc);
+}
+
+int
+sip_foc2pix(
+    const sip_t* sip,
+    const unsigned int naxes,
+    const unsigned int nelem,
+    const double* foc /* [NAXES][nelem] */,
+    double* pix /* [NAXES][nelem] */) {
+  assert(pix);
+  assert(foc);
+
+  memcpy(pix, foc, sizeof(double) * naxes * nelem);
+
+  return sip_foc2deltas(sip, naxes, nelem, foc, pix);
 }
 
