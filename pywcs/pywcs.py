@@ -450,6 +450,10 @@ class WCS(WCSBase):
         """ % (__.NON_FITS_EQUIVALENT('p4_pix2foc', 8))
 
     def sip_pix2foc(self, *args):
+        if self.sip is None:
+            if len(args) == 1:
+                return args[0]
+            return args
         return self._array_converter(self.sip.pix2foc, *args)
     sip_pix2foc.__doc__ = """
         sip_pix2foc(*args) -> focal plane
@@ -472,6 +476,10 @@ class WCS(WCSBase):
                __.ONE_OR_TWO_ARGS('pixel', 8))
 
     def sip_pix2foc_fits(self, *args):
+        if self.sip is None:
+            if len(args) == 1:
+                return args[0]
+            return args
         return self._array_converter(self.sip.pix2foc_fits, *args)
     sip_pix2foc_fits.__doc__ = """
         sip_pix2foc_fits(*args) -> focal plane
@@ -480,6 +488,10 @@ class WCS(WCSBase):
         """ % (__.NON_FITS_EQUIVALENT('sip_pix2foc', 8))
 
     def sip_foc2pix(self, *args):
+        if self.sip is None:
+            if len(args) == 1:
+                return args[0]
+            return args
         return self._array_converter(self.sip.foc2pix, *args)
     sip_foc2pix.__doc__ = """
         sip_foc2pix(*args) -> pixel
@@ -501,6 +513,10 @@ class WCS(WCSBase):
                __.ONE_OR_TWO_ARGS('focal plane', 8))
 
     def sip_foc2pix_fits(self, *args):
+        if self.sip is None:
+            if len(args) == 1:
+                return args[0]
+            return args
         return self._array_converter(self.sip.foc2pix_fits, *args)
     sip_foc2pix_fits.__doc__ = """
         sip_foc2pix_fits(*args) -> pixels
