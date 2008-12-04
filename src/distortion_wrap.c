@@ -34,6 +34,8 @@ DAMAGE.
          mdroe@stsci.edu
 */
 
+#define NO_IMPORT_ARRAY
+
 #include "distortion_wrap.h"
 #include "docstrings.h"
 

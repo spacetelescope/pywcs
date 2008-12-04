@@ -34,6 +34,8 @@ DAMAGE.
          mdroe@stsci.edu
 */
 
+#define NO_IMPORT_ARRAY
+
 /* util.h must be imported first */
 #include "util.h"
 

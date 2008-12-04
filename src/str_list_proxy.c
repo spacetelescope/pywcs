@@ -34,6 +34,8 @@ DAMAGE.
          mdroe@stsci.edu
 */
 
+#define NO_IMPORT_ARRAY
+
 #include "str_list_proxy.h"
 
 /***************************************************************************
