@@ -34,6 +34,8 @@ DAMAGE.
          mdroe@stsci.edu
 */
 
+#define NO_IMPORT_ARRAY
+
 #include "sip_wrap.h"
 #include "docstrings.h"
 #include "wcs.h"

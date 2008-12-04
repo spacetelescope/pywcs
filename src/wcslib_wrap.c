@@ -34,6 +34,8 @@ DAMAGE.
          mdroe@stsci.edu
 */
 
+#define NO_IMPORT_ARRAY
+
 #include "wcslib_wrap.h"
 #include <structmember.h> /* from Python */
 
