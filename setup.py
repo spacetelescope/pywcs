@@ -147,7 +147,7 @@ undef_macros = []
 extra_compile_args = []
 if DEBUG:
     define_macros.append(('DEBUG', None))
-    undef_macros.append('DEBUG')
+    undef_macros.append('NDEBUG')
     extra_compile_args.extend(["-fno-inline", "-O0", "-g"])
 else:
     # Define ECHO as nothing to prevent spurious newlines from
