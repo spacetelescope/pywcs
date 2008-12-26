@@ -167,7 +167,7 @@ pipeline_all_pixel2world(
   }
 
   has_sip = pipeline->sip != NULL;
-  has_p4  = pipeline->cpdis[0] != NULL && pipeline->cpdis[1] != NULL;
+  has_p4  = pipeline->cpdis[0] != NULL || pipeline->cpdis[1] != NULL;
   has_wcs = pipeline->wcs != NULL;
 
   if (has_wcs) {
@@ -221,7 +221,7 @@ int pipeline_pix2foc(
   }
 
   has_sip = pipeline->sip != NULL;
-  has_p4  = pipeline->cpdis[0] != NULL && pipeline->cpdis[1] != NULL;
+  has_p4  = pipeline->cpdis[0] != NULL || pipeline->cpdis[1] != NULL;
 
   /* Copy pixcrd to foc as a starting point.  The "deltas" functions below will
      undistort from there */

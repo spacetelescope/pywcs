@@ -206,31 +206,42 @@ p4_pix2deltas(
     const unsigned int nelem,
     const double* pix, /* [NAXES][nelem] */
     double *foc /* [NAXES][nelem] */) {
-
-  unsigned int i, j;
-
   assert(naxes == NAXES);
   assert(lookup != NULL);
-#ifndef NDEBUG
-  for (i = 0; i < naxes; ++i) {
-    assert(lookup[i] != NULL);
-    assert(lookup[i]->data != NULL);
-  }
-#endif
   assert(pix != NULL);
   assert(foc != NULL);
+#ifndef NDEBUG
+  unsigned int k;
+  for (k = 0; k < naxes; ++k) {
+    if (lookup[k] != NULL) {
+      assert(lookup[k]->data != NULL);
+    }
+  }
+#endif
 
-  if (pix == NULL || foc == NULL || lookup[0] == NULL || lookup[1] == NULL) {
+  if (pix == NULL || foc == NULL) {
     return 1;
   }
 
-  for (j = 0; j < nelem; ++j) {
-    for (i = 0; i < NAXES; ++i) {
-      foc[i] = get_distortion_offset(lookup[i], pix);
+  int j;
+
+#pragma omp parallel
+  {
+    int i;
+    double* foc0;
+    const double* pix0;
+
+#pragma omp for
+    for (j = 0; j < nelem; ++j) {
+      pix0 = pix + (j * NAXES);
+      foc0 = foc + (j * NAXES);
+      for (i = 0; i < NAXES; ++i) {
+        if (lookup[i]) {
+          foc0[i] = get_distortion_offset(lookup[i], pix0);
+        }
+      }
     }
-    pix += naxes;
-    foc += naxes;
-  }
+  } /* end of parallel section  */
 
   return 0;
 }

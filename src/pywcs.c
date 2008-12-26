@@ -144,9 +144,9 @@ PyWcs_init(
   PyObject* py_distortion_lookup[2];
 
   if (!PyArg_ParseTuple(args, "O(OO)O:Wcs.__init__",
-                       &py_sip,
-                       &py_distortion_lookup[0],
-                       &py_distortion_lookup[1],
+                        &py_sip,
+                        &py_distortion_lookup[0],
+                        &py_distortion_lookup[1],
                         &py_wcsprm)) {
     return -1;
   }
@@ -168,19 +168,13 @@ PyWcs_init(
     if (py_distortion_lookup[i] != NULL && py_distortion_lookup[i] != Py_None) {
       if (!PyObject_TypeCheck(py_distortion_lookup[i], &PyDistLookupType)) {
         PyErr_SetString(PyExc_TypeError,
-                        "Arg 2 must be a pair of DistortionLookupTable objects");
+                        "Arg 2 must be a pair of DistortionLookupTable or None objects");
         return -1;
       }
 
       self->py_distortion_lookup[i] = py_distortion_lookup[i];
       self->x.cpdis[i] = &(((PyDistLookup*)py_distortion_lookup[i])->x);
     }
-  }
-
-  if ((py_distortion_lookup[0] != NULL) ^ (py_distortion_lookup[1] != NULL)) {
-    PyErr_SetString(PyExc_ValueError,
-                    "Both X and Y distortion lookup tables must be provided");
-    return -1;
   }
 
   /* Set and lookup Wcsprm object */
