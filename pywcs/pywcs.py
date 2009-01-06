@@ -147,8 +147,8 @@ class WCS(WCSBase):
             except _pywcs.NoWcsKeywordsFoundError:
                 wcsprm = _pywcs._Wcsprm(header=None, key=key,
                                         relax=relax, naxis=naxis)
-            cpdis = self._read_distortion_kw(header, fobj, dist='CPDIS')
-            sip = self._read_sip_kw(header)
+            cpdis = self._read_distortion_kw(header, fobj, key=key,dist='CPDIS')
+            sip = self._read_sip_kw(header, key=key)
 
         WCSBase.__init__(self, sip, cpdis, wcsprm)
         self.footprint = self._calcFootprint(header)
@@ -180,7 +180,7 @@ class WCS(WCSBase):
         #return self.wcs.p2s_fits(corners)['world']
         return self.all_pix2sky_fits(corners)
         
-    def _read_distortion_kw(self, header, fobj, dist='CPDIS'):
+    def _read_distortion_kw(self, header, fobj, key='', dist='CPDIS'):
         """
         Reads paper IV table-lookup distortion keywords and data, and
         returns a 2-tuple of DistortionLookupTable objects.
@@ -195,13 +195,13 @@ class WCS(WCSBase):
 
         tables = {}
         for i in range(1, self.naxis+1):
-            distortion = dist+str(i)
+            distortion = dist+str(i)+key
             if header.has_key(distortion):
                 dis = header[distortion].lower()
                 if dis == 'lookup':
                     assert isinstance(fobj, pyfits.NP_pyfits.HDUList), \
                         'A pyfits HDUList is required for Lookup table distortion.'
-                    dp = d_kw+str(i)
+                    dp = (d_kw+str(i)+key).strip()
                     d_extver = header[dp+'.EXTVER']
                     d_data = fobj['WCSDVARR', d_extver].data
                     d_header = fobj['WCSDVARR', d_extver].header
@@ -214,36 +214,37 @@ class WCS(WCSBase):
                 else:
                     print 'Polynomial distortion is not implemented.\n'
             else:
-                pass
-
-        if len(tables) == 2:
+                tables[i] = None
+                
+        if not tables:
+            return (None, None)
+        else:
             return (tables[1], tables[2])
-        return (None, None)
 
-    def _read_sip_kw(self, header):
+    def _read_sip_kw(self, header, key=''):
         """
         Reads SIP header keywords and returns a Sip object.
 
         If no SIP header keywords are found, None is returned.
         """
-        if header.has_key("A_ORDER"):
-            if not header.has_key("B_ORDER"):
+        if header.has_key("A_ORDER"+key):
+            if not header.has_key("B_ORDER"+key):
                 raise ValueError(
                     "A_ORDER provided without corresponding B_ORDER "
                     "keyword for SIP distortion")
 
-            m = int(header["A_ORDER"])
+            m = int(header["A_ORDER"+key])
             a = numpy.zeros((m+1, m+1), numpy.double)
             for i in range(m+1):
                 for j in range(m-i+1):
-                    a[i, j] = header.get("A_%d_%d" % (i, j), 0.0)
+                    a[i, j] = header.get(("A_%d_%d" % (i, j))+key, 0.0)
 
-            m = int(header["B_ORDER"])
+            m = int(header["B_ORDER"+key])
             b = numpy.zeros((m+1, m+1), numpy.double)
             for i in range(m+1):
                 for j in range(m-i+1):
-                    b[i, j] = header.get("B_%d_%d" % (i, j), 0.0)
-        elif header.has_key("B_ORDER"):
+                    b[i, j] = header.get(("B_%d_%d" % (i, j))+key, 0.0)
+        elif header.has_key("B_ORDER"+key):
             raise ValueError(
                 "B_ORDER provided without corresponding A_ORDER "
                 "keyword for SIP distortion")
