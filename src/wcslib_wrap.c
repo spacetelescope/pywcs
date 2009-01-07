@@ -319,7 +319,7 @@ PyWcsprm_celfix(
   wcsprm_c2python(&self->x);
 
   if (status == -1 || status == 0) {
-    return PyInt_FromLong(status);
+    return PyInt_FromLong((long)status);
   } else if (status > 0 && status < WCSFIX_ERRMSG_MAX) {
     PyErr_SetString(PyExc_ValueError, wcsfix_errmsg[status]);
     return NULL;
@@ -373,7 +373,7 @@ PyWcsprm_cylfix(
   Py_XDECREF(naxis_array);
 
   if (status == -1 || status == 0) {
-    return PyInt_FromLong(status);
+    return PyInt_FromLong((long)status);
   } else if (status > 0 && status < WCSFIX_ERRMSG_MAX) {
     PyErr_SetString(PyExc_ValueError, wcsfix_errmsg[status]);
     return NULL;
@@ -393,7 +393,7 @@ PyWcsprm_datfix(
   status = datfix(&self->x);
 
   if (status == -1 || status == 0) {
-    return PyInt_FromLong(status);
+    return PyInt_FromLong((long)status);
   } else if (status > 0 && status < WCSFIX_ERRMSG_MAX) {
     PyErr_SetString(PyExc_ValueError, wcsfix_errmsg[status]);
     return NULL;
@@ -1111,7 +1111,7 @@ PyWcsprm_spcfix(
   wcsprm_c2python(&self->x);
 
   if (status == -1 || status == 0) {
-    return PyInt_FromLong(status);
+    return PyInt_FromLong((long)status);
   } else if (status > 0 && status < WCSFIX_ERRMSG_MAX) {
     PyErr_SetString(PyExc_ValueError, wcsfix_errmsg[status]);
     return NULL;
@@ -1228,7 +1228,7 @@ PyWcsprm_unitfix(
   status = unitfix(ctrl, &self->x);
 
   if (status == -1 || status == 0) {
-    return PyInt_FromLong(status);
+    return PyInt_FromLong((long)status);
   } else if (status > 0 && status < WCSFIX_ERRMSG_MAX) {
     PyErr_SetString(PyExc_ValueError, wcsfix_errmsg[status]);
     return NULL;
