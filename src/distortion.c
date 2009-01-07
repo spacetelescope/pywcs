@@ -237,7 +237,7 @@ p4_pix2deltas(
       foc0 = foc + (j * NAXES);
       for (i = 0; i < NAXES; ++i) {
         if (lookup[i]) {
-          foc0[i] = get_distortion_offset(lookup[i], pix0);
+          foc0[i] += get_distortion_offset(lookup[i], pix0);
         }
       }
     }
