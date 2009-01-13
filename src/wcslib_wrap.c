@@ -1132,7 +1132,7 @@ PyWcsprm_sptr(
   char* py_ctype         = NULL;
   char  ctype[9];
   int   status           = 0;
-  const char* keywords[] = {"i", NULL};
+  const char* keywords[] = {"ctype", "i", NULL};
 
   if (!PyArg_ParseTupleAndKeywords(args, kwds, "s|i:sptr", (char **)keywords,
                                    &py_ctype, &i)) {
@@ -2419,7 +2419,7 @@ static PyMethodDef PyWcsprm_methods[] = {
   {"set_ps", (PyCFunction)PyWcsprm_set_ps, METH_O, doc_set_ps},
   {"set_pv", (PyCFunction)PyWcsprm_set_pv, METH_O, doc_set_pv},
   {"spcfix", (PyCFunction)PyWcsprm_spcfix, METH_NOARGS, doc_spcfix},
-  {"sptr", (PyCFunction)PyWcsprm_sptr, METH_NOARGS, doc_sptr},
+  {"sptr", (PyCFunction)PyWcsprm_sptr, METH_VARARGS, doc_sptr},
   {"to_header", (PyCFunction)PyWcsprm_to_header, METH_VARARGS, doc_to_header},
   {"unitfix", (PyCFunction)PyWcsprm_unitfix, METH_VARARGS, doc_unitfix},
   {NULL}
