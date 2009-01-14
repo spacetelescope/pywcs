@@ -143,7 +143,7 @@ class WCS(WCSBase):
         else:
             try:
                 header_string = "".join([str(x) for x in header.ascardlist()])
-                wcsprm = _pywcs._Wcsprm(header=str(header_string, key=key,
+                wcsprm = _pywcs._Wcsprm(header=header_string, key=key,
                                         relax=relax, naxis=naxis)
             except _pywcs.NoWcsKeywordsFoundError:
                 wcsprm = _pywcs._Wcsprm(header=None, key=key,
