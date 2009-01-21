@@ -88,7 +88,7 @@ class WCS(WCSBase):
     keywords and data in a FITS file.
     """
 
-    def __init__(self, header=None, fobj=None, key=' ', relax=False, naxis=2):
+    def __init__(self, header=None, fobj=None, key=' ', minerr=0.0, relax=False, naxis=2):
         """
         WCS(header=None, fobj=None, key=' ', relax=False, naxis=2)
 
@@ -108,6 +108,11 @@ class WCS(WCSBase):
            may only be provided if C{header} is also provided.)
         @type key: string
 
+        @param minerr: minimum value a distortion correction must have 
+            in order to be applied. If CPERRja, CQERRja are smaller than 
+            minerr, the corersponding distortion is not applied.
+        @type minerr: float
+        
         @param relax: Degree of permissiveness:
             - C{False}: Recognize only FITS keywords defined by the
               published WCS standard.
@@ -148,7 +153,8 @@ class WCS(WCSBase):
             except _pywcs.NoWcsKeywordsFoundError:
                 wcsprm = _pywcs._Wcsprm(header=None, key=key,
                                         relax=relax, naxis=naxis)
-            cpdis = self._read_distortion_kw(header, fobj, key=key,dist='CPDIS')
+            
+            cpdis = self._read_distortion_kw(header, fobj, key=key,dist='CPDIS', err=minerr)
             sip = self._read_sip_kw(header, key=key)
 
         WCSBase.__init__(self, sip, cpdis, wcsprm)
@@ -165,10 +171,10 @@ class WCS(WCSBase):
         corners = numpy.zeros(shape=(4,2),dtype=numpy.float64)
         naxis1 = header.get('NAXIS1', None)
         naxis2 = header.get('NAXIS2', None)
-
+        
         if naxis1 is None or naxis2 is None:
             return None
-
+        
         corners[0,0] = 1.
         corners[0,1] = 1.
         corners[1,0] = 1.
@@ -177,11 +183,11 @@ class WCS(WCSBase):
         corners[2,1] = naxis2
         corners[3,0] = naxis1
         corners[3,1] = 1.
-
+        
         #return self.wcs.p2s_fits(corners)['world']
         return self.all_pix2sky_fits(corners)
-
-    def _read_distortion_kw(self, header, fobj, key='', dist='CPDIS'):
+        
+    def _read_distortion_kw(self, header, fobj, key='', dist='CPDIS', err=0.0):
         """
         Reads paper IV table-lookup distortion keywords and data, and
         returns a 2-tuple of DistortionLookupTable objects.
@@ -191,11 +197,17 @@ class WCS(WCSBase):
         """
         if dist == 'CPDIS':
             d_kw = 'DP'
+            err_kw = 'CPERR'
         else:
             d_kw = 'DQ'
+            err_kw = 'CQERR'
 
         tables = {}
         for i in range(1, self.naxis+1):
+            distortion_error = header.get(err_kw+str(i), 0.0)
+            if distortion_error < err:
+                tables[i] = None
+                continue
             distortion = dist+str(i)+key
             if header.has_key(distortion):
                 dis = header[distortion].lower()
@@ -216,7 +228,7 @@ class WCS(WCSBase):
                     print 'Polynomial distortion is not implemented.\n'
             else:
                 tables[i] = None
-
+                
         if not tables:
             return (None, None)
         else:
@@ -228,6 +240,7 @@ class WCS(WCSBase):
 
         If no SIP header keywords are found, None is returned.
         """
+        
         if header.has_key("A_ORDER"+key):
             if not header.has_key("B_ORDER"+key):
                 raise ValueError(
@@ -615,24 +628,24 @@ class WCS(WCSBase):
     def to_header_string(self, relax=False):
         return self.to_header(self, relax).to_string()
     to_header_string.__doc__ = to_header.__doc__
-
+    
     def footprint_to_file(self, filename=None, color='green', width=2):
         """
         Writes out a ds9 style regions file. It can be loaded directly by ds9.
-
+        
         @param filename: Output file name - default is 'footprint.reg'
         @type filename: string
         @param color: Color used when plotting the line
         @type color: string
         @param width: Width of region line
         @type width: int
-
+        
         """
         if not filename:
             filename = 'footprint.reg'
         comments = '# Region file format: DS9 version 4.0 \n'
         comments += '# global color=green font="helvetica 12 bold select=1 highlite=1 edit=1 move=1 delete=1 include=1 fixed=0 source\n'
-
+            
         f = open(filename, 'a')
         f.write(comments)
         f.write('linear\n')
@@ -640,7 +653,7 @@ class WCS(WCSBase):
         self.footprint.tofile(f, sep=',')
         f.write(') # color=%s, width=%d \n' % (color, width))
         f.close()
-
+        
     def recenter(self):
         """
         Reset the reference position values to correspond to the center
@@ -659,7 +672,7 @@ class WCS(WCSBase):
 
         # Compute the RA and Dec for center pixel
         _cenrd = self.wcs.p2s_fits(_cen)['world']
-
+        
         #_cd = numpy.array([[self.wcs.cd[0,0],self.wcs.cd[0,1]],[self.wcs.cd[1,0],self.wcs.cd[1,1]]],dtype=numpy.double)
         _cd = self.wcs.cd
         _ra0 = DEGTORAD(self.wcs.crval[0])
@@ -702,7 +715,7 @@ class WCS(WCSBase):
 
         # Keep the same plate scale, only change the orientation
         self.rotateCD(_new_orient)
-
+        
         # These would update the CD matrix with the new rotation
         # ALONG with the new plate scale which we do not want.
         self.wcs.cd[0,0] = _cd11n
@@ -712,7 +725,7 @@ class WCS(WCSBase):
         self.pscale = numpy.sqrt(self.wcs.cd[0,0]**2 + self.wcs.cd[1,0]**2)*3600.
         self.orientat = numpy.arctan2(self.wcs.cd[0,1],self.wcs.cd[1,1]) * 180./numpy.pi
         #self.update()
-
+        
     def rotateCD(self, theta):
         _theta = DEGTORAD(theta)
         _mrot = numpy.zeros(shape=(2,2),dtype=numpy.double)
@@ -720,7 +733,7 @@ class WCS(WCSBase):
         _mrot[1] = (-numpy.sin(_theta),numpy.cos(_theta))
         new_cd = numpy.dot(self.wcs.cd, _mrot)
         self.wcs.cd = new_cd
-
+        
     def printwcs(self):
         print 'WCS Keywords\n'
         print 'CD_11  CD_12: %r %r' % (self.wcs.cd[0,0],  self.wcs.cd[0,1])
@@ -730,7 +743,7 @@ class WCS(WCSBase):
         print 'NAXIS    : %d %d' % (self.naxis1, self.naxis2)
         print 'Plate Scale : %r' % self.pscale
         print 'ORIENTAT : %r' % self.orientat
-
+        
 def DEGTORAD(deg):
     return (deg * numpy.pi / 180.)
 
