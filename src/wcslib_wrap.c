@@ -477,7 +477,7 @@ PyWcsprm_fix(
     return NULL;
   }
 
-  for (i = 0; i < NWCSFIX; ++i) {
+  for (i = 0; i < 5; ++i) {
     msg_index = stat[message_map[i].index];
     if (msg_index >= 0 && msg_index < 11) {
       subresult = PyString_FromString(wcsfix_errmsg[msg_index]);
