@@ -52,7 +52,7 @@ Get the order of the polynomial in the SIP A_i_j array (A_ORDER).
 """
 
 all_pix2sky = """
-all_pix2sky(pixcrd) -> numpy array[ncoord][nelem] of double
+all_pix2sky(pixcrd, origin=1) -> numpy array[ncoord][nelem] of double
 
 Transforms pixel coordinates to sky coordinates by doing all of the
 following:
@@ -65,11 +65,11 @@ following:
 
 The first two (the distortion corrections) are done in parallel.
 
-%s
-
 @param pixcrd: Array of pixel coordinates.
 
 @type pixcrd: numpy array[ncoord][nelem] of double
+
+%s
 
 @return: Array of sky coordinates.
 
@@ -84,13 +84,7 @@ The first two (the distortion corrections) are done in parallel.
 
 @raises InvalidTransformError: Ill-conditioned coordinate
     transformation parameters.
-""" % __.FITS_EQUIVALENT('all_pix2sky')
-
-all_pix2sky_fits = """
-all_pix2sky_fits(*args) -> sky
-
-%s
-""" % __.NON_FITS_EQUIVALENT('all_pix2sky')
+""" % __.ORIGIN()
 
 alt = """
 Character code for alternate coordinate descriptions.  For example,
@@ -249,12 +243,6 @@ matrix, maintained for historical compatibility.
 
 crpix = """
 Coordinate reference pixels (C{CRPIXja}) for each pixel axis.
-
-B{Note that this coordinate is 1-based, and will be set/returned
-exactly as in the header.}
-
-This means that C{p2s(crpix)} will not be correct, and one should use
-C{p2s_fits(crpix)} instead.
 
 @type: array[naxis] of double
 """
@@ -597,15 +585,11 @@ The native longitude of the celestial pole, C{LONPOLEa} (deg).
 """
 
 mix = """
-mix(mixpix, mixcel, vspan, vstep, viter, world, pixcrd) -> dict
+mix(mixpix, mixcel, vspan, vstep, viter, world, pixcrd, origin=1) -> dict
 
 Given either the celestial longitude or latitude plus an element of
 the pixel coordinate, solves for the remaining elements by iterating
 on the unknown celestial coordinate element using L{s2p}.
-
-B{The pixel coordinates given and returned are 0-based (like array
-indices in C and Python).  If your pixel coordinates are 1-based (like
-array indices in Fortran), use L{mix_fits} instead.}
 
 @param mixpix: Which element on the pixel coordinate is given.
 @type mixpix: int
@@ -648,10 +632,10 @@ array indices in Fortran), use L{mix_fits} instead.}
 
 @param pixcrd: Pixel coordinate.  The element indicated by C{mixpix}
     is given and the remaining elements will be written in-place.
-    B{The pixel coordinates given and returned are zero-based.  If
-    your pixel coordinates are one-based, use L{mix_fits} instead.}
 
 @type pixcrd: array[naxis] of double
+
+%s
 
 @return: A dictionary with the following keys:
 
@@ -677,15 +661,7 @@ array indices in Fortran), use L{mix_fits} instead.}
 transformation parameters.
 @raise InvalidCoordinateError: Invalid world coordinate.
 @raise NoSolutionError: No solution found in the specified interval.
-"""
-
-mix_fits = """
-mix_fits(mixpix, mixcel, vspan, vstep, viter, world, pixcrd) -> dict
-
-Identical to L{mix}, except pixel coordinates are 1-based (like array
-indices in Fortran), instead of 0-based (like array indices C and
-Python).
-"""
+""" % __.ORIGIN()
 
 mjdavg = """
 Modified Julian Date (MJD = JD - 2400000.5), C{MJD-AVG}, corresponding
@@ -750,15 +726,15 @@ An undefined value is represented by NaN.
 """
 
 p2s = """
-p2s(pixcrd) -> dict
+p2s(pixcrd, origin=1) -> dict
 
 Converts pixel to sky coordinates.
-
-%s
 
 @param pixcrd: Array of pixel coordinates.
 
 @type pixcrd: numpy array[ncoord][nelem] of double
+
+%s
 
 @return: A dictionary with the following keys:
 
@@ -800,37 +776,25 @@ Converts pixel to sky coordinates.
     parameters.
 @raises InvalidTransformError: Ill-conditioned coordinate
     transformation parameters.
-""" % __.FITS_EQUIVALENT('p2s')
-
-p2s_fits = """
-p2s_fits(pixcrd) -> dict
-
-%s
-""" % __.NON_FITS_EQUIVALENT('s2p')
+""" % __.ORIGIN()
 
 p4_pix2foc = """
-p4_pix2foc(pixcrd) -> numpy array[ncoord][nelem] of double
+p4_pix2foc(pixcrd, origin=1) -> numpy array[ncoord][nelem] of double
 
 Convert pixel coordinates to focal plane coordinates using Paper IV
 lookup-table distortion correction.
-
-%s
 
 @param pixcrd: Array of pixel coordinates.
 
 @type pixcrd: numpy array[ncoord][nelem] of double
 
+%s
+
 @return: Array of focal plane coordinates.
 
 @raises MemoryError: Memory allocation failed.
 @raises ValueError: Invalid coordinate transformation parameters.
-""" % __.FITS_EQUIVALENT('p4_pix2foc')
-
-p4_pix2foc_fits = """
-p4_pix2foc_fits(pixcrd) -> foccrd
-
-%s
-""" % __.NON_FITS_EQUIVALENT('p4_pix2foc')
+""" % __.ORIGIN()
 
 pc = """
 The C{PCi_ja} (pixel coordinate) transformation matrix.  The order is::
@@ -852,28 +816,22 @@ default.
 """
 
 pix2foc = """
-pix2foc(pixcrd) -> numpy array[ncoord][nelem] of double
+pix2foc(pixcrd, origin=1) -> numpy array[ncoord][nelem] of double
 
 Perform both SIP polynomial and Paper IV lookup-table distortion
 correction in parallel.
-
-%s
 
 @param pixcrd: Array of pixel coordinates.
 
 @type pixcrd: numpy array[ncoord][nelem] of double
 
+%s
+
 @return: Array of focal plane coordinates.
 
 @raises MemoryError: Memory allocation failed.
 @raises ValueError: Invalid coordinate transformation parameters.
-""" % __.FITS_EQUIVALENT('pix2foc')
-
-pix2foc_fits = """
-pix2foc_fits(pixcrd) -> foccrd
-
-%s
-""" % __.NON_FITS_EQUIVALENT('pix2foc')
+""" % __.ORIGIN()
 
 piximg_matrix = """
 Matrix containing the product of the C{CDELTia} diagonal matrix and
@@ -916,15 +874,15 @@ An undefined value is represented by NaN.
 """
 
 s2p = """
-s2p(sky) -> dict
+s2p(sky, origin=1) -> dict
 
 Transforms sky coordinates to pixel coordinates.
-
-%s
 
 @param sky: Array of sky coordinates, in decimal degrees.
 
 @type sky: array[ncoord][nelem] of double
+
+%s
 
 @return: A dictionary with the following keys:
         - C{phi} (array[ncoord] of double)
@@ -963,13 +921,7 @@ Transforms sky coordinates to pixel coordinates.
     parameters.
 @raises InvalidTransformError: Ill-conditioned coordinate
     transformation parameters.
-""" % (__.FITS_EQUIVALENT('s2p'))
-
-s2p_fits = """
-s2p_fits(pixcrd) -> dict
-
-%s
-""" % (__.NON_FITS_EQUIVALENT('s2p'))
+""" % (__.ORIGIN())
 
 set = """
 set()
@@ -1059,52 +1011,40 @@ Headers."  ADASS XIV.
 """
 
 sip_foc2pix = """
-sip_foc2pix(foccrd) -> numpy array[ncoord][nelem] of double
+sip_foc2pix(foccrd, origin=1) -> numpy array[ncoord][nelem] of double
 
 Convert focal plane coordinates to pixel coordinates using the SIP
 polynomial distortion convention.
-
-%s
 
 @param foccrd: Array of focal plane coordinates.
 
 @type foccrd: numpy array[ncoord][nelem] of double
 
+%s
+
 @return: Array of pixel coordinates.
 
 @raises MemoryError: Memory allocation failed.
 @raises ValueError: Invalid coordinate transformation parameters.
-""" % __.FITS_EQUIVALENT('foc2pix')
-
-sip_foc2pix_fits = """
-sip_foc2pix_fits(foccrd) -> pixel
-
-%s
-""" % __.NON_FITS_EQUIVALENT('foc2pix')
+""" % __.ORIGIN()
 
 sip_pix2foc = """
-sip_pix2foc(pixcrd) -> numpy array[ncoord][nelem] of double
+sip_pix2foc(pixcrd, origin=1) -> numpy array[ncoord][nelem] of double
 
 Convert pixel coordinates to focal plane coordinates using the SIP
 polynomial distortion convention.
-
-%s
 
 @param pixcrd: Array of pixel coordinates.
 
 @type pixcrd: numpy array[ncoord][nelem] of double
 
+%s
+
 @return: Array of focal plane coordinates.
 
 @raises MemoryError: Memory allocation failed.
 @raises ValueError: Invalid coordinate transformation parameters.
-""" % __.FITS_EQUIVALENT('pix2foc')
-
-sip_pix2foc_fits = """
-sip_pix2foc_fits(pixcrd) -> focal plane
-
-%s
-""" % __.NON_FITS_EQUIVALENT('pix2foc')
+""" % __.ORIGIN()
 
 spcfix = """
 spcfix() -> int

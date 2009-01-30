@@ -52,15 +52,13 @@ def ONE_OR_TWO_ARGS(out_type, indent=0):
      single array, a single array is returned, otherwise a tuple of
      arrays is returned.""" % out_type, indent)
 
-def FITS_EQUIVALENT(method_name, indent=0):
+def ORIGIN(indent=0):
     return _fix(
-"""B{The pixel coordinates are 0-based (like array indices in C and
-Python).  If your pixel coordinates are 1-based (like array
-indices in Fortran), use L{%s_fits} instead.}""" % method_name, indent)
+"""
+@param origin: Optional keyword argument.  Specifies the origin of
+pixel values (default is 1).  The FITS standard uses an origin of 1.
+Numpy and C use array indexing with origin at 0.
 
-def NON_FITS_EQUIVALENT(method_name, indent=0):
-    return _fix(
-"""Identical to L{%s}, except pixel coordinates are 1-based (like array
-indices in Fortran), instead of 0-based (like array indices C and
-Python).""" % method_name, indent)
+@type origin: int
+""", indent)
 

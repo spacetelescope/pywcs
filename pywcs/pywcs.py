@@ -184,8 +184,7 @@ class WCS(WCSBase):
         corners[3,0] = naxis1
         corners[3,1] = 1.
         
-        #return self.wcs.p2s_fits(corners)['world']
-        return self.all_pix2sky_fits(corners)
+        return self.all_pix2sky(corners)
         
     def _read_distortion_kw(self, header, fobj, key='', dist='CPDIS', err=0.0):
         """
@@ -303,9 +302,9 @@ class WCS(WCSBase):
 
         return Sip(a, b, ap, bp, (crpix1, crpix2))
 
-    def _array_converter(self, func, *args):
+    def _array_converter(self, func, *args, **kwargs):
         if len(args) == 1:
-            return func(args[0])
+            return func(args[0], **kwargs)
         elif len(args) == 2:
             x, y = args
             if len(x) != len(y):
@@ -313,14 +312,14 @@ class WCS(WCSBase):
             length = len(x)
             xy = numpy.hstack((x.reshape((length, 1)),
                                y.reshape((length, 1))))
-            sky = func(xy)
+            sky = func(xy, **kwargs)
             return [sky[:, i] for i in range(sky.shape[1])]
         raise TypeError("Expected 1 or 2 arguments, %d given" % len(args))
 
-    def all_pix2sky(self, *args):
-        return self._array_converter(self._all_pix2sky, *args)
+    def all_pix2sky(self, *args, **kwargs):
+        return self._array_converter(self._all_pix2sky, *args, **kwargs)
     all_pix2sky.__doc__ = """
-        all_pix2sky(*args) -> sky
+        all_pix2sky(*args, origin=1) -> sky
 
         Transforms pixel coordinates to sky coordinates by doing all
         of the following in order:
@@ -349,23 +348,15 @@ class WCS(WCSBase):
             transformation parameters.
         @raises InvalidTransformError: Ill-conditioned coordinate
             transformation parameters.
-        """ % (__.FITS_EQUIVALENT('all_pix2sky', 8),
+        """ % (__.ORIGIN(8),
                __.ONE_OR_TWO_ARGS('pixel', 8))
 
-    def all_pix2sky_fits(self, *args):
-        return self._array_converter(self._all_pix2sky_fits, *args)
-    all_pix2sky_fits.__doc__ = """
-        all_pix2sky_fits(*args) -> sky
-
-        %s
-        """ % (__.NON_FITS_EQUIVALENT('all_pix2sky', 8))
-
-    def wcs_pix2sky(self, *args):
+    def wcs_pix2sky(self, *args, **kwargs):
         if self.wcs is None:
             raise ValueError("No basic WCS settings were created.")
-        return self._array_converter(lambda x: self.wcs.p2s(x)['world'], *args)
+        return self._array_converter(lambda x: self.wcs.p2s(x)['world'], *args, **kwargs)
     wcs_pix2sky.__doc__ = """
-        wcs_pix2sky(*args) -> sky
+        wcs_pix2sky(*args, origin=1) -> sky
 
         Transforms pixel coordinates to sky coordinates by doing only
         the basic wcslib transformation.  No SIP or Paper IV table
@@ -391,23 +382,15 @@ class WCS(WCSBase):
             transformation parameters.
         @raises InvalidTransformError: Ill-conditioned coordinate
             transformation parameters.
-        """ % (__.FITS_EQUIVALENT('wcs_pix2sky', 8),
+        """ % (__.ORIGIN(8),
                __.ONE_OR_TWO_ARGS('sky', 8))
 
-    def wcs_pix2sky_fits(self, *args):
-        return self._array_converter(lambda x: self.wcs.p2s_fits(x)['world'], *args)
-    wcs_pix2sky_fits.__doc__ = """
-        wcs_pix2sky_fits(*args) -> sky
-
-        %s
-        """ % (__.NON_FITS_EQUIVALENT('wcs_pix2sky', 8))
-
-    def wcs_sky2pix(self, *args):
+    def wcs_sky2pix(self, *args, **kwargs):
         if self.wcs is None:
             raise ValueError("No basic WCS settings were created.")
-        return self._array_converter(lambda x: self.wcs.s2p(x)['pixcrd'], *args)
+        return self._array_converter(lambda x: self.wcs.s2p(x)['pixcrd'], *args, **kwargs)
     wcs_sky2pix.__doc__ = """
-        wcs_sky2pix(*args) -> pixel
+        wcs_sky2pix(*args, origin=1) -> pixel
 
         Transforms sky coordinates to pixel coordinates, using only
         the basic libwcs WCS transformation.  No SIP or Paper IV table
@@ -427,24 +410,13 @@ class WCS(WCSBase):
             transformation parameters.
         @raises InvalidTransformError: Ill-conditioned coordinate
             transformation parameters.
-        """ % (__.FITS_EQUIVALENT('wcs_sky2pix', 8),
+        """ % (__.ORIGIN(8),
                __.ONE_OR_TWO_ARGS('pixel', 8))
 
-    def wcs_sky2pix_fits(self, *args):
-        if self.wcs is None:
-            raise ValueError("No basic WCS settings were created.")
-        return self._array_converter(lambda x: self.wcs.s2p_fits(x)['pixcrd'],
-                                     *args)
-    wcs_sky2pix_fits.__doc__ = """
-        wcs_sky2pix_fits(*args) -> pixel
-
-        %s
-        """ % (__.NON_FITS_EQUIVALENT('wcs_sky2pix', 8))
-
-    def pix2foc(self, *args):
-        return self._array_converter(self._pix2foc, *args)
+    def pix2foc(self, *args, **kwargs):
+        return self._array_converter(self._pix2foc, *args, **kwargs)
     pix2foc.__doc__ = """
-        pix2foc(*args) -> focal plane
+        pix2foc(*args, origin=1) -> focal plane
 
         Convert pixel coordinates to focal plane coordinates using the
         SIP polynomial distortion convention and Paper IV table-lookup
@@ -456,21 +428,13 @@ class WCS(WCSBase):
 
         @raises MemoryError: Memory allocation failed.
         @raises ValueError: Invalid coordinate transformation parameters.
-        """ % (__.FITS_EQUIVALENT('pix2foc', 8),
+        """ % (__.ORIGIN(8),
                __.ONE_OR_TWO_ARGS('pixel', 8))
 
-    def pix2foc_fits(self, *args):
-        return self._array_converter(self._pix2foc_fits, *args)
-    pix2foc_fits.__doc__ = """
-        pix2foc_fits(*args) -> focal plane
-
-        %s
-        """ % (__.NON_FITS_EQUIVALENT('pix2foc', 8))
-
-    def p4_pix2foc(self, *args):
-        return self._array_converter(self._p4_pix2foc, *args)
+    def p4_pix2foc(self, *args, **kwargs):
+        return self._array_converter(self._p4_pix2foc, *args, **kwargs)
     p4_pix2foc.__doc__ = """
-        p4_pix2foc(*args) -> focal plane
+        p4_pix2foc(*args, origin=1) -> focal plane
 
         Convert pixel coordinates to focal plane coordinates using
         Paper IV table-lookup distortion correction.
@@ -481,25 +445,17 @@ class WCS(WCSBase):
 
         @raises MemoryError: Memory allocation failed.
         @raises ValueError: Invalid coordinate transformation parameters.
-        """ % (__.FITS_EQUIVALENT('p4_pix2foc', 8),
+        """ % (__.ORIGIN(8),
                __.ONE_OR_TWO_ARGS('pixel', 8))
 
-    def p4_pix2foc_fits(self, *args):
-        return self._array_converter(self._p4_pix2foc_fits, *args)
-    p4_pix2foc_fits.__doc__ = """
-        p4_pix2foc_fits(*args) -> focal plane
-
-        %s
-        """ % (__.NON_FITS_EQUIVALENT('p4_pix2foc', 8))
-
-    def sip_pix2foc(self, *args):
+    def sip_pix2foc(self, *args, **kwargs):
         if self.sip is None:
             if len(args) == 1:
                 return args[0]
             return args
-        return self._array_converter(self.sip.pix2foc, *args)
+        return self._array_converter(self.sip.pix2foc, *args, **kwargs)
     sip_pix2foc.__doc__ = """
-        sip_pix2foc(*args) -> focal plane
+        sip_pix2foc(*args, origin=1) -> focal plane
 
         Convert pixel coordinates to focal plane coordinates using the
         SIP polynomial distortion convention.
@@ -515,29 +471,17 @@ class WCS(WCSBase):
 
         @raises MemoryError: Memory allocation failed.
         @raises ValueError: Invalid coordinate transformation parameters.
-        """ % (__.FITS_EQUIVALENT('sip_pix2foc', 8),
+        """ % (__.ORIGIN(8),
                __.ONE_OR_TWO_ARGS('pixel', 8))
 
-    def sip_pix2foc_fits(self, *args):
+    def sip_foc2pix(self, *args, **kwargs):
         if self.sip is None:
             if len(args) == 1:
                 return args[0]
             return args
-        return self._array_converter(self.sip.pix2foc_fits, *args)
-    sip_pix2foc_fits.__doc__ = """
-        sip_pix2foc_fits(*args) -> focal plane
-
-        %s
-        """ % (__.NON_FITS_EQUIVALENT('sip_pix2foc', 8))
-
-    def sip_foc2pix(self, *args):
-        if self.sip is None:
-            if len(args) == 1:
-                return args[0]
-            return args
-        return self._array_converter(self.sip.foc2pix, *args)
+        return self._array_converter(self.sip.foc2pix, *args, **kwargs)
     sip_foc2pix.__doc__ = """
-        sip_foc2pix(*args) -> pixel
+        sip_foc2pix(*args, origin=1) -> pixel
 
         Convert focal plane coordinates to pixel coordinates using the
         SIP polynomial distortion convention.
@@ -552,20 +496,8 @@ class WCS(WCSBase):
 
         @raises MemoryError: Memory allocation failed.
         @raises ValueError: Invalid coordinate transformation parameters.
-        """ % (__.FITS_EQUIVALENT('sip_foc2pix', 8),
+        """ % (__.ORIGIN(8),
                __.ONE_OR_TWO_ARGS('focal plane', 8))
-
-    def sip_foc2pix_fits(self, *args):
-        if self.sip is None:
-            if len(args) == 1:
-                return args[0]
-            return args
-        return self._array_converter(self.sip.foc2pix_fits, *args)
-    sip_foc2pix_fits.__doc__ = """
-        sip_foc2pix_fits(*args) -> pixels
-
-        %s
-        """ % (__.NON_FITS_EQUIVALENT('sip_foc2pix', 8))
 
     def to_header(self, relax=False):
         """
@@ -671,7 +603,7 @@ class WCS(WCSBase):
         _cen = numpy.array([[self.naxis1/2.,self.naxis2/2.]])
 
         # Compute the RA and Dec for center pixel
-        _cenrd = self.wcs.p2s_fits(_cen)['world']
+        _cenrd = self.wcs.p2s(_cen)['world']
         
         #_cd = numpy.array([[self.wcs.cd[0,0],self.wcs.cd[0,1]],[self.wcs.cd[1,0],self.wcs.cd[1,1]]],dtype=numpy.double)
         _cd = self.wcs.cd

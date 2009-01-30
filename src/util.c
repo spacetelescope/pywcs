@@ -73,16 +73,37 @@ PyArrayProxy_New(
 }
 
 void
-offset_array(
+preoffset_array(
     PyArrayObject* array,
-    double value) {
+    int value) {
 
   npy_intp  size;
   double   *data;
 
+  if (value == 1) {
+    return;
+  }
+
   size = PyArray_Size((PyObject*)array);
   data = (double*)PyArray_DATA(array);
-  offset_c_array(data, size, value);
+  offset_c_array(data, size, (double)(1 - value));
+}
+
+void
+unoffset_array(
+    PyArrayObject* array,
+    int value) {
+
+  npy_intp  size;
+  double   *data;
+
+  if (value == 1) {
+    return;
+  }
+
+  size = PyArray_Size((PyObject*)array);
+  data = (double*)PyArray_DATA(array);
+  offset_c_array(data, size, (double)-(1 - value));
 }
 
 void

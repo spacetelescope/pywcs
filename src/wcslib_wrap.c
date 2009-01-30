@@ -563,11 +563,10 @@ PyWcsprm_is_unity(
 }
 
 /*@null@*/ static PyObject*
-PyWcsprm_mix_generic(
+PyWcsprm_mix(
     PyWcsprm* self,
     PyObject* args,
-    /*@unused@*/ PyObject* kwds,
-    int do_shift) {
+    PyObject* kwds) {
 
   int            mixpix     = 0;
   int            mixcel     = 0;
@@ -577,6 +576,7 @@ PyWcsprm_mix_generic(
   Py_ssize_t     naxis      = 0;
   PyObject*      world_obj  = NULL;
   PyObject*      pixcrd_obj = NULL;
+  int            origin     = 1;
   PyArrayObject* world      = NULL;
   PyArrayObject* phi        = NULL;
   PyArrayObject* theta      = NULL;
@@ -585,10 +585,13 @@ PyWcsprm_mix_generic(
   int            status     = -1;
   PyObject*      result     = NULL;
   PyObject*      ignored    = NULL;
+  const char*    keywords[] = {
+    "mixpix", "mixcel", "vspan", "vstep", "viter", "world", "pixcrd", "origin", NULL };
 
-  if (!PyArg_ParseTuple(args, "ii(dd)diOO:mix",
-                       &mixpix, &mixcel, &vspan[0], &vspan[1],
-                        &vstep, &viter, &world_obj, &pixcrd_obj)) {
+  if (!PyArg_ParseTupleAndKeywords(
+        args, kwds, "ii(dd)diOO|i:mix", (char **)keywords,
+        &mixpix, &mixcel, &vspan[0], &vspan[1], &vstep, &viter, &world_obj,
+        &pixcrd_obj, &origin)) {
     return NULL;
   }
 
@@ -669,9 +672,7 @@ PyWcsprm_mix_generic(
   }
 
   /* Convert pixel coordinates to 1-based */
-  if (do_shift) {
-    offset_array(pixcrd, 1.0);
-  }
+  preoffset_array(pixcrd, origin);
   wcsprm_python2c(&self->x);
   status = wcsmix(&self->x,
                   mixpix,
@@ -685,10 +686,7 @@ PyWcsprm_mix_generic(
                   (double*)PyArray_DATA(imgcrd),
                   (double*)PyArray_DATA(pixcrd));
   wcsprm_c2python(&self->x);
-  /* Convert pixel coordinates back to 0-based) */
-  if (do_shift) {
-    offset_array(pixcrd, -1.0);
-  }
+  unoffset_array(pixcrd, origin);
 
   if (status == 0) {
     result = PyDict_New();
@@ -725,39 +723,32 @@ PyWcsprm_mix_generic(
   }
 }
 
-static PyObject*
-PyWcsprm_mix(
-    PyWcsprm* self,
-    PyObject* args,
-    PyObject* kwds) {
-  return PyWcsprm_mix_generic(self, args, kwds, 1);
-}
-
-static PyObject*
-PyWcsprm_mix_fits(
-    PyWcsprm* self,
-    PyObject* args,
-    PyObject* kwds) {
-  return PyWcsprm_mix_generic(self, args, kwds, 0);
-}
-
 /*@null@*/ static PyObject*
-PyWcsprm_p2s_generic(
+PyWcsprm_p2s(
     PyWcsprm* self,
-    PyObject* arg,
-    int do_shift) {
+    PyObject* args,
+    PyObject* kwds) {
 
-  PyArrayObject* pixcrd  = NULL;
-  PyArrayObject* imgcrd  = NULL;
-  PyArrayObject* phi     = NULL;
-  PyArrayObject* theta   = NULL;
-  PyArrayObject* world   = NULL;
-  PyArrayObject* stat    = NULL;
-  PyObject*      result  = NULL;
-  int            status  = 0;
+  PyObject*      pixcrd_obj = NULL;
+  int            origin     = 1;
+  PyArrayObject* pixcrd     = NULL;
+  PyArrayObject* imgcrd     = NULL;
+  PyArrayObject* phi        = NULL;
+  PyArrayObject* theta      = NULL;
+  PyArrayObject* world      = NULL;
+  PyArrayObject* stat       = NULL;
+  PyObject*      result     = NULL;
+  int            status     = 0;
+  const char*    keywords[] = {
+    "pixcrd", "origin", NULL };
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "O|i:p2s", (char **)keywords,
+                                   &pixcrd_obj, &origin)) {
+    return NULL;
+  }
 
   pixcrd = (PyArrayObject*)PyArray_ContiguousFromAny
-    (arg, PyArray_DOUBLE, 2, 2);
+    (pixcrd_obj, PyArray_DOUBLE, 2, 2);
   if (pixcrd == NULL) {
     return NULL;
   }
@@ -799,11 +790,7 @@ PyWcsprm_p2s_generic(
     goto exit;
   }
 
-  /* Adjust pixel coordinates to be 1-based */
-  if (do_shift) {
-    offset_array(pixcrd, 1.0);
-  }
-
+  preoffset_array(pixcrd, origin);
   /* Make the call */
   wcsprm_python2c(&self->x);
   status = wcsp2s(&self->x,
@@ -816,10 +803,7 @@ PyWcsprm_p2s_generic(
                   (double*)PyArray_DATA(world),
                   (int*)PyArray_DATA(stat));
   wcsprm_c2python(&self->x);
-  /* Adjust pixel coordinates back to 0-based */
-  if (do_shift) {
-    offset_array(pixcrd, -1.0);
-  }
+  unoffset_array(pixcrd, origin);
 
   if (status == 0 || status == 8) {
     result = PyDict_New();
@@ -858,38 +842,31 @@ PyWcsprm_p2s_generic(
 }
 
 /*@null@*/ static PyObject*
-PyWcsprm_p2s(
+PyWcsprm_s2p(
     PyWcsprm* self,
-    PyObject* arg) {
+    PyObject* args,
+    PyObject* kwds) {
 
-  return PyWcsprm_p2s_generic(self, arg, 1);
-}
+  PyObject*      world_obj = NULL;
+  int            origin    = 1;
+  PyArrayObject* world     = NULL;
+  PyArrayObject* phi       = NULL;
+  PyArrayObject* theta     = NULL;
+  PyArrayObject* imgcrd    = NULL;
+  PyArrayObject* pixcrd    = NULL;
+  PyArrayObject* stat      = NULL;
+  PyObject*      result    = NULL;
+  int            status    = 0;
+  const char*    keywords[] = {
+    "world", "origin", NULL };
 
-/*@null@*/ static PyObject*
-PyWcsprm_p2s_fits(
-    PyWcsprm* self,
-    PyObject* arg) {
-
-  return PyWcsprm_p2s_generic(self, arg, 0);
-}
-
-/*@null@*/ static PyObject*
-PyWcsprm_s2p_generic(
-    PyWcsprm* self,
-    PyObject* arg,
-    int do_shift) {
-
-  PyArrayObject* world   = NULL;
-  PyArrayObject* phi     = NULL;
-  PyArrayObject* theta   = NULL;
-  PyArrayObject* imgcrd  = NULL;
-  PyArrayObject* pixcrd  = NULL;
-  PyArrayObject* stat    = NULL;
-  PyObject*      result  = NULL;
-  int            status  = 0;
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "O|i:s2p", (char **)keywords,
+                                   &world_obj, &origin)) {
+    return NULL;
+  }
 
   world = (PyArrayObject*)PyArray_ContiguousFromAny
-    (arg, PyArray_DOUBLE, 2, 2);
+    (world_obj, PyArray_DOUBLE, 2, 2);
   if (world == NULL) {
     return NULL;
   }
@@ -932,12 +909,8 @@ PyWcsprm_s2p_generic(
     goto exit;
   }
 
-  /* Adjust pixel coordinates to be zero-based */
-  if (do_shift) {
-    offset_array(pixcrd, 1.0);
-  }
-
   /* Make the call */
+  preoffset_array(pixcrd, origin);
   wcsprm_python2c(&self->x);
   status = wcss2p(&self->x,
                   (int)PyArray_DIM(world, 0),
@@ -949,11 +922,7 @@ PyWcsprm_s2p_generic(
                   (double*)PyArray_DATA(pixcrd),
                   (int*)PyArray_DATA(stat));
   wcsprm_c2python(&self->x);
-
-  /* Adjust pixel coordinates to be zero-based */
-  if (do_shift) {
-    offset_array(pixcrd, -1.0);
-  }
+  unoffset_array(pixcrd, origin);
 
   if (status == 0 || status == 9) {
     result = PyDict_New();
@@ -987,22 +956,6 @@ PyWcsprm_s2p_generic(
       return NULL;
     }
   }
-}
-
-/*@null@*/ static PyObject*
-PyWcsprm_s2p(
-    PyWcsprm* self,
-    PyObject* arg) {
-
-  return PyWcsprm_s2p_generic(self, arg, 1);
-}
-
-/*@null@*/ static PyObject*
-PyWcsprm_s2p_fits(
-    PyWcsprm* self,
-    PyObject* arg) {
-
-  return PyWcsprm_s2p_generic(self, arg, 0);
 }
 
 static int
@@ -2409,12 +2362,9 @@ static PyMethodDef PyWcsprm_methods[] = {
   {"has_pci_ja", (PyCFunction)PyWcsprm_has_pci_ja, METH_NOARGS, doc_has_pci_ja},
   {"is_unity", (PyCFunction)PyWcsprm_is_unity, METH_NOARGS, doc_is_unity},
   {"mix", (PyCFunction)PyWcsprm_mix, METH_VARARGS, doc_mix},
-  {"mix_fits", (PyCFunction)PyWcsprm_mix_fits, METH_VARARGS, doc_mix_fits},
-  {"p2s", (PyCFunction)PyWcsprm_p2s, METH_O, doc_p2s},
-  {"p2s_fits", (PyCFunction)PyWcsprm_p2s_fits, METH_O, doc_p2s_fits},
+  {"p2s", (PyCFunction)PyWcsprm_p2s, METH_VARARGS, doc_p2s},
   {"print_contents", (PyCFunction)PyWcsprm_print_contents, METH_NOARGS, doc_print_contents},
-  {"s2p", (PyCFunction)PyWcsprm_s2p, METH_O, doc_s2p},
-  {"s2p_fits", (PyCFunction)PyWcsprm_s2p_fits, METH_O, doc_s2p_fits},
+  {"s2p", (PyCFunction)PyWcsprm_s2p, METH_VARARGS, doc_s2p},
   {"set", (PyCFunction)PyWcsprm_set, METH_NOARGS, doc_set},
   {"set_ps", (PyCFunction)PyWcsprm_set_ps, METH_O, doc_set_ps},
   {"set_pv", (PyCFunction)PyWcsprm_set_pv, METH_O, doc_set_pv},

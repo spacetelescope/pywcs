@@ -173,14 +173,23 @@ PySip_init(
 }
 
 /*@null@*/ static PyObject*
-PySip_pix2foc_generic(
+PySip_pix2foc(
     PySip* self,
-    PyObject* arg,
-    int do_shift) {
+    PyObject* args,
+    PyObject* kwds) {
 
-  PyArrayObject* pixcrd = NULL;
-  PyArrayObject* foccrd = NULL;
-  int            status = -1;
+  PyObject*      pixcrd_obj = NULL;
+  int            origin     = 1;
+  PyArrayObject* pixcrd     = NULL;
+  PyArrayObject* foccrd     = NULL;
+  int            status     = -1;
+  const char*    keywords[] = {
+    "pixcrd", "origin", NULL };
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "O|i:pix2foc", (char **)keywords,
+                                   &pixcrd_obj, &origin)) {
+    return NULL;
+  }
 
   if (self->x.a == NULL || self->x.b == NULL) {
     PyErr_SetString(
@@ -189,7 +198,7 @@ PySip_pix2foc_generic(
     return NULL;
   }
 
-  pixcrd = (PyArrayObject*)PyArray_ContiguousFromAny(arg, PyArray_DOUBLE, 2, 2);
+  pixcrd = (PyArrayObject*)PyArray_ContiguousFromAny(pixcrd_obj, PyArray_DOUBLE, 2, 2);
   if (pixcrd == NULL) {
     goto exit;
   }
@@ -206,19 +215,13 @@ PySip_pix2foc_generic(
     goto exit;
   }
 
-  if (do_shift) {
-    offset_array(pixcrd, 1.0);
-  }
-
+  preoffset_array(pixcrd, origin);
   status = sip_pix2foc(&self->x,
                        (unsigned int)PyArray_DIM(pixcrd, 1),
                        (unsigned int)PyArray_DIM(pixcrd, 0),
                        (const double*)PyArray_DATA(pixcrd),
                        (double*)PyArray_DATA(foccrd));
-
-  if (do_shift) {
-    offset_array(pixcrd, -1.0);
-  }
+  unoffset_array(pixcrd, origin);
 
  exit:
 
@@ -243,32 +246,23 @@ PySip_pix2foc_generic(
 }
 
 /*@null@*/ static PyObject*
-PySip_pix2foc(
+PySip_foc2pix(
     PySip* self,
-    PyObject* arg,
-    /*@unused@*/ PyObject* kwds) {
+    PyObject* args,
+    PyObject* kwds) {
 
-  return PySip_pix2foc_generic(self, arg, 1);
-}
+  PyObject*      foccrd_obj = NULL;
+  int            origin     = 1;
+  PyArrayObject* foccrd     = NULL;
+  PyArrayObject* pixcrd     = NULL;
+  int            status     = -1;
+  const char*    keywords[] = {
+    "foccrd", "origin", NULL };
 
-/*@null@*/ static PyObject*
-PySip_pix2foc_fits(
-    PySip* self,
-    PyObject* arg,
-    /*@unused@*/ PyObject* kwds) {
-
-  return PySip_pix2foc_generic(self, arg, 0);
-}
-
-/*@null@*/ static PyObject*
-PySip_foc2pix_generic(
-    PySip* self,
-    PyObject* arg,
-    int do_shift) {
-
-  PyArrayObject* foccrd = NULL;
-  PyArrayObject* pixcrd = NULL;
-  int            status = -1;
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "O|i:foc2pix", (char **)keywords,
+                                   &foccrd_obj, &origin)) {
+    return NULL;
+  }
 
   if (self->x.ap == NULL || self->x.bp == NULL) {
     PyErr_SetString(
@@ -277,7 +271,7 @@ PySip_foc2pix_generic(
     return NULL;
   }
 
-  foccrd = (PyArrayObject*)PyArray_ContiguousFromAny(arg, PyArray_DOUBLE, 2, 2);
+  foccrd = (PyArrayObject*)PyArray_ContiguousFromAny(foccrd_obj, PyArray_DOUBLE, 2, 2);
   if (foccrd == NULL) {
     goto exit;
   }
@@ -294,19 +288,13 @@ PySip_foc2pix_generic(
     goto exit;
   }
 
-  if (do_shift) {
-    offset_array(pixcrd, 1.0);
-  }
-
+  preoffset_array(foccrd, origin);
   status = sip_foc2pix(&self->x,
                        (unsigned int)PyArray_DIM(pixcrd, 1),
                        (unsigned int)PyArray_DIM(pixcrd, 0),
                        (double*)PyArray_DATA(foccrd),
                        (double*)PyArray_DATA(pixcrd));
-
-  if (do_shift) {
-    offset_array(pixcrd, -1.0);
-  }
+  unoffset_array(foccrd, origin);
 
  exit:
   Py_XDECREF(foccrd);
@@ -327,24 +315,6 @@ PySip_foc2pix_generic(
       return NULL;
     }
   }
-}
-
-/*@null@*/ static PyObject*
-PySip_foc2pix(
-    PySip* self,
-    PyObject* arg,
-    /*@unused@*/ PyObject* kwds) {
-
-  return PySip_foc2pix_generic(self, arg, 1);
-}
-
-/*@null@*/ static PyObject*
-PySip_foc2pix_fits(
-    PySip* self,
-    PyObject* arg,
-    /*@unused@*/ PyObject* kwds) {
-
-  return PySip_foc2pix_generic(self, arg, 0);
 }
 
 /*@null@*/ static PyObject*
@@ -467,10 +437,8 @@ static PyGetSetDef PySip_getset[] = {
 };
 
 static PyMethodDef PySip_methods[] = {
-  {"pix2foc", (PyCFunction)PySip_pix2foc, METH_O, doc_sip_pix2foc},
-  {"pix2foc_fits", (PyCFunction)PySip_pix2foc_fits, METH_O, doc_sip_pix2foc_fits},
-  {"foc2pix", (PyCFunction)PySip_foc2pix, METH_O, doc_sip_foc2pix},
-  {"foc2pix_fits", (PyCFunction)PySip_foc2pix_fits, METH_O, doc_sip_foc2pix_fits},
+  {"pix2foc", (PyCFunction)PySip_pix2foc, METH_VARARGS, doc_sip_pix2foc},
+  {"foc2pix", (PyCFunction)PySip_foc2pix, METH_VARARGS, doc_sip_foc2pix},
   {NULL}
 };
 

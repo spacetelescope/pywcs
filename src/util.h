@@ -77,9 +77,14 @@ offset_c_array(
 }
 
 void
-offset_array(
+preoffset_array(
     PyArrayObject* array,
-    double value);
+    int value);
+
+void
+unoffset_array(
+    PyArrayObject* array,
+    int value);
 
 void
 copy_array_to_c_double(

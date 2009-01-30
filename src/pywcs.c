@@ -198,16 +198,25 @@ PyWcs_init(
 }
 
 /*@null@*/ static PyObject*
-PyWcs_all_pix2sky_generic(
+PyWcs_all_pix2sky(
     PyWcs* self,
-    PyObject* arg,
-    int do_shift) {
+    PyObject* args,
+    PyObject* kwds) {
 
-  PyArrayObject* pixcrd  = NULL;
-  PyArrayObject* world   = NULL;
-  int            status  = -1;
+  PyObject*      pixcrd_obj = NULL;
+  int            origin     = 1;
+  PyArrayObject* pixcrd     = NULL;
+  PyArrayObject* world      = NULL;
+  int            status     = -1;
+  const char*    keywords[] = {
+    "pixcrd", "origin", NULL };
 
-  pixcrd = (PyArrayObject*)PyArray_ContiguousFromAny(arg, PyArray_DOUBLE, 2, 2);
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "O|i:all_pix2sky", (char **)keywords,
+                                   &pixcrd_obj, &origin)) {
+    return NULL;
+  }
+
+  pixcrd = (PyArrayObject*)PyArray_ContiguousFromAny(pixcrd_obj, PyArray_DOUBLE, 2, 2);
   if (pixcrd == NULL) {
     return NULL;
   }
@@ -217,12 +226,9 @@ PyWcs_all_pix2sky_generic(
     goto exit;
   }
 
-  /* Adjust pixel coordinates to be 1-based */
-  if (do_shift) {
-    offset_array(pixcrd, 1.0);
-  }
 
   /* Make the call */
+  preoffset_array(pixcrd, origin);
   wcsprm_python2c(self->x.wcs);
   status = pipeline_all_pixel2world(&self->x,
                                     (unsigned int)PyArray_DIM(pixcrd, 0),
@@ -230,10 +236,7 @@ PyWcs_all_pix2sky_generic(
                                     (double*)PyArray_DATA(pixcrd),
                                     (double*)PyArray_DATA(world));
   wcsprm_c2python(self->x.wcs);
-  /* Adjust pixel coordinates back to 0-based */
-  if (do_shift) {
-    offset_array(pixcrd, -1.0);
-  }
+  unoffset_array(pixcrd, origin);
 
  exit:
   Py_XDECREF(pixcrd);
@@ -256,37 +259,30 @@ PyWcs_all_pix2sky_generic(
 }
 
 /*@null@*/ static PyObject*
-PyWcs_all_pix2sky(
+PyWcs_p4_pix2foc(
     PyWcs* self,
-    PyObject* arg) {
+    PyObject* args,
+    PyObject* kwds) {
 
-  return PyWcs_all_pix2sky_generic(self, arg, 1);
-}
+  PyObject*      pixcrd_obj = NULL;
+  int            origin     = 1;
+  PyArrayObject* pixcrd     = NULL;
+  PyArrayObject* foccrd     = NULL;
+  int            status     = -1;
+  const char*    keywords[] = {
+    "pixcrd", "origin", NULL };
 
-/*@null@*/ static PyObject*
-PyWcs_all_pix2sky_fits(
-    PyWcs* self,
-    PyObject* arg) {
-
-  return PyWcs_all_pix2sky_generic(self, arg, 0);
-}
-
-/*@null@*/ static PyObject*
-PyWcs_p4_pix2foc_generic(
-    PyWcs* self,
-    /*@shared@*/ PyObject* arg,
-    int do_shift) {
-
-  PyArrayObject* pixcrd = NULL;
-  PyArrayObject* foccrd = NULL;
-  int            status = -1;
-
-  if (self->x.cpdis[0] == NULL || self->x.cpdis[1] == NULL) {
-    Py_INCREF(arg);
-    return arg;
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "O|i:p4_pix2foc", (char **)keywords,
+                                   &pixcrd_obj, &origin)) {
+    return NULL;
   }
 
-  pixcrd = (PyArrayObject*)PyArray_ContiguousFromAny(arg, PyArray_DOUBLE, 2, 2);
+  if (self->x.cpdis[0] == NULL || self->x.cpdis[1] == NULL) {
+    Py_INCREF(pixcrd_obj);
+    return pixcrd_obj;
+  }
+
+  pixcrd = (PyArrayObject*)PyArray_ContiguousFromAny(pixcrd_obj, PyArray_DOUBLE, 2, 2);
   if (pixcrd == NULL) {
     return NULL;
   }
@@ -302,98 +298,14 @@ PyWcs_p4_pix2foc_generic(
     goto exit;
   }
 
-  if (do_shift) {
-    offset_array(pixcrd, 1.0);
-  }
-
+  preoffset_array(pixcrd, origin);
   status = p4_pix2foc(2, (void *)self->x.cpdis,
                       (unsigned int)PyArray_DIM(pixcrd, 0),
                       (double*)PyArray_DATA(pixcrd),
                       (double*)PyArray_DATA(foccrd));
-
-  if (do_shift) {
-    offset_array(pixcrd, -1.0);
-  }
+  unoffset_array(pixcrd, origin);
 
  exit:
-
-  Py_XDECREF(pixcrd);
-
-  if (status == 0) {
-    return (PyObject*)foccrd;
-  } else {
-    Py_XDECREF(foccrd);
-    if (status > 0 && status < WCS_ERRMSG_MAX) {
-      PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
-      return NULL;
-    } else if (status == -1) {
-      return NULL;
-    } else {
-      PyErr_SetString(PyExc_RuntimeError,
-                      "Unknown error occurred.  Something is seriously wrong.");
-      return NULL;
-    }
-  }
-}
-
-/*@null@*/ static PyObject*
-PyWcs_p4_pix2foc(
-    PyWcs* self,
-    PyObject* arg,
-    /*@unused@*/ PyObject* kwds) {
-
-  return PyWcs_p4_pix2foc_generic(self, arg, 1);
-}
-
-/*@null@*/ static PyObject*
-PyWcs_p4_pix2foc_fits(
-    PyWcs* self,
-    PyObject* arg,
-    /*@unused@*/ PyObject* kwds) {
-
-  return PyWcs_p4_pix2foc_generic(self, arg, 0);
-}
-
-/*@null@*/ static PyObject*
-PyWcs_pix2foc_generic(
-    PyWcs* self,
-    PyObject* arg,
-    int do_shift) {
-
-  PyArrayObject* pixcrd = NULL;
-  PyArrayObject* foccrd = NULL;
-  int            status = -1;
-
-  pixcrd = (PyArrayObject*)PyArray_ContiguousFromAny(arg, PyArray_DOUBLE, 2, 2);
-  if (pixcrd == NULL) {
-    return NULL;
-  }
-
-  if (PyArray_DIM(pixcrd, 1) != NAXES) {
-    PyErr_SetString(PyExc_ValueError, "Pixel array must be an Nx2 array");
-    goto _exit;
-  }
-
-  foccrd = (PyArrayObject*)PyArray_SimpleNew(2, PyArray_DIMS(pixcrd), PyArray_DOUBLE);
-  if (foccrd == NULL) {
-    goto _exit;
-  }
-
-  if (do_shift) {
-    offset_array(pixcrd, 1.0);
-  }
-
-  status = pipeline_pix2foc(&self->x,
-                            (unsigned int)PyArray_DIM(pixcrd, 0),
-                            (unsigned int)PyArray_DIM(pixcrd, 1),
-                            (double*)PyArray_DATA(pixcrd),
-                            (double*)PyArray_DATA(foccrd));
-
-  if (do_shift) {
-    offset_array(pixcrd, -1.0);
-  }
-
- _exit:
 
   Py_XDECREF(pixcrd);
 
@@ -417,19 +329,64 @@ PyWcs_pix2foc_generic(
 /*@null@*/ static PyObject*
 PyWcs_pix2foc(
     PyWcs* self,
-    PyObject* arg,
-    /*@unused@*/ PyObject* kwds) {
+    PyObject* args,
+    PyObject* kwds) {
 
-  return PyWcs_pix2foc_generic(self, arg, 1);
-}
+  PyObject*      pixcrd_obj = NULL;
+  int            origin     = 1;
+  PyArrayObject* pixcrd     = NULL;
+  PyArrayObject* foccrd     = NULL;
+  int            status     = -1;
+  const char*    keywords[] = {
+    "pixcrd", "origin", NULL };
 
-/*@null@*/ static PyObject*
-PyWcs_pix2foc_fits(
-    PyWcs* self,
-    PyObject* arg,
-    /*@unused@*/ PyObject* kwds) {
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "O|i:pix2foc", (char **)keywords,
+                                   &pixcrd_obj, &origin)) {
+    return NULL;
+  }
 
-  return PyWcs_pix2foc_generic(self, arg, 0);
+  pixcrd = (PyArrayObject*)PyArray_ContiguousFromAny(pixcrd_obj, PyArray_DOUBLE, 2, 2);
+  if (pixcrd == NULL) {
+    return NULL;
+  }
+
+  if (PyArray_DIM(pixcrd, 1) != NAXES) {
+    PyErr_SetString(PyExc_ValueError, "Pixel array must be an Nx2 array");
+    goto _exit;
+  }
+
+  foccrd = (PyArrayObject*)PyArray_SimpleNew(2, PyArray_DIMS(pixcrd), PyArray_DOUBLE);
+  if (foccrd == NULL) {
+    goto _exit;
+  }
+
+  preoffset_array(pixcrd, origin);
+  status = pipeline_pix2foc(&self->x,
+                            (unsigned int)PyArray_DIM(pixcrd, 0),
+                            (unsigned int)PyArray_DIM(pixcrd, 1),
+                            (double*)PyArray_DATA(pixcrd),
+                            (double*)PyArray_DATA(foccrd));
+  unoffset_array(pixcrd, origin);
+
+ _exit:
+
+  Py_XDECREF(pixcrd);
+
+  if (status == 0) {
+    return (PyObject*)foccrd;
+  } else {
+    Py_XDECREF(foccrd);
+    if (status > 0 && status < WCS_ERRMSG_MAX) {
+      PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
+      return NULL;
+    } else if (status == -1) {
+      return NULL;
+    } else {
+      PyErr_SetString(PyExc_RuntimeError,
+                      "Unknown error occurred.  Something is seriously wrong.");
+      return NULL;
+    }
+  }
 }
 
 /*@null@*/ static PyObject*
@@ -602,12 +559,9 @@ static PyGetSetDef PyWcs_getset[] = {
 };
 
 static PyMethodDef PyWcs_methods[] = {
-  {"_all_pix2sky", (PyCFunction)PyWcs_all_pix2sky, METH_O, doc_all_pix2sky},
-  {"_all_pix2sky_fits", (PyCFunction)PyWcs_all_pix2sky_fits, METH_O, doc_all_pix2sky_fits},
-  {"_p4_pix2foc", (PyCFunction)PyWcs_p4_pix2foc, METH_O, doc_p4_pix2foc},
-  {"_p4_pix2foc_fits", (PyCFunction)PyWcs_p4_pix2foc_fits, METH_O, doc_p4_pix2foc_fits},
-  {"_pix2foc", (PyCFunction)PyWcs_pix2foc, METH_O, doc_pix2foc},
-  {"_pix2foc_fits", (PyCFunction)PyWcs_pix2foc_fits, METH_O, doc_pix2foc_fits},
+  {"_all_pix2sky", (PyCFunction)PyWcs_all_pix2sky, METH_VARARGS, doc_all_pix2sky},
+  {"_p4_pix2foc", (PyCFunction)PyWcs_p4_pix2foc, METH_VARARGS, doc_p4_pix2foc},
+  {"_pix2foc", (PyCFunction)PyWcs_pix2foc, METH_VARARGS, doc_pix2foc},
   {NULL}
 };
 

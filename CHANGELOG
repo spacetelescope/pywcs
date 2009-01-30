@@ -1,0 +1,11 @@
+Version 1.3a1
+=============
+
+Earlier versions of pywcs had two versions of every conversion method:
+
+  X(...)      -- treats the origin of pixel coordinates at (0, 0)
+  X_fits(...) -- treats the origin of pixel coordinates at (1, 1)
+
+From version 1.3 onwards, there is only one method for each
+conversion, with an 'origin' keyword argument.  The default value is
+1, following the FITS/Fortran convention not the Numpy/C convention.
