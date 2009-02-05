@@ -186,7 +186,7 @@ PySip_pix2foc(
   const char*    keywords[] = {
     "pixcrd", "origin", NULL };
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "O|i:pix2foc", (char **)keywords,
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "Oi:pix2foc", (char **)keywords,
                                    &pixcrd_obj, &origin)) {
     return NULL;
   }
@@ -259,7 +259,7 @@ PySip_foc2pix(
   const char*    keywords[] = {
     "foccrd", "origin", NULL };
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "O|i:foc2pix", (char **)keywords,
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "Oi:foc2pix", (char **)keywords,
                                    &foccrd_obj, &origin)) {
     return NULL;
   }

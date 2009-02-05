@@ -211,7 +211,7 @@ PyWcs_all_pix2sky(
   const char*    keywords[] = {
     "pixcrd", "origin", NULL };
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "O|i:all_pix2sky", (char **)keywords,
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "Oi:all_pix2sky", (char **)keywords,
                                    &pixcrd_obj, &origin)) {
     return NULL;
   }
@@ -272,7 +272,7 @@ PyWcs_p4_pix2foc(
   const char*    keywords[] = {
     "pixcrd", "origin", NULL };
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "O|i:p4_pix2foc", (char **)keywords,
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "Oi:p4_pix2foc", (char **)keywords,
                                    &pixcrd_obj, &origin)) {
     return NULL;
   }
@@ -340,7 +340,7 @@ PyWcs_pix2foc(
   const char*    keywords[] = {
     "pixcrd", "origin", NULL };
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "O|i:pix2foc", (char **)keywords,
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "Oi:pix2foc", (char **)keywords,
                                    &pixcrd_obj, &origin)) {
     return NULL;
   }

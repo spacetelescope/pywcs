@@ -589,7 +589,7 @@ PyWcsprm_mix(
     "mixpix", "mixcel", "vspan", "vstep", "viter", "world", "pixcrd", "origin", NULL };
 
   if (!PyArg_ParseTupleAndKeywords(
-        args, kwds, "ii(dd)diOO|i:mix", (char **)keywords,
+        args, kwds, "ii(dd)diOOi:mix", (char **)keywords,
         &mixpix, &mixcel, &vspan[0], &vspan[1], &vstep, &viter, &world_obj,
         &pixcrd_obj, &origin)) {
     return NULL;
@@ -742,7 +742,7 @@ PyWcsprm_p2s(
   const char*    keywords[] = {
     "pixcrd", "origin", NULL };
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "O|i:p2s", (char **)keywords,
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "Oi:p2s", (char **)keywords,
                                    &pixcrd_obj, &origin)) {
     return NULL;
   }
@@ -860,7 +860,7 @@ PyWcsprm_s2p(
   const char*    keywords[] = {
     "world", "origin", NULL };
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "O|i:s2p", (char **)keywords,
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "Oi:s2p", (char **)keywords,
                                    &world_obj, &origin)) {
     return NULL;
   }

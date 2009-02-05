@@ -52,7 +52,7 @@ Get the order of the polynomial in the SIP A_i_j array (A_ORDER).
 """
 
 all_pix2sky = """
-all_pix2sky(pixcrd, origin=1) -> numpy array[ncoord][nelem] of double
+all_pix2sky(pixcrd, origin) -> numpy array[ncoord][nelem] of double
 
 Transforms pixel coordinates to sky coordinates by doing all of the
 following:
@@ -585,7 +585,7 @@ The native longitude of the celestial pole, C{LONPOLEa} (deg).
 """
 
 mix = """
-mix(mixpix, mixcel, vspan, vstep, viter, world, pixcrd, origin=1) -> dict
+mix(mixpix, mixcel, vspan, vstep, viter, world, pixcrd, origin) -> dict
 
 Given either the celestial longitude or latitude plus an element of
 the pixel coordinate, solves for the remaining elements by iterating
@@ -726,7 +726,7 @@ An undefined value is represented by NaN.
 """
 
 p2s = """
-p2s(pixcrd, origin=1) -> dict
+p2s(pixcrd, origin) -> dict
 
 Converts pixel to sky coordinates.
 
@@ -779,7 +779,7 @@ Converts pixel to sky coordinates.
 """ % __.ORIGIN()
 
 p4_pix2foc = """
-p4_pix2foc(pixcrd, origin=1) -> numpy array[ncoord][nelem] of double
+p4_pix2foc(pixcrd, origin) -> numpy array[ncoord][nelem] of double
 
 Convert pixel coordinates to focal plane coordinates using Paper IV
 lookup-table distortion correction.
@@ -816,7 +816,7 @@ default.
 """
 
 pix2foc = """
-pix2foc(pixcrd, origin=1) -> numpy array[ncoord][nelem] of double
+pix2foc(pixcrd, origin) -> numpy array[ncoord][nelem] of double
 
 Perform both SIP polynomial and Paper IV lookup-table distortion
 correction in parallel.
@@ -874,7 +874,7 @@ An undefined value is represented by NaN.
 """
 
 s2p = """
-s2p(sky, origin=1) -> dict
+s2p(sky, origin) -> dict
 
 Transforms sky coordinates to pixel coordinates.
 
@@ -1011,7 +1011,7 @@ Headers."  ADASS XIV.
 """
 
 sip_foc2pix = """
-sip_foc2pix(foccrd, origin=1) -> numpy array[ncoord][nelem] of double
+sip_foc2pix(foccrd, origin) -> numpy array[ncoord][nelem] of double
 
 Convert focal plane coordinates to pixel coordinates using the SIP
 polynomial distortion convention.
@@ -1029,7 +1029,7 @@ polynomial distortion convention.
 """ % __.ORIGIN()
 
 sip_pix2foc = """
-sip_pix2foc(pixcrd, origin=1) -> numpy array[ncoord][nelem] of double
+sip_pix2foc(pixcrd, origin) -> numpy array[ncoord][nelem] of double
 
 Convert pixel coordinates to focal plane coordinates using the SIP
 polynomial distortion convention.

@@ -108,11 +108,11 @@ class WCS(WCSBase):
            may only be provided if C{header} is also provided.)
         @type key: string
 
-        @param minerr: minimum value a distortion correction must have 
-            in order to be applied. If CPERRja, CQERRja are smaller than 
+        @param minerr: minimum value a distortion correction must have
+            in order to be applied. If CPERRja, CQERRja are smaller than
             minerr, the corersponding distortion is not applied.
         @type minerr: float
-        
+
         @param relax: Degree of permissiveness:
             - C{False}: Recognize only FITS keywords defined by the
               published WCS standard.
@@ -153,7 +153,7 @@ class WCS(WCSBase):
             except _pywcs.NoWcsKeywordsFoundError:
                 wcsprm = _pywcs._Wcsprm(header=None, key=key,
                                         relax=relax, naxis=naxis)
-            
+
             cpdis = self._read_distortion_kw(header, fobj, key=key,dist='CPDIS', err=minerr)
             sip = self._read_sip_kw(header, key=key)
 
@@ -171,10 +171,10 @@ class WCS(WCSBase):
         corners = numpy.zeros(shape=(4,2),dtype=numpy.float64)
         naxis1 = header.get('NAXIS1', None)
         naxis2 = header.get('NAXIS2', None)
-        
+
         if naxis1 is None or naxis2 is None:
             return None
-        
+
         corners[0,0] = 1.
         corners[0,1] = 1.
         corners[1,0] = 1.
@@ -183,9 +183,9 @@ class WCS(WCSBase):
         corners[2,1] = naxis2
         corners[3,0] = naxis1
         corners[3,1] = 1.
-        
-        return self.all_pix2sky(corners)
-        
+
+        return self.all_pix2sky(corners, 1)
+
     def _read_distortion_kw(self, header, fobj, key='', dist='CPDIS', err=0.0):
         """
         Reads paper IV table-lookup distortion keywords and data, and
@@ -227,7 +227,7 @@ class WCS(WCSBase):
                     print 'Polynomial distortion is not implemented.\n'
             else:
                 tables[i] = None
-                
+
         if not tables:
             return (None, None)
         else:
@@ -239,7 +239,7 @@ class WCS(WCSBase):
 
         If no SIP header keywords are found, None is returned.
         """
-        
+
         if header.has_key("A_ORDER"+key):
             if not header.has_key("B_ORDER"+key):
                 raise ValueError(
@@ -303,23 +303,24 @@ class WCS(WCSBase):
         return Sip(a, b, ap, bp, (crpix1, crpix2))
 
     def _array_converter(self, func, *args, **kwargs):
-        if len(args) == 1:
-            return func(args[0], **kwargs)
+        if len(args) == 2:
+            xy, origin = args
+            return func(xy, origin)
         elif len(args) == 2:
-            x, y = args
+            x, y, origin = args
             if len(x) != len(y):
                 raise ValueError("x and y arrays are not the same size")
             length = len(x)
             xy = numpy.hstack((x.reshape((length, 1)),
                                y.reshape((length, 1))))
-            sky = func(xy, **kwargs)
+            sky = func(xy, origin)
             return [sky[:, i] for i in range(sky.shape[1])]
-        raise TypeError("Expected 1 or 2 arguments, %d given" % len(args))
+        raise TypeError("Expected 2 or 3 arguments, %d given" % len(args))
 
     def all_pix2sky(self, *args, **kwargs):
         return self._array_converter(self._all_pix2sky, *args, **kwargs)
     all_pix2sky.__doc__ = """
-        all_pix2sky(*args, origin=1) -> sky
+        all_pix2sky(*args, origin) -> sky
 
         Transforms pixel coordinates to sky coordinates by doing all
         of the following in order:
@@ -356,7 +357,7 @@ class WCS(WCSBase):
             raise ValueError("No basic WCS settings were created.")
         return self._array_converter(lambda x: self.wcs.p2s(x)['world'], *args, **kwargs)
     wcs_pix2sky.__doc__ = """
-        wcs_pix2sky(*args, origin=1) -> sky
+        wcs_pix2sky(*args, origin) -> sky
 
         Transforms pixel coordinates to sky coordinates by doing only
         the basic wcslib transformation.  No SIP or Paper IV table
@@ -390,7 +391,7 @@ class WCS(WCSBase):
             raise ValueError("No basic WCS settings were created.")
         return self._array_converter(lambda x: self.wcs.s2p(x)['pixcrd'], *args, **kwargs)
     wcs_sky2pix.__doc__ = """
-        wcs_sky2pix(*args, origin=1) -> pixel
+        wcs_sky2pix(*args, origin) -> pixel
 
         Transforms sky coordinates to pixel coordinates, using only
         the basic libwcs WCS transformation.  No SIP or Paper IV table
@@ -416,7 +417,7 @@ class WCS(WCSBase):
     def pix2foc(self, *args, **kwargs):
         return self._array_converter(self._pix2foc, *args, **kwargs)
     pix2foc.__doc__ = """
-        pix2foc(*args, origin=1) -> focal plane
+        pix2foc(*args, origin) -> focal plane
 
         Convert pixel coordinates to focal plane coordinates using the
         SIP polynomial distortion convention and Paper IV table-lookup
@@ -434,7 +435,7 @@ class WCS(WCSBase):
     def p4_pix2foc(self, *args, **kwargs):
         return self._array_converter(self._p4_pix2foc, *args, **kwargs)
     p4_pix2foc.__doc__ = """
-        p4_pix2foc(*args, origin=1) -> focal plane
+        p4_pix2foc(*args, origin) -> focal plane
 
         Convert pixel coordinates to focal plane coordinates using
         Paper IV table-lookup distortion correction.
@@ -455,7 +456,7 @@ class WCS(WCSBase):
             return args
         return self._array_converter(self.sip.pix2foc, *args, **kwargs)
     sip_pix2foc.__doc__ = """
-        sip_pix2foc(*args, origin=1) -> focal plane
+        sip_pix2foc(*args, origin) -> focal plane
 
         Convert pixel coordinates to focal plane coordinates using the
         SIP polynomial distortion convention.
@@ -481,7 +482,7 @@ class WCS(WCSBase):
             return args
         return self._array_converter(self.sip.foc2pix, *args, **kwargs)
     sip_foc2pix.__doc__ = """
-        sip_foc2pix(*args, origin=1) -> pixel
+        sip_foc2pix(*args, origin) -> pixel
 
         Convert focal plane coordinates to pixel coordinates using the
         SIP polynomial distortion convention.
@@ -560,24 +561,24 @@ class WCS(WCSBase):
     def to_header_string(self, relax=False):
         return self.to_header(self, relax).to_string()
     to_header_string.__doc__ = to_header.__doc__
-    
+
     def footprint_to_file(self, filename=None, color='green', width=2):
         """
         Writes out a ds9 style regions file. It can be loaded directly by ds9.
-        
+
         @param filename: Output file name - default is 'footprint.reg'
         @type filename: string
         @param color: Color used when plotting the line
         @type color: string
         @param width: Width of region line
         @type width: int
-        
+
         """
         if not filename:
             filename = 'footprint.reg'
         comments = '# Region file format: DS9 version 4.0 \n'
         comments += '# global color=green font="helvetica 12 bold select=1 highlite=1 edit=1 move=1 delete=1 include=1 fixed=0 source\n'
-            
+
         f = open(filename, 'a')
         f.write(comments)
         f.write('linear\n')
@@ -585,7 +586,7 @@ class WCS(WCSBase):
         self.footprint.tofile(f, sep=',')
         f.write(') # color=%s, width=%d \n' % (color, width))
         f.close()
-        
+
     def recenter(self):
         """
         Reset the reference position values to correspond to the center
@@ -604,7 +605,7 @@ class WCS(WCSBase):
 
         # Compute the RA and Dec for center pixel
         _cenrd = self.wcs.p2s(_cen)['world']
-        
+
         #_cd = numpy.array([[self.wcs.cd[0,0],self.wcs.cd[0,1]],[self.wcs.cd[1,0],self.wcs.cd[1,1]]],dtype=numpy.double)
         _cd = self.wcs.cd
         _ra0 = DEGTORAD(self.wcs.crval[0])
@@ -647,7 +648,7 @@ class WCS(WCSBase):
 
         # Keep the same plate scale, only change the orientation
         self.rotateCD(_new_orient)
-        
+
         # These would update the CD matrix with the new rotation
         # ALONG with the new plate scale which we do not want.
         self.wcs.cd[0,0] = _cd11n
@@ -657,7 +658,7 @@ class WCS(WCSBase):
         self.pscale = numpy.sqrt(self.wcs.cd[0,0]**2 + self.wcs.cd[1,0]**2)*3600.
         self.orientat = numpy.arctan2(self.wcs.cd[0,1],self.wcs.cd[1,1]) * 180./numpy.pi
         #self.update()
-        
+
     def rotateCD(self, theta):
         _theta = DEGTORAD(theta)
         _mrot = numpy.zeros(shape=(2,2),dtype=numpy.double)
@@ -665,7 +666,7 @@ class WCS(WCSBase):
         _mrot[1] = (-numpy.sin(_theta),numpy.cos(_theta))
         new_cd = numpy.dot(self.wcs.cd, _mrot)
         self.wcs.cd = new_cd
-        
+
     def printwcs(self):
         print 'WCS Keywords\n'
         print 'CD_11  CD_12: %r %r' % (self.wcs.cd[0,0],  self.wcs.cd[0,1])
@@ -675,7 +676,7 @@ class WCS(WCSBase):
         print 'NAXIS    : %d %d' % (self.naxis1, self.naxis2)
         print 'Plate Scale : %r' % self.pscale
         print 'ORIENTAT : %r' % self.orientat
-        
+
 def DEGTORAD(deg):
     return (deg * numpy.pi / 180.)
 

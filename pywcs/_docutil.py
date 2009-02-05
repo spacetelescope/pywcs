@@ -55,9 +55,9 @@ def ONE_OR_TWO_ARGS(out_type, indent=0):
 def ORIGIN(indent=0):
     return _fix(
 """
-@param origin: Optional keyword argument.  Specifies the origin of
-pixel values (default is 1).  The FITS standard uses an origin of 1.
-Numpy and C use array indexing with origin at 0.
+@param origin: Specifies the origin of pixel values.  The Fortran and
+FITS standards use an origin of 1.  Numpy and C use array indexing
+with origin at 0.
 
 @type origin: int
 """, indent)
