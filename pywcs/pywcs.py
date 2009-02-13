@@ -305,9 +305,22 @@ class WCS(WCSBase):
     def _array_converter(self, func, *args, **kwargs):
         if len(args) == 2:
             xy, origin = args
+            try:
+                xy = numpy.asarray(xy)
+                origin = int(origin)
+            except:
+                raise TypeError(
+                    "When providing two arguments, they must be (xy, origin)")
             return func(xy, origin)
         elif len(args) == 3:
             x, y, origin = args
+            try:
+                x = numpy.asarray(x)
+                y = numpy.asarray(y)
+                origin = int(origin)
+            except:
+                raise TypeError(
+                    "When providing three arguments, they must be (x, y, origin)")
             if len(x) != len(y):
                 raise ValueError("x and y arrays are not the same size")
             length = len(x)
