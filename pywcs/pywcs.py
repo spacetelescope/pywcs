@@ -306,7 +306,7 @@ class WCS(WCSBase):
         if len(args) == 2:
             xy, origin = args
             return func(xy, origin)
-        elif len(args) == 2:
+        elif len(args) == 3:
             x, y, origin = args
             if len(x) != len(y):
                 raise ValueError("x and y arrays are not the same size")
