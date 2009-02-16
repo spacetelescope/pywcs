@@ -368,7 +368,8 @@ class WCS(WCSBase):
     def wcs_pix2sky(self, *args, **kwargs):
         if self.wcs is None:
             raise ValueError("No basic WCS settings were created.")
-        return self._array_converter(lambda x: self.wcs.p2s(x)['world'], *args, **kwargs)
+        return self._array_converter(lambda xy, o: self.wcs.p2s(xy, o)['world'],
+                                     *args, **kwargs)
     wcs_pix2sky.__doc__ = """
         wcs_pix2sky(*args, origin) -> sky
 
@@ -402,7 +403,8 @@ class WCS(WCSBase):
     def wcs_sky2pix(self, *args, **kwargs):
         if self.wcs is None:
             raise ValueError("No basic WCS settings were created.")
-        return self._array_converter(lambda x: self.wcs.s2p(x)['pixcrd'], *args, **kwargs)
+        return self._array_converter(lambda xy, o: self.wcs.s2p(xy, o)['pixcrd'],
+                                     *args, **kwargs)
     wcs_sky2pix.__doc__ = """
         wcs_sky2pix(*args, origin) -> pixel
 
