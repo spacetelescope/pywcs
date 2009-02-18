@@ -2354,6 +2354,8 @@ static PyMethodDef PyWcsprm_methods[] = {
   {"__copy__", (PyCFunction)PyWcsprm_copy, METH_NOARGS, doc_copy},
   {"cylfix", (PyCFunction)PyWcsprm_cylfix, METH_VARARGS, doc_cylfix},
   {"datfix", (PyCFunction)PyWcsprm_datfix, METH_NOARGS, doc_datfix},
+  {"deepcopy", (PyCFunction)PyWcsprm_copy, METH_O, doc_copy},
+  {"__deepcopy__", (PyCFunction)PyWcsprm_copy, METH_O, doc_copy},
   {"fix", (PyCFunction)PyWcsprm_fix, METH_VARARGS, doc_fix},
   {"get_ps", (PyCFunction)PyWcsprm_get_ps, METH_NOARGS, doc_get_ps},
   {"get_pv", (PyCFunction)PyWcsprm_get_pv, METH_NOARGS, doc_get_pv},

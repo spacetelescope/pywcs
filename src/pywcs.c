@@ -545,6 +545,95 @@ PyWcs_set_sip(
   return 0;
 }
 
+static PyObject*
+PyWcs___copy__(
+    PyWcs* self,
+    /*@unused@*/ PyObject* args,
+    /*@unused@*/ PyObject* kwds) {
+
+  PyObject* copy = NULL;
+
+  copy = PyWcs_new(&PyWcsType, NULL, NULL);
+  if (copy == NULL) {
+    return NULL;
+  }
+
+  if (self->py_sip) {
+    PyWcs_set_sip((PyWcs*)copy, self->py_sip, NULL);
+  }
+
+  if (self->py_distortion_lookup[0]) {
+    PyWcs_set_cpdis1((PyWcs*)copy, self->py_distortion_lookup[0], NULL);
+  }
+
+  if (self->py_distortion_lookup[1]) {
+    PyWcs_set_cpdis2((PyWcs*)copy, self->py_distortion_lookup[1], NULL);
+  }
+
+  if (self->py_wcsprm) {
+    PyWcs_set_wcs((PyWcs*)copy, self->py_wcsprm, NULL);
+  }
+
+  return copy;
+}
+
+static PyObject*
+PyWcs___deepcopy__(
+    PyWcs* self,
+    PyObject* memo,
+    /*@unused@*/ PyObject* kwds) {
+
+  PyObject* copy;
+  PyObject* obj_copy;
+
+  copy = PyWcs_new(&PyWcsType, NULL, NULL);
+  if (copy == NULL) {
+    return NULL;
+  }
+
+  if (self->py_sip) {
+    obj_copy = get_deepcopy(self->py_sip, memo);
+    if (obj_copy == NULL) {
+      Py_DECREF(copy);
+      return NULL;
+    }
+    PyWcs_set_sip((PyWcs*)copy, obj_copy, NULL);
+    Py_DECREF(obj_copy);
+  }
+
+  if (self->py_distortion_lookup[0]) {
+    obj_copy = get_deepcopy(self->py_distortion_lookup[0], memo);
+    if (obj_copy == NULL) {
+      Py_DECREF(copy);
+      return NULL;
+    }
+    PyWcs_set_cpdis1((PyWcs*)copy, obj_copy, NULL);
+    Py_DECREF(obj_copy);
+  }
+
+  if (self->py_distortion_lookup[1]) {
+    obj_copy = get_deepcopy(self->py_distortion_lookup[1], memo);
+    if (obj_copy == NULL) {
+      Py_DECREF(copy);
+      return NULL;
+    }
+    PyWcs_set_cpdis2((PyWcs*)copy, obj_copy, NULL);
+    Py_DECREF(obj_copy);
+  }
+
+  if (self->py_wcsprm) {
+    obj_copy = get_deepcopy(self->py_wcsprm, memo);
+    if (obj_copy == NULL) {
+      Py_DECREF(copy);
+      return NULL;
+    }
+    PyWcs_set_wcs((PyWcs*)copy, obj_copy, NULL);
+    Py_DECREF(obj_copy);
+  }
+
+  return copy;
+}
+
 
 /***************************************************************************
  * PyWcs definition structures
@@ -560,6 +649,10 @@ static PyGetSetDef PyWcs_getset[] = {
 
 static PyMethodDef PyWcs_methods[] = {
   {"_all_pix2sky", (PyCFunction)PyWcs_all_pix2sky, METH_VARARGS, doc_all_pix2sky},
+  {"__copy__", (PyCFunction)PyWcs___copy__, METH_NOARGS, NULL},
+  {"copy", (PyCFunction)PyWcs___copy__, METH_NOARGS, NULL},
+  {"__deepcopy__", (PyCFunction)PyWcs___deepcopy__, METH_O, NULL},
+  {"deepcopy", (PyCFunction)PyWcs___deepcopy__, METH_O, NULL},
   {"_p4_pix2foc", (PyCFunction)PyWcs_p4_pix2foc, METH_VARARGS, doc_p4_pix2foc},
   {"_pix2foc", (PyCFunction)PyWcs_pix2foc, METH_VARARGS, doc_pix2foc},
   {NULL}

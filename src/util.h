@@ -330,4 +330,9 @@ set_pvcards(
     int *npv,
     int *npvmax);
 
+PyObject*
+get_deepcopy(
+    PyObject* obj,
+    PyObject* memo);
+
 #endif /* __UTIL_H__ */

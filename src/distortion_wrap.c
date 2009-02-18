@@ -253,6 +253,70 @@ PyDistLookup_get_offset(
   return PyFloat_FromDouble(result);
 }
 
+static PyObject*
+PyDistLookup___copy__(
+    PyDistLookup* self,
+    /*@unused@*/ PyObject* args,
+    /*@unused@*/ PyObject* kwds) {
+
+  PyDistLookup* copy = NULL;
+  int           i    = 0;
+
+  copy = (PyDistLookup*)PyDistLookup_new(&PyDistLookupType, NULL, NULL);
+  if (copy == NULL) {
+    return NULL;
+  }
+
+  for (i = 0; i < 2; ++i) {
+    copy->x.naxis[i] = self->x.naxis[i];
+    copy->x.crpix[i] = self->x.crpix[i];
+    copy->x.crval[i] = self->x.crval[i];
+    copy->x.cdelt[i] = self->x.cdelt[i];
+  }
+
+  if (self->py_data) {
+    PyDistLookup_set_data(copy, (PyObject*)self->py_data, NULL);
+  }
+
+  return (PyObject*)copy;
+}
+
+static PyObject*
+PyDistLookup___deepcopy__(
+    PyDistLookup* self,
+    PyObject* memo,
+    /*@unused@*/ PyObject* kwds) {
+
+  PyDistLookup* copy;
+  PyObject*     obj_copy;
+  int           i = 0;
+
+  copy = (PyDistLookup*)PyDistLookup_new(&PyDistLookupType, NULL, NULL);
+  if (copy == NULL) {
+    return NULL;
+  }
+
+  for (i = 0; i < 2; ++i) {
+    copy->x.naxis[i] = self->x.naxis[i];
+    copy->x.crpix[i] = self->x.crpix[i];
+    copy->x.crval[i] = self->x.crval[i];
+    copy->x.cdelt[i] = self->x.cdelt[i];
+  }
+
+  if (self->py_data) {
+    obj_copy = get_deepcopy((PyObject*)self->py_data, memo);
+    if (obj_copy == NULL) {
+      Py_DECREF(copy);
+      return NULL;
+    }
+    PyDistLookup_set_data(copy, (PyObject*)obj_copy, NULL);
+    Py_DECREF(obj_copy);
+  }
+
+  return copy;
+}
+
+
 static PyGetSetDef PyDistLookup_getset[] = {
   {"cdelt", (getter)PyDistLookup_get_cdelt, (setter)PyDistLookup_set_cdelt, (char *)doc_cdelt},
   {"crpix", (getter)PyDistLookup_get_crpix, (setter)PyDistLookup_set_crpix, (char *)doc_crpix},
@@ -262,6 +326,10 @@ static PyGetSetDef PyDistLookup_getset[] = {
 };
 
 static PyMethodDef PyDistLookup_methods[] = {
+  {"__copy__", (PyCFunction)PyDistLookup___copy__, METH_NOARGS, NULL},
+  {"copy", (PyCFunction)PyDistLookup___copy__, METH_NOARGS, NULL},
+  {"__deepcopy__", (PyCFunction)PyDistLookup___deepcopy__, METH_O, NULL},
+  {"deepcopy", (PyCFunction)PyDistLookup___deepcopy__, METH_O, NULL},
   {"get_offset", (PyCFunction)PyDistLookup_get_offset, METH_VARARGS, doc_get_offset},
   {NULL}
 };

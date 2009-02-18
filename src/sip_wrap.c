@@ -423,6 +423,33 @@ PySip_get_crpix(
   return get_double_array("crpix", self->x.crpix, 1, &naxis, (PyObject*)self);
 }
 
+static PyObject*
+PySip___copy__(
+    PySip* self,
+    /*@unused@*/ PyObject* args,
+    /*@unused@*/ PyObject* kwds) {
+
+  PySip* copy         = NULL;
+
+  copy = (PySip*)PySip_new(&PySipType, NULL, NULL);
+  if (copy == NULL) {
+    return NULL;
+  }
+
+  if (sip_init(&copy->x,
+               self->x.a_order, self->x.a,
+               self->x.b_order, self->x.b,
+               self->x.ap_order, self->x.ap,
+               self->x.bp_order, self->x.bp,
+               self->x.crpix)) {
+    Py_DECREF(copy);
+    return NULL;
+  }
+
+  return (PyObject*)copy;
+}
+
+
 static PyGetSetDef PySip_getset[] = {
   {"a", (getter)PySip_get_a, NULL, (char *)doc_a},
   {"a_order", (getter)PySip_get_a_order, NULL, (char *)doc_a_order},
@@ -437,6 +464,10 @@ static PyGetSetDef PySip_getset[] = {
 };
 
 static PyMethodDef PySip_methods[] = {
+  {"copy", (PyCFunction)PySip___copy__, METH_NOARGS, NULL},
+  {"__copy__", (PyCFunction)PySip___copy__, METH_NOARGS, NULL},
+  {"deepcopy", (PyCFunction)PySip___copy__, METH_O, NULL},
+  {"__deepcopy__", (PyCFunction)PySip___copy__, METH_O, NULL},
   {"pix2foc", (PyCFunction)PySip_pix2foc, METH_VARARGS, doc_sip_pix2foc},
   {"foc2pix", (PyCFunction)PySip_foc2pix, METH_VARARGS, doc_sip_foc2pix},
   {NULL}

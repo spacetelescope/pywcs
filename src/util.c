@@ -759,3 +759,15 @@ set_pvcards(
 
   return 0;
 }
+
+PyObject*
+get_deepcopy(
+    PyObject* obj,
+    PyObject* memo) {
+
+  if (PyObject_HasAttrString(obj, "__deepcopy__")) {
+    return PyObject_CallMethod(obj, "__deepcopy__", "O", memo);
+  } else {
+    return PyObject_CallMethod(obj, "__copy__", "");
+  }
+}
