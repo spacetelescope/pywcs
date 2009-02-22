@@ -2350,11 +2350,9 @@ static PyGetSetDef PyWcsprm_getset[] = {
 
 static PyMethodDef PyWcsprm_methods[] = {
   {"celfix", (PyCFunction)PyWcsprm_celfix, METH_NOARGS, doc_celfix},
-  {"copy", (PyCFunction)PyWcsprm_copy, METH_NOARGS, doc_copy},
   {"__copy__", (PyCFunction)PyWcsprm_copy, METH_NOARGS, doc_copy},
   {"cylfix", (PyCFunction)PyWcsprm_cylfix, METH_VARARGS, doc_cylfix},
   {"datfix", (PyCFunction)PyWcsprm_datfix, METH_NOARGS, doc_datfix},
-  {"deepcopy", (PyCFunction)PyWcsprm_copy, METH_O, doc_copy},
   {"__deepcopy__", (PyCFunction)PyWcsprm_copy, METH_O, doc_copy},
   {"fix", (PyCFunction)PyWcsprm_fix, METH_VARARGS, doc_fix},
   {"get_ps", (PyCFunction)PyWcsprm_get_ps, METH_NOARGS, doc_get_ps},

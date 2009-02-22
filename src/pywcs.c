@@ -650,9 +650,7 @@ static PyGetSetDef PyWcs_getset[] = {
 static PyMethodDef PyWcs_methods[] = {
   {"_all_pix2sky", (PyCFunction)PyWcs_all_pix2sky, METH_VARARGS, doc_all_pix2sky},
   {"__copy__", (PyCFunction)PyWcs___copy__, METH_NOARGS, NULL},
-  {"copy", (PyCFunction)PyWcs___copy__, METH_NOARGS, NULL},
   {"__deepcopy__", (PyCFunction)PyWcs___deepcopy__, METH_O, NULL},
-  {"deepcopy", (PyCFunction)PyWcs___deepcopy__, METH_O, NULL},
   {"_p4_pix2foc", (PyCFunction)PyWcs_p4_pix2foc, METH_VARARGS, doc_p4_pix2foc},
   {"_pix2foc", (PyCFunction)PyWcs_pix2foc, METH_VARARGS, doc_pix2foc},
   {NULL}

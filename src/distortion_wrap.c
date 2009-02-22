@@ -327,9 +327,7 @@ static PyGetSetDef PyDistLookup_getset[] = {
 
 static PyMethodDef PyDistLookup_methods[] = {
   {"__copy__", (PyCFunction)PyDistLookup___copy__, METH_NOARGS, NULL},
-  {"copy", (PyCFunction)PyDistLookup___copy__, METH_NOARGS, NULL},
   {"__deepcopy__", (PyCFunction)PyDistLookup___deepcopy__, METH_O, NULL},
-  {"deepcopy", (PyCFunction)PyDistLookup___deepcopy__, METH_O, NULL},
   {"get_offset", (PyCFunction)PyDistLookup_get_offset, METH_VARARGS, doc_get_offset},
   {NULL}
 };

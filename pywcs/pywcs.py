@@ -68,6 +68,8 @@ The basic workflow is as follows:
 
 __docformat__ = "epytext"
 
+import copy
+
 import numpy
 
 import _docutil as __
@@ -159,6 +161,41 @@ class WCS(WCSBase):
 
         WCSBase.__init__(self, sip, cpdis, wcsprm)
         self.footprint = self._calcFootprint(header)
+
+    def __copy__(self):
+        new_copy = WCS()
+        WCSBase.__init__(new_copy, self.sip,
+                         (self.cpdis1, self.cpdis2),
+                         self.wcs)
+        new_copy.footprint = self.footprint
+        return new_copy
+
+    def __deepcopy__(self, memo):
+        new_copy = WCS()
+        WCSBase.__init__(new_copy, copy.deepcopy(self.sip, memo),
+                         (copy.deepcopy(self.cpdis1, memo),
+                          copy.deepcopy(self.cpdis2, memo)),
+                         copy.deepcopy(self.wcs, memo))
+        new_copy.footprint = copy.deepcopy(self.footprint, memo)
+        return new_copy
+
+    def copy(self):
+        """
+        Return a shallow copy of the object.
+
+        Convenience method so user doesn't have to import the copy
+        stdlib module.
+        """
+        return copy.copy(self)
+
+    def deepcopy(self):
+        """
+        Return a deep copy of the object.
+
+        Convenience method so user doesn't have to import the copy
+        stdlib module.
+        """
+        return copy.deepcopy(self)
 
     def _calcFootprint(self,header):
         """
