@@ -167,16 +167,18 @@ class WCS(WCSBase):
         WCSBase.__init__(new_copy, self.sip,
                          (self.cpdis1, self.cpdis2),
                          self.wcs)
-        new_copy.footprint = self.footprint
+        new_copy.__dict__.update(self.__dict__)
         return new_copy
 
     def __deepcopy__(self, memo):
         new_copy = WCS()
+        new_copy.naxis = copy.deepcopy(self.naxis, memo)
         WCSBase.__init__(new_copy, copy.deepcopy(self.sip, memo),
                          (copy.deepcopy(self.cpdis1, memo),
                           copy.deepcopy(self.cpdis2, memo)),
                          copy.deepcopy(self.wcs, memo))
-        new_copy.footprint = copy.deepcopy(self.footprint, memo)
+        for key, val in self.__dict__:
+            new_copy[key] = copy.deepcopy(val, memo)
         return new_copy
 
     def copy(self):
