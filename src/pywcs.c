@@ -277,7 +277,7 @@ PyWcs_p4_pix2foc(
     return NULL;
   }
 
-  if (self->x.cpdis[0] == NULL || self->x.cpdis[1] == NULL) {
+  if (self->x.cpdis[0] == NULL && self->x.cpdis[1] == NULL) {
     Py_INCREF(pixcrd_obj);
     return pixcrd_obj;
   }
@@ -713,30 +713,67 @@ int _setup_pywcs_type(
   return PyModule_AddObject(m, "_Wcs", (PyObject *)&PyWcsType);
 }
 
-#ifndef PyMODINIT_FUNC	/* declarations for DLL import/export */
-#define PyMODINIT_FUNC void
+struct module_state {
+
+};
+
+#if PY_MAJOR_VERSION >= 3
+    #define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
+#else
+    #define GETSTATE(m) (&_state)
+    static struct module_state _state;
 #endif
-PyMODINIT_FUNC
-init_pywcs(void) {
-  PyObject* m;
 
-  m = Py_InitModule3("_pywcs", NULL, NULL);
+#if PY_MAJOR_VERSION >= 3
+    static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "_pywcs",
+        NULL,
+        sizeof(struct module_state),
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL
+    };
 
-  if (m == NULL) {
-    return;
-  }
+    #define INITERROR return NULL
 
-  import_array();
+    PyObject *
+    PyInit__pywcs(void)
 
-  if (_setup_str_list_proxy_type(m) ||
-      _setup_wcsprm_type(m)         ||
-      _setup_distortion_type(m)     ||
-      _setup_sip_type(m)            ||
-      _setup_pywcs_type(m)          ||
-      _define_exceptions(m)) {
-    Py_DECREF(m);
-    return;
-  }
+#else
+    #define INITERROR return
 
-  PyModule_AddObject(m, "__docformat__", PyString_FromString("epytext"));
+    void
+    init_pywcs(void)
+#endif
+
+{
+#if PY_MAJOR_VERSION >= 3
+    PyObject *m = PyModule_Create(&moduledef);
+#else
+    PyObject *m = Py_InitModule3("_pywcs", NULL, NULL);
+#endif
+
+    if (m == NULL)
+        INITERROR;
+
+    import_array();
+
+    if (_setup_str_list_proxy_type(m) ||
+        _setup_wcsprm_type(m)         ||
+        _setup_distortion_type(m)     ||
+        _setup_sip_type(m)            ||
+        _setup_pywcs_type(m)          ||
+        _define_exceptions(m)) {
+        Py_DECREF(m);
+        INITERROR;
+    }
+
+    PyModule_AddObject(m, "__docformat__", PyString_FromString("epytext"));
+
+#if PY_MAJOR_VERSION >= 3
+    return module;
+#endif
 }

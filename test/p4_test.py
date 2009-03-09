@@ -10,17 +10,18 @@ data2 = numpy.array([1,3,5,7])
 
 header = hdulist[1].header
 wcs = pywcs.WCS(header, hdulist)
-assert wcs.cpdis1 is not None and wcs.cpdis2 is not None
+print wcs.cpdis1, wcs.cpdis2
+wcs.cpdis2 = None
 
 print data1, data2
-focal = wcs.p4_pix2foc(data1, data2)
+focal = wcs.p4_pix2foc(data1, data2, 0)
 print "Just P4"
 print focal
 
-focal2 = wcs.sip_pix2foc(data1, data2)
+focal2 = wcs.sip_pix2foc(data1, data2, 0)
 print "Just SIP"
 print focal2
 
-focal3 = wcs.pix2foc(data1, data2)
+focal3 = wcs.pix2foc(data1, data2, 0)
 print "Both"
 print focal3

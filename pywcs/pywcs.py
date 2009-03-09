@@ -270,7 +270,7 @@ class WCS(WCSBase):
         if not tables:
             return (None, None)
         else:
-            return (tables[1], tables[2])
+            return (tables.get(1), tables.get(2))
 
     def _read_sip_kw(self, header, key=''):
         """
@@ -505,9 +505,12 @@ class WCS(WCSBase):
 
     def sip_pix2foc(self, *args, **kwargs):
         if self.sip is None:
-            if len(args) == 1:
+            if len(args) == 2:
                 return args[0]
-            return args
+            elif len(args) == 3:
+                return args[:2]
+            else:
+                raise ArgumentError("Wrong number of arguments")
         return self._array_converter(self.sip.pix2foc, *args, **kwargs)
     sip_pix2foc.__doc__ = """
         sip_pix2foc(*args, origin) -> focal plane
@@ -531,9 +534,12 @@ class WCS(WCSBase):
 
     def sip_foc2pix(self, *args, **kwargs):
         if self.sip is None:
-            if len(args) == 1:
+            if len(args) == 2:
                 return args[0]
-            return args
+            elif len(args) == 3:
+                return args[:2]
+            else:
+                raise ArgumentError("Wrong number of arguments")
         return self._array_converter(self.sip.foc2pix, *args, **kwargs)
     sip_foc2pix.__doc__ = """
         sip_foc2pix(*args, origin) -> pixel
