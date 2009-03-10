@@ -687,6 +687,7 @@ PyWcsprm_mix(
                   (double*)PyArray_DATA(pixcrd));
   wcsprm_c2python(&self->x);
   unoffset_array(pixcrd, origin);
+  unoffset_array(imgcrd, origin);
 
   if (status == 0) {
     result = PyDict_New();
@@ -804,6 +805,8 @@ PyWcsprm_p2s(
                   (int*)PyArray_DATA(stat));
   wcsprm_c2python(&self->x);
   unoffset_array(pixcrd, origin);
+  unoffset_array(world, origin);
+  unoffset_array(imgcrd, origin);
 
   if (status == 0 || status == 8) {
     result = PyDict_New();
@@ -910,7 +913,7 @@ PyWcsprm_s2p(
   }
 
   /* Make the call */
-  preoffset_array(pixcrd, origin);
+  preoffset_array(world, origin);
   wcsprm_python2c(&self->x);
   status = wcss2p(&self->x,
                   (int)PyArray_DIM(world, 0),
@@ -922,7 +925,9 @@ PyWcsprm_s2p(
                   (double*)PyArray_DATA(pixcrd),
                   (int*)PyArray_DATA(stat));
   wcsprm_c2python(&self->x);
+  unoffset_array(world, origin);
   unoffset_array(pixcrd, origin);
+  unoffset_array(imgcrd, origin);
 
   if (status == 0 || status == 9) {
     result = PyDict_New();

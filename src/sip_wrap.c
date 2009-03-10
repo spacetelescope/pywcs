@@ -222,6 +222,7 @@ PySip_pix2foc(
                        (const double*)PyArray_DATA(pixcrd),
                        (double*)PyArray_DATA(foccrd));
   unoffset_array(pixcrd, origin);
+  unoffset_array(foccrd, origin);
 
  exit:
 
@@ -295,6 +296,7 @@ PySip_foc2pix(
                        (double*)PyArray_DATA(foccrd),
                        (double*)PyArray_DATA(pixcrd));
   unoffset_array(foccrd, origin);
+  unoffset_array(pixcrd, origin);
 
  exit:
   Py_XDECREF(foccrd);

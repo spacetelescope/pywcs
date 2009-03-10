@@ -237,6 +237,7 @@ PyWcs_all_pix2sky(
                                     (double*)PyArray_DATA(world));
   wcsprm_c2python(self->x.wcs);
   unoffset_array(pixcrd, origin);
+  unoffset_array(world, origin);
 
  exit:
   Py_XDECREF(pixcrd);
@@ -304,6 +305,7 @@ PyWcs_p4_pix2foc(
                       (double*)PyArray_DATA(pixcrd),
                       (double*)PyArray_DATA(foccrd));
   unoffset_array(pixcrd, origin);
+  unoffset_array(foccrd, origin);
 
  exit:
 
@@ -367,6 +369,7 @@ PyWcs_pix2foc(
                             (double*)PyArray_DATA(pixcrd),
                             (double*)PyArray_DATA(foccrd));
   unoffset_array(pixcrd, origin);
+  unoffset_array(foccrd, origin);
 
  _exit:
 

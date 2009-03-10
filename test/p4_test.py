@@ -12,9 +12,10 @@ header = hdulist[1].header
 wcs = pywcs.WCS(header, hdulist)
 print wcs.cpdis1, wcs.cpdis2
 wcs.cpdis2 = None
+wcs.cpdis1.data = numpy.array([[0,0,0,0]], numpy.float32)
 
-print data1, data2
 focal = wcs.p4_pix2foc(data1, data2, 0)
+print data1, data2
 print "Just P4"
 print focal
 
