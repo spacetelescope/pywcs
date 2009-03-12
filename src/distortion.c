@@ -91,7 +91,7 @@ get_dist(
     }
   }
 
-  return *(lookup->data + (lookup->naxis[0] * cropped[1]) + cropped[0]);
+  return *(lookup->data + (lookup->naxis[1] * cropped[1]) + cropped[0]);
 }
 
 /**
