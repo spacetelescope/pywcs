@@ -115,8 +115,8 @@ PyDistLookup_init(
   }
 
   self->py_data = array_obj;
-  self->x.naxis[0] = (unsigned int)PyArray_DIM(array_obj, 0);
-  self->x.naxis[1] = (unsigned int)PyArray_DIM(array_obj, 1);
+  self->x.naxis[0] = (unsigned int)PyArray_DIM(array_obj, 1);
+  self->x.naxis[1] = (unsigned int)PyArray_DIM(array_obj, 0);
   self->x.data = (float *)PyArray_DATA(array_obj);
 
   return 0;
@@ -223,8 +223,8 @@ PyDistLookup_set_data(
   Py_XDECREF(self->py_data);
 
   self->py_data = value_array;
-  self->x.naxis[0] = (unsigned int)PyArray_DIM(value_array, 0);
-  self->x.naxis[1] = (unsigned int)PyArray_DIM(value_array, 1);
+  self->x.naxis[0] = (unsigned int)PyArray_DIM(value_array, 1);
+  self->x.naxis[1] = (unsigned int)PyArray_DIM(value_array, 0);
   self->x.data = (float *)PyArray_DATA(value_array);
 
   return 0;

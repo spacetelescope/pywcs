@@ -80,7 +80,7 @@ get_dist(
 
   unsigned int cropped[NAXES];
   unsigned int i;
-
+  
   for (i = 0; i < NAXES; ++i) {
     if (coord[i] >= lookup->naxis[i]) {
       cropped[i] = lookup->naxis[i] - 1;
@@ -90,8 +90,7 @@ get_dist(
       cropped[i] = coord[i];
     }
   }
-
-  return *(lookup->data + (lookup->naxis[1] * cropped[1]) + cropped[0]);
+  return *(lookup->data + (lookup->naxis[0] * cropped[1]) + cropped[0]);
 }
 
 /**
@@ -108,7 +107,6 @@ image_coord_to_distortion_coord(
 
   assert(lookup != NULL);
   assert(axis < NAXES);
-
   result = (
       ((img - lookup->crval[axis]) / lookup->cdelt[axis]) +
       lookup->crpix[axis]);
@@ -118,7 +116,6 @@ image_coord_to_distortion_coord(
   } else if (result >= (double)lookup->naxis[axis]) {
     result = (double)lookup->naxis[axis] - 1.0;
   }
-
   return result;
 }
 
@@ -193,9 +190,9 @@ get_distortion_offset(
       coord[1] = dist_ifloor[1] + (int)k;
       result += (double)get_dist(lookup, coord) * \
         calculate_weight(dist_weight[0], l, dist_weight[1], k);
+      
     }
   }
-
   return result;
 }
 
