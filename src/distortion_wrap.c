@@ -313,7 +313,7 @@ PyDistLookup___deepcopy__(
     Py_DECREF(obj_copy);
   }
 
-  return copy;
+  return (PyObject*)copy;
 }
 
 
