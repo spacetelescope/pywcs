@@ -160,7 +160,7 @@ class WCS(WCSBase):
             sip = self._read_sip_kw(header, key=key)
 
         WCSBase.__init__(self, sip, cpdis, wcsprm)
-        self.footprint = self._calcFootprint(header)
+        
 
     def __copy__(self):
         new_copy = WCS()
@@ -199,18 +199,26 @@ class WCS(WCSBase):
         """
         return copy.deepcopy(self)
 
-    def _calcFootprint(self,header):
+    def calcFootprint(self, header=None):
         """
         Calculates the footprint of the image on the sky.
         A footprint is defined as the positions of the corners of the image
         on the sky after all available distortions have been applied.
         """
         if header is None:
-            return None
+            try:
+                # classes that inherit from WCS and define naxis1/2 
+                # do not require a header parameter
+                naxis1 = self.naxis1 
+                naxis2 = self.naxis2
+            except AttributeError :
+                print "Need a valid header in order to calculate footprint\n"
+                return None
+        else:
+            naxis1 = header.get('NAXIS1', None)
+            naxis2 = header.get('NAXIS2', None)
+            
         corners = numpy.zeros(shape=(4,2),dtype=numpy.float64)
-        naxis1 = header.get('NAXIS1', None)
-        naxis2 = header.get('NAXIS2', None)
-
         if naxis1 is None or naxis2 is None:
             return None
 
@@ -222,7 +230,6 @@ class WCS(WCSBase):
         corners[2,1] = naxis2
         corners[3,0] = naxis1
         corners[3,1] = 1.
-
         return self.all_pix2sky(corners, 1)
 
     def _read_distortion_kw(self, header, fobj, key='', dist='CPDIS', err=0.0):
