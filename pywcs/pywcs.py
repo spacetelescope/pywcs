@@ -160,7 +160,7 @@ class WCS(WCSBase):
             sip = self._read_sip_kw(header, key=key)
 
         WCSBase.__init__(self, sip, cpdis, wcsprm)
-        
+
 
     def __copy__(self):
         new_copy = WCS()
@@ -207,9 +207,9 @@ class WCS(WCSBase):
         """
         if header is None:
             try:
-                # classes that inherit from WCS and define naxis1/2 
+                # classes that inherit from WCS and define naxis1/2
                 # do not require a header parameter
-                naxis1 = self.naxis1 
+                naxis1 = self.naxis1
                 naxis2 = self.naxis2
             except AttributeError :
                 print "Need a valid header in order to calculate footprint\n"
@@ -217,7 +217,7 @@ class WCS(WCSBase):
         else:
             naxis1 = header.get('NAXIS1', None)
             naxis2 = header.get('NAXIS2', None)
-            
+
         corners = numpy.zeros(shape=(4,2),dtype=numpy.float64)
         if naxis1 is None or naxis2 is None:
             return None
@@ -409,7 +409,7 @@ class WCS(WCSBase):
         @raises InvalidTransformError: Ill-conditioned coordinate
             transformation parameters.
         """ % (__.ORIGIN(8),
-               __.ONE_OR_TWO_ARGS('pixel', 8))
+               __.TWO_OR_THREE_ARGS('pixel', 8))
 
     def wcs_pix2sky(self, *args, **kwargs):
         if self.wcs is None:
@@ -444,7 +444,7 @@ class WCS(WCSBase):
         @raises InvalidTransformError: Ill-conditioned coordinate
             transformation parameters.
         """ % (__.ORIGIN(8),
-               __.ONE_OR_TWO_ARGS('sky', 8))
+               __.TWO_OR_THREE_ARGS('sky', 8))
 
     def wcs_sky2pix(self, *args, **kwargs):
         if self.wcs is None:
@@ -473,7 +473,7 @@ class WCS(WCSBase):
         @raises InvalidTransformError: Ill-conditioned coordinate
             transformation parameters.
         """ % (__.ORIGIN(8),
-               __.ONE_OR_TWO_ARGS('pixel', 8))
+               __.TWO_OR_THREE_ARGS('pixel', 8))
 
     def pix2foc(self, *args, **kwargs):
         return self._array_converter(self._pix2foc, *args, **kwargs)
@@ -491,7 +491,7 @@ class WCS(WCSBase):
         @raises MemoryError: Memory allocation failed.
         @raises ValueError: Invalid coordinate transformation parameters.
         """ % (__.ORIGIN(8),
-               __.ONE_OR_TWO_ARGS('pixel', 8))
+               __.TWO_OR_THREE_ARGS('pixel', 8))
 
     def p4_pix2foc(self, *args, **kwargs):
         return self._array_converter(self._p4_pix2foc, *args, **kwargs)
@@ -508,7 +508,7 @@ class WCS(WCSBase):
         @raises MemoryError: Memory allocation failed.
         @raises ValueError: Invalid coordinate transformation parameters.
         """ % (__.ORIGIN(8),
-               __.ONE_OR_TWO_ARGS('pixel', 8))
+               __.TWO_OR_THREE_ARGS('pixel', 8))
 
     def sip_pix2foc(self, *args, **kwargs):
         if self.sip is None:
@@ -537,7 +537,7 @@ class WCS(WCSBase):
         @raises MemoryError: Memory allocation failed.
         @raises ValueError: Invalid coordinate transformation parameters.
         """ % (__.ORIGIN(8),
-               __.ONE_OR_TWO_ARGS('pixel', 8))
+               __.TWO_OR_THREE_ARGS('pixel', 8))
 
     def sip_foc2pix(self, *args, **kwargs):
         if self.sip is None:
@@ -565,7 +565,7 @@ class WCS(WCSBase):
         @raises MemoryError: Memory allocation failed.
         @raises ValueError: Invalid coordinate transformation parameters.
         """ % (__.ORIGIN(8),
-               __.ONE_OR_TWO_ARGS('focal plane', 8))
+               __.TWO_OR_THREE_ARGS('focal plane', 8))
 
     def to_header(self, relax=False):
         """

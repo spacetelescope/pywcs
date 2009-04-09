@@ -39,17 +39,21 @@ def _fix(content, indent=0):
     indent = '\n' + ' ' * indent
     return indent.join(lines)
 
-def ONE_OR_TWO_ARGS(out_type, indent=0):
+def TWO_OR_THREE_ARGS(out_type, indent=0):
     return _fix(
-"""Either one or two arguments may be provided.
+"""Either two or three arguments may be provided.
 
-    - one argument: An Nx2 array of I{x}- and I{y}-coordinates.
+    - two arguments: An Nx2 array of I{x}- and I{y}-coordinates, and
+      an origin
 
-    - two arguments: Two one-dimensional arrays of I{x} and I{y}
-          coordinates.
+    - three arguments: Two one-dimensional arrays of I{x} and I{y}
+      coordinates, and an origin.
 
-@return: Returns the %s coordinates.  If the input was a
-     single array, a single array is returned, otherwise a tuple of
+Here, origin is the coordinate in the upper left corner of the image.
+In FITS/Fortran standards, this is 1.  In Numpy/C standards this is 0.
+
+@return: Returns the %s coordinates.  If the input was a single array
+     and origin, a single array is returned, otherwise a tuple of
      arrays is returned.""" % out_type, indent)
 
 def ORIGIN(indent=0):
