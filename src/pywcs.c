@@ -34,12 +34,10 @@ DAMAGE.
          mdroe@stsci.edu
 */
 
-/* util.h must be imported first */
-#include "util.h"
+#include "pywcs.h"
 #include "wcslib_wrap.h"
 #include "distortion_wrap.h"
 #include "sip_wrap.h"
-#include "pipeline.h"
 #include "docstrings.h"
 
 #include <structmember.h> /* from Python */
@@ -49,14 +47,6 @@ DAMAGE.
  ***************************************************************************/
 
 static PyTypeObject PyWcsType;
-
-typedef struct {
-  PyObject_HEAD
-  pipeline_t x;
-  /*@null@*/ /*@shared@*/ PyObject* py_sip;
-  /*@shared@*/ PyObject*            py_distortion_lookup[2];
-  /*@null@*/ /*@shared@*/ PyObject* py_wcsprm;
-} PyWcs;
 
 static int _setup_pywcs_type(PyObject* m);
 
