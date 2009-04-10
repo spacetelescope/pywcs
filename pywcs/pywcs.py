@@ -740,10 +740,7 @@ class WCS(WCSBase):
         print 'CD_21  CD_22: %r %r' % (self.wcs.cd[1,0],  self.wcs.cd[1,1])
         print 'CRVAL    : %r %r' % (self.wcs.crval[0], self.wcs.crval[1])
         print 'CRPIX    : %r %r' % (self.wcs.crpix[0], self.wcs.crpix[1])
-        print 'NAXIS    : %d %d' % (self.naxis1, self.naxis2)
-        print 'Plate Scale : %r' % self.pscale
-        print 'ORIENTAT : %r' % self.orientat
-
+        
 def DEGTORAD(deg):
     return (deg * numpy.pi / 180.)
 
