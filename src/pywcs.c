@@ -227,7 +227,7 @@ PyWcs_all_pix2sky(
                                     (double*)PyArray_DATA(world));
   wcsprm_c2python(self->x.wcs);
   unoffset_array(pixcrd, origin);
-  unoffset_array(world, origin);
+  /* unoffset_array(world, origin); */
 
  exit:
   Py_XDECREF(pixcrd);
