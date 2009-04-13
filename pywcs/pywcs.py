@@ -661,7 +661,14 @@ class WCS(WCSBase):
             self.naxis1 = header.get('NAXIS1', 0.0)
             self.naxis2 = header.get('NAXIS2', 0.0)
                 
-    
+    def rotateCD(self, theta): 
+        _theta = DEGTORAD(theta) 
+        _mrot = numpy.zeros(shape=(2,2),dtype=numpy.double) 
+        _mrot[0] = (numpy.cos(_theta),numpy.sin(_theta)) 
+        _mrot[1] = (-numpy.sin(_theta),numpy.cos(_theta)) 
+        new_cd = numpy.dot(self.wcs.cd, _mrot) 
+        self.wcs.cd = new_cd 
+        
     def printwcs(self):
         print 'WCS Keywords\n'
         print 'CD_11  CD_12: %r %r' % (self.wcs.cd[0,0],  self.wcs.cd[0,1])
