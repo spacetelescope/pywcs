@@ -158,7 +158,7 @@ class WCS(WCSBase):
 
             cpdis = self._read_distortion_kw(header, fobj, key=key,dist='CPDIS', err=minerr)
             sip = self._read_sip_kw(header, key=key)
-
+        self.get_naxis(header)
         WCSBase.__init__(self, sip, cpdis, wcsprm)
 
 
@@ -653,93 +653,22 @@ class WCS(WCSBase):
         self.footprint.tofile(f, sep=',')
         f.write(') # color=%s, width=%d \n' % (color, width))
         f.close()
-
-    def recenter(self):
-        """
-        Reset the reference position values to correspond to the center
-        of the reference frame.
-        """
-        if self.wcs.ctype[0].find('TAN') < 0 or self.wcs.ctype[1].find('TAN') < 0:
-            print 'WCS.recenter() only supported for TAN projections.'
-            raise TypeError
-
-        # Check to see if WCS is already centered...
-        if self.wcs.crpix[0] == self.naxis1/2. and self.wcs.crpix[1] == self.naxis2/2.:
-            # No recentering necessary... return without changing WCS.
-            return
-
-        _cen = numpy.array([[self.naxis1/2.,self.naxis2/2.]])
-
-        # Compute the RA and Dec for center pixel
-        _cenrd = self.wcs.p2s(_cen)['world']
-
-        #_cd = numpy.array([[self.wcs.cd[0,0],self.wcs.cd[0,1]],[self.wcs.cd[1,0],self.wcs.cd[1,1]]],dtype=numpy.double)
-        _cd = self.wcs.cd
-        _ra0 = DEGTORAD(self.wcs.crval[0])
-        _dec0 = DEGTORAD(self.wcs.crval[1])
-        _ra = DEGTORAD(_cenrd[0,0])
-        _dec = DEGTORAD(_cenrd[0,1])
-
-        # Set up some terms for use in the final result
-        _dx = self.naxis1/2. - self.wcs.crpix[0]
-        _dy = self.naxis2/2. - self.wcs.crpix[1]
-
-        _dE,_dN = DEGTORAD(numpy.dot(_cd,(_dx,_dy)))
-        _dE_dN = 1 + numpy.power(_dE,2) + numpy.power(_dN,2)
-        _cosdec = numpy.cos(_dec)
-        _sindec = numpy.sin(_dec)
-        _cosdec0 = numpy.cos(_dec0)
-        _sindec0 = numpy.sin(_dec0)
-
-        _n1 = numpy.power(_cosdec,2) + _dE*_dE + _dN*_dN*numpy.power(_sindec,2)
-        _dra_dE = (_cosdec0 - _dN*_sindec0)/_n1
-        _dra_dN = _dE*_sindec0 /_n1
-
-        _ddec_dE = -_dE*numpy.tan(_dec) / _dE_dN
-        _ddec_dN = (1/_cosdec) * ((_cosdec0 / numpy.sqrt(_dE_dN)) - (_dN*numpy.sin(_dec) / _dE_dN))
-
-        # Compute new CD matrix values now...
-        _cd11n = _cosdec * (self.wcs.cd[0,0]*_dra_dE + self.wcs.cd[1,0] * _dra_dN)
-        _cd12n = _cosdec * (self.wcs.cd[0,1]*_dra_dE + self.wcs.cd[1,1] * _dra_dN)
-        _cd21n = self.wcs.cd[0,0] * _ddec_dE + self.wcs.cd[1,0] * _ddec_dN
-        _cd22n = self.wcs.cd[0,1] * _ddec_dE + self.wcs.cd[1,1] * _ddec_dN
-
-        _new_orient = RADTODEG(numpy.arctan2(_cd12n,_cd22n))
-        #_new_pscale = N.sqrt(N.power(_cd11n,2)+N.power(_cd21n,2)) * 3600.
-
-        # Update the values now...
-        self.wcs.crpix = _cen[0]
-        #self.wcs.crpix[1] = _cen[1]
-        self.wcs.crval[0] = RADTODEG(_ra)
-        self.wcs.crval[1] = RADTODEG(_dec)
-
-        # Keep the same plate scale, only change the orientation
-        self.rotateCD(_new_orient)
-
-        # These would update the CD matrix with the new rotation
-        # ALONG with the new plate scale which we do not want.
-        self.wcs.cd[0,0] = _cd11n
-        self.wcs.cd[0,1] = _cd12n
-        self.wcs.cd[1,0] = _cd21n
-        self.wcs.cd[1,1] = _cd22n
-        self.pscale = numpy.sqrt(self.wcs.cd[0,0]**2 + self.wcs.cd[1,0]**2)*3600.
-        self.orientat = numpy.arctan2(self.wcs.cd[0,1],self.wcs.cd[1,1]) * 180./numpy.pi
-        #self.update()
-
-    def rotateCD(self, theta):
-        _theta = DEGTORAD(theta)
-        _mrot = numpy.zeros(shape=(2,2),dtype=numpy.double)
-        _mrot[0] = (numpy.cos(_theta),numpy.sin(_theta))
-        _mrot[1] = (-numpy.sin(_theta),numpy.cos(_theta))
-        new_cd = numpy.dot(self.wcs.cd, _mrot)
-        self.wcs.cd = new_cd
-
+        
+    def get_naxis(self, header=None):
+        self.naxis1 = 0.0
+        self.naxis2 = 0.0
+        if header != None:
+            self.naxis1 = header.get('NAXIS1', 0.0)
+            self.naxis2 = header.get('NAXIS2', 0.0)
+                
+    
     def printwcs(self):
         print 'WCS Keywords\n'
         print 'CD_11  CD_12: %r %r' % (self.wcs.cd[0,0],  self.wcs.cd[0,1])
         print 'CD_21  CD_22: %r %r' % (self.wcs.cd[1,0],  self.wcs.cd[1,1])
         print 'CRVAL    : %r %r' % (self.wcs.crval[0], self.wcs.crval[1])
         print 'CRPIX    : %r %r' % (self.wcs.crpix[0], self.wcs.crpix[1])
+        print 'NAXIS    : %r %r' % (self.naxis1, self.naxis2)
         
 def DEGTORAD(deg):
     return (deg * numpy.pi / 180.)
