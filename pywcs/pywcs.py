@@ -177,8 +177,9 @@ class WCS(WCSBase):
                          (copy.deepcopy(self.cpdis1, memo),
                           copy.deepcopy(self.cpdis2, memo)),
                          copy.deepcopy(self.wcs, memo))
-        for key, val in self.__dict__:
-            new_copy[key] = copy.deepcopy(val, memo)
+        for key in self.__dict__:
+            val = self.__dict__[key]
+            new_copy.__dict__[key] = copy.deepcopy(val, memo)
         return new_copy
 
     def copy(self):
