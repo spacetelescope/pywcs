@@ -1,10 +1,5 @@
 #!/usr/bin/env python
-"""
-import os, os.path, sys, commands
-import distutils.core
-import distutils.sysconfig 
-import string
-"""
+
 CONTACT = "Michael Droettboom"
 EMAIL = "mdroe@stsci.edu"
 
@@ -64,6 +59,7 @@ WCSFILES = [ # List of wcslib files to compile
     'wcsunits.c',
     'wcsutil.c']
 WCSFILES = [join(WCSLIBC, x) for x in WCSFILES]
+WCSLIBINC = join("pywcs", WCSLIBC)
 
 ######################################################################
 # WCSLIB CONFIGURATION
@@ -172,6 +168,7 @@ PYWCS_EXTENSIONS = [Extension('pywcs._pywcs',
                   WCSFILES + PYWCS_SOURCES,
                   include_dirs=[
                     numpy_include,
+                    WCSLIBINC,
                     WCSLIBC,
                     "src"
                     ],
