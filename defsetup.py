@@ -1,5 +1,10 @@
 #!/usr/bin/env python
-
+"""
+import os, os.path, sys, commands
+import distutils.core
+import distutils.sysconfig 
+import string
+"""
 CONTACT = "Michael Droettboom"
 EMAIL = "mdroe@stsci.edu"
 
@@ -92,7 +97,7 @@ def determine_64_bit_int():
         print "         Please contact <%s> with details about your platform." % EMAIL
         return "long long int"
 
-fd = open("src/wcsconfig.h", "w")
+fd = open("pywcs/src/wcsconfig.h", "w")
 fd.write("""
 /* WCSLIB library version number. */
 #define WCSLIB_VERSION %s
@@ -104,12 +109,12 @@ fd.close()
 
 ######################################################################
 # GENERATE DOCSTRINGS IN C
-sys.path.append("./lib")
+sys.path.append("./pywcs/lib")
 docstrings = {}
-execfile("doc/docstrings.py", docstrings)
+execfile("pywcs/doc/docstrings.py", docstrings)
 keys = docstrings.keys()
 keys.sort()
-fd = open("src/docstrings.h", "w")
+fd = open("pywcs/src/docstrings.h", "w")
 fd.write("""/*
 DO NOT EDIT!
 
@@ -161,15 +166,9 @@ if OPENMP:
 else:
     extra_compile_args.append('-Wno-unknown-pragmas')
 
-setup(name="pywcs",
-      version="1.3a1-%s" % WCSVERSION,
-      description="Python wrappers to WCSLIB",
-      author=CONTACT,
-      author_email=EMAIL,
-      url="http://projects.scipy.org/astropy/astrolib/wiki/WikiStart",
-      packages=['lib'],
-      ext_modules=[
-        Extension('pywcs._pywcs',
+
+
+PYWCS_EXTENSIONS = [Extension('pywcs._pywcs',
                   WCSFILES + PYWCS_SOURCES,
                   include_dirs=[
                     numpy_include,
@@ -182,4 +181,17 @@ setup(name="pywcs",
                   libraries=libraries
                   )
         ]
-      )
+
+pkg = "pywcs"
+
+setupargs = {
+    'version' :		"1.4-%s" % WCSVERSION,
+    'description':  "Python wrappers to WCSLIB",
+    'author' :      CONTACT,
+    'author_email': EMAIL,
+    'url' :         "http://projects.scipy.org/astropy/astrolib/wiki/WikiStart", 
+    'platforms' :			["unix","windows"],
+    'ext_modules' :			PYWCS_EXTENSIONS
+
+}
+
