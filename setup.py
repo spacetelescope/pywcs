@@ -158,8 +158,6 @@ else:
 if OPENMP:
     extra_compile_args.append('-fopenmp')
     libraries.append('gomp')
-else:
-    extra_compile_args.append('-Wno-unknown-pragmas')
 
 setup(name="pywcs",
       version="1.3a1-%s" % WCSVERSION,
