@@ -324,9 +324,10 @@ PySip_get_a(
     PySip* self,
     /*@unused@*/ void* closure) {
 
-  const npy_intp dims[2] = {
-    (npy_intp)self->x.a_order + 1,
-    (npy_intp)self->x.a_order + 1 };
+  npy_intp dims[2];
+
+  dims[0] = (npy_intp)self->x.a_order + 1;
+  dims[1] = (npy_intp)self->x.a_order + 1;
 
   if (is_null(self->x.a)) {
     return NULL;
@@ -340,9 +341,10 @@ PySip_get_b(
     PySip* self,
     /*@unused@*/ void* closure) {
 
-  const npy_intp dims[2] = {
-    (npy_intp)self->x.b_order + 1,
-    (npy_intp)self->x.b_order + 1 };
+  npy_intp dims[2];
+
+  dims[0] = (npy_intp)self->x.b_order + 1;
+  dims[1] = (npy_intp)self->x.b_order + 1;
 
   if (is_null(self->x.b)) {
     return NULL;
@@ -356,9 +358,10 @@ PySip_get_ap(
     PySip* self,
     /*@unused@*/ void* closure) {
 
-  const npy_intp dims[2] = {
-    (npy_intp)self->x.ap_order + 1,
-    (npy_intp)self->x.ap_order + 1 };
+  npy_intp dims[2];
+
+  dims[0] = (npy_intp)self->x.ap_order + 1;
+  dims[1] = (npy_intp)self->x.ap_order + 1;
 
   if (is_null(self->x.ap)) {
     return NULL;
@@ -372,9 +375,10 @@ PySip_get_bp(
     PySip* self,
     /*@unused@*/ void* closure) {
 
-  const npy_intp dims[2] = {
-    (npy_intp)self->x.bp_order + 1,
-    (npy_intp)self->x.bp_order + 1 };
+  npy_intp dims[2];
+
+  dims[0] = (npy_intp)self->x.bp_order + 1;
+  dims[1] = (npy_intp)self->x.bp_order + 1;
 
   if (is_null(self->x.bp)) {
     return NULL;
