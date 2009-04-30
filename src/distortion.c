@@ -220,10 +220,9 @@ p4_pix2deltas(
     return 1;
   }
 
-  int j;
-
 #pragma omp parallel
   {
+    int j;
     int i;
     double* foc0;
     const double* pix0;
