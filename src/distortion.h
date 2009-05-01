@@ -37,6 +37,8 @@ DAMAGE.
 #ifndef __DISTORTION_H__
 #define __DISTORTION_H__
 
+#include "util.h"
+
 /* TODO: This is all two-dimensional.  Should be made
    multi-dimensional in the future. */
 #define NAXES 2

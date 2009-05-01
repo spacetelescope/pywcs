@@ -145,19 +145,24 @@ libraries = []
 define_macros = [('ECHO', None)]
 undef_macros = []
 extra_compile_args = []
+
 if DEBUG:
     define_macros.append(('DEBUG', None))
     undef_macros.append('NDEBUG')
-    extra_compile_args.extend(["-fno-inline", "-O0", "-g"])
+    if not sys.platform.startswith('sun'):
+        extra_compile_args.extend(["-fno-inline", "-O0", "-g"])
 else:
     # Define ECHO as nothing to prevent spurious newlines from
     # printing within the libwcs parser
     define_macros.append(('NDEBUG', None))
     undef_macros.append('DEBUG')
 
-if OPENMP:
-    extra_compile_args.append('-fopenmp')
-    libraries.append('gomp')
+if not sys.platform.startswith('sun'):
+    if OPENMP:
+        extra_compile_args.append('-fopenmp')
+        libraries.append('gomp')
+    else:
+        extra_compile_args.append('-Wno-unknown-pragmas')
 
 setup(name="pywcs",
       version="1.3a1-%s" % WCSVERSION,

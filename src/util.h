@@ -37,10 +37,16 @@ DAMAGE.
 #ifndef __UTIL_H__
 #define __UTIL_H__
 
+/* There is no inline in the Sun compiler */
+#ifdef __SUNPRO_C
+#define inline
+#endif
+
 #define PY_ARRAY_UNIQUE_SYMBOL pywcs_numpy_api
 
 #include <Python.h>
 #include <numpy/arrayobject.h>
+#include <numpy/npy_math.h>
 #include <wcs.h>
 #include <wcsmath.h>
 
@@ -120,7 +126,7 @@ void undefined2nan(
 
   for ( ; value != end; ++value) {
     v = *value;
-    *value = (v == UNDEFINED) ? (double)NAN : v;
+    *value = (v == UNDEFINED) ? (double)NPY_NAN : v;
   }
 }
 

@@ -707,7 +707,10 @@ int _setup_pywcs_type(
 }
 
 struct module_state {
-
+/* The Sun compiler can't handle empty structs */
+#ifdef __SUNPRO_C
+    int _dummy;
+#endif
 };
 
 #if PY_MAJOR_VERSION >= 3

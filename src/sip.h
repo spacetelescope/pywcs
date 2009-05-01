@@ -37,6 +37,8 @@ DAMAGE.
 #ifndef __SIP_H__
 #define __SIP_H__
 
+#include "util.h"
+
 typedef struct {
   unsigned int                    a_order;
   /*@null@*/ /*@shared@*/ double* a;
