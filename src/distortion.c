@@ -80,7 +80,7 @@ get_dist(
 
   unsigned int cropped[NAXES];
   unsigned int i;
-  
+
   for (i = 0; i < NAXES; ++i) {
     if (coord[i] >= lookup->naxis[i]) {
       cropped[i] = lookup->naxis[i] - 1;
@@ -190,7 +190,7 @@ get_distortion_offset(
       coord[1] = dist_ifloor[1] + (int)k;
       result += (double)get_dist(lookup, coord) * \
         calculate_weight(dist_weight[0], l, dist_weight[1], k);
-      
+
     }
   }
   return result;
@@ -203,6 +203,8 @@ p4_pix2deltas(
     const unsigned int nelem,
     const double* pix, /* [NAXES][nelem] */
     double *foc /* [NAXES][nelem] */) {
+  int j;
+
   assert(naxes == NAXES);
   assert(lookup != NULL);
   assert(pix != NULL);
@@ -222,7 +224,6 @@ p4_pix2deltas(
 
 #pragma omp parallel
   {
-    int j;
     int i;
     double* foc0;
     const double* pix0;
