@@ -35,18 +35,18 @@ def test_file(path):
     wcs.wcs.fix()
     wcs.wcs.set()
 
-    world = wcs.wcs_pix2sky(data3)
-    xy = wcs.wcs_sky2pix(world)
+    world = wcs.wcs_pix2sky(data3, 0)
+    xy = wcs.wcs_sky2pix(world, 0)
     print xy, data3
     assert similar(xy, data3)
 
-    world = wcs.wcs_pix2sky(data1, data2)
-    x, y = wcs.wcs_sky2pix(*world)
+    world = wcs.wcs_pix2sky(data1, data2, 0)
+    x, y = wcs.wcs_sky2pix(world[0], world[1], 0)
     assert similar(x, data1)
     assert similar(y, data2)
 
     # all_* should be identical to wcs_*
-    world2 = wcs.all_pix2sky(data1, data2)
+    world2 = wcs.all_pix2sky(data1, data2, 0)
     print world, world2
     assert similar(world[0], world2[0])
     assert similar(world[1], world2[1])
