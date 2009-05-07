@@ -38,7 +38,7 @@ DAMAGE.
 #define __PYWCS_H__
 
 /* util.h must be imported first */
-#include "util.h"
+#include "pyutil.h"
 #include "pipeline.h"
 
 typedef struct {

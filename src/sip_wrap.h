@@ -37,7 +37,7 @@ DAMAGE.
 #ifndef __SIP_WRAP_H__
 #define __SIP_WRAP_H__
 
-#include "util.h"
+#include "pyutil.h"
 #include "sip.h"
 
 extern PyTypeObject PySipType;

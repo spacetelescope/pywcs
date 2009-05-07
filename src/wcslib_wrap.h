@@ -37,7 +37,7 @@ DAMAGE.
 #ifndef __WCSLIB_WRAP_H__
 #define __WCSLIB_WRAP_H__
 
-#include "util.h"
+#include "pyutil.h"
 
 extern PyTypeObject PyWcsprmType;
 

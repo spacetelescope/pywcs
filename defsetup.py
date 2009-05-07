@@ -6,6 +6,7 @@ EMAIL = "mdroe@stsci.edu"
 import sys
 from distutils.core import setup, Extension
 from os.path import join
+import stsci_distutils_hack
 
 ######################################################################
 # CONFIGURATION
@@ -60,6 +61,7 @@ WCSFILES = [ # List of wcslib files to compile
     'wcsutil.c']
 WCSFILES = [join(WCSLIBC, x) for x in WCSFILES]
 WCSLIBINC = join("pywcs", WCSLIBC)
+WCSINCLUDES = [join(WCSLIBC, '*.h')]
 
 ######################################################################
 # WCSLIB CONFIGURATION
@@ -132,13 +134,29 @@ PYWCS_SOURCES = [ # List of pywcs files to compile
     'distortion.c',
     'distortion_wrap.c',
     'pipeline.c',
+    'pyutil.c',
     'pywcs.c',
     'sip.c',
     'sip_wrap.c',
     'str_list_proxy.c',
-    'util.c',
     'wcslib_wrap.c']
 PYWCS_SOURCES = [join('src', x) for x in PYWCS_SOURCES]
+
+PYWCS_INCLUDES = [
+    'distortion.h',
+    'distortion_wrap.h',
+    'docstrings.h',
+    'isnan.h',
+    'pipeline.h',
+    'pyutil.h',
+    'pywcs.h',
+    'sip.h',
+    'sip_wrap.h',
+    'str_list_proxy.h',
+    'util.h',
+    'wcsconfig.h',
+    'wcslib_wrap.h']
+PYWCS_INCLUDES = [join('src', x) for x in PYWCS_INCLUDES]
 
 ######################################################################
 # DISTUTILS SETUP
@@ -188,7 +206,9 @@ setupargs = {
     'author_email': EMAIL,
     'url' :         "http://projects.scipy.org/astropy/astrolib/wiki/WikiStart",
     'platforms' :			["unix","windows"],
-    'ext_modules' :			PYWCS_EXTENSIONS
-
+    'ext_modules' :			PYWCS_EXTENSIONS,
+    'data_files' : [
+        ('pywcs/include', PYWCS_INCLUDES),
+        ('pywcs/include/wcslib', WCSINCLUDES) ]
 }
 

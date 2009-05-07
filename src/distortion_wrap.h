@@ -37,7 +37,7 @@ DAMAGE.
 #ifndef __DISTORTION_WRAP_H__
 #define __DISTORTION_WRAP_H__
 
-#include "util.h"
+#include "pyutil.h"
 #include "distortion.h"
 
 extern PyTypeObject PyDistLookupType;

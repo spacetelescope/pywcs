@@ -37,7 +37,7 @@ DAMAGE.
 #ifndef __STR_LIST_PROXY_H__
 #define __STR_LIST_PROXY_H__
 
-#include "util.h"
+#include "pyutil.h"
 
 /***************************************************************************
  * List-of-strings proxy object
