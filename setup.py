@@ -183,7 +183,7 @@ if not sys.platform.startswith('sun'):
         extra_compile_args.append('-Wno-unknown-pragmas')
 
 setup(name="pywcs",
-      version="1.3a1-%s" % WCSVERSION,
+      version="1.4.1-%s" % WCSVERSION,
       description="Python wrappers to WCSLIB",
       author=CONTACT,
       author_email=EMAIL,

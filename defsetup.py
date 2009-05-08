@@ -200,7 +200,7 @@ PYWCS_EXTENSIONS = [Extension('pywcs._pywcs',
 pkg = "pywcs"
 
 setupargs = {
-    'version' :		"1.4-%s" % WCSVERSION,
+    'version' :		"1.4.1-%s" % WCSVERSION,
     'description':  "Python wrappers to WCSLIB",
     'author' :      CONTACT,
     'author_email': EMAIL,
