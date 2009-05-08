@@ -627,6 +627,20 @@ PyWcs___deepcopy__(
   return copy;
 }
 
+static PyObject*
+_sanity_check(
+    PyObject* self,
+    PyObject* args,
+    PyObject* kwds) {
+
+    if (sizeof(WCSLIB_INT64) != 8) {
+        Py_INCREF(Py_False);
+        return Py_False;
+    }
+
+    Py_INCREF(Py_True);
+    return Py_True;
+}
 
 /***************************************************************************
  * PyWcs definition structures
@@ -647,6 +661,11 @@ static PyMethodDef PyWcs_methods[] = {
   {"_p4_pix2foc", (PyCFunction)PyWcs_p4_pix2foc, METH_VARARGS, doc_p4_pix2foc},
   {"_pix2foc", (PyCFunction)PyWcs_pix2foc, METH_VARARGS, doc_pix2foc},
   {NULL}
+};
+
+static PyMethodDef module_methods[] = {
+    {"_sanity_check", (PyCFunction)_sanity_check, METH_NOARGS, ""},
+    {NULL}  /* Sentinel */
 };
 
 static PyTypeObject PyWcsType = {
@@ -726,7 +745,7 @@ struct module_state {
         "_pywcs",
         NULL,
         sizeof(struct module_state),
-        NULL,
+        module_methods,
         NULL,
         NULL,
         NULL,
@@ -749,7 +768,7 @@ struct module_state {
 #if PY_MAJOR_VERSION >= 3
     PyObject *m = PyModule_Create(&moduledef);
 #else
-    PyObject *m = Py_InitModule3("_pywcs", NULL, NULL);
+    PyObject *m = Py_InitModule3("_pywcs", module_methods, NULL);
 #endif
 
     if (m == NULL)

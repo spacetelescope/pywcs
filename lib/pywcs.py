@@ -76,6 +76,10 @@ import _docutil as __
 import _pywcs
 import pyfits
 
+assert _pywcs._sanity_check(), \
+    """PyWcs did not pass its sanity check for your build on your platform.
+Please send details about your build and platform to mdroe@stsci.edu"""
+
 # This is here for the sake of epydoc
 WCSBase = _pywcs._Wcs
 DistortionLookupTable = _pywcs.DistortionLookupTable
@@ -654,22 +658,22 @@ class WCS(WCSBase):
         self.footprint.tofile(f, sep=',')
         f.write(') # color=%s, width=%d \n' % (color, width))
         f.close()
-        
+
     def get_naxis(self, header=None):
         self.naxis1 = 0.0
         self.naxis2 = 0.0
         if header != None:
             self.naxis1 = header.get('NAXIS1', 0.0)
             self.naxis2 = header.get('NAXIS2', 0.0)
-                
-    def rotateCD(self, theta): 
-        _theta = DEGTORAD(theta) 
-        _mrot = numpy.zeros(shape=(2,2),dtype=numpy.double) 
-        _mrot[0] = (numpy.cos(_theta),numpy.sin(_theta)) 
-        _mrot[1] = (-numpy.sin(_theta),numpy.cos(_theta)) 
-        new_cd = numpy.dot(self.wcs.cd, _mrot) 
-        self.wcs.cd = new_cd 
-        
+
+    def rotateCD(self, theta):
+        _theta = DEGTORAD(theta)
+        _mrot = numpy.zeros(shape=(2,2),dtype=numpy.double)
+        _mrot[0] = (numpy.cos(_theta),numpy.sin(_theta))
+        _mrot[1] = (-numpy.sin(_theta),numpy.cos(_theta))
+        new_cd = numpy.dot(self.wcs.cd, _mrot)
+        self.wcs.cd = new_cd
+
     def printwcs(self):
         print 'WCS Keywords\n'
         print 'CD_11  CD_12: %r %r' % (self.wcs.cd[0,0],  self.wcs.cd[0,1])
@@ -677,7 +681,7 @@ class WCS(WCSBase):
         print 'CRVAL    : %r %r' % (self.wcs.crval[0], self.wcs.crval[1])
         print 'CRPIX    : %r %r' % (self.wcs.crpix[0], self.wcs.crpix[1])
         print 'NAXIS    : %r %r' % (self.naxis1, self.naxis2)
-        
+
 def DEGTORAD(deg):
     return (deg * numpy.pi / 180.)
 

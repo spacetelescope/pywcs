@@ -28,15 +28,6 @@ except AttributeError:
     numpy_include = numpy.get_numpy_include()
 
 ######################################################################
-# PyFITS
-try:
-    import pyfits
-except ImportError:
-    print "WARNING: PyFITS must be installed to use pywcs."
-    print "         Since this is not a build-time dependency, the "
-    print "         build will proceed."
-
-######################################################################
 # WCSLIB
 WCSVERSION = "4.3"
 WCSLIB = "wcslib-%s" % WCSVERSION # Path to wcslib
@@ -88,9 +79,6 @@ def determine_64_bit_int():
             raise ValueError()
 
     except ValueError:
-        print "WARNING: Could not find a suitable 64-bit integer type."
-        print "         Defaulting to 'long long int', but your build may be broken."
-        print "         Please contact <%s> with details about your platform." % EMAIL
         return "long long int"
 
 if os.path.exists("pywcs"):
