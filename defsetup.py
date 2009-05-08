@@ -6,7 +6,7 @@ EMAIL = "mdroe@stsci.edu"
 import sys
 from distutils.core import setup, Extension
 from os.path import join
-import stsci_distutils_hack
+import os.path
 
 ######################################################################
 # CONFIGURATION
@@ -60,8 +60,6 @@ WCSFILES = [ # List of wcslib files to compile
     'wcsunits.c',
     'wcsutil.c']
 WCSFILES = [join(WCSLIBC, x) for x in WCSFILES]
-WCSLIBINC = join("pywcs", WCSLIBC)
-WCSINCLUDES = [join(WCSLIBC, '*.h')]
 
 ######################################################################
 # WCSLIB CONFIGURATION
@@ -95,7 +93,11 @@ def determine_64_bit_int():
         print "         Please contact <%s> with details about your platform." % EMAIL
         return "long long int"
 
-fd = open("pywcs/src/wcsconfig.h", "w")
+if os.path.exists("pywcs"):
+    srcroot = 'pywcs'
+else:
+    srcroot = '.'
+fd = open(join(srcroot, 'src', 'wcsconfig.h'), "w")
 fd.write("""
 /* WCSLIB library version number. */
 #define WCSLIB_VERSION %s
@@ -107,12 +109,12 @@ fd.close()
 
 ######################################################################
 # GENERATE DOCSTRINGS IN C
-sys.path.append("./pywcs/lib")
+sys.path.append(join('.', srcroot, "lib"))
 docstrings = {}
-execfile("pywcs/doc/docstrings.py", docstrings)
+execfile(join(srcroot, 'doc', 'docstrings.py'), docstrings)
 keys = docstrings.keys()
 keys.sort()
-fd = open("pywcs/src/docstrings.h", "w")
+fd = open(join(srcroot, 'src', 'docstrings.h'), "w")
 fd.write("""/*
 DO NOT EDIT!
 
@@ -142,22 +144,6 @@ PYWCS_SOURCES = [ # List of pywcs files to compile
     'wcslib_wrap.c']
 PYWCS_SOURCES = [join('src', x) for x in PYWCS_SOURCES]
 
-PYWCS_INCLUDES = [
-    'distortion.h',
-    'distortion_wrap.h',
-    'docstrings.h',
-    'isnan.h',
-    'pipeline.h',
-    'pyutil.h',
-    'pywcs.h',
-    'sip.h',
-    'sip_wrap.h',
-    'str_list_proxy.h',
-    'util.h',
-    'wcsconfig.h',
-    'wcslib_wrap.h']
-PYWCS_INCLUDES = [join('src', x) for x in PYWCS_INCLUDES]
-
 ######################################################################
 # DISTUTILS SETUP
 libraries = []
@@ -186,9 +172,9 @@ PYWCS_EXTENSIONS = [Extension('pywcs._pywcs',
                   WCSFILES + PYWCS_SOURCES,
                   include_dirs=[
                     numpy_include,
-                    WCSLIBINC,
+                    join(srcroot, WCSLIBC),
                     WCSLIBC,
-                    "src"
+                    join(srcroot, "src")
                     ],
                   define_macros=define_macros,
                   undef_macros=undef_macros,
@@ -197,18 +183,22 @@ PYWCS_EXTENSIONS = [Extension('pywcs._pywcs',
                   )
         ]
 
-pkg = "pywcs"
+pkg = ["pywcs", "pywcs.include", "pywcs.include.wcslib"]
 
 setupargs = {
-    'version' :		"1.4.1-%s" % WCSVERSION,
+    'version' :	    "1.4.1-%s" % WCSVERSION,
     'description':  "Python wrappers to WCSLIB",
     'author' :      CONTACT,
     'author_email': EMAIL,
     'url' :         "http://projects.scipy.org/astropy/astrolib/wiki/WikiStart",
     'platforms' :			["unix","windows"],
     'ext_modules' :			PYWCS_EXTENSIONS,
-    'data_files' : [
-        ('pywcs/include', PYWCS_INCLUDES),
-        ('pywcs/include/wcslib', WCSINCLUDES) ]
+    'package_dir' : {
+        'pywcs': 'lib',
+        'pywcs.include': 'src',
+        'pywcs.include.wcslib': WCSLIBC},
+    'package_data' : {
+        'pywcs.include': ['*.h'],
+        'pywcs.include.wcslib': ['*.h']}
 }
 
