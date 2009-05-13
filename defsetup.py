@@ -10,7 +10,8 @@ import os.path
 
 ######################################################################
 # CONFIGURATION
-DEBUG = False
+# BUILD may be 'debug', 'profile', or 'release'
+BUILD = 'release'
 OPENMP = False
 
 ######################################################################
@@ -138,16 +139,23 @@ libraries = []
 define_macros = [('ECHO', None)]
 undef_macros = []
 extra_compile_args = []
-if DEBUG:
+if BUILD.lower() == 'debug':
     define_macros.append(('DEBUG', None))
     undef_macros.append('NDEBUG')
     if not sys.platform.startswith('sun'):
         extra_compile_args.extend(["-fno-inline", "-O0", "-g"])
-else:
+elif BUILD.lower() == 'profile':
+    define_macros.append(('NDEBUG', None))
+    undef_macros.append('DEBUG')
+    if not sys.platform.startswith('sun'):
+        extra_compile_args.extend(["-O3", "-g"])
+elif BUILD.lower() == 'release':
     # Define ECHO as nothing to prevent spurious newlines from
     # printing within the libwcs parser
     define_macros.append(('NDEBUG', None))
     undef_macros.append('DEBUG')
+else:
+    raise ValueError("BUILD should be one of 'debug', 'profile', or 'release'")
 
 if not sys.platform.startswith('sun'):
     if OPENMP:
@@ -174,7 +182,7 @@ PYWCS_EXTENSIONS = [Extension('pywcs._pywcs',
 pkg = ["pywcs", "pywcs.include", "pywcs.include.wcslib"]
 
 setupargs = {
-    'version' :	    "1.4.1-%s" % WCSVERSION,
+    'version' :	    "1.4.2-%s" % WCSVERSION,
     'description':  "Python wrappers to WCSLIB",
     'author' :      CONTACT,
     'author_email': EMAIL,
