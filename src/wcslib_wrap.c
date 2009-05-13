@@ -1136,7 +1136,7 @@ PyWcsprm_to_header(
 
   if (!PyArg_ParseTupleAndKeywords(args, kwds, "|i:to_header",
                                    (char **)keywords, &relax)) {
-    return NULL;
+    goto exit;
   }
 
   if (relax) {
@@ -1150,16 +1150,15 @@ PyWcsprm_to_header(
   if (status != 0) {
     PyErr_SetString(PyExc_RuntimeError,
                     "Unknown error occurred.  Something is seriously wrong.");
-    free(header);
-    return NULL;
+    goto exit;
   }
 
   /* Just return the raw header string.  PyFITS on the Python side will help
      to parse and use this information. */
   result = PyString_FromStringAndSize(header, (Py_ssize_t)nkeyrec * 80);
 
+ exit:
   free(header);
-
   return result;
 }
 
