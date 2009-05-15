@@ -74,23 +74,23 @@ distortion_lookup_t_free(
  * checking.)
  */
 static inline float
+get_dist_clamp(
+    const distortion_lookup_t * const lookup,
+    const int x,
+    const int y) {
+
+  return *(lookup->data +
+           (lookup->naxis[0] * CLAMP(y, 0, lookup->naxis[1] - 1)) +
+           CLAMP(x, 0, lookup->naxis[0] - 1));
+}
+
+static inline float
 get_dist(
-    const distortion_lookup_t *lookup,
-    const int *coord /* [NAXES] */) {
+    const distortion_lookup_t * const lookup,
+    const int x,
+    const int y) {
 
-  unsigned int cropped[NAXES];
-  unsigned int i;
-
-  for (i = 0; i < NAXES; ++i) {
-    if (coord[i] >= lookup->naxis[i]) {
-      cropped[i] = lookup->naxis[i] - 1;
-    } else if (coord[i] < 0) {
-      cropped[i] = 0;
-    } else {
-      cropped[i] = coord[i];
-    }
-  }
-  return *(lookup->data + (lookup->naxis[0] * cropped[1]) + cropped[0]);
+  return *(lookup->data + (lookup->naxis[0] * y) + x);
 }
 
 /**
@@ -99,7 +99,7 @@ get_dist(
  */
 static inline double
 image_coord_to_distortion_coord(
-    const distortion_lookup_t *lookup,
+    const distortion_lookup_t * const lookup,
     const unsigned int axis,
     const double img) {
 
@@ -107,16 +107,12 @@ image_coord_to_distortion_coord(
 
   assert(lookup != NULL);
   assert(axis < NAXES);
+
   result = (
       ((img - lookup->crval[axis]) / lookup->cdelt[axis]) +
       lookup->crpix[axis]);
 
-  if (result < 0.0) {
-    result = 0.0;
-  } else if (result >= (double)lookup->naxis[axis]) {
-    result = (double)lookup->naxis[axis] - 1.0;
-  }
-  return result;
+  return CLAMP(result, 0.0, (double)(lookup->naxis[axis] - 1));
 }
 
 /**
@@ -125,8 +121,8 @@ image_coord_to_distortion_coord(
  */
 static inline void
 image_coords_to_distortion_coords(
-    const distortion_lookup_t *lookup,
-    const double *img /* [NAXES] */,
+    const distortion_lookup_t * const lookup,
+    const double * const img /* [NAXES] */,
     /* Output parameters */
     /*@out@*/ double *dist /* [NAXES] */) {
 
@@ -141,36 +137,38 @@ image_coords_to_distortion_coords(
   }
 }
 
-/**
- * Helper function for get_distortion_offset
- */
-static inline double
-calculate_weight(
-    double iw,
-    const unsigned int i0,
-    double jw,
-    const unsigned int j0) {
+/* /\** */
+/*  * Helper function for get_distortion_offset */
+/*  *\/ */
+/* static inline double */
+/* calculate_weight( */
+/*     double iw, */
+/*     const unsigned int i0, */
+/*     double jw, */
+/*     const unsigned int j0) { */
 
-  assert(iw >= 0.0 && iw < 1.0);
-  assert(jw >= 0.0 && jw < 1.0);
+/*   assert(iw >= 0.0 && iw < 1.0); */
+/*   assert(jw >= 0.0 && jw < 1.0); */
 
-  if (i0 == 0) iw = 1.0 - iw;
-  if (j0 == 0) jw = 1.0 - jw;
-  return iw * jw;
-}
+/*   if (i0 == 0) iw = 1.0 - iw; */
+/*   if (j0 == 0) jw = 1.0 - jw; */
+/*   return iw * jw; */
+/* } */
+
+/* #define CALCULATE_WEIGHT(iw, i0, jw, j0) (((i0 == 0) ? (1.0 - iw) : iw) * ((j0 == 0) ? (1.0 - jw) : jw)) */
 
 double
 get_distortion_offset(
-    const distortion_lookup_t *lookup,
-    const double *img /*[NAXES]*/) {
+    const distortion_lookup_t * const lookup,
+    const double * const img /*[NAXES]*/) {
 
   double       dist[NAXES];
   double       dist_floor[NAXES];
   int          dist_ifloor[NAXES];
-  int          coord[NAXES];
   double       dist_weight[NAXES];
+  double       dist_iweight[NAXES];
   double       result;
-  unsigned int i, k, l;
+  unsigned int i;
 
   assert(lookup != NULL);
   assert(img != NULL);
@@ -181,18 +179,28 @@ get_distortion_offset(
     dist_floor[i] = floor(dist[i]);
     dist_ifloor[i] = (int)dist_floor[i];
     dist_weight[i] = dist[i] - dist_floor[i];
+    dist_iweight[i] = 1.0 - dist_weight[i];
   }
 
-  result = 0.0;
-  for (k = 0; k < NAXES; ++k) {
-    for (l = 0; l < NAXES; ++l) {
-      coord[0] = dist_ifloor[0] + (int)l;
-      coord[1] = dist_ifloor[1] + (int)k;
-      result += (double)get_dist(lookup, coord) * \
-        calculate_weight(dist_weight[0], l, dist_weight[1], k);
-
-    }
+  /* If we may need to clamp the lookups, use this slower approach */
+  if (dist_ifloor[0] < 0 ||
+      dist_ifloor[1] < 0 ||
+      dist_ifloor[0] >= lookup->naxis[0] - 1 ||
+      dist_ifloor[1] >= lookup->naxis[1] - 1) {
+    result =
+      (double)get_dist_clamp(lookup, dist_ifloor[0], dist_ifloor[1]) * dist_weight[0] * dist_weight[1] +
+      (double)get_dist_clamp(lookup, dist_ifloor[0], dist_ifloor[1] + 1) * dist_weight[0] * dist_iweight[1] +
+      (double)get_dist_clamp(lookup, dist_ifloor[0] + 1, dist_ifloor[1]) * dist_iweight[0] * dist_weight[1] +
+      (double)get_dist_clamp(lookup, dist_ifloor[0] + 1, dist_ifloor[1] + 1) * dist_iweight[0] * dist_iweight[1];
+  /* Else, we don't need to clamp 4 times for each pixel */
+  } else {
+    result =
+      (double)get_dist(lookup, dist_ifloor[0], dist_ifloor[1]) * dist_weight[0] * dist_weight[1] +
+      (double)get_dist(lookup, dist_ifloor[0], dist_ifloor[1] + 1) * dist_weight[0] * dist_iweight[1] +
+      (double)get_dist(lookup, dist_ifloor[0] + 1, dist_ifloor[1]) * dist_iweight[0] * dist_weight[1] +
+      (double)get_dist(lookup, dist_ifloor[0] + 1, dist_ifloor[1] + 1) * dist_iweight[0] * dist_iweight[1];
   }
+
   return result;
 }
 
@@ -203,6 +211,7 @@ p4_pix2deltas(
     const unsigned int nelem,
     const double* pix, /* [NAXES][nelem] */
     double *foc /* [NAXES][nelem] */) {
+
   int j;
 
   assert(naxes == NAXES);
@@ -254,7 +263,9 @@ p4_pix2foc(
   assert(pix);
   assert(foc);
 
-  memcpy(foc, pix, sizeof(double) * naxes * nelem);
+  if (pix != foc) {
+      memcpy(foc, pix, sizeof(double) * naxes * nelem);
+  }
 
   return p4_pix2deltas(naxes, lookup, nelem, pix, foc);
 }

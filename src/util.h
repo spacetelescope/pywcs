@@ -47,4 +47,7 @@ DAMAGE.
 
 #include "isnan.h"
 
+#undef	CLAMP
+#define CLAMP(x, low, high)  (((x) > (high)) ? (high) : (((x) < (low)) ? (low) : (x)))
+
 #endif /* __UTIL_H__ */

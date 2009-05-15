@@ -215,6 +215,7 @@ int pipeline_pix2foc(
   int           status     = 0;
 
   assert(nelem == 2);
+  assert(pixcrd != foc);
 
   if (pipeline == NULL || pixcrd == NULL || foc == NULL) {
     return 1;

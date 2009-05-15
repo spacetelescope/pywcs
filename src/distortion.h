@@ -86,8 +86,8 @@ lookup table
 */
 double
 get_distortion_offset(
-    const distortion_lookup_t *lookup,
-    const double *img /* [NAXES] */);
+    const distortion_lookup_t * const lookup,
+    const double * const img /* [NAXES] */);
 
 /**
 Perform just the distortion table part of Paper IV.

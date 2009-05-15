@@ -237,7 +237,9 @@ sip_compute(
     for (j = 0; j <= (int)m; ++j) {
       tmp[j] = lu(m, a, (int)m-j, j);
       for (k = j-1; k >= 0; --k) {
-        tmp[j] = (tmp_y * tmp[j]) + lu(m, a, (int)m-j, k);
+        /* tmp[j] = (tmp_y * tmp[j]) + lu(m, a, (int)m-j, k); */
+        tmp[j] *= tmp_y;
+        tmp[j] += lu(m, a, (int)m-j, k);
       }
     }
 
@@ -251,7 +253,9 @@ sip_compute(
     for (j = 0; j <= (int)n; ++j) {
       tmp[j] = lu(n, b, (int)n-j, j);
       for (k = j-1; k >= 0; --k) {
-        tmp[j] = tmp_y * tmp[j] + lu(n, b, (int)n-j, k);
+        /* tmp[j] = tmp_y * tmp[j] + lu(n, b, (int)n-j, k); */
+        tmp[j] *= tmp_y;
+        tmp[j] += lu(n, a, (int)n-j, k);
       }
     }
 
