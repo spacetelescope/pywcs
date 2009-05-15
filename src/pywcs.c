@@ -727,10 +727,16 @@ int _setup_pywcs_type(
 
 struct module_state {
 /* The Sun compiler can't handle empty structs */
-#ifdef __SUNPRO_C
+#if defined(__SUNPRO_C) || defined(_MSC_VER)
     int _dummy;
 #endif
 };
+
+/* This is an array mapping the wcs status codes to Python exception
+ * types.  The exception string is stored as part of wcslib itself in
+ * wcs_errmsg.
+ */
+PyObject** wcs_errexc[14];
 
 #if PY_MAJOR_VERSION >= 3
     #define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
@@ -765,10 +771,29 @@ struct module_state {
 #endif
 
 {
+    PyObject* m;
+
+    wcs_errexc[0] = NULL;                         /* Success */
+    wcs_errexc[1] = &PyExc_MemoryError;           /* Null wcsprm pointer passed */
+    wcs_errexc[2] = &PyExc_MemoryError;           /* Memory allocation failed */
+    wcs_errexc[3] = &WcsExc_SingularMatrix;       /* Linear transformation matrix is singular */
+    wcs_errexc[4] = &WcsExc_InconsistentAxisTypes; /* Inconsistent or unrecognized coordinate axis types */
+    wcs_errexc[5] = &PyExc_ValueError;            /* Invalid parameter value */
+    wcs_errexc[6] = &WcsExc_InvalidTransform;     /* Invalid coordinate transformation parameters */
+    wcs_errexc[7] = &WcsExc_InvalidTransform;     /* Ill-conditioned coordinate transformation parameters */
+    wcs_errexc[8] = &WcsExc_InvalidCoordinate;    /* One or more of the pixel coordinates were invalid, */
+    /* as indicated by the stat vector */
+    wcs_errexc[9] = &WcsExc_InvalidCoordinate;    /* One or more of the world coordinates were invalid, */
+                                        /* as indicated by the stat vector */
+    wcs_errexc[10] = &WcsExc_InvalidCoordinate;    /* Invalid world coordinate */
+    wcs_errexc[11] = &WcsExc_NoSolution;           /* no solution found in the specified interval */
+    wcs_errexc[12] = &WcsExc_InvalidSubimageSpecification; /* Invalid subimage specification (no spectral axis) */
+    wcs_errexc[13] = &WcsExc_NonseparableSubimageCoordinateSystem; /* Non-separable subimage coordinate system */
+
 #if PY_MAJOR_VERSION >= 3
-    PyObject *m = PyModule_Create(&moduledef);
+    m = PyModule_Create(&moduledef);
 #else
-    PyObject *m = Py_InitModule3("_pywcs", module_methods, NULL);
+    m = Py_InitModule3("_pywcs", module_methods, NULL);
 #endif
 
     if (m == NULL)

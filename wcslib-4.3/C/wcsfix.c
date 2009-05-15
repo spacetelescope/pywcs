@@ -316,7 +316,7 @@ int celfix(struct wcsprm *wcs)
    /* Initialize if required. */
    if (wcs == 0x0) return 1;
    if (wcs->flag != WCSSET) {
-      if ((status = wcsset(wcs))) return status;
+      if ((status = wcsset_(wcs))) return status;
    }
 
    /* Was an NCP or GLS projection code translated? */
@@ -383,7 +383,7 @@ int spcfix(struct wcsprm *wcs)
    /* Initialize if required. */
    if (wcs == 0x0) return 1;
    if (wcs->flag != WCSSET) {
-      if ((status = wcsset(wcs))) return status;
+      if ((status = wcsset_(wcs))) return status;
    }
 
    if ((i = wcs->spec) < 0) {
@@ -435,7 +435,7 @@ int cylfix(const int naxis[], struct wcsprm *wcs)
    /* Initialize if required. */
    if (wcs == 0x0) return 1;
    if (wcs->flag != WCSSET) {
-      if ((status = wcsset(wcs))) return status;
+      if ((status = wcsset_(wcs))) return status;
    }
 
    /* Check that we have a cylindrical projection. */
@@ -519,5 +519,5 @@ int cylfix(const int naxis[], struct wcsprm *wcs)
    wcs->crval[wcs->lat] = world[0][wcs->lat];
    wcs->lonpole = phi[0] - phi0;
 
-   return wcsset(wcs);
+   return wcsset_(wcs);
 }

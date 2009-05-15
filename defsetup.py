@@ -142,7 +142,8 @@ extra_compile_args = []
 if BUILD.lower() == 'debug':
     define_macros.append(('DEBUG', None))
     undef_macros.append('NDEBUG')
-    if not sys.platform.startswith('sun'):
+    if not sys.platform.startswith('sun') and \
+       not sys.platform == 'win32':
         extra_compile_args.extend(["-fno-inline", "-O0", "-g"])
 elif BUILD.lower() == 'profile':
     define_macros.append(('NDEBUG', None))
@@ -157,7 +158,12 @@ elif BUILD.lower() == 'release':
 else:
     raise ValueError("BUILD should be one of 'debug', 'profile', or 'release'")
 
-if not sys.platform.startswith('sun'):
+if sys.platform == 'win32':
+    define_macros.append(('YY_NO_UNISTD_H', None))
+    define_macros.append(('_CRT_SECURE_NO_WARNINGS', None))
+
+if not sys.platform.startswith('sun') and \
+   not sys.platform == 'win32':
     if OPENMP:
         extra_compile_args.append('-fopenmp')
         libraries.append('gomp')

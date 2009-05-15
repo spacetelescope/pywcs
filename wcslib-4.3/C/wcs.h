@@ -1265,7 +1265,6 @@ struct wcsprm {
 
 #define WCSLEN (sizeof(struct wcsprm)/sizeof(int))
 
-
 int wcsnpv(int);
 int wcsnps(int);
 
@@ -1273,7 +1272,7 @@ int wcsini(int, int, struct wcsprm *);
 int wcssub(int, const struct wcsprm *, int *, int[], struct wcsprm *);
 int wcsfree(struct wcsprm *);
 int wcsprt(const struct wcsprm *);
-int wcsset(struct wcsprm *);
+int wcsset_(struct wcsprm *);
 int wcsp2s(struct wcsprm *, int, int, const double[],
            double[], double[], double[], double[], int[]);
 int wcss2p(struct wcsprm *, int, int, const double[],

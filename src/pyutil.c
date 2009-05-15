@@ -226,24 +226,7 @@ PyObject* WcsExc_NoWcsKeywordsFound;
  * types.  The exception string is stored as part of wcslib itself in
  * wcs_errmsg.
  */
-PyObject** wcs_errexc[] = {
-  /* 0 */ NULL,                         /* Success */
-  /* 1 */ &PyExc_MemoryError,           /* Null wcsprm pointer passed */
-  /* 2 */ &PyExc_MemoryError,           /* Memory allocation failed */
-  /* 3 */ &WcsExc_SingularMatrix,       /* Linear transformation matrix is singular */
-  /* 4 */ &WcsExc_InconsistentAxisTypes, /* Inconsistent or unrecognized coordinate axis types */
-  /* 5 */ &PyExc_ValueError,            /* Invalid parameter value */
-  /* 6 */ &WcsExc_InvalidTransform,     /* Invalid coordinate transformation parameters */
-  /* 7 */ &WcsExc_InvalidTransform,     /* Ill-conditioned coordinate transformation parameters */
-  /* 8 */ &WcsExc_InvalidCoordinate,    /* One or more of the pixel coordinates were invalid, */
-                                        /* as indicated by the stat vector */
-  /* 9 */ &WcsExc_InvalidCoordinate,    /* One or more of the world coordinates were invalid, */
-                                        /* as indicated by the stat vector */
-  /*10 */ &WcsExc_InvalidCoordinate,    /* Invalid world coordinate */
-  /*11 */ &WcsExc_NoSolution,           /* no solution found in the specified interval */
-  /*12 */ &WcsExc_InvalidSubimageSpecification, /* Invalid subimage specification (no spectral axis) */
-  /*13 */ &WcsExc_NonseparableSubimageCoordinateSystem /* Non-separable subimage coordinate system */
-};
+PyObject** wcs_errexc[14];
 
 #define DEFINE_EXCEPTION(exc) \
   WcsExc_##exc = PyErr_NewException("_pywcs." #exc "Error", PyExc_ValueError, NULL); \

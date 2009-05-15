@@ -970,7 +970,7 @@ PyWcsprm_cset(
   int status = 0;
 
   wcsprm_python2c(&self->x);
-  status = wcsset(&self->x);
+  status = wcsset_(&self->x);
   wcsprm_c2python(&self->x);
 
   if (status == 0) {

@@ -42,6 +42,10 @@ DAMAGE.
 #define inline
 #endif
 
+#ifdef _MSC_VER
+#define inline __inline
+#endif
+
 #include <wcs.h>
 #include <wcsmath.h>
 
