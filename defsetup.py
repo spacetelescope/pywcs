@@ -121,8 +121,15 @@ edit doc/docstrings.py
 for key in keys:
     if key.startswith('__'):
         continue
-    val = docstrings[key].lstrip().encode("string_escape").replace('"', '\\"')
-    fd.write('/*@unused@*/ static const char doc_%s[] = "%s";\n\n' % (key, val))
+    val = docstrings[key].lstrip()
+    # Some compilers, notably Visual Studio, can not accept a string
+    # literal longer than 2048 bytes, without using concatenation.
+    # Therefore, we break the docstrings into lines
+    fd.write('/*@unused@*/ static const char doc_%s[] = "' % key)
+    for line in val.split('\n'):
+        line = line.encode('string_escape').replace('"', '\\"')
+        fd.write('%s\\n\\\n' % line)
+    fd.write('";\n\n')
 fd.close()
 
 ######################################################################
@@ -174,7 +181,7 @@ if not sys.platform.startswith('sun') and \
         extra_compile_args.append('-fopenmp')
         libraries.append('gomp')
     else:
-        extra_compile_args.append('-Wno-unknown-pragmas')
+        extra_compile_args.extend(['-Wno-unknown-pragmas'])
 
 PYWCS_EXTENSIONS = [Extension('pywcs._pywcs',
                   WCSFILES + PYWCS_SOURCES,
