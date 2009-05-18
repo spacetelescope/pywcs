@@ -237,13 +237,10 @@ sip_compute(
     for (j = 0; j <= (int)m; ++j) {
       tmp[j] = lu(m, a, (int)m-j, j);
       for (k = j-1; k >= 0; --k) {
-        /* tmp[j] = (tmp_y * tmp[j]) + lu(m, a, (int)m-j, k); */
-        tmp[j] *= tmp_y;
-        tmp[j] += lu(m, a, (int)m-j, k);
+        tmp[j] = (tmp_y * tmp[j]) + lu(m, a, (int)m-j, k);
       }
     }
 
-    /* Don't know why this loop is convoluted */
     sum = tmp[0];
     for (j = (int)m; j > 0; --j) {
       sum = tmp_x * sum + tmp[(int)m - j + 1];
@@ -253,13 +250,10 @@ sip_compute(
     for (j = 0; j <= (int)n; ++j) {
       tmp[j] = lu(n, b, (int)n-j, j);
       for (k = j-1; k >= 0; --k) {
-        /* tmp[j] = tmp_y * tmp[j] + lu(n, b, (int)n-j, k); */
-        tmp[j] *= tmp_y;
-        tmp[j] += lu(n, a, (int)n-j, k);
+          tmp[j] = (tmp_y * tmp[j]) + lu(n, b, (int)n-j, k);
       }
     }
 
-    /* Don't know why this loop is convoluted */
     sum = tmp[0];
     for (j = (int)n; j > 0; --j) {
       sum = tmp_x * sum + tmp[n - j + 1];
@@ -320,7 +314,9 @@ sip_pix2foc(
   assert(pix);
   assert(foc);
 
-  memcpy(foc, pix, sizeof(double) * naxes * nelem);
+  if (pix != foc) {
+      memcpy(foc, pix, sizeof(double) * naxes * nelem);
+  }
 
   return sip_pix2deltas(sip, naxes, nelem, pix, foc);
 }
@@ -335,7 +331,9 @@ sip_foc2pix(
   assert(pix);
   assert(foc);
 
-  memcpy(pix, foc, sizeof(double) * naxes * nelem);
+  if (pix != foc) {
+      memcpy(pix, foc, sizeof(double) * naxes * nelem);
+  }
 
   return sip_foc2deltas(sip, naxes, nelem, foc, pix);
 }

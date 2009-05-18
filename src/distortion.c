@@ -137,26 +137,6 @@ image_coords_to_distortion_coords(
   }
 }
 
-/* /\** */
-/*  * Helper function for get_distortion_offset */
-/*  *\/ */
-/* static inline double */
-/* calculate_weight( */
-/*     double iw, */
-/*     const unsigned int i0, */
-/*     double jw, */
-/*     const unsigned int j0) { */
-
-/*   assert(iw >= 0.0 && iw < 1.0); */
-/*   assert(jw >= 0.0 && jw < 1.0); */
-
-/*   if (i0 == 0) iw = 1.0 - iw; */
-/*   if (j0 == 0) jw = 1.0 - jw; */
-/*   return iw * jw; */
-/* } */
-
-/* #define CALCULATE_WEIGHT(iw, i0, jw, j0) (((i0 == 0) ? (1.0 - iw) : iw) * ((j0 == 0) ? (1.0 - jw) : jw)) */
-
 double
 get_distortion_offset(
     const distortion_lookup_t * const lookup,
@@ -188,17 +168,17 @@ get_distortion_offset(
       dist_ifloor[0] >= lookup->naxis[0] - 1 ||
       dist_ifloor[1] >= lookup->naxis[1] - 1) {
     result =
-      (double)get_dist_clamp(lookup, dist_ifloor[0], dist_ifloor[1]) * dist_weight[0] * dist_weight[1] +
-      (double)get_dist_clamp(lookup, dist_ifloor[0], dist_ifloor[1] + 1) * dist_weight[0] * dist_iweight[1] +
-      (double)get_dist_clamp(lookup, dist_ifloor[0] + 1, dist_ifloor[1]) * dist_iweight[0] * dist_weight[1] +
-      (double)get_dist_clamp(lookup, dist_ifloor[0] + 1, dist_ifloor[1] + 1) * dist_iweight[0] * dist_iweight[1];
+      (double)get_dist_clamp(lookup, dist_ifloor[0],     dist_ifloor[1])     * dist_iweight[0] * dist_iweight[1] +
+      (double)get_dist_clamp(lookup, dist_ifloor[0],     dist_ifloor[1] + 1) * dist_weight[0] * dist_iweight[1] +
+      (double)get_dist_clamp(lookup, dist_ifloor[0] + 1, dist_ifloor[1])     * dist_iweight[0] * dist_weight[1] +
+      (double)get_dist_clamp(lookup, dist_ifloor[0] + 1, dist_ifloor[1] + 1) * dist_weight[0] * dist_weight[1];
   /* Else, we don't need to clamp 4 times for each pixel */
   } else {
     result =
-      (double)get_dist(lookup, dist_ifloor[0], dist_ifloor[1]) * dist_weight[0] * dist_weight[1] +
-      (double)get_dist(lookup, dist_ifloor[0], dist_ifloor[1] + 1) * dist_weight[0] * dist_iweight[1] +
-      (double)get_dist(lookup, dist_ifloor[0] + 1, dist_ifloor[1]) * dist_iweight[0] * dist_weight[1] +
-      (double)get_dist(lookup, dist_ifloor[0] + 1, dist_ifloor[1] + 1) * dist_iweight[0] * dist_iweight[1];
+      (double)get_dist(lookup, dist_ifloor[0],     dist_ifloor[1])     * dist_iweight[0] * dist_iweight[1] +
+      (double)get_dist(lookup, dist_ifloor[0],     dist_ifloor[1] + 1) * dist_weight[0] * dist_iweight[1] +
+      (double)get_dist(lookup, dist_ifloor[0] + 1, dist_ifloor[1])     * dist_iweight[0] * dist_weight[1] +
+      (double)get_dist(lookup, dist_ifloor[0] + 1, dist_ifloor[1] + 1) * dist_weight[0] * dist_weight[1];
   }
 
   return result;
@@ -212,7 +192,10 @@ p4_pix2deltas(
     const double* pix, /* [NAXES][nelem] */
     double *foc /* [NAXES][nelem] */) {
 
-  int j;
+  int i;
+  double* foc0;
+  const double* pix0;
+  const double* pixend;
 
   assert(naxes == NAXES);
   assert(lookup != NULL);
@@ -231,23 +214,16 @@ p4_pix2deltas(
     return 1;
   }
 
-#pragma omp parallel
-  {
-    int i;
-    double* foc0;
-    const double* pix0;
-
-#pragma omp for
-    for (j = 0; j < nelem; ++j) {
-      pix0 = pix + (j * NAXES);
-      foc0 = foc + (j * NAXES);
-      for (i = 0; i < NAXES; ++i) {
-        if (lookup[i]) {
-          foc0[i] += get_distortion_offset(lookup[i], pix0);
-        }
+  pixend = pix + nelem * NAXES;
+  /* This can't be parallelized, because pix may be equal to foc */
+  /* For the same reason, i needs to be in the inner loop */
+  for (pix0 = pix, foc0 = foc; pix0 < pixend; pix0 += NAXES, foc0 += NAXES) {
+    for (i = 0; i < NAXES; ++i) {
+      if (lookup[i]) {
+        foc0[i] += get_distortion_offset(lookup[i], pix0);
       }
     }
-  } /* end of parallel section  */
+  }
 
   return 0;
 }
@@ -264,7 +240,7 @@ p4_pix2foc(
   assert(foc);
 
   if (pix != foc) {
-      memcpy(foc, pix, sizeof(double) * naxes * nelem);
+    memcpy(foc, pix, sizeof(double) * naxes * nelem);
   }
 
   return p4_pix2deltas(naxes, lookup, nelem, pix, foc);
