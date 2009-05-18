@@ -23,6 +23,12 @@ except ImportError:
     print "ABORTING."
     raise
 
+major, minor, rest = numpy.__version__.split(".", 2)
+if major, minor < (1, 3):
+    print "numpy version 1.3 or later must be installed to build pywcs."
+    print "ABORTING."
+    raise ImportError
+
 try:
     numpy_include = numpy.get_include()
 except AttributeError:
