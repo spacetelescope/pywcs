@@ -121,15 +121,12 @@ edit doc/docstrings.py
 for key in keys:
     if key.startswith('__'):
         continue
-    val = docstrings[key].lstrip()
-    # Some compilers, notably Visual Studio, can not accept a string
-    # literal longer than 2048 bytes, without using concatenation.
-    # Therefore, we break the docstrings into lines
-    fd.write('/*@unused@*/ static const char doc_%s[] = "' % key)
-    for line in val.split('\n'):
-        line = line.encode('string_escape').replace('"', '\\"')
-        fd.write('%s\\n\\\n' % line)
-    fd.write('";\n\n')
+    val = docstrings[key].lstrip().encode("string_escape").replace('"', '\\"')
+    if sys.platform == 'win32':
+        # Visual Studio .NET (2003), and possibly earlier, has a limit
+        # on the length of strings
+        val = val[:1024]
+    fd.write('/*@unused@*/ static const char doc_%s[] = "%s";\n\n' % (key, val))
 fd.close()
 
 ######################################################################
@@ -183,20 +180,21 @@ if not sys.platform.startswith('sun') and \
     else:
         extra_compile_args.extend(['-Wno-unknown-pragmas'])
 
-PYWCS_EXTENSIONS = [Extension('pywcs._pywcs',
-                  WCSFILES + PYWCS_SOURCES,
-                  include_dirs=[
-                    numpy_include,
-                    join(srcroot, WCSLIBC),
-                    WCSLIBC,
-                    join(srcroot, "src")
-                    ],
-                  define_macros=define_macros,
-                  undef_macros=undef_macros,
-                  extra_compile_args=extra_compile_args,
-                  libraries=libraries
-                  )
-        ]
+PYWCS_EXTENSIONS = [
+    Extension('pywcs._pywcs',
+              WCSFILES + PYWCS_SOURCES,
+              include_dirs =
+              [numpy_include,
+               join(srcroot, WCSLIBC),
+               WCSLIBC,
+               join(srcroot, "src")
+               ],
+              define_macros=define_macros,
+              undef_macros=undef_macros,
+              extra_compile_args=extra_compile_args,
+              libraries=libraries
+              )
+    ]
 
 pkg = ["pywcs", "pywcs.include", "pywcs.include.wcslib"]
 
