@@ -137,7 +137,7 @@ image_coords_to_distortion_coords(
   }
 }
 
-double
+inline double
 get_distortion_offset(
     const distortion_lookup_t * const lookup,
     const double * const img /*[NAXES]*/) {

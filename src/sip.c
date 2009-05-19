@@ -173,7 +173,7 @@ sip_free(sip_t* sip) {
 static inline double
 lu(
     const unsigned int order,
-    const double* matrix,
+    const double* const matrix,
     const int x,
     const int y) {
 
@@ -200,10 +200,12 @@ sip_compute(
     /*@null@*/ const double* input /* [NAXES][nelem] */,
     /*@null@*/ double* output /* [NAXES][nelem] */) {
 
-  unsigned int i;
-  int j, k;
-  double x, y, tmp_x, tmp_y;
-  double sum;
+  unsigned int  i;
+  int           j, k;
+  double        x, y;
+  double        sum;
+  const double* input_ptr;
+  double*       output_ptr;
 
   assert(a != NULL);
   assert(b != NULL);
@@ -227,38 +229,37 @@ sip_compute(
     return 0;
   }
 
+  input_ptr = input;
+  output_ptr = output;
   for (i = 0; i < nelem; ++i) {
-    x = input[i << 1];
-    y = input[(i << 1) + 1];
-
-    tmp_x = x - crpix[0];
-    tmp_y = y - crpix[1];
+    x = *input_ptr++ - crpix[0];
+    y = *input_ptr++ - crpix[1];
 
     for (j = 0; j <= (int)m; ++j) {
       tmp[j] = lu(m, a, (int)m-j, j);
       for (k = j-1; k >= 0; --k) {
-        tmp[j] = (tmp_y * tmp[j]) + lu(m, a, (int)m-j, k);
+        tmp[j] = (y * tmp[j]) + lu(m, a, (int)m-j, k);
       }
     }
 
     sum = tmp[0];
     for (j = (int)m; j > 0; --j) {
-      sum = tmp_x * sum + tmp[(int)m - j + 1];
+      sum = x * sum + tmp[(int)m - j + 1];
     }
-    output[i << 1] += sum;
+    *output_ptr++ += sum;
 
     for (j = 0; j <= (int)n; ++j) {
       tmp[j] = lu(n, b, (int)n-j, j);
       for (k = j-1; k >= 0; --k) {
-          tmp[j] = (tmp_y * tmp[j]) + lu(n, b, (int)n-j, k);
+          tmp[j] = (y * tmp[j]) + lu(n, b, (int)n-j, k);
       }
     }
 
     sum = tmp[0];
     for (j = (int)n; j > 0; --j) {
-      sum = tmp_x * sum + tmp[n - j + 1];
+      sum = x * sum + tmp[n - j + 1];
     }
-    output[(i << 1) + 1] += sum;
+    *output_ptr++ += sum;
   }
 
   return 0;
