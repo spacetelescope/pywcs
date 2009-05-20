@@ -54,7 +54,6 @@ WCSFILES = [ # List of wcslib files to compile
     'wcsfix.c',
     'wcshdr.c',
     'wcspih.c',
-    'wcstrig.c',
     'wcsunits.c',
     'wcsutil.c']
 WCSFILES = [join(WCSLIBC, x) for x in WCSFILES]
@@ -146,7 +145,7 @@ PYWCS_SOURCES = [join('src', x) for x in PYWCS_SOURCES]
 ######################################################################
 # DISTUTILS SETUP
 libraries = []
-define_macros = [('ECHO', None)]
+define_macros = [('ECHO', None), ('WCSTRIG_MACRO', None)]
 undef_macros = []
 extra_compile_args = []
 if BUILD.lower() == 'debug':

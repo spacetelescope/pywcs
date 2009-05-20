@@ -75,22 +75,24 @@ distortion_lookup_t_free(
  */
 static inline float
 get_dist_clamp(
-    const distortion_lookup_t * const lookup,
+    const float* const data,
+    const unsigned int* const naxis,
     const int x,
     const int y) {
 
-  return *(lookup->data +
-           (lookup->naxis[0] * CLAMP(y, 0, lookup->naxis[1] - 1)) +
-           CLAMP(x, 0, lookup->naxis[0] - 1));
+  return data[
+      ((naxis[0] * CLAMP(y, 0, naxis[1] - 1)) +
+       CLAMP(x, 0, naxis[0] - 1))];
 }
 
 static inline float
 get_dist(
-    const distortion_lookup_t * const lookup,
+    const float* const data,
+    const unsigned int* const naxis,
     const int x,
     const int y) {
 
-  return *(lookup->data + (lookup->naxis[0] * y) + x);
+  return data[(naxis[0] * y) + x];
 }
 
 /**
@@ -142,13 +144,15 @@ get_distortion_offset(
     const distortion_lookup_t * const lookup,
     const double * const img /*[NAXES]*/) {
 
-  double       dist[NAXES];
-  double       dist_floor[NAXES];
-  int          dist_ifloor[NAXES];
-  double       dist_weight[NAXES];
-  double       dist_iweight[NAXES];
-  double       result;
-  unsigned int i;
+  double              dist[NAXES];
+  double              dist_floor[NAXES];
+  int                 dist_ifloor[NAXES];
+  double              dist_weight[NAXES];
+  double              dist_iweight[NAXES];
+  double              result;
+  const unsigned int* naxis = lookup->naxis;
+  const float*        data  = lookup->data;
+  unsigned int        i;
 
   assert(lookup != NULL);
   assert(img != NULL);
@@ -168,17 +172,17 @@ get_distortion_offset(
       dist_ifloor[0] >= lookup->naxis[0] - 1 ||
       dist_ifloor[1] >= lookup->naxis[1] - 1) {
     result =
-      (double)get_dist_clamp(lookup, dist_ifloor[0],     dist_ifloor[1])     * dist_iweight[0] * dist_iweight[1] +
-      (double)get_dist_clamp(lookup, dist_ifloor[0],     dist_ifloor[1] + 1) * dist_weight[0] * dist_iweight[1] +
-      (double)get_dist_clamp(lookup, dist_ifloor[0] + 1, dist_ifloor[1])     * dist_iweight[0] * dist_weight[1] +
-      (double)get_dist_clamp(lookup, dist_ifloor[0] + 1, dist_ifloor[1] + 1) * dist_weight[0] * dist_weight[1];
+      (double)get_dist_clamp(data, naxis, dist_ifloor[0],     dist_ifloor[1])     * dist_iweight[0] * dist_iweight[1] +
+      (double)get_dist_clamp(data, naxis, dist_ifloor[0],     dist_ifloor[1] + 1) * dist_weight[0] * dist_iweight[1] +
+      (double)get_dist_clamp(data, naxis, dist_ifloor[0] + 1, dist_ifloor[1])     * dist_iweight[0] * dist_weight[1] +
+      (double)get_dist_clamp(data, naxis, dist_ifloor[0] + 1, dist_ifloor[1] + 1) * dist_weight[0] * dist_weight[1];
   /* Else, we don't need to clamp 4 times for each pixel */
   } else {
     result =
-      (double)get_dist(lookup, dist_ifloor[0],     dist_ifloor[1])     * dist_iweight[0] * dist_iweight[1] +
-      (double)get_dist(lookup, dist_ifloor[0],     dist_ifloor[1] + 1) * dist_weight[0] * dist_iweight[1] +
-      (double)get_dist(lookup, dist_ifloor[0] + 1, dist_ifloor[1])     * dist_iweight[0] * dist_weight[1] +
-      (double)get_dist(lookup, dist_ifloor[0] + 1, dist_ifloor[1] + 1) * dist_weight[0] * dist_weight[1];
+      (double)get_dist(data, naxis, dist_ifloor[0],     dist_ifloor[1])     * dist_iweight[0] * dist_iweight[1] +
+      (double)get_dist(data, naxis, dist_ifloor[0],     dist_ifloor[1] + 1) * dist_weight[0] * dist_iweight[1] +
+      (double)get_dist(data, naxis, dist_ifloor[0] + 1, dist_ifloor[1])     * dist_iweight[0] * dist_weight[1] +
+      (double)get_dist(data, naxis, dist_ifloor[0] + 1, dist_ifloor[1] + 1) * dist_weight[0] * dist_weight[1];
   }
 
   return result;

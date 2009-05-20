@@ -40,25 +40,20 @@ double cosd(angle)
 double angle;
 
 {
-   /* MGD: This appears to be an attempt at a speed improvement, but
-      profiling reveals it is much faster to skip the short-circuiting
-      and just use the system cos.
-    */
+   double resid;
 
-   /* double resid; */
-
-   /* if (fmod(angle,90.0) == 0.0) { */
-   /*    resid = fabs(fmod(angle,360.0)); */
-   /*    if (resid == 0.0) { */
-   /*       return 1.0; */
-   /*    } else if (resid == 90.0) { */
-   /*       return 0.0; */
-   /*    } else if (resid == 180.0) { */
-   /*       return -1.0; */
-   /*    } else if (resid == 270.0) { */
-   /*       return 0.0; */
-   /*    } */
-   /* } */
+   if (fmod(angle,90.0) == 0.0) {
+      resid = fabs(fmod(angle,360.0));
+      if (resid == 0.0) {
+         return 1.0;
+      } else if (resid == 90.0) {
+         return 0.0;
+      } else if (resid == 180.0) {
+         return -1.0;
+      } else if (resid == 270.0) {
+         return 0.0;
+      }
+   }
 
    return cos(angle*D2R);
 }
@@ -70,25 +65,20 @@ double sind(angle)
 double angle;
 
 {
-   /* MGD: This appears to be an attempt at a speed improvement, but
-      profiling reveals it is much faster to skip the short-circuiting
-      and just use the system sin.
-    */
+   double resid;
 
-   /* double resid; */
-
-   /* if (fmod(angle,90.0) == 0.0) { */
-   /*    resid = fmod(angle-90.0,360.0); */
-   /*    if (resid == 0.0) { */
-   /*       return 1.0; */
-   /*    } else if (resid == 90.0) { */
-   /*       return 0.0; */
-   /*    } else if (resid == 180.0) { */
-   /*       return -1.0; */
-   /*    } else if (resid == 270.0) { */
-   /*       return 0.0; */
-   /*    } */
-   /* } */
+   if (fmod(angle,90.0) == 0.0) {
+      resid = fmod(angle-90.0,360.0);
+      if (resid == 0.0) {
+         return 1.0;
+      } else if (resid == 90.0) {
+         return 0.0;
+      } else if (resid == 180.0) {
+         return -1.0;
+      } else if (resid == 270.0) {
+         return 0.0;
+      }
+   }
 
    return sin(angle*D2R);
 }
@@ -100,21 +90,16 @@ double tand(angle)
 double angle;
 
 {
-   /* MGD: This appears to be an attempt at a speed improvement, but
-      profiling reveals it is much faster to skip the short-circuiting
-      and just use the system cos.
-    */
+   double resid;
 
-   /* double resid; */
-
-   /* resid = fmod(angle,360.0); */
-   /* if (resid == 0.0 || fabs(resid) == 180.0) { */
-   /*    return 0.0; */
-   /* } else if (resid == 45.0 || resid == 225.0) { */
-   /*    return 1.0; */
-   /* } else if (resid == -135.0 || resid == -315.0) { */
-   /*    return -1.0; */
-   /* } */
+   resid = fmod(angle,360.0);
+   if (resid == 0.0 || fabs(resid) == 180.0) {
+      return 0.0;
+   } else if (resid == 45.0 || resid == 225.0) {
+      return 1.0;
+   } else if (resid == -135.0 || resid == -315.0) {
+      return -1.0;
+   }
 
    return tan(angle*D2R);
 }
