@@ -205,12 +205,9 @@ setupargs = {
     'url' :         "http://projects.scipy.org/astropy/astrolib/wiki/WikiStart",
     'platforms' :			["unix","windows"],
     'ext_modules' :			PYWCS_EXTENSIONS,
-    'package_dir' : {
-        'pywcs': 'lib',
-        'pywcs.include': 'src',
-        'pywcs.include.wcslib': WCSLIBC},
-    'package_data' : {
-        'pywcs.include': ['*.h'],
-        'pywcs.include.wcslib': ['*.h']}
+    'data_files' : [
+                    ( 'pywcs/include', ['src/*.h']),
+                    ( 'pywcs/include/wcslib', [ WCSLIBC + '/*.h'] ),
+                    ],
 }
 
