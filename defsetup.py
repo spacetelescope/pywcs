@@ -195,7 +195,7 @@ PYWCS_EXTENSIONS = [
               )
     ]
 
-pkg = ["pywcs", "pywcs.include", "pywcs.include.wcslib"]
+pkg = ["pywcs" ]
 
 setupargs = {
     'version' :	    "1.4.2-%s" % WCSVERSION,
