@@ -127,7 +127,7 @@ sip_pix2foc(
 Computes the offset deltas necessary to convert pixel coordinates to
 focal plane coordinates using the SIP polynomial distortion
 convention, and the values stored in the sip_t struct.  The deltas are
-added to the existing values in foc.
+added to the existing values in pix.
 
 @param naxes
 
@@ -171,5 +171,30 @@ sip_foc2pix(
     const unsigned int nelem,
     const double* foc /* [NAXES][nelem] */,
     double* pix /* [NAXES][nelem] */);
+
+/**
+Computes the offset deltas necessary to convert focal plane
+coordinates to pixel coordinates using the SIP polynomial distortion
+convention, and the values stored in the sip_t struct.  The deltas are
+added to the existing values in foc.
+
+@param naxes
+
+@param nelem
+
+@param foc [in]: An array of focal plane coordinates
+
+@param foc [in/out]: An array of deltas, that when added to pix
+results in focal plane coordinates.
+
+@return A wcslib error code
+*/
+int
+sip_foc2deltas(
+    const sip_t* sip,
+    const unsigned int naxes,
+    const unsigned int nelem,
+    const double* foc /* [NAXES][nelem] */,
+    double* deltas /* [NAXES][nelem] */);
 
 #endif

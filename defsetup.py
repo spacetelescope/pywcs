@@ -136,6 +136,7 @@ PYWCS_SOURCES = [ # List of pywcs files to compile
     'pipeline.c',
     'pyutil.c',
     'pywcs.c',
+    'pywcs_api.c',
     'sip.c',
     'sip_wrap.c',
     'str_list_proxy.c',
@@ -145,7 +146,7 @@ PYWCS_SOURCES = [join('src', x) for x in PYWCS_SOURCES]
 ######################################################################
 # DISTUTILS SETUP
 libraries = []
-define_macros = [('ECHO', None), ('WCSTRIG_MACRO', None)]
+define_macros = [('ECHO', None), ('WCSTRIG_MACRO', None), ('PYWCS_BUILD', None)]
 undef_macros = []
 extra_compile_args = []
 if BUILD.lower() == 'debug':

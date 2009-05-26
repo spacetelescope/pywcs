@@ -39,6 +39,7 @@ DAMAGE.
 #include "distortion_wrap.h"
 #include "sip_wrap.h"
 #include "docstrings.h"
+#include "pywcs_api.h"
 
 #include <structmember.h> /* from Python */
 
@@ -801,7 +802,8 @@ PyObject** wcs_errexc[14];
 
     import_array();
 
-    if (_setup_str_list_proxy_type(m) ||
+    if (_setup_api(m)                 ||
+        _setup_str_list_proxy_type(m) ||
         _setup_wcsprm_type(m)         ||
         _setup_distortion_type(m)     ||
         _setup_sip_type(m)            ||
