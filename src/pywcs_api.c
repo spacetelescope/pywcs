@@ -29,6 +29,8 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 DAMAGE.
 */
 
+#define NO_IMPORT_ARRAY
+
 #include "pywcs_api.h"
 
 int
