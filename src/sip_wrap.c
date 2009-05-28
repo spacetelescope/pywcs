@@ -472,8 +472,8 @@ static PyGetSetDef PySip_getset[] = {
 static PyMethodDef PySip_methods[] = {
   {"__copy__", (PyCFunction)PySip___copy__, METH_NOARGS, NULL},
   {"__deepcopy__", (PyCFunction)PySip___copy__, METH_O, NULL},
-  {"pix2foc", (PyCFunction)PySip_pix2foc, METH_VARARGS, doc_sip_pix2foc},
-  {"foc2pix", (PyCFunction)PySip_foc2pix, METH_VARARGS, doc_sip_foc2pix},
+  {"pix2foc", (PyCFunction)PySip_pix2foc, METH_VARARGS|METH_KEYWORDS, doc_sip_pix2foc},
+  {"foc2pix", (PyCFunction)PySip_foc2pix, METH_VARARGS|METH_KEYWORDS, doc_sip_foc2pix},
   {NULL}
 };
 
