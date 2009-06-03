@@ -66,6 +66,8 @@ The basic workflow is as follows:
          the table lookup distortion method described in Paper IV.
 """
 
+from __future__ import division # confidence high
+
 __docformat__ = "epytext"
 
 import copy

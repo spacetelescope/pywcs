@@ -34,6 +34,8 @@
 pywcs-specific utilities for generating boilerplate in docstrings.
 """
 
+from __future__ import division # confidence high
+
 def _fix(content, indent=0):
     lines = content.split('\n')
     indent = '\n' + ' ' * indent

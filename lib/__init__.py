@@ -38,6 +38,8 @@
 @license: LGPL (wcslib)
 """
 
+from __future__ import division # confidence high
+
 __docformat__ = "epytext"
 
 from pywcs import *
