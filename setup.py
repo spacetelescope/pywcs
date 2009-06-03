@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import division # confidence high
+
 # We use the local copy of stsci_distutils_hack, unless
 # the user asks for the stpytools version
 

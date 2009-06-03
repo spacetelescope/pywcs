@@ -37,7 +37,6 @@ DAMAGE.
 #ifndef __UTIL_H__
 #define __UTIL_H__
 
-/* There is no inline in the Sun compiler */
 #ifdef __SUNPRO_C
 #define inline
 #endif

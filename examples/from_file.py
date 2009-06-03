@@ -1,6 +1,8 @@
 # Load the WCS information from a fits header, and use it
 # to convert pixel coordinates to world coordinates.
 
+from __future__ import division # confidence high
+
 import numpy
 import pywcs
 import pyfits
