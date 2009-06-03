@@ -249,6 +249,11 @@ _define_exceptions(
   return 0;
 }
 
+const char*
+wcslib_get_error_message(int status) {
+    return wcsp2s_errmsg[status];
+}
+
 /***************************************************************************
   Property helpers
  ***************************************************************************/

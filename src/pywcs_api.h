@@ -61,7 +61,7 @@ This allows for a rudimentary version check upon dynamic linking to
 the pywcs module.
  */
 
-#define REVISION 1
+#define REVISION 2
 
 #ifdef PYWCS_BUILD
 
@@ -99,6 +99,7 @@ void** PyWcs_API;
 #define wcsp2s (*(int (*)(struct wcsprm *, int, int, const double[], double[], double[], double[], double[], int[])) PyWcs_API[20])
 #define wcss2p (*(int (*)(struct wcsprm *, int, int, const double[], double[], double[], double[], double[], int[])) PyWcs_API[21])
 #define wcsprt (*(int (*)(struct wcsprm *)) PyWcs_API[22])
+#define wcslib_get_error_message (*(const char* (*)(int)) PyWcs_API[23])
 
 #ifndef NO_IMPORT_PYWCS_API
 int
@@ -122,7 +123,7 @@ import_pywcs(void) {
   /* Perform runtime check of C API version */
   if (REVISION != PyWcs_GetCVersion()) {
     PyErr_Format(
-      PyExc_RuntimeError, "module compiled against " \
+      PyExc_ImportError, "module compiled against " \
       "ABI version '%x' but this version of pywcs is '%x'", \
       (int)REVISION, (int)PyWcs_GetCVersion());
     return -1;
@@ -135,7 +136,7 @@ import_pywcs(void) {
   return status;
 }
 
-#endif /* defined(NO_IMPORT_PYWCS_API) */
+#endif /* !defined(NO_IMPORT_PYWCS_API) */
 
 #endif /* PYWCS_BUILD */
 

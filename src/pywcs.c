@@ -43,6 +43,9 @@ DAMAGE.
 
 #include <structmember.h> /* from Python */
 
+#include <stdlib.h>
+#include <time.h>
+
 /***************************************************************************
  * Pywcs type
  ***************************************************************************/
@@ -634,13 +637,13 @@ _sanity_check(
     PyObject* args,
     PyObject* kwds) {
 
-    if (sizeof(WCSLIB_INT64) != 8) {
-        Py_INCREF(Py_False);
-        return Py_False;
-    }
+  if (sizeof(WCSLIB_INT64) != 8) {
+    Py_INCREF(Py_False);
+    return Py_False;
+  }
 
-    Py_INCREF(Py_True);
-    return Py_True;
+  Py_INCREF(Py_True);
+  return Py_True;
 }
 
 /***************************************************************************

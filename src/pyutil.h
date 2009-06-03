@@ -163,6 +163,9 @@ extern PyObject** wcs_errexc[14];
 int
 _define_exceptions(PyObject* m);
 
+const char*
+wcslib_get_error_message(int stat);
+
 /***************************************************************************
   Property helpers
  ***************************************************************************/
