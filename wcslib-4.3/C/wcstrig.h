@@ -34,10 +34,25 @@
 #ifndef WCSLIB_WCSTRIG
 #define WCSLIB_WCSTRIG
 
+#include <math.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#ifdef sunos4
+#define HAS_SINCOS
+#endif
+
+#ifdef VXWORKS
+#ifndef POWERPC
+#define HAS_SINCOS
+#endif
+#endif
+
+#if defined (__GLIBC__) && defined(__USE_GNU)
+#define HAS_SINCOS
+#endif
 
 #ifdef WCSTRIG_MACRO
 
@@ -51,7 +66,7 @@ extern "C" {
 #define asind(X) asin(X)*R2D
 #define atand(X) atan(X)*R2D
 #define atan2d(Y,X) atan2(Y,X)*R2D
-#ifdef __GNUC__
+#ifdef HAS_SINCOS
     #define sincosd(X,S,C) sincos((X)*D2R,(S),(C))
 #else
     #define sincosd(X,S,C) *(S) = sin((X)*D2R); *(C) = cos((X)*D2R);

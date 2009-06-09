@@ -184,7 +184,7 @@ double x, y;
 
 /*--------------------------------------------------------------------------*/
 
-#ifndef __GNUC__
+#ifdef HAS_SINCOS
 
 double sincosd(x, s, c)
 
@@ -193,9 +193,7 @@ double* s;
 double* c;
 
 {
-   *s = sin(x*D2R);
-   *c = cos(x*D2R);
-   return *s;
+   return sincos(x*D2R, s, c);
 }
 
 #else
@@ -207,7 +205,9 @@ double* s;
 double* c;
 
 {
-   return sincos(x*D2R, s, c);
+   *s = sin(x*D2R);
+   *c = cos(x*D2R);
+   return *s;
 }
 
 #endif /* __GNUC__ */

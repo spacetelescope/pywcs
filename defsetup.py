@@ -148,7 +148,8 @@ PYWCS_SOURCES = [join('src', x) for x in PYWCS_SOURCES]
 ######################################################################
 # DISTUTILS SETUP
 libraries = []
-define_macros = [('ECHO', None), ('WCSTRIG_MACRO', None), ('PYWCS_BUILD', None)]
+define_macros = [('ECHO', None), ('WCSTRIG_MACRO', None),
+                 ('PYWCS_BUILD', None), ('_GNU_SOURCE', None)]
 undef_macros = []
 extra_compile_args = []
 if BUILD.lower() == 'debug':
