@@ -618,8 +618,7 @@ int stat[];
    rowoff = 0;
    rowlen = nphi*sxy;
    for (iphi = 0; iphi < nphi; iphi++, rowoff += sxy, phip += spt) {
-      sinphi = sind(*phip);
-      cosphi = cosd(*phip);
+      sincosd(*phip, &sinphi, &cosphi);
 
       xp = x + rowoff;
       yp = y + rowoff;
@@ -638,8 +637,7 @@ int stat[];
    yp = y;
    statp = stat;
    for (itheta = 0; itheta < ntheta; itheta++, thetap += spt) {
-      costhe = cosd(*thetap);
-      sinthe = sind(*thetap);
+      sincosd(*thetap, &sinthe, &costhe);
 
       for (iphi = 0; iphi < mphi; iphi++, xp += sxy, yp += sxy) {
          s = prj->w[1]*(*yp);
@@ -947,8 +945,7 @@ int stat[];
    rowoff = 0;
    rowlen = nphi*sxy;
    for (iphi = 0; iphi < nphi; iphi++, rowoff += sxy, phip += spt) {
-      sinphi = sind(*phip);
-      cosphi = cosd(*phip);
+      sincosd(*phip, &sinphi, &cosphi);
 
       xp = x + rowoff;
       yp = y + rowoff;
@@ -1187,8 +1184,7 @@ int stat[];
    rowoff = 0;
    rowlen = nphi*sxy;
    for (iphi = 0; iphi < nphi; iphi++, rowoff += sxy, phip += spt) {
-      sinphi = sind(*phip);
-      cosphi = cosd(*phip);
+      sincosd(*phip, &sinphi, &cosphi);
 
       xp = x + rowoff;
       yp = y + rowoff;
@@ -1406,8 +1402,7 @@ int stat[];
    rowoff = 0;
    rowlen = nphi*sxy;
    for (iphi = 0; iphi < nphi; iphi++, rowoff += sxy, phip += spt) {
-      sinphi = sind(*phip);
-      cosphi = cosd(*phip);
+      sincosd(*phip, &sinphi, &cosphi);
 
       xp = x + rowoff;
       yp = y + rowoff;
@@ -1707,8 +1702,7 @@ int stat[];
    rowoff = 0;
    rowlen = nphi*sxy;
    for (iphi = 0; iphi < nphi; iphi++, rowoff += sxy, phip += spt) {
-      sinphi = sind(*phip);
-      cosphi = cosd(*phip);
+      sincosd(*phip, &sinphi, &cosphi);
 
       xp = x + rowoff;
       yp = y + rowoff;
@@ -1950,8 +1944,7 @@ int stat[];
    rowoff = 0;
    rowlen = nphi*sxy;
    for (iphi = 0; iphi < nphi; iphi++, rowoff += sxy, phip += spt) {
-      sinphi = sind(*phip);
-      cosphi = cosd(*phip);
+      sincosd(*phip, &sinphi, &cosphi);
 
       xp = x + rowoff;
       yp = y + rowoff;
@@ -2324,8 +2317,7 @@ int stat[];
    rowoff = 0;
    rowlen = nphi*sxy;
    for (iphi = 0; iphi < nphi; iphi++, rowoff += sxy, phip += spt) {
-      sinphi = sind(*phip);
-      cosphi = cosd(*phip);
+      sincosd(*phip, &sinphi, &cosphi);
 
       xp = x + rowoff;
       yp = y + rowoff;
@@ -2552,8 +2544,7 @@ int stat[];
    rowoff = 0;
    rowlen = nphi*sxy;
    for (iphi = 0; iphi < nphi; iphi++, rowoff += sxy, phip += spt) {
-      sinphi = sind(*phip);
-      cosphi = cosd(*phip);
+      sincosd(*phip, &sinphi, &cosphi);
 
       xp = x + rowoff;
       yp = y + rowoff;
@@ -2839,8 +2830,7 @@ int stat[];
    rowoff = 0;
    rowlen = nphi*sxy;
    for (iphi = 0; iphi < nphi; iphi++, rowoff += sxy, phip += spt) {
-      sinphi = sind(*phip);
-      cosphi = cosd(*phip);
+      sincosd(*phip, &sinphi, &cosphi);
 
       xp = x + rowoff;
       yp = y + rowoff;
@@ -4618,8 +4608,7 @@ int stat[];
    rowlen = nphi*sxy;
    for (iphi = 0; iphi < nphi; iphi++, rowoff += sxy, phip += spt) {
       w = (*phip)/2.0;
-      sinphi = sind(w);
-      cosphi = cosd(w);
+      sincosd(w, &sinphi, &cosphi);
 
       xp = x + rowoff;
       yp = y + rowoff;
@@ -4638,8 +4627,7 @@ int stat[];
    yp = y;
    statp = stat;
    for (itheta = 0; itheta < ntheta; itheta++, thetap += spt) {
-      costhe = cosd(*thetap);
-      sinthe = sind(*thetap);
+      sincosd(*thetap, &sinthe, &costhe);
 
       for (iphi = 0; iphi < mphi; iphi++, xp += sxy, yp += sxy) {
          w = sqrt(prj->w[0]/(1.0 + costhe*(*yp)));
@@ -4847,8 +4835,7 @@ int stat[];
    rowlen = nphi*sxy;
    for (iphi = 0; iphi < nphi; iphi++, rowoff += sxy, phip += spt) {
       alpha = prj->w[0]*(*phip);
-      sinalpha = sind(alpha);
-      cosalpha = cosd(alpha);
+      sincosd(alpha, &sinalpha, &cosalpha);
 
       xp = x + rowoff;
       yp = y + rowoff;
@@ -5119,8 +5106,7 @@ int stat[];
    rowlen = nphi*sxy;
    for (iphi = 0; iphi < nphi; iphi++, rowoff += sxy, phip += spt) {
       alpha = prj->w[0]*(*phip);
-      sinalpha = sind(alpha);
-      cosalpha = cosd(alpha);
+      sincosd(alpha, &sinalpha, &cosalpha);
 
       xp = x + rowoff;
       yp = y + rowoff;
@@ -5344,8 +5330,7 @@ int stat[];
    rowlen = nphi*sxy;
    for (iphi = 0; iphi < nphi; iphi++, rowoff += sxy, phip += spt) {
       alpha = prj->w[0]*(*phip);
-      sinalpha = sind(alpha);
-      cosalpha = cosd(alpha);
+      sincosd(alpha, &sinalpha, &cosalpha);
 
       xp = x + rowoff;
       yp = y + rowoff;
@@ -5599,8 +5584,7 @@ int stat[];
    rowlen = nphi*sxy;
    for (iphi = 0; iphi < nphi; iphi++, rowoff += sxy, phip += spt) {
       alpha = prj->w[0]*(*phip);
-      sinalpha = sind(alpha);
-      cosalpha = cosd(alpha);
+      sincosd(alpha, &sinalpha, &cosalpha);
 
       xp = x + rowoff;
       yp = y + rowoff;
@@ -5812,7 +5796,7 @@ int stat[];
 
 {
    int mphi, mtheta, rowlen, rowoff;
-   double alpha, r, s, y0;
+   double alpha, r, s, y0, sinalpha, cosalpha;
    register int iphi, itheta, *statp;
    register const double *phip, *thetap;
    register double *xp, *yp;
@@ -5866,8 +5850,9 @@ int stat[];
 
       for (iphi = 0; iphi < mphi; iphi++, xp += sxy, yp += sxy) {
          alpha = s*(*xp);
-         *xp =  r*sind(alpha) - prj->x0;
-         *yp = -r*cosd(alpha) - y0;
+         sincosd(alpha, &sinalpha, &cosalpha);
+         *xp =  r*sinalpha - prj->x0;
+         *yp = -r*cosalpha - y0;
          *(statp++) = 0;
       }
    }
@@ -6121,8 +6106,7 @@ int stat[];
    statp = stat;
    for (itheta = 0; itheta < ntheta; itheta++, thetap += spt) {
       therad = (*thetap)*D2R;
-      costhe = cosd(*thetap);
-      sinthe = sind(*thetap);
+      sincosd(*thetap, &sinthe, &costhe);
 
       for (iphi = 0; iphi < mphi; iphi++, xp += sxy, yp += sxy) {
          if (sinthe == 0.0) {
@@ -6372,8 +6356,7 @@ int stat[];
    rowoff = 0;
    rowlen = nphi*sxy;
    for (iphi = 0; iphi < nphi; iphi++, rowoff += sxy, phip += spt) {
-      cosphi = cosd(*phip);
-      sinphi = sind(*phip);
+      sincosd(*phip, &sinphi, &cosphi);
 
       xp = x + rowoff;
       yp = y + rowoff;
@@ -6392,8 +6375,7 @@ int stat[];
    yp = y;
    statp = stat;
    for (itheta = 0; itheta < ntheta; itheta++, thetap += spt) {
-      costhe = cosd(*thetap);
-      sinthe = sind(*thetap);
+      sincosd(*thetap, &sinthe, &costhe);
 
       for (iphi = 0; iphi < mphi; iphi++, xp += sxy, yp += sxy) {
          l = costhe*(*xp);
@@ -6805,8 +6787,7 @@ int stat[];
    rowoff = 0;
    rowlen = nphi*sxy;
    for (iphi = 0; iphi < nphi; iphi++, rowoff += sxy, phip += spt) {
-      cosphi = cosd(*phip);
-      sinphi = sind(*phip);
+      sincosd(*phip, &sinphi, &cosphi);
 
       xp = x + rowoff;
       yp = y + rowoff;
@@ -6825,8 +6806,7 @@ int stat[];
    yp = y;
    statp = stat;
    for (itheta = 0; itheta < ntheta; itheta++, thetap += spt) {
-      costhe = cosd(*thetap);
-      sinthe = sind(*thetap);
+      sincosd(*thetap, &sinthe, &costhe);
 
       for (iphi = 0; iphi < mphi; iphi++, xp += sxy, yp += sxy) {
          l = costhe*(*xp);
@@ -7007,7 +6987,7 @@ int stat[];
 
 {
    int direct, face, mx, my, rowlen, rowoff, status;
-   double l, m, n, omega, tau, xf, yf, w, zeco, zeta;
+   double l, m, n, omega, tau, xf, yf, w, zeco, zeta, sinw, cosw;
    const double tol = 1.0e-12;
    register int ix, iy, *statp;
    register const double *xp, *yp;
@@ -7122,7 +7102,8 @@ int stat[];
                zeco = 0.0;
             } else {
                w = 15.0*xf/yf;
-               omega = sind(w)/(cosd(w) - SQRT2INV);
+               sincosd(w, &sinw, &cosw);
+               omega = sinw/(cosw - SQRT2INV);
                tau  = 1.0 + omega*omega;
                zeco = yf*yf*(1.0 - 1.0/sqrt(1.0 + tau));
                zeta = 1.0 - zeco;
@@ -7278,8 +7259,7 @@ int stat[];
    rowoff = 0;
    rowlen = nphi*sxy;
    for (iphi = 0; iphi < nphi; iphi++, rowoff += sxy, phip += spt) {
-      cosphi = cosd(*phip);
-      sinphi = sind(*phip);
+      sincosd(*phip, &sinphi, &cosphi);
 
       xp = x + rowoff;
       yp = y + rowoff;
@@ -7298,8 +7278,7 @@ int stat[];
    yp = y;
    statp = stat;
    for (itheta = 0; itheta < ntheta; itheta++, thetap += spt) {
-      costhe = cosd(*thetap);
-      sinthe = sind(*thetap);
+      sincosd(*thetap, &sinthe, &costhe);
 
       for (iphi = 0; iphi < mphi; iphi++, xp += sxy, yp += sxy) {
          if (fabs(*thetap) == 90.0) {

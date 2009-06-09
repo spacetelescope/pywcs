@@ -213,12 +213,9 @@ struct celprm *cel;
 
    } else {
       /* Fiducial point away from the native pole. */
-      clat0 = cosd(lat0);
-      slat0 = sind(lat0);
-      cphip = cosd(phip - cel->phi0);
-      sphip = sind(phip - cel->phi0);
-      cthe0 = cosd(cel->theta0);
-      sthe0 = sind(cel->theta0);
+      sincosd(lat0, &slat0, &clat0);
+      sincosd(phip - cel->phi0, &sphip, &cphip);
+      sincosd(cel->theta0, &sthe0, &cthe0);
 
       x = cthe0*cphip;
       y = sthe0;
@@ -345,8 +342,7 @@ struct celprm *cel;
    cel->euler[0] = lngp;
    cel->euler[1] = 90.0 - latp;
    cel->euler[2] = phip;
-   cel->euler[3] = cosd(cel->euler[1]);
-   cel->euler[4] = sind(cel->euler[1]);
+   sincosd(cel->euler[1], &cel->euler[4], &cel->euler[3]);
    cel->isolat = (cel->euler[4] == 0.0);
    cel->flag = CELSET;
 

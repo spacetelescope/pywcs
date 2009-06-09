@@ -181,3 +181,33 @@ double x, y;
 
    return atan2(y,x)*R2D;
 }
+
+/*--------------------------------------------------------------------------*/
+
+#ifndef __GNUC__
+
+double sincosd(x, s, c)
+
+double x;
+double* s;
+double* c;
+
+{
+   *s = sin(x*D2R);
+   *c = cos(x*D2R);
+   return *s;
+}
+
+#else
+
+double sincosd(x, s, c)
+
+double x;
+double* s;
+double* c;
+
+{
+   return sincos(x*D2R, s, c);
+}
+
+#endif /* __GNUC__ */

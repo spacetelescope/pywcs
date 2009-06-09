@@ -86,8 +86,7 @@ double lng[], lat[];
    lngp = lng;
    latp = lat;
    for (itheta = 0; itheta < ntheta; itheta++, thetap += spt) {
-      costhe = cosd(*thetap);
-      sinthe = sind(*thetap);
+      sincosd(*thetap, &sinthe, &costhe);
       costhe3 = costhe*eul[3];
       costhe4 = costhe*eul[4];
       sinthe3 = sinthe*eul[3];
@@ -95,8 +94,7 @@ double lng[], lat[];
 
       for (iphi = 0; iphi < mphi; iphi++, lngp += sll, latp += sll) {
          dphi = *lngp;
-         cosphi = cosd(dphi);
-         sinphi = sind(dphi);
+         sincosd(dphi, &sinphi, &cosphi);
 
          /* Compute the celestial longitude. */
          x = sinthe4 - costhe3*cosphi;
@@ -198,8 +196,7 @@ double phi[], theta[];
    phip   = phi;
    thetap = theta;
    for (ilat = 0; ilat < nlat; ilat++, latp += sll) {
-      coslat  = cosd(*latp);
-      sinlat  = sind(*latp);
+      sincosd(*latp, &sinlat, &coslat);
       coslat3 = coslat*eul[3];
       coslat4 = coslat*eul[4];
       sinlat3 = sinlat*eul[3];
@@ -207,8 +204,7 @@ double phi[], theta[];
 
       for (ilng = 0; ilng < mlng; ilng++, phip += spt, thetap += spt) {
          dlng = *phip;
-         coslng = cosd(dlng);
-         sinlng = sind(dlng);
+         sincosd(dlng, &sinlng, &coslng);
 
          /* Compute the native longitude. */
          x = sinlat4 - coslat3*coslng;

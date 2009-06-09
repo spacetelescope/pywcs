@@ -51,6 +51,11 @@ extern "C" {
 #define asind(X) asin(X)*R2D
 #define atand(X) atan(X)*R2D
 #define atan2d(Y,X) atan2(Y,X)*R2D
+#ifdef __GNUC__
+    #define sincosd(X,S,C) sincos((X)*D2R,(S),(C))
+#else
+    #define sincosd(X,S,C) *(S) = sin((X)*D2R); *(C) = cos((X)*D2R);
+#endif
 
 #else
 
@@ -63,6 +68,7 @@ double acosd(double);
 double asind(double);
 double atand(double);
 double atan2d(double, double);
+double sincosd(double, double*, double*);
 
 /* Domain tolerance for asin and acos functions. */
 #define WCSTRIG_TOL 1e-10
