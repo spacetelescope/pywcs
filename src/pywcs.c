@@ -736,12 +736,6 @@ struct module_state {
 #endif
 };
 
-/* This is an array mapping the wcs status codes to Python exception
- * types.  The exception string is stored as part of wcslib itself in
- * wcs_errmsg.
- */
-PyObject** wcs_errexc[14];
-
 #if PY_MAJOR_VERSION >= 3
     #define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
 #else
