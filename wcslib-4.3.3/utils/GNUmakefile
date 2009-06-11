@@ -12,12 +12,12 @@
 #         instead and re-run configure.
 #
 #      2) In compiling these utilities, this makefile assumes that the
-#         WCSLIB 4.3 sources reside in ../{pgsbox,C} (as in the distribution
+#         WCSLIB 4.4 sources reside in ../{pgsbox,C} (as in the distribution
 #         kit).
 #
 #   Author: Mark Calabretta, Australia Telescope National Facility
 #   http://www.atnf.csiro.au/~mcalabre/index.html
-#   $Id: GNUmakefile,v 4.3 2007/12/27 05:50:31 cal103 Exp $
+#   $Id: GNUmakefile,v 4.3.1.2 2008/02/18 07:07:35 cal103 Exp $
 #-----------------------------------------------------------------------------
 # Get configure settings.
 include ../makedefs
@@ -94,6 +94,9 @@ $(LIBWCS) :
 	   $(MAKE) -C ../C lib
 
 install : build
+	-  if [ ! -d "$(BINDIR)" ] ; then \
+	     $(INSTALL) -d -m 2775 $(BINDIR) ; \
+	   fi
 	$(INSTALL) -m 755 $(UTILS) $(BINDIR)
 
 GNUmakefile : ../makedefs ;

@@ -1693,8 +1693,6 @@ int wcs_types(struct wcsprm *wcs)
             /* Spectral axis. */
             if (wcs->spec < 0) wcs->spec = i;
             wcs->types[i] += 3000;
-         } else {
-           return 4;
          }
 
          continue;

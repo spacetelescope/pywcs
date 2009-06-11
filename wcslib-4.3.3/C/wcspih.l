@@ -28,7 +28,7 @@
 
     Author: Mark Calabretta, Australia Telescope National Facility
     http://www.atnf.csiro.au/~mcalabre/index.html
-    $Id: wcspih.l,v 4.3 2007/12/27 05:41:36 cal103 Exp $
+    $Id: wcspih.l,v 4.3.1.2 2009/04/30 02:33:27 cal103 Exp cal103 $
 *=============================================================================
 *
 *   wcspih.l is a Flex description file containing the definition of a lexical
@@ -54,7 +54,7 @@
 *   was specified for some representations it cannot be known in advance
 *   whether it was specified for all of those present in the header.
 *
-*   Hence the definition of WCSAXESa forces the scanner must be implemented in
+*   Hence the definition of WCSAXESa forces the scanner to be implemented in
 *   two passes.  The first pass is used to determine the number of coordinate
 *   representations (up to 27) and the number of coordinate axes in each.
 *   Effectively WCSAXESa is ignored unless it exceeds the "largest index" in
@@ -103,6 +103,7 @@ STRING	'([^']|'')*'
 
 %{
 #include <math.h>
+#include <setjmp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -135,11 +136,15 @@ STRING	'([^']|'')*'
 char *wcspih_hdr;
 int  wcspih_nkeyrec;
 
-void wcspih_naxes(int naxis, int i, int j, char a, int alts[], int *npptr);
-int  wcspih_inits(int alts[], int npv[], int nps[], int *nwcs,
-                  struct wcsprm **wcs);
 int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
                   int *nwcs, struct wcsprm **wcs);
+int wcspih_inits(int naxis, int alts[], int npv[], int nps[], int *nwcs,
+        struct wcsprm **wcs);
+void wcspih_naxes(int naxis, int i, int j, char a, int alts[], int *npptr);
+
+/* Used in preempting the call to exit() by yy_fatal_error(). */
+jmp_buf wcspih_abort_jmp_env;
+#define exit(status) longjmp(wcspih_abort_jmp_env, status)
 
 %}
 
@@ -147,7 +152,7 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 	/* Keyword indices, as used in the WCS papers, e.g. PCi_ja, PVi_ma. */
 	char a;
 	int  i, j, m;
-	
+
 	char *cptr, *errmsg, errtxt[80], *hptr, *keep;
 	int  altlin, alts[27], iax, idx, ipx, ix, jx, naxis, *npptr,
 	     nps[27], npv[27], pass, status, valtype, velref[27], voff;
@@ -155,7 +160,7 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 	void *vptr, *wptr;
 	struct wcsprm *wcsp;
         int yylex_destroy(void);
-	
+
 	naxis = 0;
 	for (iax = 0; iax < 27; iax++) {
 	  alts[iax] = 0;
@@ -165,34 +170,40 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 	  velref[iax]  = 0;
 	  vsource[iax] = UNDEFINED;
 	}
-	
+
 	/* Parameters used to implement YY_INPUT. */
 	wcspih_hdr = header;
 	wcspih_nkeyrec = nkeyrec;
-	
+
 	/* Our handle on the input stream. */
 	hptr = header;
 	keep = 0x0;
 	*nreject = 0;
-	
+
 	/* Keyword parameters. */
 	i = j = m = 0;
 	a = ' ';
-	
+
 	/* For decoding the keyvalue. */
 	valtype = -1;
 	idx     = -1;
 	vptr    = 0x0;
-	
+
 	/* For keywords that require special handling. */
 	altlin = 0;
 	npptr  = 0x0;
-	
+
 	/* The data structures produced. */
 	*nwcs = 0;
 	*wcs  = 0x0;
-	
+
 	pass = 1;
+
+	/* Return here via longjmp() invoked by yy_fatal_error(). */
+	if (setjmp(wcspih_abort_jmp_env)) {
+	  return 3;
+	}
+
 	BEGIN(INITIAL);
 
 
@@ -200,7 +211,7 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 	  if (pass == 1) {
 	    sscanf(yytext, "NAXIS   = %d", &naxis);
 	  }
-	
+
 	  if (naxis < 0) {
 	    errmsg = errtxt;
 	    sprintf(errmsg, "Negative value of NAXIS ignored: %d", naxis);
@@ -356,7 +367,7 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 
 ^EPOCH{ALT}"  " {
 	  sscanf(yytext, "EPOCH%c", &a);
-	
+
 	  if (a == ' ' || relax & WCSHDR_EPOCHa) {
 	    valtype = FLOAT;
 	    if (pass == 2) {
@@ -365,14 +376,14 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 	        vptr = (void *)((double *)vptr + alts[a-'A'+1]);
 	      }
 	    }
-	
+
 	    unput(' ');
 	    BEGIN(CCCCCCCa);
-	
+
 	  } else if (relax & WCSHDR_reject) {
 	    errmsg = "EPOCH keyword may not have an alternate version code";
 	    BEGIN(ERROR);
-	
+
 	  } else {
 	    BEGIN(DISCARD);
 	  }
@@ -431,11 +442,11 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 	    if (pass == 2) vptr = (*wcs)->radesys;
 	    unput(' ');
 	    BEGIN(CCCCCCCa);
-	
+
 	  } else if (relax & WCSHDR_reject) {
 	    errmsg = "RADECSYS is non-standard, use RADESYSa";
 	    BEGIN(ERROR);
-	
+
 	  } else {
 	    BEGIN(DISCARD);
 	  }
@@ -473,7 +484,7 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 
 ^VELREF{ALT}" " {
 	  sscanf(yytext, "VELREF%c", &a);
-	
+
 	  if (a == ' ' || relax & WCSHDR_VELREFa) {
 	    valtype = INTEGER;
 	    if (pass == 2) {
@@ -482,14 +493,14 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 	        vptr = (void *)((int *)vptr + alts[a-'A'+1]);
 	      }
 	    }
-	
+
 	    unput(' ');
 	    BEGIN(CCCCCCCa);
-	
+
 	  } else if (relax & WCSHDR_reject) {
 	    errmsg = "VELREF keyword may not have an alternate version code";
 	    BEGIN(ERROR);
-	
+
 	  } else {
 	    BEGIN(DISCARD);
 	  }
@@ -497,7 +508,7 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 
 ^VSOURCE{ALT} {
 	  sscanf(yytext, "VSOURCE%c", &a);
-	
+
 	  if (relax & WCSHDR_VSOURCEa) {
 	    valtype = FLOAT;
 	    if (pass == 2) {
@@ -506,14 +517,14 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 	        vptr = (void *)((double *)vptr + alts[a-'A'+1]);
 	      }
 	    }
-	
+
 	    unput(' ');
 	    BEGIN(CCCCCCCa);
-	
+
 	  } else if (relax & WCSHDR_reject) {
 	    errmsg = "Deprecated VSOURCEa keyword rejected";
 	    BEGIN(ERROR);
-	
+
 	  } else {
 	    BEGIN(DISCARD);
 	  }
@@ -573,7 +584,7 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 	    if (a != ' ') {
 	      wcsp += alts[a-'A'+1];
 	    }
-	
+
 	    idx = (i-1)*(wcsp->naxis) + j - 1;
 	  }
 	  BEGIN(VALUE);
@@ -585,7 +596,7 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 <CCi_ja>{I2}_{I3} |
 <CCi_ja>{I3}_{I2} |
 <CCi_ja>{I4}_{I1} {
-	  /* Invalid axis number will be caught by <VALUE>. */
+	  /* Invalid axis numbers will be caught by <VALUE>. */
 	  sscanf(yytext, "%d_%d", &i, &j);
 	  BEGIN(VALUE);
 	}
@@ -600,13 +611,13 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 	      idx = (i-1)*((*wcs)->naxis) + j - 1;
 	    }
 	    BEGIN(VALUE);
-	
+
 	  } else if (relax & WCSHDR_reject) {
 	    errmsg = errtxt;
 	    sprintf(errmsg, "Defunct form of %si_ja keyword",
 	                     (altlin==1) ? "PC" : "CD");
 	    BEGIN(ERROR);
-	
+
 	  } else {
 	    BEGIN(DISCARD);
 	  }
@@ -622,11 +633,11 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 	  if (a == ' ' || relax & WCSHDR_CROTAia) {
 	    idx = i - 1;
 	    BEGIN(VALUE);
-	
+
 	  } else if (relax & WCSHDR_reject) {
 	    errmsg = "CROTAn keyword may not have an alternate version code";
 	    BEGIN(ERROR);
-	
+
 	  } else {
 	    BEGIN(DISCARD);
 	  }
@@ -646,7 +657,7 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 <CCCCCCCa>{ALT} |
 <CCCCCCCC>. {
 	  idx = -1;
-	
+
 	  if (YY_START == CCCCCCCa) {
 	    sscanf(yytext, "%c", &a);
 	  } else {
@@ -675,7 +686,7 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 <CCi_ma>{I2}_{I3} |
 <CCi_ma>{I3}_{I2} |
 <CCi_ma>{I4}_{I0} {
-	  /* Invalid parameter will be caught by <VALUE>. */
+	  /* Invalid parameters will be caught by <VALUE>. */
 	  sscanf(yytext, "%d_%d", &i, &m);
 	  BEGIN(VALUE);
 	}
@@ -691,11 +702,11 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 	    a = ' ';
 	    idx = -1;
 	    BEGIN(VALUE);
-	
+
 	  } else if (relax & WCSHDR_reject) {
 	    errmsg = "Defunct PROJPn keyword rejected";
 	    BEGIN(ERROR);
-	
+
 	  } else {
 	    BEGIN(DISCARD);
 	  }
@@ -716,12 +727,12 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 	        sprintf(errmsg, "Parameter number exceeds 99");
 	      }
 	      BEGIN(ERROR);
-	
+
 	    } else {
 	      /* Pretend we don't recognize it. */
 	      BEGIN(DISCARD);
 	    }
-	
+
 	  } else {
 	    if (valtype == INTEGER) {
 	      BEGIN(INTEGER_VAL);
@@ -747,7 +758,7 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 	  if (pass == 1) {
 	    wcspih_naxes(naxis, i, j, a, alts, npptr);
 	    BEGIN(FLUSH);
-	
+
 	  } else {
 	    if (vptr) {
 	      /* Determine the coordinate representation. */
@@ -757,26 +768,26 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 	        if (a >= 'A') {
 	          iax = alts[a-'A'+1];
 	        }
-	
+
 	        wptr = vptr;
 	        if (iax) {
 	          voff = (char *)(*wcs+iax) - (char *)(*wcs);
 	          wptr = (void *)((char *)vptr + voff);
 	        }
-	
+
 	        /* Apply keyword parameterization. */
 	        if (idx >= 0) {
 	          wptr = *((int **)wptr) + idx;
 	        }
-	
+
 	        /* Read the keyvalue. */
 	        sscanf(yytext, "%d", (int *)wptr);
-	
+
 	        if (a) break;
 	      }
-	
+
 	      BEGIN(COMMENT);
-	
+
 	    } else {
 	      errmsg = "Internal parser ERROR, null int pointer";
 	      BEGIN(ERROR);
@@ -793,7 +804,7 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 	  if (pass == 1) {
 	    wcspih_naxes(naxis, i, j, a, alts, npptr);
 	    BEGIN(FLUSH);
-	
+
 	  } else {
 	    if (vptr) {
 	      /* Determine the coordinate representation. */
@@ -803,38 +814,38 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 	        if (a >= 'A') {
 	          iax = alts[a-'A'+1];
 	        }
-	
+
 	        wptr = vptr;
 	        if (iax) {
 	          voff = (char *)(*wcs+iax) - (char *)(*wcs);
 	          wptr = (void *)((char *)vptr + voff);
 	        }
-	
+
 	        /* Apply keyword parameterization. */
 	        if (idx >= 0) {
 	          wptr = *((double **)wptr) + idx;
-	
+
 	        } else if (npptr == npv) {
 	          ipx = (*wcs+iax)->npv++;
 	          (*wcs+iax)->pv[ipx].i = i;
 	          (*wcs+iax)->pv[ipx].m = m;
 	          wptr = &((*wcs+iax)->pv[ipx].value);
 	        }
-	
+
 	        /* Read the keyvalue. */
 	        sscanf(yytext, "%lf", (double *)wptr);
-	
+
 	        /* Flag the presence of PCi_ja, or CDi_ja and/or CROTAia. */
 	        if (altlin) {
 	          (*wcs+iax)->altlin |= altlin;
 	          altlin = 0;
 	        }
-	
+
 	        if (a) break;
 	      }
-	
+
 	      BEGIN(COMMENT);
-	
+
 	    } else {
 	      errmsg = "Internal parser ERROR, null float pointer";
 	      BEGIN(ERROR);
@@ -851,7 +862,7 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 	  if (pass == 1) {
 	    wcspih_naxes(naxis, i, j, a, alts, npptr);
 	    BEGIN(FLUSH);
-	
+
 	  } else {
 	    if (vptr) {
 	      /* Determine the coordinate representation. */
@@ -861,50 +872,50 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 	        if (a >= 'A') {
 	          iax = alts[a-'A'+1];
 	        }
-	
+
 	        wptr = vptr;
 	        if (iax) {
 	          voff = (char *)(*wcs+iax) - (char *)(*wcs);
 	          wptr = (void *)((char *)vptr + voff);
 	        }
-	
+
 	        /* Apply keyword parameterization. */
 	        if (idx >= 0) {
 	          wptr = *((char (**)[72])wptr) + idx;
-	
+
 	        } else if (npptr == nps) {
 	          ipx = (*wcs+iax)->nps++;
 	          (*wcs+iax)->ps[ipx].i = i;
 	          (*wcs+iax)->ps[ipx].m = m;
 	          wptr = (*wcs+iax)->ps[ipx].value;
 	        }
-	
+
 	        /* Read the keyvalue. */
 	        cptr = (char *)wptr;
 	        strcpy(cptr, yytext+1);
-	
+
 	        /* Squeeze out repeated quotes. */
 	        ix = 0;
 	        for (jx = 0; jx < 72; jx++) {
 	          if (ix < jx) {
 	            cptr[ix] = cptr[jx];
 	          }
-	
+
 	          if (cptr[jx] == '\0') {
 	            if (ix) cptr[ix-1] = '\0';
 	            break;
 	          } else if (cptr[jx] == '\'' && cptr[jx+1] == '\'') {
 	            jx++;
 	          }
-	
+
 	          ix++;
 	        }
-	
+
 	        if (a) break;
 	      }
-	
+
 	      BEGIN(COMMENT);
-	
+
 	    } else {
 	      errmsg = "Internal parser ERROR, null string pointer";
 	      BEGIN(ERROR);
@@ -932,7 +943,7 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 	    if (ctrl < 0) {
 	      /* Preserve discards. */
 	      keep = wcspih_hdr - 80;
-	
+
 	    } else if (ctrl > 2) {
 	      fprintf(stderr, "%.80s\n  Discarded.\n", wcspih_hdr-80);
 	    }
@@ -947,7 +958,7 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 	      /* Preserve rejects. */
 	      keep = wcspih_hdr - 80;
 	    }
-	
+
 	    if (abs(ctrl%10) > 1) {
 	      fprintf(stderr, "%.80s\n%4d: %s.\n", wcspih_hdr-80, *nreject,
 	        errmsg);
@@ -963,7 +974,7 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 	    }
 	    hptr += 80;
 	  }
-	
+
 	  i = j = m = 0;
 	  a = ' ';
 	  valtype = -1;
@@ -976,12 +987,12 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 <<EOF>> {
 	  /* End-of-input. */
 	  if (pass == 1) {
-	    if ((status = wcspih_inits(alts, npv, nps, nwcs, wcs)) ||
+	    if ((status = wcspih_inits(naxis, alts, npv, nps, nwcs, wcs)) ||
 	         *nwcs == 0) {
 	      yylex_destroy();
 	      return status;
 	    }
-	
+
 	    if (abs(ctrl%10) > 2) {
 	      if (*nwcs == 1) {
 	        fprintf(stderr, "Found one coordinate representation.\n");
@@ -990,18 +1001,18 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 	          *nwcs);
 	      }
 	    }
-	
+
 	    wcspih_hdr = header;
 	    wcspih_nkeyrec = nkeyrec;
 	    *nreject = 0;
-	
+
 	    pass = 2;
 	    i = j = m = 0;
 	    a = ' ';
 	    valtype = -1;
-	
+
 	    yyrestart(yyin);
-	
+
 	  } else {
 	    yylex_destroy();
 
@@ -1011,7 +1022,7 @@ int  wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
 	      fprintf(stderr, "%d WCS keyrecords were rejected.\n",
 	        *nreject);
 	    }
-	
+
 	    return wcspih_final(alts, epoch, velref, vsource, nwcs, wcs);
 	  }
 	}
@@ -1067,6 +1078,7 @@ void wcspih_naxes(int naxis, int i, int j, char a, int alts[], int *npptr)
 *---------------------------------------------------------------------------*/
 
 int wcspih_inits(
+  int naxis,
   int alts[],
   int npv[],
   int nps[],
@@ -1081,6 +1093,13 @@ int wcspih_inits(
   *nwcs = 0;
   for (iax = 0; iax < 27; iax++) {
     if (alts[iax]) (*nwcs)++;
+  }
+
+  if (!(*nwcs) && naxis) {
+    /* NAXIS is non-zero but there were no WCS keywords with an alternate
+       version code; create a default WCS with blank alternate version. */
+    wcspih_naxes(naxis, 0, 0, ' ', alts, 0x0);
+    *nwcs = 1;
   }
 
   if (*nwcs) {

@@ -20,7 +20,7 @@
 #
 #   Author: Mark Calabretta, Australia Telescope National Facility
 #   http://www.atnf.csiro.au/~mcalabre/index.html
-#   $Id: GNUmakefile,v 4.3 2007/12/27 05:57:06 cal103 Exp $
+#   $Id: GNUmakefile,v 4.3.1.3 2008/02/20 01:00:07 cal103 Exp cal103 $
 #-----------------------------------------------------------------------------
 # Get configure settings.
 include makedefs
@@ -28,15 +28,20 @@ include makedefs
 SUBDIRS := C Fortran pgsbox utils
 TSTDIRS := C Fortran pgsbox
 
+# Top of the 'make install' hierarchy: psgbox -> Fortran -> C.
+INSTDIR := pgsbox
+
 # Is a Fortran compiler available?
 ifeq "$(FC)" ""
   SUBDIRS := C Fortran utils
   TSTDIRS := C
+  INSTDIR := Fortran
 endif
 
 # Is PGPLOT available?
 ifeq "$(PGPLOTINC)" ""
   SUBDIRS := $(filter-out pgsbox, $(SUBDIRS))
+  INSTDIR := Fortran
 endif
 
 ifeq "$(PGPLOTLIB)" ""
@@ -65,11 +70,12 @@ check tests : show_all
 	     echo '' ; \
 	     $(TIMER) ; \
 	     $(MAKE) -k -C $$DIR $@ ; \
-	   done 
+	   done
 
 install :
-	$(MAKE) -k -C pgsbox $@
+	$(MAKE) -k -C $(INSTDIR) $@
 	$(MAKE) -k -C utils $@
+	$(INSTALL) -m 444 wcsconfig.h wcsconfig_f77.h $(INCDIR)
 	$(INSTALL) -m 444 COPYING $(INCDIR)/COPYING
 	$(INSTALL) -m 444 README  $(INCDIR)/README
 

@@ -38,7 +38,7 @@ except AttributeError:
 
 ######################################################################
 # WCSLIB
-WCSVERSION = "4.3"
+WCSVERSION = "4.3.3"
 WCSLIB = "wcslib-%s" % WCSVERSION # Path to wcslib
 WCSLIBC = join(WCSLIB, "C") # Path to wcslib source files
 WCSFILES = [ # List of wcslib files to compile
@@ -202,7 +202,7 @@ PYWCS_EXTENSIONS = [
 pkg = ["pywcs" ]
 
 setupargs = {
-    'version' :	    "1.4.2-%s" % WCSVERSION,
+    'version' :	    "1.5-%s" % WCSVERSION,
     'description':  "Python wrappers to WCSLIB",
     'author' :      CONTACT,
     'author_email': EMAIL,

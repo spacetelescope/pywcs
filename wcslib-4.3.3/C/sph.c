@@ -35,7 +35,7 @@
 #include "wcstrig.h"
 #include "sph.h"
 
-/* #define copysign(X, Y) ((Y) < 0.0 ? -fabs(X) : fabs(X)) */
+#define copysign(X, Y) ((Y) < 0.0 ? -fabs(X) : fabs(X))
 
 #define tol 1.0e-5
 
