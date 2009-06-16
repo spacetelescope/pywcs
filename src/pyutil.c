@@ -571,6 +571,7 @@ get_pscards(
   for (i = 0; i < (Py_ssize_t)nps; ++i) {
     subresult = Py_BuildValue("iis", ps[i].i, ps[i].m, ps[i].value);
     if (subresult == NULL) {
+      Py_DECREF(result);
       return NULL;
     }
 
@@ -668,6 +669,7 @@ get_pvcards(
   for (i = 0; i < (Py_ssize_t)npv; ++i) {
     subresult = Py_BuildValue("iid", pv[i].i, pv[i].m, pv[i].value);
     if (subresult == NULL) {
+      Py_DECREF(result);
       return NULL;
     }
 
