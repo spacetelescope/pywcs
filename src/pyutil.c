@@ -615,6 +615,7 @@ set_pscards(
       return -1;
     }
     if (!PyArg_ParseTuple(subvalue, "iis", &ival, &mval, &strvalue)) {
+      Py_DECREF(subvalue);
       return -1;
     }
     Py_DECREF(subvalue);
