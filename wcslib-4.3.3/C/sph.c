@@ -130,7 +130,7 @@ double lng[], lat[];
          }
 
          /* Compute the celestial latitude. */
-         if (fmod(dphi,180.0) == 0.0) {
+         if (FMOD_NOERR(dphi,180.0) == 0.0) {
             *latp = *thetap + cosphi*eul[1];
             if (*latp >  90.0) *latp =  180.0 - *latp;
             if (*latp < -90.0) *latp = -180.0 - *latp;
@@ -224,7 +224,7 @@ double phi[], theta[];
                dphi = -dlng;
             }
          }
-         *phip = fmod(eul[2] + dphi, 360.0);
+         *phip = FMOD_NOERR(eul[2] + dphi, 360.0);
 
          /* Normalize the native longitude. */
          if (*phip > 180.0) {
@@ -234,7 +234,7 @@ double phi[], theta[];
          }
 
          /* Compute the native latitude. */
-         if (fmod(dlng,180.0) == 0.0) {
+         if (FMOD_NOERR(dlng,180.0) == 0.0) {
             *thetap = *latp + coslng*eul[1];
             if (*thetap >  90.0) *thetap =  180.0 - *thetap;
             if (*thetap < -90.0) *thetap = -180.0 - *thetap;

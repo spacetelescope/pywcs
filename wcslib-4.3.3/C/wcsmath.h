@@ -71,4 +71,6 @@
 #define UNDEFINED 987654321.0e99
 #define undefined(value) (value == UNDEFINED)
 
+#define FMOD_NOERR(x, y) ((x)-((int)((x)/(y)))*(y))
+
 #endif /* WCSLIB_WCSMATH */

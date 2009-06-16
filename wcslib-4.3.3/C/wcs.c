@@ -2804,7 +2804,7 @@ int wcsmix(
       status = sphx2s(wcscel->euler, 1, 1, 1, 1, phi, theta, &lng, &lat);
 
       if (mixcel == 1) {
-         if (fabs(fmod(*worldlng-lng, 360.0)) > tol) continue;
+         if (fabs(FMOD_NOERR(*worldlng-lng, 360.0)) > tol) continue;
          if (lat < span[0]) continue;
          if (lat > span[1]) continue;
          *worldlat = lat;
