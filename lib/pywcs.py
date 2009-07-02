@@ -374,9 +374,9 @@ class WCS(WCSBase):
             except:
                 raise TypeError(
                     "When providing three arguments, they must be (x, y, origin)")
-            if len(x) != len(y):
+            if x.size != y.size:
                 raise ValueError("x and y arrays are not the same size")
-            length = len(x)
+            length = x.size
             xy = numpy.hstack((x.reshape((length, 1)),
                                y.reshape((length, 1))))
             sky = func(xy, origin)
