@@ -68,32 +68,36 @@ enum e_altlin {
 
 static int
 parse_unsafe_unit_conversion_spec(
-    const char* arg) {
+    const char* arg, int* ctrl) {
 
-  int ctrl = 0;
   const char* p = NULL;
+
+  *ctrl = 0;
 
   p = arg;
   for (p = arg; *p != '\0'; ++p) {
     switch (*p) {
     case 's':
     case 'S':
-      ctrl |= 1;
+      *ctrl |= 1;
       break;
     case 'h':
     case 'H':
-      ctrl |= 2;
+      *ctrl |= 2;
       break;
     case 'd':
     case 'D':
-      ctrl |= 4;
+      *ctrl |= 4;
       break;
     default:
-      break;
+      PyErr_SetString(
+          PyExc_ValueError,
+          "translate_units may only contain the characters 's', 'h' or 'd'");
+      return 1;
     }
   }
 
-  return ctrl;
+  return 0;
 }
 
 static int
@@ -222,6 +226,8 @@ PyWcsprm_init(
 
     nkeyrec = header_length / 80;
     if (nkeyrec > 0x7fffffff) {
+      PyErr_SetString(PyExc_MemoryError,
+                      "header is too long");
       return -1;
     }
 
@@ -443,7 +449,9 @@ PyWcsprm_fix(
   }
 
   if (translate_units != NULL) {
-    ctrl = parse_unsafe_unit_conversion_spec(translate_units);
+      if (parse_unsafe_unit_conversion_spec(translate_units, &ctrl)) {
+          return NULL;
+      }
   }
 
   if (naxis_obj != NULL) {
@@ -1179,7 +1187,9 @@ PyWcsprm_unitfix(
   }
 
   if (translate_units != NULL) {
-    ctrl = parse_unsafe_unit_conversion_spec(translate_units);
+      if (parse_unsafe_unit_conversion_spec(translate_units, &ctrl)) {
+          return NULL;
+      }
   }
 
   status = unitfix(ctrl, &self->x);
