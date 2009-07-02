@@ -71,6 +71,7 @@ from __future__ import division # confidence high
 __docformat__ = "epytext"
 
 import copy
+import re
 
 import numpy
 
@@ -96,7 +97,7 @@ class WCS(WCSBase):
     keywords and data in a FITS file.
     """
 
-    def __init__(self, header=None, fobj=None, key=' ', minerr=0.0, relax=False, naxis=2):
+    def __init__(self, header=None, fobj=None, key=' ', minerr=0.0, relax=False, naxis=None):
         """
         WCS(header=None, fobj=None, key=' ', relax=False, naxis=2)
 
@@ -129,8 +130,9 @@ class WCS(WCSBase):
         @type relax: bool
 
         @param naxis: The number of sky coordinates axes for the
-            object.  (C{naxis} may only be provided if C{header} is
-            C{None}.)  The only number of axis currently supported is 2.
+            object.  If a header is provided, at it contains more than
+            C{naxis} axes, all axes > C{naxis} will be removed from the
+            header before parsing.
         @type naxis: int
 
         @raises MemoryError: Memory allocation failed.
@@ -139,11 +141,10 @@ class WCS(WCSBase):
         @raises AssertionError: Lookup table distortion present in the
             header but fobj not provided.
         """
-        if naxis != 2:
-            raise ValueError("Only 2 axes are supported")
-        self.naxis = naxis
-
         if header is None:
+            if naxis is None:
+                naxis = 2
+            self.naxis = naxis
             wcsprm = _pywcs._Wcsprm(header=None, key=key,
                                     relax=relax, naxis=naxis)
             # Set some reasonable defaults.
@@ -154,6 +155,11 @@ class WCS(WCSBase):
             cpdis = (None, None)
             sip = None
         else:
+            if naxis is not None:
+                self.truncate_axes(header, naxis, key)
+            else:
+                naxis = 2
+            self.naxis = naxis
             try:
                 header_string = "".join([str(x) for x in header.ascardlist()])
                 wcsprm = _pywcs._Wcsprm(header=header_string, key=key,
@@ -205,6 +211,28 @@ class WCS(WCSBase):
         stdlib module.
         """
         return copy.deepcopy(self)
+
+    def truncate_axes(self, header, naxis, wcs_key):
+        """
+        Removes extra axes in the header > naxis.
+        """
+        axes_keywords = [
+            'CRVAL', 'CRPIX', 'CTYPE', 'NAXIS', 'LBOUND', 'CUNIT']
+        for key, val in header.items():
+            if re.match("^CD[0-9]{1,2}_[0-9]{1,2}$", key):
+                x, y = key[2:].split('_')
+                x = int(x)
+                y = int(y)
+                if x > naxis or y > naxis:
+                    del header[key]
+                break
+            for prefix in axes_keywords:
+                if re.match("^%s[0-9]{1,2}$" % prefix, key):
+                    if int(key[len(prefix):]) > naxis:
+                        del header[key]
+                    break
+        header.update('NAXIS', naxis)
+        header.update('WCSAXES%s' % wcs_key, naxis)
 
     def calcFootprint(self, header=None):
         """
