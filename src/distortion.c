@@ -173,15 +173,15 @@ get_distortion_offset(
       dist_ifloor[1] >= lookup->naxis[1] - 1) {
     result =
       (double)get_dist_clamp(data, naxis, dist_ifloor[0],     dist_ifloor[1])     * dist_iweight[0] * dist_iweight[1] +
-      (double)get_dist_clamp(data, naxis, dist_ifloor[0],     dist_ifloor[1] + 1) * dist_weight[0] * dist_iweight[1] +
-      (double)get_dist_clamp(data, naxis, dist_ifloor[0] + 1, dist_ifloor[1])     * dist_iweight[0] * dist_weight[1] +
+      (double)get_dist_clamp(data, naxis, dist_ifloor[0],     dist_ifloor[1] + 1) * dist_iweight[0] * dist_weight[1] +
+      (double)get_dist_clamp(data, naxis, dist_ifloor[0] + 1, dist_ifloor[1])     * dist_weight[0] * dist_iweight[1] +
       (double)get_dist_clamp(data, naxis, dist_ifloor[0] + 1, dist_ifloor[1] + 1) * dist_weight[0] * dist_weight[1];
   /* Else, we don't need to clamp 4 times for each pixel */
   } else {
     result =
       (double)get_dist(data, naxis, dist_ifloor[0],     dist_ifloor[1])     * dist_iweight[0] * dist_iweight[1] +
-      (double)get_dist(data, naxis, dist_ifloor[0],     dist_ifloor[1] + 1) * dist_weight[0] * dist_iweight[1] +
-      (double)get_dist(data, naxis, dist_ifloor[0] + 1, dist_ifloor[1])     * dist_iweight[0] * dist_weight[1] +
+      (double)get_dist(data, naxis, dist_ifloor[0],     dist_ifloor[1] + 1) * dist_iweight[0] * dist_weight[1] +
+      (double)get_dist(data, naxis, dist_ifloor[0] + 1, dist_ifloor[1])     * dist_weight[0] * dist_iweight[1] +
       (double)get_dist(data, naxis, dist_ifloor[0] + 1, dist_ifloor[1] + 1) * dist_weight[0] * dist_weight[1];
   }
 
