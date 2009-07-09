@@ -1,4 +1,4 @@
 include LICENSE MANIFEST.in stsci_distutils_hack.py defsetup.py CHANGELOG
 include doc/docstrings.py
 include src/*.h
-recursive-include wcslib-4.3 *
+recursive-include wcslib-4.3.3 *

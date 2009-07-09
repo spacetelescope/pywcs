@@ -202,7 +202,7 @@ PYWCS_EXTENSIONS = [
 pkg = ["pywcs" ]
 
 setupargs = {
-    'version' :	    "1.5-%s" % WCSVERSION,
+    'version' :	    "1.5.1-%s" % WCSVERSION,
     'description':  "Python wrappers to WCSLIB",
     'author' :      CONTACT,
     'author_email': EMAIL,
