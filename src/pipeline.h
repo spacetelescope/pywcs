@@ -42,6 +42,7 @@ DAMAGE.
 #include "wcs.h"
 
 typedef struct {
+  distortion_lookup_t*                   det2im[2];
   /*@shared@*/ /*@null@*/ sip_t*         sip;
   distortion_lookup_t*                   cpdis[2];
   /*@shared@*/ /*@null@*/ struct wcsprm* wcs;
@@ -49,6 +50,7 @@ typedef struct {
   /* Temporary buffers for performing calculations */
   unsigned int                           alloc_ncoord;
   unsigned int                           alloc_nelem;
+  void*                                  mem;
   /*@null@*/ double*                     tmp;
   /*@null@*/ double*                     imgcrd;
   /*@null@*/ double*                     phi;
@@ -69,6 +71,7 @@ Set all the values of a pipeline_t.
 void
 pipeline_init(
     pipeline_t* pipeline,
+    /*@shared@*/ distortion_lookup_t** det2im /* [2] */,
     /*@shared@*/ sip_t* sip,
     /*@shared@*/ distortion_lookup_t** cpdis /* [2] */,
     /*@shared@*/ struct wcsprm* wcs);

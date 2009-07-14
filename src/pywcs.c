@@ -65,6 +65,8 @@ PyWcs_traverse(
     visitproc visit,
     void* arg) {
 
+  Py_VISIT(self->py_det2im[0]);
+  Py_VISIT(self->py_det2im[1]);
   Py_VISIT(self->py_sip);
   Py_VISIT(self->py_distortion_lookup[0]);
   Py_VISIT(self->py_distortion_lookup[1]);
@@ -78,6 +80,14 @@ PyWcs_clear(
     PyWcs* self) {
 
   PyObject* tmp;
+
+  tmp = self->py_det2im[0];
+  self->py_det2im[0] = NULL;
+  Py_XDECREF(tmp);
+
+  tmp = self->py_det2im[1];
+  self->py_det2im[1] = NULL;
+  Py_XDECREF(tmp);
 
   tmp = self->py_sip;
   self->py_sip = NULL;
@@ -118,10 +128,12 @@ PyWcs_new(
   self = (PyWcs*)type->tp_alloc(type, 0);
   if (self != NULL) {
     pipeline_clear(&self->x);
-    self->py_sip = NULL;
+    self->py_det2im[0]            = NULL;
+    self->py_det2im[1]            = NULL;
+    self->py_sip                  = NULL;
     self->py_distortion_lookup[0] = NULL;
     self->py_distortion_lookup[1] = NULL;
-    self->py_wcsprm = NULL;
+    self->py_wcsprm               = NULL;
   }
   return (PyObject*)self;
 }
@@ -132,17 +144,37 @@ PyWcs_init(
     PyObject* args,
     /*@unused@*/ PyObject* kwds) {
 
-  size_t    i;
-  PyObject* py_sip;
-  PyObject* py_wcsprm;
-  PyObject* py_distortion_lookup[2];
+  size_t       i;
+  PyObject*    py_sip;
+  PyObject*    py_wcsprm;
+  PyObject*    py_distortion_lookup[2];
+  PyObject*    py_det2im[2];
+  const char*  keywords[] = {
+      "sip", "cpdis", "wcs", "det2im", NULL };
 
-  if (!PyArg_ParseTuple(args, "O(OO)O:Wcs.__init__",
-                        &py_sip,
-                        &py_distortion_lookup[0],
-                        &py_distortion_lookup[1],
-                        &py_wcsprm)) {
+  if (!PyArg_ParseTupleAndKeywords
+      (args, kwds, "|O(OO)O(OO):Wcs.__init__", (char **)keywords,
+       &py_sip,
+       &py_distortion_lookup[0],
+       &py_distortion_lookup[1],
+       &py_wcsprm,
+       &py_det2im[0],
+       &py_det2im[1])) {
     return -1;
+  }
+
+  /* Check and set Distortion lookup tables */
+  for (i = 0; i < 2; ++i) {
+    if (py_det2im[i] != NULL && py_det2im[i] != Py_None) {
+      if (!PyObject_TypeCheck(py_det2im[i], &PyDistLookupType)) {
+        PyErr_SetString(PyExc_TypeError,
+                        "Arg 4 must be a pair of DistortionLookupTable or None objects");
+        return -1;
+      }
+
+      self->py_det2im[i] = py_det2im[i];
+      self->x.det2im[i] = &(((PyDistLookup*)py_det2im[i])->x);
+    }
   }
 
   /* Check and set SIP */
@@ -187,6 +219,8 @@ PyWcs_init(
   Py_XINCREF(self->py_distortion_lookup[0]);
   Py_XINCREF(self->py_distortion_lookup[1]);
   Py_XINCREF(self->py_wcsprm);
+  Py_XINCREF(self->py_det2im[0]);
+  Py_XINCREF(self->py_det2im[1]);
 
   return 0;
 }
@@ -205,8 +239,9 @@ PyWcs_all_pix2sky(
   const char*    keywords[] = {
     "pixcrd", "origin", NULL };
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "Oi:all_pix2sky", (char **)keywords,
-                                   &pixcrd_obj, &origin)) {
+  if (!PyArg_ParseTupleAndKeywords(
+          args, kwds, "Oi:all_pix2sky", (char **)keywords,
+          &pixcrd_obj, &origin)) {
     return NULL;
   }
 
@@ -309,6 +344,75 @@ PyWcs_p4_pix2foc(
     return (PyObject*)foccrd;
   } else {
     Py_XDECREF(foccrd);
+    if (status > 0 && status < WCS_ERRMSG_MAX) {
+      PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
+      return NULL;
+    } else if (status == -1) {
+      return NULL;
+    } else {
+      PyErr_SetString(PyExc_RuntimeError,
+                      "Unknown error occurred.  Something is seriously wrong.");
+      return NULL;
+    }
+  }
+}
+
+/*@null@*/ static PyObject*
+PyWcs_det2im(
+    PyWcs* self,
+    PyObject* args,
+    PyObject* kwds) {
+
+  PyObject*      detcrd_obj = NULL;
+  int            origin     = 1;
+  PyArrayObject* detcrd     = NULL;
+  PyArrayObject* imcrd     = NULL;
+  int            status     = -1;
+  const char*    keywords[] = {
+    "detcrd", "origin", NULL };
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "Oi:det2im", (char **)keywords,
+                                   &detcrd_obj, &origin)) {
+    return NULL;
+  }
+
+  if (self->x.det2im[0] == NULL && self->x.det2im[1] == NULL) {
+    Py_INCREF(detcrd_obj);
+    return detcrd_obj;
+  }
+
+  detcrd = (PyArrayObject*)PyArray_ContiguousFromAny(detcrd_obj, PyArray_DOUBLE, 2, 2);
+  if (detcrd == NULL) {
+    return NULL;
+  }
+
+  if (PyArray_DIM(detcrd, 1) != NAXES) {
+    PyErr_SetString(PyExc_ValueError, "Pixel array must be an Nx2 array");
+    goto exit;
+  }
+
+  imcrd = (PyArrayObject*)PyArray_SimpleNew(2, PyArray_DIMS(detcrd), PyArray_DOUBLE);
+  if (imcrd == NULL) {
+    status = 2;
+    goto exit;
+  }
+
+  preoffset_array(detcrd, origin);
+  status = p4_pix2foc(2, (void *)self->x.det2im,
+                      (unsigned int)PyArray_DIM(detcrd, 0),
+                      (double*)PyArray_DATA(detcrd),
+                      (double*)PyArray_DATA(imcrd));
+  unoffset_array(detcrd, origin);
+  unoffset_array(imcrd, origin);
+
+ exit:
+
+  Py_XDECREF(detcrd);
+
+  if (status == 0) {
+    return (PyObject*)imcrd;
+  } else {
+    Py_XDECREF(imcrd);
     if (status > 0 && status < WCS_ERRMSG_MAX) {
       PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
       return NULL;
@@ -503,6 +607,84 @@ PyWcs_set_cpdis2(
   return 0;
 }
 
+static PyObject*
+PyWcs_get_det2im1(
+    PyWcs* self,
+    /*@unused@*/ void* closure) {
+
+  if (self->py_det2im[0]) {
+    Py_INCREF(self->py_det2im[0]);
+    return self->py_det2im[0];
+  }
+
+  Py_INCREF(Py_None);
+  return Py_None;
+}
+
+static int
+PyWcs_set_det2im1(
+    PyWcs* self,
+    /*@shared@*/ PyObject* value,
+    /*@unused@*/ void* closure) {
+
+  Py_XDECREF(self->py_det2im[0]);
+  self->py_det2im[0] = NULL;
+  self->x.det2im[0] = NULL;
+
+  if (value != Py_None) {
+    if (!PyObject_TypeCheck(value, &PyDistLookupType)) {
+      PyErr_SetString(PyExc_TypeError,
+                      "det2im1 must be DistortionLookupTable object");
+      return -1;
+    }
+
+    Py_INCREF(value);
+    self->py_det2im[0] = value;
+    self->x.det2im[0] = &(((PyDistLookup*)value)->x);
+  }
+
+  return 0;
+}
+
+/*@shared@*/ static PyObject*
+PyWcs_get_det2im2(
+    PyWcs* self,
+    /*@unused@*/ void* closure) {
+
+  if (self->py_det2im[1]) {
+    Py_INCREF(self->py_det2im[1]);
+    return self->py_det2im[1];
+  }
+
+  Py_INCREF(Py_None);
+  return Py_None;
+}
+
+static int
+PyWcs_set_det2im2(
+    PyWcs* self,
+    /*@shared@*/ PyObject* value,
+    /*@unused@*/ void* closure) {
+
+  Py_XDECREF(self->py_det2im[1]);
+  self->py_det2im[1] = NULL;
+  self->x.det2im[1] = NULL;
+
+  if (value != Py_None) {
+    if (!PyObject_TypeCheck(value, &PyDistLookupType)) {
+      PyErr_SetString(PyExc_TypeError,
+                      "det2im2 must be DistortionLookupTable object");
+      return -1;
+    }
+
+    Py_INCREF(value);
+    self->py_det2im[1] = value;
+    self->x.det2im[1] = &(((PyDistLookup*)value)->x);
+  }
+
+  return 0;
+}
+
 /*@shared@*/ static PyObject*
 PyWcs_get_sip(
     PyWcs* self,
@@ -555,6 +737,14 @@ PyWcs___copy__(
     return NULL;
   }
 
+  if (self->py_det2im[0]) {
+    PyWcs_set_det2im1((PyWcs*)copy, self->py_det2im[0], NULL);
+  }
+
+  if (self->py_det2im[1]) {
+    PyWcs_set_det2im2((PyWcs*)copy, self->py_det2im[1], NULL);
+  }
+
   if (self->py_sip) {
     PyWcs_set_sip((PyWcs*)copy, self->py_sip, NULL);
   }
@@ -574,61 +764,55 @@ PyWcs___copy__(
   return copy;
 }
 
+static int
+_deepcopy_helper(
+    PyWcs* copy,
+    PyObject* item,
+    int (*function)(PyWcs*, PyObject*, void*),
+    PyObject* memo) {
+  PyObject* obj_copy;
+
+  if (item) {
+    obj_copy = get_deepcopy(item, memo);
+    if (obj_copy == NULL) {
+      return 1;
+    }
+
+    if (function(copy, obj_copy, NULL)) {
+      Py_DECREF(obj_copy);
+      return 1;
+    }
+
+    Py_DECREF(obj_copy);
+  }
+
+  return 0;
+}
+
 static PyObject*
 PyWcs___deepcopy__(
     PyWcs* self,
     PyObject* memo,
     /*@unused@*/ PyObject* kwds) {
 
-  PyObject* copy;
-  PyObject* obj_copy;
+  PyWcs*    copy;
 
-  copy = PyWcs_new(&PyWcsType, NULL, NULL);
+  copy = (PyWcs*)PyWcs_new(&PyWcsType, NULL, NULL);
   if (copy == NULL) {
     return NULL;
   }
 
-  if (self->py_sip) {
-    obj_copy = get_deepcopy(self->py_sip, memo);
-    if (obj_copy == NULL) {
-      Py_DECREF(copy);
-      return NULL;
-    }
-    PyWcs_set_sip((PyWcs*)copy, obj_copy, NULL);
-    Py_DECREF(obj_copy);
+  if (_deepcopy_helper(copy, self->py_det2im[0], PyWcs_set_det2im1, memo) ||
+      _deepcopy_helper(copy, self->py_det2im[1], PyWcs_set_det2im2, memo) ||
+      _deepcopy_helper(copy, self->py_sip, PyWcs_set_sip, memo) ||
+      _deepcopy_helper(copy, self->py_distortion_lookup[0], PyWcs_set_cpdis1, memo) ||
+      _deepcopy_helper(copy, self->py_distortion_lookup[1], PyWcs_set_det2im1, memo) ||
+      _deepcopy_helper(copy, self->py_wcsprm, PyWcs_set_wcs, memo)) {
+    Py_DECREF(copy);
+    return NULL;
   }
 
-  if (self->py_distortion_lookup[0]) {
-    obj_copy = get_deepcopy(self->py_distortion_lookup[0], memo);
-    if (obj_copy == NULL) {
-      Py_DECREF(copy);
-      return NULL;
-    }
-    PyWcs_set_cpdis1((PyWcs*)copy, obj_copy, NULL);
-    Py_DECREF(obj_copy);
-  }
-
-  if (self->py_distortion_lookup[1]) {
-    obj_copy = get_deepcopy(self->py_distortion_lookup[1], memo);
-    if (obj_copy == NULL) {
-      Py_DECREF(copy);
-      return NULL;
-    }
-    PyWcs_set_cpdis2((PyWcs*)copy, obj_copy, NULL);
-    Py_DECREF(obj_copy);
-  }
-
-  if (self->py_wcsprm) {
-    obj_copy = get_deepcopy(self->py_wcsprm, memo);
-    if (obj_copy == NULL) {
-      Py_DECREF(copy);
-      return NULL;
-    }
-    PyWcs_set_wcs((PyWcs*)copy, obj_copy, NULL);
-    Py_DECREF(obj_copy);
-  }
-
-  return copy;
+  return (PyObject*)copy;
 }
 
 static PyObject*
@@ -651,6 +835,8 @@ _sanity_check(
  */
 
 static PyGetSetDef PyWcs_getset[] = {
+  {"det2im1", (getter)PyWcs_get_det2im1, (setter)PyWcs_set_det2im1, (char *)doc_det2im1},
+  {"det2im2", (getter)PyWcs_get_det2im2, (setter)PyWcs_set_det2im2, (char *)doc_det2im2},
   {"cpdis1", (getter)PyWcs_get_cpdis1, (setter)PyWcs_set_cpdis1, (char *)doc_cpdis1},
   {"cpdis2", (getter)PyWcs_get_cpdis2, (setter)PyWcs_set_cpdis2, (char *)doc_cpdis2},
   {"sip", (getter)PyWcs_get_sip, (setter)PyWcs_set_sip, (char *)doc_sip},
@@ -662,6 +848,7 @@ static PyMethodDef PyWcs_methods[] = {
   {"_all_pix2sky", (PyCFunction)PyWcs_all_pix2sky, METH_VARARGS|METH_KEYWORDS, doc_all_pix2sky},
   {"__copy__", (PyCFunction)PyWcs___copy__, METH_NOARGS, NULL},
   {"__deepcopy__", (PyCFunction)PyWcs___deepcopy__, METH_O, NULL},
+  {"_det2im", (PyCFunction)PyWcs_det2im, METH_VARARGS|METH_KEYWORDS, doc_det2im},
   {"_p4_pix2foc", (PyCFunction)PyWcs_p4_pix2foc, METH_VARARGS|METH_KEYWORDS, doc_p4_pix2foc},
   {"_pix2foc", (PyCFunction)PyWcs_pix2foc, METH_VARARGS|METH_KEYWORDS, doc_pix2foc},
   {NULL}

@@ -43,6 +43,8 @@ void
 pipeline_clear(
     pipeline_t* pipeline) {
 
+  pipeline->det2im[0] = NULL;
+  pipeline->det2im[1] = NULL;
   pipeline->sip = NULL;
   pipeline->cpdis[0] = NULL;
   pipeline->cpdis[1] = NULL;
@@ -61,10 +63,13 @@ pipeline_clear(
 void
 pipeline_init(
     pipeline_t* pipeline,
+    /*@shared@*/ distortion_lookup_t** det2im /* [2] */,
     /*@shared@*/ sip_t* sip,
     /*@shared@*/ distortion_lookup_t** cpdis /* [2] */,
     /*@shared@*/ struct wcsprm* wcs) {
 
+  pipeline->det2im[0] = det2im[0];
+  pipeline->det2im[1] = det2im[1];
   pipeline->sip = sip;
   pipeline->cpdis[0] = cpdis[0];
   pipeline->cpdis[1] = cpdis[1];
@@ -75,19 +80,16 @@ static void
 pipeline_free_tmp(
     pipeline_t* pipeline) {
 
-  /* Free all temporary buffers and reset pointers to NULL */
+  /* Free the temporary buffer and reset pointers to NULL */
   pipeline->alloc_nelem = 0;
   pipeline->alloc_ncoord = 0;
-  free(pipeline->tmp);
-  pipeline->tmp = NULL;
-  free(pipeline->imgcrd);
+  free(pipeline->mem);
+  pipeline->mem = NULL;
   pipeline->imgcrd = NULL;
-  free(pipeline->phi);
   pipeline->phi = NULL;
-  free(pipeline->theta);
   pipeline->theta = NULL;
-  free(pipeline->stat);
   pipeline->stat = NULL;
+  pipeline->tmp = NULL;
 }
 
 void
@@ -103,46 +105,47 @@ pipeline_realloc(
     unsigned int ncoord,
     unsigned int nelem) {
 
+  void* mem = NULL;
+
   if (pipeline->alloc_ncoord < ncoord ||
       pipeline->alloc_nelem * pipeline->alloc_ncoord < nelem * ncoord) {
     pipeline_free_tmp(pipeline);
 
-    pipeline->imgcrd = malloc(ncoord * nelem * sizeof(double));
-    if (pipeline->imgcrd == NULL) {
-      goto out_of_memory;
+    mem = malloc(
+        ncoord * nelem * sizeof(double) + /* imgcrd */
+        ncoord * sizeof(double) +         /* phi */
+        ncoord * sizeof(double) +         /* theta */
+        ncoord * nelem * sizeof(int) +    /* stat */
+        ncoord * nelem * sizeof(double)   /* tmp */
+        );
+
+    if (mem == NULL) {
+      free(mem);
+      return 2;
     }
 
-    pipeline->phi = malloc(ncoord * sizeof(double));
-    if (pipeline->phi == NULL) {
-      goto out_of_memory;
-    }
+    pipeline->mem = mem;
 
-    pipeline->theta = malloc(ncoord * sizeof(double));
-    if (pipeline->theta == NULL) {
-      goto out_of_memory;
-    }
+    pipeline->imgcrd = mem;
+    mem += ncoord * nelem * sizeof(double);
 
-    pipeline->stat = malloc(ncoord * nelem * sizeof(int));
-    if (pipeline->stat == NULL) {
-      goto out_of_memory;
-    }
+    pipeline->phi = mem;
+    mem += ncoord * sizeof(double);
 
-    pipeline->tmp = malloc(ncoord * nelem * sizeof(double));
-    if (pipeline->tmp == NULL) {
-      goto out_of_memory;
-    }
+    pipeline->theta = mem;
+    mem += ncoord * sizeof(double);
+
+    pipeline->stat = mem;
+    mem += ncoord * nelem * sizeof(int);
+
+    pipeline->tmp = mem;
+    /* mem += ncoord * nelem * sizeof(double); */
 
     pipeline->alloc_ncoord = ncoord;
     pipeline->alloc_nelem = nelem;
   }
 
   return 0;
-
- out_of_memory:
-  pipeline->alloc_nelem = 0;
-  pipeline->alloc_ncoord = 0;
-  pipeline_free_tmp(pipeline);
-  return 2;
 }
 
 int
@@ -155,10 +158,11 @@ pipeline_all_pixel2world(
 
   const double* wcs_input  = NULL;
   double*       wcs_output = NULL;
+  int           has_det2im;
   int           has_sip;
   int           has_p4;
   int           has_wcs;
-  int           status     = 0;
+  int           status     = 1;
 
   assert(nelem == 2);
 
@@ -166,9 +170,10 @@ pipeline_all_pixel2world(
     return 1;
   }
 
-  has_sip = pipeline->sip != NULL;
-  has_p4  = pipeline->cpdis[0] != NULL || pipeline->cpdis[1] != NULL;
-  has_wcs = pipeline->wcs != NULL;
+  has_det2im = pipeline->det2im[0] != NULL || pipeline->det2im[1] != NULL;
+  has_sip    = pipeline->sip != NULL;
+  has_p4     = pipeline->cpdis[0] != NULL || pipeline->cpdis[1] != NULL;
+  has_wcs    = pipeline->wcs != NULL;
 
   if (has_wcs) {
     status = pipeline_realloc((pipeline_t*)pipeline, ncoord, nelem);
@@ -176,7 +181,7 @@ pipeline_all_pixel2world(
       goto exit;
     }
 
-    if (has_sip || has_p4) {
+    if (has_det2im || has_sip || has_p4) {
       status = pipeline_pix2foc(pipeline, ncoord, nelem, pixcrd, pipeline->tmp);
       if (status != 0) {
         goto exit;
@@ -193,7 +198,7 @@ pipeline_all_pixel2world(
                     wcs_input, pipeline->imgcrd, pipeline->phi,
                     pipeline->theta, wcs_output, pipeline->stat);
   } else {
-    if (has_sip || has_p4) {
+    if (has_det2im || has_sip || has_p4) {
       status = pipeline_pix2foc(pipeline, ncoord, nelem, pixcrd, world);
     }
   }
@@ -210,9 +215,10 @@ int pipeline_pix2foc(
     const double* pixcrd /* [ncoord][nelem] */,
     double* foc /* [ncoord][nelem] */) {
 
+  int           has_det2im;
   int           has_sip;
   int           has_p4;
-  int           status     = 0;
+  int           status     = 1;
 
   assert(nelem == 2);
   assert(pixcrd != foc);
@@ -221,12 +227,20 @@ int pipeline_pix2foc(
     return 1;
   }
 
-  has_sip = pipeline->sip != NULL;
-  has_p4  = pipeline->cpdis[0] != NULL || pipeline->cpdis[1] != NULL;
+  has_det2im = pipeline->det2im[0] != NULL || pipeline->det2im[1] != NULL;
+  has_sip    = pipeline->sip != NULL;
+  has_p4     = pipeline->cpdis[0] != NULL || pipeline->cpdis[1] != NULL;
 
   /* Copy pixcrd to foc as a starting point.  The "deltas" functions below will
      undistort from there */
   memcpy(foc, pixcrd, sizeof(double) * ncoord * nelem);
+
+  if (has_det2im) {
+    status = p4_pix2deltas(2, (void*)pipeline->det2im, ncoord, pixcrd, foc);
+    if (status) {
+      goto exit;
+    }
+  }
 
   if (has_sip) {
     status = sip_pix2deltas(pipeline->sip, 2, ncoord, pixcrd, foc);
@@ -241,6 +255,8 @@ int pipeline_pix2foc(
       goto exit;
     }
   }
+
+  status = 0;
 
  exit:
   /* We don't have any cleanup at the moment */

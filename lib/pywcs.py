@@ -64,6 +64,9 @@ The basic workflow is as follows:
 
        - p4_pix2foc: Convert from pixel to focal plane coords using
          the table lookup distortion method described in Paper IV.
+
+       - det2im: Convert from detector coordinates to image
+         coordinates.  Commonly used for narrow column correction.
 """
 
 from __future__ import division # confidence high
@@ -152,6 +155,7 @@ class WCS(WCSBase):
             wcsprm.crval = numpy.zeros((self.naxis,), numpy.double)
             wcsprm.ctype = ['RA---TAN', 'DEC--TAN']
             wcsprm.cd = numpy.array([[1.0, 0.0], [0.0, 1.0]], numpy.double)
+            det2im = (None, None)
             cpdis = (None, None)
             sip = None
         else:
@@ -168,11 +172,12 @@ class WCS(WCSBase):
                 wcsprm = _pywcs._Wcsprm(header=None, key=key,
                                         relax=relax, naxis=naxis)
 
-            cpdis = self._read_distortion_kw(header, fobj, key=key,dist='CPDIS', err=minerr)
+            det2im = self._read_det2im_kw(header, fobj)
+            cpdis = self._read_distortion_kw(
+                header, fobj, key=key,dist='CPDIS', err=minerr)
             sip = self._read_sip_kw(header, key=key)
         self.get_naxis(header)
-        WCSBase.__init__(self, sip, cpdis, wcsprm)
-
+        WCSBase.__init__(self, sip, cpdis, wcsprm, det2im)
 
     def __copy__(self):
         new_copy = WCS()
@@ -266,6 +271,32 @@ class WCS(WCSBase):
         corners[3,0] = naxis1
         corners[3,1] = 1.
         return self.all_pix2sky(corners, 1)
+
+    def _read_det2im_kw(self, header, fobj):
+        """
+        Create a paper IV type lookup table for detector to image
+        plane correction.
+        """
+        try:
+            d2im_data = pyfits.getdata(fobj, ext=('D2IMARR', 1))
+        except KeyError:
+            return (None, None)
+        d2im_data = np.array([d2im_data])
+        d2im_hdr = pyfits.getheader(fobj, ext=('D2IMARR', 1))
+
+        crpix = (d2im_hdr['CRPIX1'], d2im_hdr['CRPIX2'])
+        crval = (d2im_hdr['CRVAL1'], d2im_hdr['CRVAL2'])
+        cdelt = (d2im_hdr['CDELT1'], d2im_hdr['CDELT2'])
+        cpdis = DistortionLookupTable(d2im_data, crpix, crval, cdelt)
+
+        axiscorr = header.get('AXISCORR', None)
+
+        if axiscorr == 1:
+            return (cpdis, None)
+        elif axiscorr == 2:
+            return (None, cpdis)
+        else:
+            raise ValueError("AXISCORR must be 1 or 2")
 
     def _read_distortion_kw(self, header, fobj, key='', dist='CPDIS', err=0.0):
         """
@@ -534,6 +565,23 @@ class WCS(WCSBase):
         p4_pix2foc(*args, origin) -> focal plane
 
         Convert pixel coordinates to focal plane coordinates using
+        Paper IV table-lookup distortion correction.
+
+        %s
+
+        %s
+
+        @raises MemoryError: Memory allocation failed.
+        @raises ValueError: Invalid coordinate transformation parameters.
+        """ % (__.ORIGIN(8),
+               __.TWO_OR_THREE_ARGS('pixel', 8))
+
+    def det2im(self, *args, **kwargs):
+        return self._array_converter(self._det2im, *args, **kwargs)
+    det2im.__doc__ = """
+        det2im(*args, origin) -> image plane
+
+        Convert detector coordinates to image plane coordinates using
         Paper IV table-lookup distortion correction.
 
         %s

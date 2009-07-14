@@ -374,6 +374,18 @@ more than half a day then C{ValueError} is raised.
 @return: C{0} for success; C{-1} if no change required.
 """
 
+det2im = """
+Convert detector coordinates to image plane coordinates.
+"""
+
+det2im1 = """
+A distortion lookup table for detector to image plane correction.
+"""
+
+det2im2 = """
+A distortion lookup table for detector to image plane correction.
+"""
+
 DistortionLookupTable = """
 DistortionLookupTable(table, crpix, crval, cdelt)
 
