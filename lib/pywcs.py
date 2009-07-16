@@ -276,11 +276,11 @@ class WCS(WCSBase):
             return (None, None)
 
         try:
-            d2im_data = pyfits.getdata(fobj, ext=('D2IMARR', 1))
+            d2im_data = fobj[('D2IMARR', 1)].data
         except KeyError:
             return (None, None)
-        d2im_data = np.array([d2im_data])
-        d2im_hdr = pyfits.getheader(fobj, ext=('D2IMARR', 1))
+        d2im_data = numpy.array([d2im_data])
+        d2im_hdr = fobj[('D2IMARR', 1)].header
 
         crpix = (d2im_hdr['CRPIX1'], d2im_hdr['CRPIX2'])
         crval = (d2im_hdr['CRVAL1'], d2im_hdr['CRVAL2'])
@@ -291,10 +291,8 @@ class WCS(WCSBase):
 
         if axiscorr == 1:
             return (cpdis, None)
-        elif axiscorr == 2:
-            return (None, cpdis)
         else:
-            raise ValueError("AXISCORR must be 1 or 2")
+            return (None, cpdis)
 
     def _read_distortion_kw(self, header, fobj, key='', dist='CPDIS', err=0.0):
         """
