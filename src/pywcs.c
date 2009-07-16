@@ -149,11 +149,9 @@ PyWcs_init(
   PyObject*    py_wcsprm;
   PyObject*    py_distortion_lookup[2];
   PyObject*    py_det2im[2];
-  const char*  keywords[] = {
-      "sip", "cpdis", "wcs", "det2im", NULL };
 
-  if (!PyArg_ParseTupleAndKeywords
-      (args, kwds, "|O(OO)O(OO):Wcs.__init__", (char **)keywords,
+  if (!PyArg_ParseTuple
+      (args, "O(OO)O(OO):Wcs.__init__",
        &py_sip,
        &py_distortion_lookup[0],
        &py_distortion_lookup[1],

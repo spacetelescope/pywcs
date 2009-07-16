@@ -163,7 +163,7 @@ PyWcsprm_init(
   Py_ssize_t     nkeyrec       = 0;
   char *         key           = " ";
   int            relax         = 0;
-  int            naxis         = 2;
+  int            naxis         = -1;
   int            ctrl          = 0;
   int            nreject       = 0;
   int            nwcs          = 0;
@@ -185,6 +185,11 @@ PyWcsprm_init(
                       "If no header is provided, relax and key may not be "
                       "provided either.");
       return -1;
+    }
+
+    /* Default number of axes is 2 */
+    if (naxis < 0) {
+        naxis = 2;
     }
 
     if (naxis < 1 || naxis > 15) {
@@ -218,7 +223,7 @@ PyWcsprm_init(
       return -1;
     }
 
-    if (naxis != 2) {
+    if (naxis >= 0) {
       PyErr_SetString(PyExc_ValueError,
                       "naxis may not be provided if a header is provided.");
       return -1;
@@ -1121,6 +1126,151 @@ PyWcsprm_sptr(
     return Py_None;
   } else if (status > 0 && status < WCS_ERRMSG_MAX) {
     PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
+    return NULL;
+  } else {
+    PyErr_SetString(PyExc_RuntimeError,
+                    "Unknown error occurred.  Something is seriously wrong.");
+    return NULL;
+  }
+}
+
+/*@null@*/ static PyObject*
+PyWcsprm_sub(
+    PyWcsprm* self,
+    PyObject* args,
+    PyObject* kwds) {
+
+  int        i              = -1;
+  Py_ssize_t tmp            = 0;
+  PyObject*  py_axes        = NULL;
+  PyWcsprm*  py_dest_wcs    = NULL;
+  PyObject*  element        = NULL;
+  char*      element_str    = NULL;
+  int        element_val    = 0;
+  int        nsub           = 0;
+  int        alloc_size     = 0;
+  int*       axes           = NULL;
+  int        status         = -1;
+  const char*    keywords[] = {"axes", NULL};
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "|O:sub", (char **)keywords,
+                                   &py_axes)) {
+    goto exit;
+  }
+
+  if (py_axes == NULL || py_axes == Py_None) {
+    /* leave all variables as is */
+  } else if (PySequence_Check(py_axes)) {
+    tmp = PySequence_Size(py_axes);
+    if (tmp == -1) {
+      goto exit;
+    }
+    nsub = (int)tmp;
+
+    axes = malloc(nsub * sizeof(int));
+    if (axes == NULL) {
+      PyErr_SetString(PyExc_MemoryError, "Out of memory");
+      goto exit;
+    }
+
+    for (i = 0; i < nsub; ++i) {
+      element = PySequence_GetItem(py_axes, i);
+      if (element == NULL) {
+        goto exit;
+      }
+
+      if (PyString_Check(element)) {
+        element_str = PyString_AsString(element);
+        if (strncmp(element_str, "longitude", 10) == 0) {
+          element_val = WCSSUB_LONGITUDE;
+        } else if (strncmp(element_str, "latitude", 9) == 0) {
+          element_val = WCSSUB_LATITUDE;
+        } else if (strncmp(element_str, "cubeface", 9) == 0) {
+          element_val = WCSSUB_CUBEFACE;
+        } else if (strncmp(element_str, "spectral", 9) == 0) {
+          element_val = WCSSUB_SPECTRAL;
+        } else if (strncmp(element_str, "stokes", 7) == 0) {
+          element_val = WCSSUB_STOKES;
+        } else {
+          PyErr_SetString(
+            PyExc_ValueError,
+            "string values for axis sequence must be one of 'latitude', 'longitude', 'cubeface', 'spectral', or 'stokes'");
+          goto exit;
+        }
+      } else if (PyInt_Check(element)) {
+        tmp = (Py_ssize_t)PyInt_AsLong(element);
+        if (tmp == -1 && PyErr_Occurred()) {
+          goto exit;
+        }
+        element_val = (int)tmp;
+      } else {
+        PyErr_SetString(
+          PyExc_TypeError,
+          "axes sequence must contain either strings or ints");
+        goto exit;
+      }
+
+      axes[i] = element_val;
+
+      Py_DECREF(element);
+      element = NULL;
+    }
+  } else if (PyInt_Check(py_axes)) {
+    tmp = (Py_ssize_t)PyInt_AsLong(py_axes);
+    if (tmp == -1 && PyErr_Occurred()) {
+      goto exit;
+    }
+    nsub = (int)tmp;
+
+    if (nsub < 0 || nsub > self->x.naxis) {
+      PyErr_Format(
+        PyExc_ValueError,
+        "If axes is an int, it must be in the range 0-self.naxis (%d)",
+        self->x.naxis);
+      goto exit;
+    }
+  } else {
+    PyErr_SetString(
+      PyExc_TypeError,
+      "axes must None, a sequence or an integer");
+    goto exit;
+  }
+
+  if (nsub == 0) {
+    alloc_size = self->x.naxis;
+  } else {
+    alloc_size = nsub;
+  }
+
+  py_dest_wcs = (PyWcsprm*)PyWcsprm_cnew();
+  status = wcsini(1, alloc_size, &py_dest_wcs->x);
+  if (status != 0) {
+    goto exit;
+  }
+
+  wcsprm_python2c(&self->x);
+  wcsprm_python2c(&py_dest_wcs->x);
+  status = wcssub(0, &self->x, &nsub, axes, &py_dest_wcs->x);
+  wcsprm_c2python(&self->x);
+  wcsprm_c2python(&py_dest_wcs->x);
+
+  if (status != 0) {
+    goto exit;
+  }
+
+  Py_INCREF(py_dest_wcs);
+
+ exit:
+  free(axes);
+  Py_XDECREF(element);
+  Py_XDECREF(py_dest_wcs);
+
+  if (status == 0) {
+    return (PyObject*)py_dest_wcs;
+  } else if (status > 0 && status < WCS_ERRMSG_MAX) {
+    PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
+    return NULL;
+  } else if (status < 0) {
     return NULL;
   } else {
     PyErr_SetString(PyExc_RuntimeError,
@@ -2384,6 +2534,7 @@ static PyMethodDef PyWcsprm_methods[] = {
   {"set_pv", (PyCFunction)PyWcsprm_set_pv, METH_O, doc_set_pv},
   {"spcfix", (PyCFunction)PyWcsprm_spcfix, METH_NOARGS, doc_spcfix},
   {"sptr", (PyCFunction)PyWcsprm_sptr, METH_VARARGS|METH_KEYWORDS, doc_sptr},
+  {"sub", (PyCFunction)PyWcsprm_sub, METH_VARARGS|METH_KEYWORDS, doc_sub},
   {"to_header", (PyCFunction)PyWcsprm_to_header, METH_VARARGS|METH_KEYWORDS, doc_to_header},
   {"unitfix", (PyCFunction)PyWcsprm_unitfix, METH_VARARGS|METH_KEYWORDS, doc_unitfix},
   {NULL}
@@ -2440,5 +2591,11 @@ _setup_wcsprm_type(
   }
 
   Py_INCREF(&PyWcsprmType);
-  return PyModule_AddObject(m, "_Wcsprm", (PyObject *)&PyWcsprmType);
+
+  return (PyModule_AddObject(m, "_Wcsprm", (PyObject *)&PyWcsprmType) ||
+          PyModule_AddIntConstant(m, "WCSSUB_LONGITUDE", WCSSUB_LONGITUDE) ||
+          PyModule_AddIntConstant(m, "WCSSUB_LATITUDE", WCSSUB_LATITUDE) ||
+          PyModule_AddIntConstant(m, "WCSSUB_CUBEFACE", WCSSUB_CUBEFACE) ||
+          PyModule_AddIntConstant(m, "WCSSUB_SPECTRAL", WCSSUB_SPECTRAL) ||
+          PyModule_AddIntConstant(m, "WCSSUB_STOKES", WCSSUB_STOKES));
 }

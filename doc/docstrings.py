@@ -1128,6 +1128,44 @@ was measured, C{SSYSSRCa}.
 @type: string
 """
 
+sub = """
+Extracts the coordinate description for a subimage from a L{WCS}
+object.
+
+The world coordinate system of the subimage must be separable in the
+sense that the world coordinates at any point in the subimage must
+depend only on the pixel coordinates of the axes extracted.  In
+practice, this means that the C{PCi_ja} matrix of the original image
+must not contain non-zero off-diagonal terms that associate any of the
+subimage axes with any of the non-subimage axes.
+
+@param axes: May be an int or a sequence.  If an int, include the
+    first C{axes} axes in their original order.  If a sequence, may
+    contain a combination of image axis numbers (1-relative) or
+    special axis identifiers (see below).  Order is significant;
+    axes[0] is the axis number of the input image that corresponds to
+    the first axis in the subimage, etc.  If 0 or [], do a deep copy.
+
+    Coordinate axes types may be specified using either strings or
+    special integer constants.  The available types are:
+
+        - 'longitude' / C{WCSSUB_LONGITUDE}: Celestial longitude
+        - 'latitude' / C{WCSSUB_LATITUDE}: Celestial latitude
+        - 'cubeface' / C{WCSSUB_CUBEFACE}: Quadcube CUBEFACE axis
+        - 'spectral'/ C{WCSSUB_SPECTRAL}: Spectral axis
+        - 'stokes' / C{WCSSUB_STOKES}: Stokes axis
+
+@type axes: sequence or int
+
+@return: L{WCS} object.
+
+@raises MemoryError: Memory allocation failed.
+@raises InvalidSubimageSpecificationError: Invalid subimage
+    specification (no spectral axis).
+@raises NonseparableSubimageCoordinateSystem: Non-separable subimage
+    coordinate system.
+"""
+
 theta0 = """
 The native longitude of the fiducial point, i.e. the point whose
 celestial coordinates are given in ref[1:2].  If undefined (NaN) the

@@ -47,25 +47,26 @@ The basic workflow is as follows:
 
     4. Use one of the following transformation methods:
 
-       - all_pix2sky: Perform all three transformations from pixel to
-         sky coords.
-
-       - wcs_pix2sky: Perform just the core WCS transformation from
+       - L{WCS.all_pix2sky}: Perform all three transformations from
          pixel to sky coords.
 
-       - wcs_sky2pix: Perform just the core WCS transformation from
-         sky to pixel coords.
+       - L{WCS.wcs_pix2sky}: Perform just the core WCS transformation
+         from pixel to sky coords.
 
-       - sip_pix2foc: Convert from pixel to focal plane coords using
-         the SIP polynomial coefficients.
+       - L{WCS.wcs_sky2pix}: Perform just the core WCS transformation
+         from sky to pixel coords.
 
-       - sip_foc2pix: Convert from focal plane to pixel coords using
-         the SIP polynomial coefficients.
+       - L{WCS.sip_pix2foc}: Convert from pixel to focal plane coords
+         using the SIP polynomial coefficients.
 
-       - p4_pix2foc: Convert from pixel to focal plane coords using
-         the table lookup distortion method described in Paper IV.
+       - L{WCS.sip_foc2pix}: Convert from focal plane to pixel coords
+         using the SIP polynomial coefficients.
 
-       - det2im: Convert from detector coordinates to image
+       - L{WCS.p4_pix2foc}: Convert from pixel to focal plane coords
+         using the table lookup distortion method described in Paper
+         IV.
+
+       - L{WCS.det2im}: Convert from detector coordinates to image
          coordinates.  Commonly used for narrow column correction.
 """
 
@@ -91,6 +92,11 @@ WCSBase = _pywcs._Wcs
 DistortionLookupTable = _pywcs.DistortionLookupTable
 Sip = _pywcs.Sip
 Wcsprm = _pywcs._Wcsprm
+WCSSUB_LATITUDE = _pywcs.WCSSUB_LATITUDE
+WCSSUB_LONGITUDE = _pywcs.WCSSUB_LONGITUDE
+WCSSUB_CUBEFACE = _pywcs.WCSSUB_CUBEFACE
+WCSSUB_SPECTRAL = _pywcs.WCSSUB_SPECTRAL
+WCSSUB_STOKES = _pywcs.WCSSUB_STOKES
 
 # A wrapper around the C WCS type
 class WCS(WCSBase):
@@ -100,7 +106,8 @@ class WCS(WCSBase):
     keywords and data in a FITS file.
     """
 
-    def __init__(self, header=None, fobj=None, key=' ', minerr=0.0, relax=False, naxis=None):
+    def __init__(self, header=None, fobj=None, key=' ', minerr=0.0,
+                 relax=False, naxis=None):
         """
         WCS(header=None, fobj=None, key=' ', relax=False, naxis=2)
 
@@ -132,11 +139,12 @@ class WCS(WCSBase):
               WCS standard.
         @type relax: bool
 
-        @param naxis: The number of sky coordinates axes for the
-            object.  If a header is provided, at it contains more than
-            C{naxis} axes, all axes > C{naxis} will be removed from the
-            header before parsing.
-        @type naxis: int
+        @param naxis: The number of coordinate axes for the object.
+            If a header is provided, and C{naxis} is not C{None},
+            C{naxis} will be passed to L{sub} in order to select
+            specific axes from the header.  See L{sub} for more
+            details about this parameter.
+        @type naxis: sequence or int
 
         @raises MemoryError: Memory allocation failed.
         @raises ValueError: Invalid key.
@@ -147,9 +155,9 @@ class WCS(WCSBase):
         if header is None:
             if naxis is None:
                 naxis = 2
-            self.naxis = naxis
             wcsprm = _pywcs._Wcsprm(header=None, key=key,
                                     relax=relax, naxis=naxis)
+            self.naxis = wcsprm.naxis
             # Set some reasonable defaults.
             wcsprm.crpix = numpy.zeros((self.naxis,), numpy.double)
             wcsprm.crval = numpy.zeros((self.naxis,), numpy.double)
@@ -159,18 +167,17 @@ class WCS(WCSBase):
             cpdis = (None, None)
             sip = None
         else:
-            if naxis is not None:
-                self.truncate_axes(header, naxis, key)
-            else:
-                naxis = 2
-            self.naxis = naxis
             try:
                 header_string = "".join([str(x) for x in header.ascardlist()])
                 wcsprm = _pywcs._Wcsprm(header=header_string, key=key,
-                                        relax=relax, naxis=naxis)
+                                        relax=relax)
             except _pywcs.NoWcsKeywordsFoundError:
                 wcsprm = _pywcs._Wcsprm(header=None, key=key,
-                                        relax=relax, naxis=naxis)
+                                        relax=relax)
+
+            if naxis is not None:
+                wcsprm = wcsprm.sub(naxis)
+            self.naxis = wcsprm.naxis
 
             det2im = self._read_det2im_kw(header, fobj)
             cpdis = self._read_distortion_kw(
@@ -183,7 +190,8 @@ class WCS(WCSBase):
         new_copy = WCS()
         WCSBase.__init__(new_copy, self.sip,
                          (self.cpdis1, self.cpdis2),
-                         self.wcs)
+                         self.wcs,
+                         (self.det2im1, self.det2im2))
         new_copy.__dict__.update(self.__dict__)
         return new_copy
 
@@ -193,7 +201,9 @@ class WCS(WCSBase):
         WCSBase.__init__(new_copy, copy.deepcopy(self.sip, memo),
                          (copy.deepcopy(self.cpdis1, memo),
                           copy.deepcopy(self.cpdis2, memo)),
-                         copy.deepcopy(self.wcs, memo))
+                         copy.deepcopy(self.wcs, memo),
+                         (copy.deepcopy(self.det2im1, memo),
+                          copy.deepcopy(self.det2im2, memo)))
         for key in self.__dict__:
             val = self.__dict__[key]
             new_copy.__dict__[key] = copy.deepcopy(val, memo)
@@ -217,27 +227,12 @@ class WCS(WCSBase):
         """
         return copy.deepcopy(self)
 
-    def truncate_axes(self, header, naxis, wcs_key):
-        """
-        Removes extra axes in the header > naxis.
-        """
-        axes_keywords = [
-            'CRVAL', 'CRPIX', 'CTYPE', 'NAXIS', 'LBOUND', 'CUNIT']
-        for key, val in header.items():
-            if re.match("^CD[0-9]{1,2}_[0-9]{1,2}$", key):
-                x, y = key[2:].split('_')
-                x = int(x)
-                y = int(y)
-                if x > naxis or y > naxis:
-                    del header[key]
-                break
-            for prefix in axes_keywords:
-                if re.match("^%s[0-9]{1,2}$" % prefix, key):
-                    if int(key[len(prefix):]) > naxis:
-                        del header[key]
-                    break
-        header.update('NAXIS', naxis)
-        header.update('WCSAXES%s' % wcs_key, naxis)
+    def sub(self, axes=None):
+        copy = self.deepcopy()
+        copy.wcs = self.wcs.sub(axes)
+        copy.naxis = copy.wcs.naxis
+        return copy
+    sub.__doc__ = _pywcs._Wcsprm.sub.__doc__
 
     def calcFootprint(self, header=None):
         """
@@ -277,6 +272,9 @@ class WCS(WCSBase):
         Create a paper IV type lookup table for detector to image
         plane correction.
         """
+        if not isinstance(fobj, pyfits.NP_pyfits.HDUList):
+            return (None, None)
+
         try:
             d2im_data = pyfits.getdata(fobj, ext=('D2IMARR', 1))
         except KeyError:
