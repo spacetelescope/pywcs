@@ -279,6 +279,8 @@ class WCS(WCSBase):
             d2im_data = fobj[('D2IMARR', 1)].data
         except KeyError:
             return (None, None)
+        except AttributeError:
+            return (None, None)
         d2im_data = numpy.array([d2im_data])
         d2im_hdr = fobj[('D2IMARR', 1)].header
 

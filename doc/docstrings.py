@@ -1144,7 +1144,8 @@ subimage axes with any of the non-subimage axes.
     contain a combination of image axis numbers (1-relative) or
     special axis identifiers (see below).  Order is significant;
     axes[0] is the axis number of the input image that corresponds to
-    the first axis in the subimage, etc.  If 0 or [], do a deep copy.
+    the first axis in the subimage, etc.  If 0, [] or None, do a deep
+    copy.
 
     Coordinate axes types may be specified using either strings or
     special integer constants.  The available types are:
