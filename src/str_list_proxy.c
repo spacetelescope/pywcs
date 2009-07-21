@@ -137,7 +137,7 @@ PyStrListProxy_getitem(
     PyStrListProxy* self,
     Py_ssize_t index) {
 
-  if (index > self->size) {
+  if (index >= self->size) {
     PyErr_SetString(PyExc_IndexError, "index out of range");
     return NULL;
   }
