@@ -153,7 +153,7 @@ pipeline_all_pixel2world(
     const pipeline_t* pipeline,
     const unsigned int ncoord,
     const unsigned int nelem,
-    const double* pixcrd /* [ncoord][nelem] */,
+    const double* const pixcrd /* [ncoord][nelem] */,
     double* world /* [ncoord][nelem] */) {
 
   const double* wcs_input  = NULL;
@@ -212,7 +212,7 @@ int pipeline_pix2foc(
     const pipeline_t* pipeline,
     const unsigned int ncoord,
     const unsigned int nelem,
-    const double* pixcrd /* [ncoord][nelem] */,
+    const double* const pixcrd /* [ncoord][nelem] */,
     double* foc /* [ncoord][nelem] */) {
 
   int            has_det2im;
