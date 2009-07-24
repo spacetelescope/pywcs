@@ -215,10 +215,12 @@ int pipeline_pix2foc(
     const double* pixcrd /* [ncoord][nelem] */,
     double* foc /* [ncoord][nelem] */) {
 
-  int           has_det2im;
-  int           has_sip;
-  int           has_p4;
-  int           status     = 1;
+  int            has_det2im;
+  int            has_sip;
+  int            has_p4;
+  const double * input  = NULL;
+  double *       tmp    = NULL;
+  int            status = 1;
 
   assert(nelem == 2);
   assert(pixcrd != foc);
@@ -231,26 +233,36 @@ int pipeline_pix2foc(
   has_sip    = pipeline->sip != NULL;
   has_p4     = pipeline->cpdis[0] != NULL || pipeline->cpdis[1] != NULL;
 
-  /* Copy pixcrd to foc as a starting point.  The "deltas" functions below will
-     undistort from there */
-  memcpy(foc, pixcrd, sizeof(double) * ncoord * nelem);
-
   if (has_det2im) {
-    status = p4_pix2deltas(2, (void*)pipeline->det2im, ncoord, pixcrd, foc);
+    tmp = malloc(ncoord * nelem * sizeof(double));
+    if (tmp == NULL) {
+      goto exit;
+    }
+
+    memcpy(tmp, pixcrd, sizeof(double) * ncoord * nelem);
+
+    status = p4_pix2deltas(2, (void*)pipeline->det2im, ncoord, pixcrd, tmp);
     if (status) {
       goto exit;
     }
+
+    input = tmp;
+  } else {
+    /* Copy pixcrd to foc as a starting point.  The "deltas" functions below will
+       undistort from there */
+    memcpy(foc, pixcrd, sizeof(double) * ncoord * nelem);
+    input = pixcrd;
   }
 
   if (has_sip) {
-    status = sip_pix2deltas(pipeline->sip, 2, ncoord, pixcrd, foc);
+    status = sip_pix2deltas(pipeline->sip, 2, ncoord, input, foc);
     if (status) {
       goto exit;
     }
   }
 
   if (has_p4) {
-    status = p4_pix2deltas(2, (void*)pipeline->cpdis, ncoord, pixcrd, foc);
+    status = p4_pix2deltas(2, (void*)pipeline->cpdis, ncoord, input, foc);
     if (status) {
       goto exit;
     }
@@ -259,6 +271,8 @@ int pipeline_pix2foc(
   status = 0;
 
  exit:
+  free(tmp);
+
   /* We don't have any cleanup at the moment */
   return status;
 }
