@@ -234,22 +234,31 @@ int pipeline_pix2foc(
   has_p4     = pipeline->cpdis[0] != NULL || pipeline->cpdis[1] != NULL;
 
   if (has_det2im) {
-    tmp = malloc(ncoord * nelem * sizeof(double));
-    if (tmp == NULL) {
-      goto exit;
-    }
+      if (has_sip || has_p4) {
+          tmp = malloc(ncoord * nelem * sizeof(double));
+          if (tmp == NULL) {
+              goto exit;
+          }
 
-    memcpy(tmp, pixcrd, sizeof(double) * ncoord * nelem);
+          memcpy(tmp, pixcrd, sizeof(double) * ncoord * nelem);
 
-    status = p4_pix2deltas(2, (void*)pipeline->det2im, ncoord, pixcrd, tmp);
-    if (status) {
-      goto exit;
-    }
+          status = p4_pix2deltas(2, (void*)pipeline->det2im, ncoord, pixcrd, tmp);
+          if (status) {
+              goto exit;
+          }
 
-    input = tmp;
+          input = tmp;
+      } else {
+          memcpy(foc, pixcrd, sizeof(double) * ncoord * nelem);
+
+          status = p4_pix2deltas(2, (void*)pipeline->det2im, ncoord, pixcrd, foc);
+          if (status) {
+              goto exit;
+          }
+      }
   } else {
-    /* Copy pixcrd to foc as a starting point.  The "deltas" functions below will
-       undistort from there */
+    /* Copy pixcrd to foc as a starting point.  The "deltas" functions
+       below will undistort from there */
     memcpy(foc, pixcrd, sizeof(double) * ncoord * nelem);
     input = pixcrd;
   }
