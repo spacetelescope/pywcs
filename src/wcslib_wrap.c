@@ -1249,7 +1249,6 @@ PyWcsprm_sub(
   }
 
   wcsprm_python2c(&self->x);
-  wcsprm_python2c(&py_dest_wcs->x);
   status = wcssub(0, &self->x, &nsub, axes, &py_dest_wcs->x);
   wcsprm_c2python(&self->x);
   wcsprm_c2python(&py_dest_wcs->x);
