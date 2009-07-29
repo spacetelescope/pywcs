@@ -95,11 +95,11 @@ void undefined2nan(
     unsigned int nvalues) {
 
   double* end = value + nvalues;
-  double  v   = 0;
 
   for ( ; value != end; ++value) {
-    v = *value;
-    *value = (v == UNDEFINED) ? (double)NPY_NAN : v;
+    if (*value == UNDEFINED) {
+      *value = (double)NPY_NAN;
+    }
   }
 }
 

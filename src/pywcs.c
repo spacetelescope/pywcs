@@ -983,6 +983,7 @@ struct module_state {
         INITERROR;
 
     import_array();
+    fill_docstrings();
 
     if (_setup_api(m)                 ||
         _setup_str_list_proxy_type(m) ||

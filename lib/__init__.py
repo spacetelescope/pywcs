@@ -48,4 +48,4 @@ import _pywcs
 
 __doc__ = __doc__ % pywcs.__doc__
 
-__version__ = "1.5.1-4.3.3"
+__version__ = "1.6-4.3.3"

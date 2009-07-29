@@ -112,19 +112,12 @@ copy_array_to_c_double(
     double* dest) {
 
   npy_intp size = 1;
-  npy_intp i;
   double*  data = NULL;
 
   size = PyArray_Size((PyObject*)array);
   data = (double*)PyArray_DATA(array);
 
-  for (i = 0; i < size; ++i, ++dest, ++data) {
-    if (isnan64(*data)) {
-      *dest = UNDEFINED;
-    } else {
-      *dest = *data;
-    }
-  }
+  memcpy(dest, data, size * sizeof(double));
 }
 
 void
@@ -133,15 +126,12 @@ copy_array_to_c_int(
     int* dest) {
 
   npy_intp size = 1;
-  npy_intp i    = 0;
   int*     data = NULL;
 
   size = PyArray_Size((PyObject*)array);
   data = (int*)PyArray_DATA(array);
 
-  for (i = 0; i < size; ++i, ++dest, ++data) {
-    *dest = *data;
-  }
+  memcpy(dest, data, size * sizeof(int));
 }
 
 int

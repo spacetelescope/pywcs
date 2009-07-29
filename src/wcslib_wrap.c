@@ -1917,7 +1917,7 @@ PyWcsprm_set_equinox(
     /*@unused@*/ void* closure) {
 
   if (value == NULL) { /* deletion */
-    self->x.equinox = UNDEFINED;
+    self->x.equinox = (double)NPY_NAN;
     return 0;
   }
 
@@ -2246,7 +2246,7 @@ PyWcsprm_set_restfrq(
     /*@unused@*/ void* closure) {
 
   if (value == NULL) { /* deletion */
-    self->x.restfrq = UNDEFINED;
+    self->x.restfrq = (double)NPY_NAN;
     return 0;
   }
 
@@ -2270,7 +2270,7 @@ PyWcsprm_set_restwav(
     /*@unused@*/ void* closure) {
 
   if (value == NULL) { /* deletion */
-    self->x.restwav = UNDEFINED;
+    self->x.restwav = (double)NPY_NAN;
     return 0;
   }
 
@@ -2402,7 +2402,7 @@ PyWcsprm_set_velangl(
     /*@unused@*/ void* closure) {
 
   if (value == NULL) { /* deletion */
-    self->x.velangl = UNDEFINED;
+    self->x.velangl = (double)NPY_NAN;
     return 0;
   }
 
@@ -2426,7 +2426,7 @@ PyWcsprm_set_velosys(
     /*@unused@*/ void* closure) {
 
   if (value == NULL) { /* deletion */
-    self->x.velosys = UNDEFINED;
+    self->x.velosys = (double)NPY_NAN;
     return 0;
   }
 
@@ -2450,7 +2450,7 @@ PyWcsprm_set_zsource(
     /*@unused@*/ void* closure) {
 
   if (value == NULL) { /* deletion */
-    self->x.zsource = UNDEFINED;
+    self->x.zsource = (double)NPY_NAN;
     return 0;
   }
 
