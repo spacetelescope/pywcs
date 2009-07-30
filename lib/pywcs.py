@@ -75,7 +75,6 @@ from __future__ import division # confidence high
 __docformat__ = "epytext"
 
 import copy
-import re
 
 import numpy
 
@@ -598,7 +597,7 @@ class WCS(WCSBase):
             elif len(args) == 3:
                 return args[:2]
             else:
-                raise ArgumentError("Wrong number of arguments")
+                raise TypeError("Wrong number of arguments")
         return self._array_converter(self.sip.pix2foc, *args, **kwargs)
     sip_pix2foc.__doc__ = """
         sip_pix2foc(*args, origin) -> focal plane
@@ -627,7 +626,7 @@ class WCS(WCSBase):
             elif len(args) == 3:
                 return args[:2]
             else:
-                raise ArgumentError("Wrong number of arguments")
+                raise TypeError("Wrong number of arguments")
         return self._array_converter(self.sip.foc2pix, *args, **kwargs)
     sip_foc2pix.__doc__ = """
         sip_foc2pix(*args, origin) -> pixel
