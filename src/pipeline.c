@@ -248,6 +248,7 @@ int pipeline_pix2foc(
           }
 
           input = tmp;
+          memcpy(foc, input, sizeof(double) * ncoord * nelem);
       } else {
           memcpy(foc, pixcrd, sizeof(double) * ncoord * nelem);
 
