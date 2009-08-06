@@ -167,7 +167,7 @@ class WCS(WCSBase):
             sip = None
         else:
             try:
-                header_string = str(header.ascard)
+                header_string = "".join([str(x)[:80] for x in header.ascardlist()])
                 wcsprm = _pywcs._Wcsprm(header=header_string, key=key,
                                         relax=relax)
             except _pywcs.NoWcsKeywordsFoundError:
