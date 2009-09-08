@@ -53,6 +53,9 @@ DAMAGE.
 typedef int Py_ssize_t;
 # define PY_SSIZE_T_MAX INT_MAX
 # define PY_SSIZE_T_MIN INT_MIN
+#define lenfunc inquiry
+#define ssizeargfunc intargfunc
+#define ssizeobjargproc intobjargproc
 #endif
 
 PyObject*
