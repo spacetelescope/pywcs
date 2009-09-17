@@ -1313,10 +1313,10 @@ Wcsprm is a direct wrapper around wcslib, and provides access to the
 core WCS transformations that it supports.
 
 The FITS header parsing enforces correct FITS "keyword = value" syntax
-with regard to C{"= "} occurring in columns 9 and 10.  However, it
-does recognize free-format character (NOST 100-2.0, Sect. 5.2.1),
-integer (Sect. 5.2.3), and floating-point values (Sect. 5.2.4) for all
-keywords.
+with regard to the equals sign occurring in columns 9 and 10.
+However, it does recognize free-format character (NOST 100-2.0,
+Sect. 5.2.1), integer (Sect. 5.2.3), and floating-point values
+(Sect. 5.2.4) for all keywords.
 
 @param header: A PyFITS header object or a string containing the raw
     FITS header data.  If header is not provided, the object will be

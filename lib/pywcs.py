@@ -108,7 +108,7 @@ class WCS(WCSBase):
     def __init__(self, header=None, fobj=None, key=' ', minerr=0.0,
                  relax=False, naxis=None):
         """
-        WCS(header=None, fobj=None, key=' ', relax=False, naxis=2)
+        WCS(header=None, fobj=None, key=' ', minerr=0.0, relax=False, naxis=2)
 
         @param header: A PyFITS header object.  If header is not
             provided, the object will be initialized to default

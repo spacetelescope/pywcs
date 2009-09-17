@@ -111,8 +111,10 @@ def encode_docstring(s):
 sys.path.append(join('.', srcroot, "lib"))
 docstrings = {}
 execfile(join(srcroot, 'doc', 'docstrings.py'), docstrings)
-keys = docstrings.keys()
+keys = [key for key in docstrings.keys() if not key.startswith('__')]
 keys.sort()
+for key in keys:
+    docstrings[key] = docstrings[key].lstrip() + '\0'
 fd = open(join(srcroot, 'src', 'docstrings.h'), "w")
 fd.write("""/*
 DO NOT EDIT!
@@ -125,13 +127,12 @@ edit doc/docstrings.py
 #define __DOCSTRINGS_H__
 
 void fill_docstrings(void);
+
 """)
 for key in keys:
-    if key.startswith('__'):
-        continue
-    val = docstrings[key].lstrip()
-    fd.write('extern char doc_%s[%d];\n\n' % (key, len(val)))
-fd.write("#endif\n\n")
+    val = docstrings[key]
+    fd.write('extern char doc_%s[%d];\n' % (key, len(val)))
+fd.write("\n#endif\n\n")
 fd.close()
 
 fd = open(join(srcroot, 'src', 'docstrings.c'), "w")
@@ -144,27 +145,23 @@ edit doc/docstrings.py
 
 #include <string.h>
 #include "docstrings.h"
+
 """)
 for key in keys:
-    if key.startswith('__'):
-        continue
-    val = docstrings[key].lstrip()
-    fd.write('char doc_%s[%d];\n\n' % (key, len(val)))
+    val = docstrings[key]
+    fd.write('char doc_%s[%d];\n' % (key, len(val)))
 
-fd.write("void fill_docstrings(void) {\n\n")
+fd.write("\nvoid fill_docstrings(void)\n{\n")
 for key in keys:
-    if key.startswith('__'):
-        continue
-    val = docstrings[key].lstrip()
+    val = docstrings[key]
     # For portability across various compilers, we need to fill the
     # docstrings in 256-character chunks
     for i in range(0, len(val), 256):
-        fd.write('strncpy(doc_%s, "%s", %d);\n' % (
-                key,
-                val[i:i+256].encode("string_escape").replace('"', '\\"'),
-                min(len(val) - i, 256) + 1))
+        chunk = val[i:i+256].encode("string_escape").replace('"', '\\"')
+        fd.write('strncpy(doc_%s + %d, "%s", %d);\n' % (
+                key, i, chunk, min(len(val) - i, 256)))
     fd.write("\n")
-fd.write("}\n\n")
+fd.write("\n}\n\n")
 fd.close()
 
 

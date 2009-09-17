@@ -1,4 +1,6 @@
-include LICENSE MANIFEST.in stsci_distutils_hack.py defsetup.py CHANGELOG
+include LICENSE MANIFEST.in stsci_distutils_hack.py defsetup.py CHANGELOG README
 include doc/docstrings.py
 include src/*.h
+include examples/*.py
+include examples/*.fits
 recursive-include wcslib-4.3.3 *
