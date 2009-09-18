@@ -71,38 +71,13 @@ to install pywcs.
 Building documentation
 ----------------------
 
-Optionally, the API documentation can be built using epydoc
-(http://epydoc.sourceforge.net).  Version 3.0beta1 or later of epydoc
-must be used.  Earlier versions will not document all of the members.
+Optionally, the documentation can be built using Sphinx
+(http://sphinx.pocoo.org).
 
-After installing pywcs, type::
+After installing pywcs, 'cd' into the 'doc' directory and::
 
-    epydoc --inheritance=included --no-private pywcs
+    make html
 
-The API documentation is also available online at:
+The documentation is also available online at:
 
     http://stsdas.stsci.edu/astrolib/pywcs/index.html
-
-General usage instructions
---------------------------
-
-TODO: The information below is out-of-date.
-
-The basic workflow is as follows:
-
-    1. ``import pywcs``
-
-    2. Call ``pywcs.parse_image_header()`` with a raw FITS header or
-    ``pywcs.parse_hdulist()`` with a PyFITS hdulist.  This will return
-    a list containing all of the WCS transformations specified in the
-    FITS file.
-
-    3. Optionally, if the FITS file uses any deprecated or
-    non-standard features, you may need to call one of the ``fix``
-    methods on the object.
-
-    4. Select the correct ``Wcs`` transform object from the list, and
-    convert coordinates using the ``.p2s()`` or ``.s2p()`` methods.
-
-See the API documentation for usage details about these methods.
-There are also examples in the examples/ directory.

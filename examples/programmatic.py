@@ -1,8 +1,6 @@
 # Set the WCS information manually by setting properties of the WCS
 # object.
 
-from __future__ import division # confidence high
-
 import numpy
 import pywcs
 import pyfits
@@ -14,26 +12,26 @@ wcs = pywcs.WCS(naxis=2)
 
 # Set up an "Airy's zenithal" projection
 # Vector properties may be set with Python lists, or Numpy arrays
-wcs.crpix = [-234.75, 8.3393]
-wcs.cdelt = numpy.array([-0.066667, 0.066667])
-wcs.crval = [0, -90]
-wcs.ctype = ["RA---AIR", "DEC--AIR"]
-wcs.set_pv([(2, 1, 45.0)])
+wcs.wcs.crpix = [-234.75, 8.3393]
+wcs.wcs.cdelt = numpy.array([-0.066667, 0.066667])
+wcs.wcs.crval = [0, -90]
+wcs.wcs.ctype = ["RA---AIR", "DEC--AIR"]
+wcs.wcs.set_pv([(2, 1, 45.0)])
 
 # Print out the "name" of the WCS, as defined in the FITS header
-print wcs.name
+print wcs.wcs.name
 
-wcs.print_contents()
+wcs.wcs.print_contents()
 
-# Some pixel coordinates of interest.  These are 0-based coordinates
+# Some pixel coordinates of interest.
 pixcrd = numpy.array([[0,0],[24,38],[45,98]], numpy.float_)
 
 # Convert pixel coordinates to world coordinates
-world = wcs.pixel2world(pixcrd)
+world = wcs.wcs_pix2sky(pixcrd, 1)
 print world
 
 # Convert the same coordinates back to pixel coordinates.
-pixcrd2 = wcs.world2pixel(world)
+pixcrd2 = wcs.wcs_sky2pix(world, 1)
 print pixcrd2
 
 # These should be the same as the original pixel coordinates, modulo

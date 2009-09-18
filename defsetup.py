@@ -167,6 +167,8 @@ fd.close()
 
 ######################################################################
 # PYWCS-SPECIFIC AND WRAPPER SOURCE FILES
+PYWCS_VERSION = '1.6'
+VERSION = '%s-%s' % (PYWCS_VERSION, WCSVERSION)
 PYWCS_SOURCES = [ # List of pywcs files to compile
     'distortion.c',
     'distortion_wrap.c',
@@ -238,7 +240,7 @@ PYWCS_EXTENSIONS = [
 pkg = ["pywcs" ]
 
 setupargs = {
-    'version' :	    "1.6-%s" % WCSVERSION,
+    'version' :	    VERSION,
     'description':  "Python wrappers to WCSLIB",
     'author' :      CONTACT,
     'author_email': EMAIL,

@@ -88,6 +88,8 @@ pipeline_free(
 Perform the entire pipeline from pixel coordinates to world
 coordinates, in the following order:
 
+    - Detector to image plane correction (optionally)
+
     - SIP distortion correction (optionally)
 
     - Paper IV distortion correction (optionally)
@@ -115,6 +117,8 @@ pipeline_all_pixel2world(
 /**
 Perform just the distortion correction part of the pipeline from pixel
 coordinates to focal plane coordinates.
+
+    - Detector to image plane correction (optionally)
 
     - SIP distortion correction (optionally)
 

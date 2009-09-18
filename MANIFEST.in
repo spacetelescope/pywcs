@@ -1,5 +1,11 @@
 include LICENSE MANIFEST.in stsci_distutils_hack.py defsetup.py CHANGELOG README
 include doc/docstrings.py
+include doc/Makefile
+include doc/make.bat
+include doc/source/conf.py
+include doc/source/_templates
+include doc/source/_static
+recursive-include doc/source *.rst
 include src/*.h
 include examples/*.py
 include examples/*.fits

@@ -1,33 +1,34 @@
 # Load the WCS information from a fits header, and use it
 # to convert pixel coordinates to world coordinates.
 
-from __future__ import division # confidence high
-
 import numpy
 import pywcs
 import pyfits
 import sys
 
+# Load the FITS hdulist using pyfits
 hdulist = pyfits.open(sys.argv[-1])
 
 # Parse the WCS keywords in the primary HDU
 wcs = pywcs.WCS(hdulist[0].header)
 
 # Print out the "name" of the WCS, as defined in the FITS header
-print wcs.name
-print wcs.get_pv()
+print wcs.wcs.name
 
-wcs.print_contents()
+# Print out all of the settings that were parsed from the header
+wcs.wcs.print_contents()
 
-# Some pixel coordinates of interest.  These are 0-based coordinates
+# Some pixel coordinates of interest.
 pixcrd = numpy.array([[0,0],[24,38],[45,98]], numpy.float_)
 
 # Convert pixel coordinates to world coordinates
-world = wcs.pixel2world(pixcrd)
-print world
+# The second argument is "origin" -- in this case we're declaring we
+# have 1-based (Fortran-like) coordinates.
+sky = wcs.wcs_pix2sky(pixcrd, 1)
+print sky
 
 # Convert the same coordinates back to pixel coordinates.
-pixcrd2 = wcs.world2pixel(world)
+pixcrd2 = wcs.wcs_sky2pix(sky, 1)
 print pixcrd2
 
 # These should be the same as the original pixel coordinates, modulo

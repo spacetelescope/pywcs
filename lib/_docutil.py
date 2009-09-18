@@ -45,26 +45,25 @@ def TWO_OR_THREE_ARGS(out_type, indent=0):
     return _fix(
 """Either two or three arguments may be provided.
 
-    - two arguments: An Nx2 array of I{x}- and I{y}-coordinates, and
-      an origin
+    - 2 arguments: An *N* x 2 array of *x*- and *y*-coordinates, and
+      an *origin*.
 
-    - three arguments: Two one-dimensional arrays of I{x} and I{y}
-      coordinates, and an origin.
+    - 3 arguments: 2 one-dimensional arrays of *x* and *y*
+      coordinates, and an *origin*.
 
-Here, origin is the coordinate in the upper left corner of the image.
-In FITS/Fortran standards, this is 1.  In Numpy/C standards this is 0.
+Here, *origin* is the coordinate in the upper left corner of the
+image.  In FITS and Fortran standards, this is 1.  In Numpy and C
+standards this is 0.
 
-@return: Returns the %s coordinates.  If the input was a single array
-     and origin, a single array is returned, otherwise a tuple of
-     arrays is returned.""" % out_type, indent)
+Returns the %s coordinates.  If the input was a single array and
+origin, a single array is returned, otherwise a tuple of arrays is
+returned.""" % out_type, indent)
 
 def ORIGIN(indent=0):
     return _fix(
 """
-@param origin: Specifies the origin of pixel values.  The Fortran and
-FITS standards use an origin of 1.  Numpy and C use array indexing
-with origin at 0.
-
-@type origin: int
+- *origin*: int. Specifies the origin of pixel values.  The Fortran and
+  FITS standards use an origin of 1.  Numpy and C use array indexing
+  with origin at 0.
 """, indent)
 

@@ -996,8 +996,6 @@ struct module_state {
         INITERROR;
     }
 
-    PyModule_AddObject(m, "__docformat__", PyString_FromString("epytext"));
-
 #if PY_MAJOR_VERSION >= 3
     return module;
 #endif
