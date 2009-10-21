@@ -272,6 +272,11 @@ class WCS(WCSBase):
         Create a `Paper IV`_ type lookup table for detector to image
         plane correction.
         """
+        cpdis = [None, None]
+        crpix = [0.,0.]
+        crval = [0.,0.]
+        cdelt = [1.,1.]
+        
         if not isinstance(fobj, pyfits.NP_pyfits.HDUList):
             return (None, None)
 
@@ -283,10 +288,13 @@ class WCS(WCSBase):
             return (None, None)
         d2im_data = numpy.array([d2im_data])
         d2im_hdr = fobj[('D2IMARR', 1)].header
+        naxis = d2im_hdr['NAXIS']
+        
+        for i in range(1,naxis+1):
+            crpix[i-1] = d2im_hdr.get('CRPIX'+str(i), 0.0)
+            crval[i-1] = d2im_hdr.get('CRVAL'+str(i), 0.0)
+            cdelt[i-1] = d2im_hdr.get('CDELT'+str(i), 1.0)
 
-        crpix = (d2im_hdr['CRPIX1'], d2im_hdr['CRPIX2'])
-        crval = (d2im_hdr['CRVAL1'], d2im_hdr['CRVAL2'])
-        cdelt = (d2im_hdr['CDELT1'], d2im_hdr['CDELT2'])
         cpdis = DistortionLookupTable(d2im_data, crpix, crval, cdelt)
 
         axiscorr = header.get('AXISCORR', None)
