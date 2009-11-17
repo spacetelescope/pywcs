@@ -72,7 +72,7 @@ __docformat__ = "epytext"
 import copy
 
 # third-party
-import numpy
+import numpy as np
 
 # local
 import _docutil as __
@@ -155,10 +155,10 @@ class WCS(WCSBase):
                                     relax=relax, naxis=naxis)
             self.naxis = wcsprm.naxis
             # Set some reasonable defaults.
-            wcsprm.crpix = numpy.zeros((self.naxis,), numpy.double)
-            wcsprm.crval = numpy.zeros((self.naxis,), numpy.double)
+            wcsprm.crpix = np.zeros((self.naxis,), np.double)
+            wcsprm.crval = np.zeros((self.naxis,), np.double)
             wcsprm.ctype = ['RA---TAN', 'DEC--TAN']
-            wcsprm.cd = numpy.array([[1.0, 0.0], [0.0, 1.0]], numpy.double)
+            wcsprm.cd = np.array([[1.0, 0.0], [0.0, 1.0]], np.double)
             det2im = (None, None)
             cpdis = (None, None)
             sip = None
@@ -253,7 +253,7 @@ class WCS(WCSBase):
             naxis1 = header.get('NAXIS1', None)
             naxis2 = header.get('NAXIS2', None)
 
-        corners = numpy.zeros(shape=(4,2),dtype=numpy.float64)
+        corners = np.zeros(shape=(4,2),dtype=np.float64)
         if naxis1 is None or naxis2 is None:
             return None
 
@@ -276,7 +276,7 @@ class WCS(WCSBase):
         crpix = [0.,0.]
         crval = [0.,0.]
         cdelt = [1.,1.]
-        
+
         if not isinstance(fobj, pyfits.NP_pyfits.HDUList):
             return (None, None)
 
@@ -286,10 +286,10 @@ class WCS(WCSBase):
             return (None, None)
         except AttributeError:
             return (None, None)
-        d2im_data = numpy.array([d2im_data])
+        d2im_data = np.array([d2im_data])
         d2im_hdr = fobj[('D2IMARR', 1)].header
         naxis = d2im_hdr['NAXIS']
-        
+
         for i in range(1,naxis+1):
             crpix[i-1] = d2im_hdr.get('CRPIX'+str(i), 0.0)
             crval[i-1] = d2im_hdr.get('CRVAL'+str(i), 0.0)
@@ -367,13 +367,13 @@ class WCS(WCSBase):
                     "keyword for SIP distortion")
 
             m = int(header["A_ORDER"+key])
-            a = numpy.zeros((m+1, m+1), numpy.double)
+            a = np.zeros((m+1, m+1), np.double)
             for i in range(m+1):
                 for j in range(m-i+1):
                     a[i, j] = header.get(("A_%d_%d" % (i, j))+key, 0.0)
 
             m = int(header["B_ORDER"+key])
-            b = numpy.zeros((m+1, m+1), numpy.double)
+            b = np.zeros((m+1, m+1), np.double)
             for i in range(m+1):
                 for j in range(m-i+1):
                     b[i, j] = header.get(("B_%d_%d" % (i, j))+key, 0.0)
@@ -392,13 +392,13 @@ class WCS(WCSBase):
                     "keyword for SIP distortion")
 
             m = int(header["AP_ORDER"])
-            ap = numpy.zeros((m+1, m+1), numpy.double)
+            ap = np.zeros((m+1, m+1), np.double)
             for i in range(m+1):
                 for j in range(m-i+1):
                     ap[i, j] = header.get("AP_%d_%d" % (i, j), 0.0)
 
             m = int(header["BP_ORDER"])
-            bp = numpy.zeros((m+1, m+1), numpy.double)
+            bp = np.zeros((m+1, m+1), np.double)
             for i in range(m+1):
                 for j in range(m-i+1):
                     bp[i, j] = header.get("BP_%d_%d" % (i, j), 0.0)
@@ -430,7 +430,7 @@ class WCS(WCSBase):
         if len(args) == 2:
             xy, origin = args
             try:
-                xy = numpy.asarray(xy)
+                xy = np.asarray(xy)
                 origin = int(origin)
             except:
                 raise TypeError(
@@ -439,8 +439,8 @@ class WCS(WCSBase):
         elif len(args) == 3:
             x, y, origin = args
             try:
-                x = numpy.asarray(x)
-                y = numpy.asarray(y)
+                x = np.asarray(x)
+                y = np.asarray(y)
                 origin = int(origin)
             except:
                 raise TypeError(
@@ -448,7 +448,7 @@ class WCS(WCSBase):
             if x.size != y.size:
                 raise ValueError("x and y arrays are not the same size")
             length = x.size
-            xy = numpy.hstack((x.reshape((length, 1)),
+            xy = np.hstack((x.reshape((length, 1)),
                                y.reshape((length, 1))))
             sky = func(xy, origin)
             return [sky[:, i] for i in range(sky.shape[1])]
@@ -786,10 +786,10 @@ class WCS(WCSBase):
 
     def rotateCD(self, theta):
         _theta = DEGTORAD(theta)
-        _mrot = numpy.zeros(shape=(2,2),dtype=numpy.double)
-        _mrot[0] = (numpy.cos(_theta),numpy.sin(_theta))
-        _mrot[1] = (-numpy.sin(_theta),numpy.cos(_theta))
-        new_cd = numpy.dot(self.wcs.cd, _mrot)
+        _mrot = np.zeros(shape=(2,2),dtype=np.double)
+        _mrot[0] = (np.cos(_theta),np.sin(_theta))
+        _mrot[1] = (-np.sin(_theta),np.cos(_theta))
+        new_cd = np.dot(self.wcs.cd, _mrot)
         self.wcs.cd = new_cd
 
     def printwcs(self):
@@ -804,9 +804,9 @@ class WCS(WCSBase):
         print 'NAXIS    : %r %r' % (self.naxis1, self.naxis2)
 
 def DEGTORAD(deg):
-    return (deg * numpy.pi / 180.)
+    return (deg * np.pi / 180.)
 
 def RADTODEG(rad):
-    return (rad * 180. / numpy.pi)
+    return (rad * 180. / np.pi)
 
 
