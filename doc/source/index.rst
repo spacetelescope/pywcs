@@ -27,13 +27,3 @@ Contents:
 
    examples.rst
    api.rst
-
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-

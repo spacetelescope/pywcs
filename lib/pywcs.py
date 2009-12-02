@@ -173,6 +173,10 @@ class WCS(WCSBase):
 
             if naxis is not None:
                 wcsprm = wcsprm.sub(naxis)
+            if wcsprm.naxis != 2:
+                raise ValueError(
+                    "pywcs currently only supports two-dimensional transformations, and this WCS describes %d dimensions" %
+                    wcsprm.naxis)
             self.naxis = wcsprm.naxis
 
             det2im = self._read_det2im_kw(header, fobj)
@@ -470,8 +474,6 @@ class WCS(WCSBase):
 
         %s
 
-        %s
-
         **Exceptions:**
 
         - `MemoryError`: Memory allocation failed.
@@ -494,8 +496,7 @@ class WCS(WCSBase):
 
         - `InvalidTransformError`: Ill-conditioned coordinate
           transformation parameters.
-        """ % (__.ORIGIN(8),
-               __.TWO_OR_THREE_ARGS('pixel', 8))
+        """ % (__.TWO_OR_THREE_ARGS('pixel', 8))
 
     def wcs_pix2sky(self, *args, **kwargs):
         if self.wcs is None:
@@ -511,8 +512,6 @@ class WCS(WCSBase):
 
         %s
 
-        %s
-
         **Exceptions:**
 
         - `MemoryError`: Memory allocation failed.
@@ -535,8 +534,7 @@ class WCS(WCSBase):
 
         - `InvalidTransformError`: Ill-conditioned coordinate
           transformation parameters.
-        """ % (__.ORIGIN(8),
-               __.TWO_OR_THREE_ARGS('sky', 8))
+        """ % (__.TWO_OR_THREE_ARGS('sky', 8))
 
     def wcs_sky2pix(self, *args, **kwargs):
         if self.wcs is None:
@@ -547,8 +545,6 @@ class WCS(WCSBase):
         Transforms sky coordinates to pixel coordinates, using only
         the basic `wcslib`_ WCS transformation.  No `SIP`_ or `Paper
         IV`_ table lookup distortion is applied.
-
-        %s
 
         %s
 
@@ -569,8 +565,7 @@ class WCS(WCSBase):
 
         - `InvalidTransformError`: Ill-conditioned coordinate
           transformation parameters.
-        """ % (__.ORIGIN(8),
-               __.TWO_OR_THREE_ARGS('pixel', 8))
+        """ % (__.TWO_OR_THREE_ARGS('pixel', 8))
 
     def pix2foc(self, *args, **kwargs):
         return self._array_converter(self._pix2foc, *args, **kwargs)
@@ -581,15 +576,12 @@ class WCS(WCSBase):
 
         %s
 
-        %s
-
         **Exceptions:**
 
         - `MemoryError`: Memory allocation failed.
 
         - `ValueError`: Invalid coordinate transformation parameters.
-        """ % (__.ORIGIN(8),
-               __.TWO_OR_THREE_ARGS('pixel', 8))
+        """ % (__.TWO_OR_THREE_ARGS('pixel', 8))
 
     def p4_pix2foc(self, *args, **kwargs):
         return self._array_converter(self._p4_pix2foc, *args, **kwargs)
@@ -599,15 +591,12 @@ class WCS(WCSBase):
 
         %s
 
-        %s
-
         **Exceptions:**
 
         - `MemoryError`: Memory allocation failed.
 
         - `ValueError`: Invalid coordinate transformation parameters.
-        """ % (__.ORIGIN(8),
-               __.TWO_OR_THREE_ARGS('pixel', 8))
+        """ % (__.TWO_OR_THREE_ARGS('pixel', 8))
 
     def det2im(self, *args, **kwargs):
         return self._array_converter(self._det2im, *args, **kwargs)
@@ -617,15 +606,12 @@ class WCS(WCSBase):
 
         %s
 
-        %s
-
         **Exceptions:**
 
         - `MemoryError`: Memory allocation failed.
 
         - `ValueError`: Invalid coordinate transformation parameters.
-        """ % (__.ORIGIN(8),
-               __.TWO_OR_THREE_ARGS('pixel', 8))
+        """ % (__.TWO_OR_THREE_ARGS('pixel', 8))
 
     def sip_pix2foc(self, *args, **kwargs):
         if self.sip is None:
@@ -647,15 +633,12 @@ class WCS(WCSBase):
 
         %s
 
-        %s
-
         **Exceptions:**
 
         - `MemoryError`: Memory allocation failed.
 
         - `ValueError`: Invalid coordinate transformation parameters.
-        """ % (__.ORIGIN(8),
-               __.TWO_OR_THREE_ARGS('pixel', 8))
+        """ % (__.TWO_OR_THREE_ARGS('pixel', 8))
 
     def sip_foc2pix(self, *args, **kwargs):
         if self.sip is None:
@@ -676,15 +659,12 @@ class WCS(WCSBase):
 
         %s
 
-        %s
-
         **Exceptions:**
 
         - `MemoryError`: Memory allocation failed.
 
         - `ValueError`: Invalid coordinate transformation parameters.
-        """ % (__.ORIGIN(8),
-               __.TWO_OR_THREE_ARGS('focal plane', 8))
+        """ % (__.TWO_OR_THREE_ARGS('focal plane', 8))
 
     def to_header(self, relax=False):
         """
