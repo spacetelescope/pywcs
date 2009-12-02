@@ -132,10 +132,22 @@ class WCS(WCSBase):
               WCS standard.
 
         - *naxis*: int or sequence.  Extracts specific coordinate axes
-          using `sub`.  If a header is provided, and *naxis* is not
-          ``None``, *naxis* will be passed to `sub` in order to select
-          specific axes from the header.  See `sub` for more details
-          about this parameter.
+          using :meth:`~pywcs.Wcsprm.sub`.  If a header is provided,
+          and *naxis* is not ``None``, *naxis* will be passed to
+          :meth:`~pywcs.Wcsprm.sub` in order to select specific axes
+          from the header.  See :meth:`~pywcs.Wcsprm.sub` for more
+          details about this parameter.
+
+        .. warning::
+
+          pywcs supports arbitrary *n* dimensions for the core WCS
+          (the transformations handled by WCSLIB).  However, the Paper
+          IV lookup table and SIP distortions must be two dimensional.
+          Therefore, if you try to create a WCS object where the core
+          WCS has a different number of dimensions than 2, a
+          `ValueError` exception will be raised.  To avoid this,
+          consider using the *naxis* kwarg to select two dimensions
+          from the core WCS.
 
         **Exceptions:**
 
@@ -173,16 +185,23 @@ class WCS(WCSBase):
 
             if naxis is not None:
                 wcsprm = wcsprm.sub(naxis)
-            if wcsprm.naxis != 2:
-                raise ValueError(
-                    "pywcs currently only supports two-dimensional transformations, and this WCS describes %d dimensions" %
-                    wcsprm.naxis)
             self.naxis = wcsprm.naxis
 
             det2im = self._read_det2im_kw(header, fobj)
             cpdis = self._read_distortion_kw(
                 header, fobj, key=key,dist='CPDIS', err=minerr)
             sip = self._read_sip_kw(header, key=key)
+            if (wcsprm.naxis != 2 and
+                (det2im[0] or det2im[1] or cpdis[0] or cpdis[1] or sip)):
+                raise ValueError(
+                    """
+Paper IV lookup tables and SIP distortions only work in 2 dimensions.
+However, WCSLIB has detected %d dimensions in the core WCS keywords.
+To use core WCS in conjunction with Paper IV lookup tables or SIP
+distortion, you must select or reduce these to 2 dimensions using the
+naxis kwarg.
+""" %
+                    wcsprm.naxis)
         self.get_naxis(header)
         WCSBase.__init__(self, sip, cpdis, wcsprm, det2im)
 
@@ -474,6 +493,9 @@ class WCS(WCSBase):
 
         %s
 
+        For a transformation that is not two-dimensional, the
+        two-argument form must be used.
+
         **Exceptions:**
 
         - `MemoryError`: Memory allocation failed.
@@ -496,7 +518,7 @@ class WCS(WCSBase):
 
         - `InvalidTransformError`: Ill-conditioned coordinate
           transformation parameters.
-        """ % (__.TWO_OR_THREE_ARGS('pixel', 8))
+        """ % (__.TWO_OR_THREE_ARGS('pixel', 'naxis', 8))
 
     def wcs_pix2sky(self, *args, **kwargs):
         if self.wcs is None:
@@ -507,10 +529,14 @@ class WCS(WCSBase):
         Transforms pixel coordinates to sky coordinates by doing only
         the basic `wcslib`_ transformation.  No `SIP`_ or `Paper IV`_
         table lookup distortion correction is applied.  To perform
-        distortion correction, see `all_pix2sky`, `sip_pix2foc`,
-        `p4_pix2foc`, or `pix2foc`.
+        distortion correction, see `~pywcs.WCS.all_pix2sky`,
+        `~pywcs.WCS.sip_pix2foc`, `~pywcs.WCS.p4_pix2foc`, or
+        `~pywcs.WCS.pix2foc`.
 
         %s
+
+        For a transformation that is not two-dimensional, the
+        two-argument form must be used.
 
         **Exceptions:**
 
@@ -534,7 +560,7 @@ class WCS(WCSBase):
 
         - `InvalidTransformError`: Ill-conditioned coordinate
           transformation parameters.
-        """ % (__.TWO_OR_THREE_ARGS('sky', 8))
+        """ % (__.TWO_OR_THREE_ARGS('sky', 'naxis', 8))
 
     def wcs_sky2pix(self, *args, **kwargs):
         if self.wcs is None:
@@ -548,6 +574,9 @@ class WCS(WCSBase):
 
         %s
 
+        For a transformation that is not two-dimensional, the
+        two-argument form must be used.
+
         **Exceptions:**
 
         - `MemoryError`: Memory allocation failed.
@@ -565,7 +594,7 @@ class WCS(WCSBase):
 
         - `InvalidTransformError`: Ill-conditioned coordinate
           transformation parameters.
-        """ % (__.TWO_OR_THREE_ARGS('pixel', 8))
+        """ % (__.TWO_OR_THREE_ARGS('pixel', 'naxis', 8))
 
     def pix2foc(self, *args, **kwargs):
         return self._array_converter(self._pix2foc, *args, **kwargs)
@@ -581,7 +610,7 @@ class WCS(WCSBase):
         - `MemoryError`: Memory allocation failed.
 
         - `ValueError`: Invalid coordinate transformation parameters.
-        """ % (__.TWO_OR_THREE_ARGS('pixel', 8))
+        """ % (__.TWO_OR_THREE_ARGS('pixel', '2', 8))
 
     def p4_pix2foc(self, *args, **kwargs):
         return self._array_converter(self._p4_pix2foc, *args, **kwargs)
@@ -596,7 +625,7 @@ class WCS(WCSBase):
         - `MemoryError`: Memory allocation failed.
 
         - `ValueError`: Invalid coordinate transformation parameters.
-        """ % (__.TWO_OR_THREE_ARGS('pixel', 8))
+        """ % (__.TWO_OR_THREE_ARGS('pixel', '2', 8))
 
     def det2im(self, *args, **kwargs):
         return self._array_converter(self._det2im, *args, **kwargs)
@@ -611,7 +640,7 @@ class WCS(WCSBase):
         - `MemoryError`: Memory allocation failed.
 
         - `ValueError`: Invalid coordinate transformation parameters.
-        """ % (__.TWO_OR_THREE_ARGS('pixel', 8))
+        """ % (__.TWO_OR_THREE_ARGS('pixel', '2', 8))
 
     def sip_pix2foc(self, *args, **kwargs):
         if self.sip is None:
@@ -628,8 +657,8 @@ class WCS(WCSBase):
 
         `Paper IV`_ table lookup distortion correction is not applied,
         even if that information existed in the FITS file that
-        initialized this :class:`WCS` object.  To correct for that,
-        use `pix2foc` or `p4_pix2foc`.
+        initialized this :class:`~pywcs.WCS` object.  To correct for that,
+        use `~pywcs.WCS.pix2foc` or `~pywcs.WCS.p4_pix2foc`.
 
         %s
 
@@ -638,7 +667,7 @@ class WCS(WCSBase):
         - `MemoryError`: Memory allocation failed.
 
         - `ValueError`: Invalid coordinate transformation parameters.
-        """ % (__.TWO_OR_THREE_ARGS('pixel', 8))
+        """ % (__.TWO_OR_THREE_ARGS('pixel', '2', 8))
 
     def sip_foc2pix(self, *args, **kwargs):
         if self.sip is None:
@@ -655,7 +684,7 @@ class WCS(WCSBase):
 
         `Paper IV`_ table lookup distortion correction is not applied,
         even if that information existed in the FITS file that
-        initialized this `WCS` object.
+        initialized this `~pywcs.WCS` object.
 
         %s
 
@@ -664,7 +693,7 @@ class WCS(WCSBase):
         - `MemoryError`: Memory allocation failed.
 
         - `ValueError`: Invalid coordinate transformation parameters.
-        """ % (__.TWO_OR_THREE_ARGS('focal plane', 8))
+        """ % (__.TWO_OR_THREE_ARGS('focal plane', '2', 8))
 
     def to_header(self, relax=False):
         """

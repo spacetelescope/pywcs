@@ -167,7 +167,7 @@ fd.close()
 
 ######################################################################
 # PYWCS-SPECIFIC AND WRAPPER SOURCE FILES
-PYWCS_VERSION = '1.6'
+PYWCS_VERSION = '1.7'
 VERSION = '%s-%s' % (PYWCS_VERSION, WCSVERSION)
 PYWCS_SOURCES = [ # List of pywcs files to compile
     'distortion.c',
@@ -240,13 +240,13 @@ PYWCS_EXTENSIONS = [
 pkg = ["pywcs" ]
 
 setupargs = {
-    'version' :	    VERSION,
+    'version' :     VERSION,
     'description':  "Python wrappers to WCSLIB",
     'author' :      CONTACT,
     'author_email': EMAIL,
     'url' :         "http://projects.scipy.org/astropy/astrolib/wiki/WikiStart",
-    'platforms' :			["unix","windows"],
-    'ext_modules' :			PYWCS_EXTENSIONS,
+    'platforms' :                       ["unix","windows"],
+    'ext_modules' :                     PYWCS_EXTENSIONS,
     'data_files' : [
                     ( 'pywcs/include', ['src/*.h']),
                     ( 'pywcs/include/wcslib', [ WCSLIBC + '/*.h'] ),

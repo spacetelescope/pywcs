@@ -164,8 +164,6 @@ pipeline_all_pixel2world(
   int           has_wcs;
   int           status     = 1;
 
-  assert(nelem == 2);
-
   if (pipeline == NULL || pixcrd == NULL || world == NULL) {
     return 1;
   }
@@ -174,6 +172,13 @@ pipeline_all_pixel2world(
   has_sip    = pipeline->sip != NULL;
   has_p4     = pipeline->cpdis[0] != NULL || pipeline->cpdis[1] != NULL;
   has_wcs    = pipeline->wcs != NULL;
+
+  if (has_det2im || has_sip || has_p4) {
+    if (nelem != 2) {
+      status = -1;
+      goto exit;
+    }
+  }
 
   if (has_wcs) {
     status = pipeline_realloc((pipeline_t*)pipeline, ncoord, nelem);

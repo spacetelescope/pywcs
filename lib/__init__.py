@@ -81,4 +81,4 @@ from pywcs import *
 import pywcs
 import _pywcs
 
-__version__ = "1.6-4.3.3"
+__version__ = "1.7-4.3.3"

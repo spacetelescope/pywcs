@@ -160,8 +160,9 @@ For historical compatibility, two alternate specifications of the
 not formally co-exist with ``PCi_ja``, the approach here is simply to
 ignore them if given in conjunction with ``PCi_ja``.
 
-`has_pci_ja`, `has_cdi_ja` and `has_crotaia` can be used to determine
-which of these alternatives are present in the header.
+`~pywcs.Wcsprm.has_pci_ja`, `~pywcs.Wcsprm.has_cdi_ja` and
+`~pywcs.Wcsprm.has_crotaia` can be used to determine which of these
+alternatives are present in the header.
 
 ``CDi_ja`` and ``CROTAia`` keywords, if found, are to be stored in the
 `cd` and `crota` arrays which are dimensioned similarly to `pc` and
@@ -169,10 +170,10 @@ which of these alternatives are present in the header.
 
 These alternate specifications of the linear transformation matrix are
 translated immediately to ``PCi_ja`` by `set` and are nowhere visible
-to the lower-level routines.  In particular, `set` resets `cdelt` to
-unity if ``CDi_ja`` is present (and no ``PCi_ja``).  If no ``CROTAia`` is
-associated with the latitude axis, `set` reverts to a unity ``PCi_ja``
-matrix.
+to the lower-level routines.  In particular, `~pywcs.Wcsprm.set`
+resets `~pywcs.Wcsprm.cdelt` to unity if ``CDi_ja`` is present (and no
+``PCi_ja``).  If no ``CROTAia`` is associated with the latitude axis,
+`set` reverts to a unity ``PCi_ja`` matrix.
 """
 
 cdelt = """
@@ -278,9 +279,9 @@ ctype = """
 
 List of ``CTYPEia`` keyvalues.
 
-The `ctype` keyword values must be in upper case and there must
-be zero or one pair of matched celestial axis types, and zero or one
-spectral axis.
+The `~pywcs.Wcsprm.ctype` keyword values must be in upper case and
+there must be zero or one pair of matched celestial axis types, and
+zero or one spectral axis.
 """
 
 cubeface = """
@@ -311,11 +312,11 @@ in FITS in either of two ways:
       three-dimensional structure using a ``CUBEFACE`` axis indexed
       from 0 to 5 as above.
 
-These routines support both methods; `set` determines which is being
-used by the presence or absence of a ``CUBEFACE`` axis in `ctype`.
-`p2s` and `s2p` translate the ``CUBEFACE`` axis representation to the
-single plane representation understood by the lower-level projection
-routines.
+These routines support both methods; `~pywcs.Wcsprm.set` determines
+which is being used by the presence or absence of a ``CUBEFACE`` axis
+in `~pywcs.Wcsprm.ctype`.  `~pywcs.Wcsprm.p2s` and `~pywcs.Wcsprm.s2p`
+translate the ``CUBEFACE`` axis representation to the single plane
+representation understood by the lower-level projection routines.
 """
 
 cunit = """
@@ -324,23 +325,26 @@ cunit = """
 List of ``CUNITia`` keyvalues which define the units of measurement of
 the ``CRVALia``, ``CDELTia`` and ``CDi_ja`` keywords.
 
-As ``CUNITia`` is an optional header keyword, `cunit` may be left
-blank but otherwise is expected to contain a standard units
-specification as defined by WCS Paper I.  Utility function
+As ``CUNITia`` is an optional header keyword, `~pywcs.Wcsprm.cunit`
+may be left blank but otherwise is expected to contain a standard
+units specification as defined by WCS Paper I.  Utility function
 `wcsutrn`, (not currently wrapped for Python) is available to
 translate commonly used non-standard units specifications but this
-must be done as a separate step before invoking `set`.
+must be done as a separate step before invoking `~pywcs.Wcsprm.set`.
 
-For celestial axes, if `cunit` is not blank, `set` uses `wcsunits`
-to parse it and scale `cdelt`, `crval`, and `cd` to decimal
-degrees.  It then resets `cunit` to ``"deg"``.
+For celestial axes, if `~pywcs.Wcsprm.cunit` is not blank,
+`~pywcs.Wcsprm.set` uses `wcsunits` to parse it and scale
+`~pywcs.Wcsprm.cdelt`, `~pywcs.Wcsprm.crval`, and `~pywcs.Wcsprm.cd`
+to decimal degrees.  It then resets `~pywcs.Wcsprm.cunit` to
+``"deg"``.
 
-For spectral axes, if `cunit` is not blank, `set` uses `wcsunits`
-to parse it and scale `cdelt`, `crval`, and `cd` to SI units.  It
-then resets `cunit` accordingly.
+For spectral axes, if `~pywcs.Wcsprm.cunit` is not blank,
+`~pywcs.Wcsprm.set` uses `wcsunits` to parse it and scale
+`~pywcs.Wcsprm.cdelt`, `~pywcs.Wcsprm.crval`, and `~pywcs.Wcsprm.cd`
+to SI units.  It then resets `~pywcs.Wcsprm.cunit` accordingly.
 
-`set` ignores `cunit` for other coordinate types; `cunit` may be
-used to label coordinate values.
+`~pywcs.Wcsprm.set` ignores `~pywcs.Wcsprm.cunit` for other coordinate
+types; `~pywcs.Wcsprm.cunit` may be used to label coordinate values.
 """
 
 cylfix = """
@@ -363,7 +367,7 @@ Representative mid-point of the date of observation in ISO format,
 
 .. seealso::
 
-   `dateobs`
+   `~pywcs.Wcsprm.dateobs`
 """
 
 dateobs = """
@@ -374,15 +378,16 @@ Start of the date of observation in ISO format,
 
 .. seealso::
 
-   `dateavg`
+   `~pywcs.Wcsprm.dateavg`
 """
 
 datfix = """
 Translates the old ``DATE-OBS`` date format to year-2000 standard form
 ``(yyyy-mm-ddThh:mm:ss)`` and derives ``MJD-OBS`` from it if not
-already set.  Alternatively, if `mjdobs` is set and `dateobs` isn't,
-then `datfix` derives `dateobs` from it.  If both are set but disagree
-by more than half a day then `ValueError` is raised.
+already set.  Alternatively, if `~pywcs.Wcsprm.mjdobs` is set and
+`~pywcs.Wcsprm.dateobs` isn't, then `~pywcs.Wcsprm.datfix` derives
+`~pywcs.Wcsprm.dateobs` from it.  If both are set but disagree by more
+than half a day then `ValueError` is raised.
 
 Returns ``0`` for success; ``-1`` if no change required.
 """
@@ -429,8 +434,10 @@ An undefined value is represented by NaN.
 fix = """
 fix(*translate_units=''*, *naxis=0*)
 
-Applies all of the corrections handled separately by `datfix`,
-`unitfix`, `celfix`, `spcfix` and `cylfix`.
+Applies all of the corrections handled separately by
+`~pywcs.Wcsprm.datfix`, `~pywcs.Wcsprm.unitfix`,
+`~pywcs.Wcsprm.celfix`, `~pywcs.Wcsprm.spcfix` and
+`~pywcs.Wcsprm.cylfix`.
 
 - *translate_units*: string. Do potentially unsafe translations of
   non-standard unit strings.
@@ -453,22 +460,23 @@ Applies all of the corrections handled separately by `datfix`,
     Thus ``''`` doesn't do any unsafe translations, whereas ``'shd'``
     does all of them.
 
-- *naxis*: int array[naxis].  Image axis lengths.  If this array
-  is set to zero or ``None``, then `cylfix` will not be invoked.
+- *naxis*: int array[naxis].  Image axis lengths.  If this array is
+  set to zero or ``None``, then `~pywcs.Wcsprm.cylfix` will not be
+  invoked.
 
 Returns a dictionary containing the following keys, each referring to
 a status string for each of the sub-fix functions that were
 called:
 
-- `datfix`
+- `~pywcs.Wcsprm.datfix`
 
-- `unitfix`
+- `~pywcs.Wcsprm.unitfix`
 
-- `celfix`
+- `~pywcs.Wcsprm.celfix`
 
-- `spcfix`
+- `~pywcs.Wcsprm.spcfix`
 
-- `cylfix`
+- `~pywcs.Wcsprm.cylfix`
 """
 
 get_offset = """
@@ -491,7 +499,7 @@ of tuples of the form (*i*, *m*, *value*):
 
 .. seealso::
 
-   `set_ps`
+   `~pywcs.Wcsprm.set_ps`
 """
 
 get_pv = """
@@ -508,7 +516,7 @@ of tuples of the form (*i*, *m*, *value*):
 
 .. seealso::
 
-   `set_pv`
+   `~pywcs.Wcsprm.set_pv`
 """
 
 has_cdi_ja = """
@@ -575,17 +583,20 @@ diagonal matrix and the ``PCi_ja`` matrix.
 
 .. warning::
 
-   This value may not be correct until after `set` is called.
+   This value may not be correct until after `~pywcs.Wcsprm.set` is
+   called.
 """
 
 is_unity = """
 is_unity() -> bool
 
-Returns ``True`` if the linear transformation matrix (`cd`) is unity.
+Returns ``True`` if the linear transformation matrix
+(`~pywcs.Wcsprm.cd`) is unity.
 
 .. warning::
 
-   This value may not be correct until after `set` is called.
+   This value may not be correct until after `~pywcs.Wcsprm.set` is
+   called.
 """
 
 lat = """
@@ -607,7 +618,8 @@ Celestial axis type for latitude, e.g. ``RA``.
 
 .. warning::
 
-   This value may not be correct until after `set` is called.
+   This value may not be correct until after `~pywcs.Wcsprm.set` is
+   called.
 """
 
 lng = """
@@ -623,7 +635,8 @@ Celestial axis type for longitude, e.g. ``DEC``.
 
 .. warning::
 
-   This value may not be correct until after `set` is called.
+   This value may not be correct until after `~pywcs.Wcsprm.set` is
+   called.
 """
 
 lonpole = """
@@ -637,7 +650,7 @@ mix(*mixpix, mixcel, vspan, vstep, viter, world, pixcrd, origin*) -> dict
 
 Given either the celestial longitude or latitude plus an element of
 the pixel coordinate, solves for the remaining elements by iterating
-on the unknown celestial coordinate element using `s2p`.
+on the unknown celestial coordinate element using `~pywcs.Wcsprm.s2p`.
 
 - *mixpix*: int.  Which element on the pixel coordinate is given.
 
@@ -712,7 +725,7 @@ Returns dictionary with the following keys:
 
 .. seealso::
 
-   `lat`, `lng`
+   `~pywcs.Wcsprm.lat`, `~pywcs.Wcsprm.lng`
 """ % __.ORIGIN()
 
 mjdavg = """
@@ -725,7 +738,7 @@ An undefined value is represented by NaN.
 
 .. seealso::
 
-   `mjdobs`
+   `~pywcs.Wcsprm.mjdobs`
 """
 
 mjdobs = """
@@ -738,7 +751,7 @@ An undefined value is represented by NaN.
 
 .. seealso::
 
-   `mjdavg`
+   `~pywcs.Wcsprm.mjdavg`
 """
 
 name = """
@@ -843,7 +856,7 @@ Returns a dictionary with the following keys:
 
 .. seealso::
 
-   `lat`, `lng`
+   `~pywcs.Wcsprm.lat`, `~pywcs.Wcsprm.lng`
 """ % __.ORIGIN()
 
 p4_pix2foc = """
@@ -877,12 +890,12 @@ phi0 = """
 
 The native latitude of the fiducial point, i.e. the point whose
 celestial coordinates are given in ``ref[1:2]``.  If undefined (NaN)
-the initialization routine, `set`, will set this to a
+the initialization routine, `~pywcs.Wcsprm.set`, will set this to a
 projection-specific default.
 
 .. seealso::
 
-   `theta0`
+   `~pywcs.Wcsprm.theta0`
 """
 
 pix2foc = """
@@ -912,7 +925,8 @@ the ``PCi_ja`` matrix.
 
 .. warning::
 
-   This value may not be correct until after `set` is called.
+   This value may not be correct until after `~pywcs.Wcsprm.set` is
+   called.
 """
 
 print_contents = """
@@ -1002,7 +1016,7 @@ Returns a dictionary with the following keys:
 
 .. seealso::
 
-   `lat`, `lng`
+   `~pywcs.Wcsprm.lat`, `~pywcs.Wcsprm.lng`
 """ % (__.ORIGIN())
 
 set = """
@@ -1012,18 +1026,19 @@ Sets up a WCS object for use according to information supplied within
 it.
 
 Note that this routine need not be called directly; it will be invoked
-by `p2s` and `s2p` if necessary.
+by `~pywcs.Wcsprm.p2s` and `~pywcs.Wcsprm.s2p` if necessary.
 
-Some attributes that are based on other attributes (such as `lattyp` on
-`ctype`) may not be correct until after `set` is called.
+Some attributes that are based on other attributes (such as
+`~pywcs.Wcsprm.lattyp` on `~pywcs.Wcsprm.ctype`) may not be correct
+until after `~pywcs.Wcsprm.set` is called.
 
-`set` strips off trailing blanks in all string members.
+`~pywcs.Wcsprm.set` strips off trailing blanks in all string members.
 
-Among all the obvious details, `set` recognizes the ``NCP`` projection
-and converts it to the equivalent ``SIN`` projection and it also
-recognizes ``GLS`` as a synonym for ``SFL``.  It does alias
-translation for the AIPS spectral types (``FREQ-LSR``, ``FELO-HEL``,
-etc.) but without changing the input header keywords.
+Among all the obvious details, `~pywcs.Wcsprm.set` recognizes the
+``NCP`` projection and converts it to the equivalent ``SIN``
+projection and it also recognizes ``GLS`` as a synonym for ``SFL``.
+It does alias translation for the AIPS spectral types (``FREQ-LSR``,
+``FELO-HEL``, etc.) but without changing the input header keywords.
 
 **Exceptions:**
 
@@ -1057,7 +1072,7 @@ sequence of tuples of the form (*i*, *m*, *value*):
 
 .. seealso::
 
-   `get_ps`
+   `~pywcs.Wcsprm.get_ps`
 """
 
 set_pv = """
@@ -1071,6 +1086,10 @@ sequence of tuples of the form (*i*, *m*, *value*):
     - *m*: int.  Parameter number, as in ``PVi_ma``, (i.e. 0-relative)
 
     - *value*: string.  Parameter value.
+
+.. seealso::
+
+   `~pywcs.Wcsprm.get_pv`
 """
 
 sip = """
@@ -1169,7 +1188,7 @@ Spectral reference frame (standard of rest), ``SPECSYSa``.
 
 .. seealso::
 
-   `ssysobs`, `velosys`.
+   `~pywcs.Wcsprm.ssysobs`, `~pywcs.Wcsprm.velosys`.
 """
 
 sptr = """
@@ -1217,7 +1236,7 @@ variation in the spectral coordinate across the field-of-view,
 
 .. seealso::
 
-   `specsys`, `velosys`
+   `~pywcs.Wcsprm.specsys`, `~pywcs.Wcsprm.velosys`
 """
 
 ssyssrc = """
@@ -1228,9 +1247,9 @@ was measured, ``SSYSSRCa``.
 """
 
 sub = """
-sub(*axes*) -> `WCS` object
+sub(*axes*) -> `~pywcs.WCS` object
 
-Extracts the coordinate description for a subimage from a `WCS`
+Extracts the coordinate description for a subimage from a `~pywcs.WCS`
 object.
 
 The world coordinate system of the subimage must be separable in the
@@ -1265,7 +1284,7 @@ special integer constants.  The available types are:
 
   - ``'stokes'`` / ``WCSSUB_STOKES``: Stokes axis
 
-Returns a `WCS` object.
+Returns a `~pywcs.WCS` object.
 
 **Exceptions:**
 
@@ -1283,12 +1302,12 @@ theta0 = """
 
 The native longitude of the fiducial point, i.e. the point whose
 celestial coordinates are given in ``ref[1:2]``.  If undefined (NaN)
-the initialization routine, `set`, will set this to a
+the initialization routine, `~pywcs.Wcsprm.set`, will set this to a
 projection-specific default.
 
 .. seealso::
 
-   `phi0`
+   `~pywcs.Wcsprm.phi0`
 """
 
 to_header = """
@@ -1296,11 +1315,11 @@ to_header(*relax=False*) -> string
 
 `to_header` translates a WCS object into a FITS header.
 
-    - If the `colnum` member is non-zero then a binary table image
-      array header will be produced.
+    - If the `~pywcs.Wcsprm.colnum` member is non-zero then a binary
+      table image array header will be produced.
 
-    - Otherwise, if the `colax` member is set non-zero then a pixel
-      list header will be produced.
+    - Otherwise, if the `~pywcs.Wcsprm.colax` member is set non-zero
+      then a pixel list header will be produced.
 
     - Otherwise, a primary image or image extension header will be
       produced.
@@ -1329,14 +1348,15 @@ number of respects:
     6. Additional keywords such as ``WCSAXES``, ``CUNITia``,
        ``LONPOLEa`` and ``LATPOLEa`` may appear.
 
-    7. The original keycomments will be lost, although `to_header`
-       tries hard to write meaningful comments.
+    7. The original keycomments will be lost, although
+       `~pywcs.Wcsprm.to_header` tries hard to write meaningful
+       comments.
 
     8. Keyword order may be changed.
 
 Keywords can be translated between the image array, binary table, and
-pixel lists forms by manipulating the `colnum` or `colax` members of
-the `WCS` object.
+pixel lists forms by manipulating the `~pywcs.Wcsprm.colnum` or
+`~pywcs.Wcsprm.colax` members of the `~pywcs.Wcsprm.WCS` object.
 
 - *relax*: Degree of permissiveness:
 

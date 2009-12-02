@@ -229,6 +229,7 @@ PyWcs_all_pix2sky(
     PyObject* args,
     PyObject* kwds) {
 
+  int            naxis      = 2;
   PyObject*      pixcrd_obj = NULL;
   int            origin     = 1;
   PyArrayObject* pixcrd     = NULL;
@@ -243,16 +244,25 @@ PyWcs_all_pix2sky(
     return NULL;
   }
 
+  naxis = self->x.wcs->naxis;
+
   pixcrd = (PyArrayObject*)PyArray_ContiguousFromAny(pixcrd_obj, PyArray_DOUBLE, 2, 2);
   if (pixcrd == NULL) {
     return NULL;
+  }
+
+  if (PyArray_DIM(pixcrd, 1) < naxis) {
+    PyErr_Format(
+      PyExc_RuntimeError,
+      "Input array must be 2-dimensional, where the second dimension >= %d",
+      naxis);
+    goto exit;
   }
 
   world = (PyArrayObject*)PyArray_SimpleNew(2, PyArray_DIMS(pixcrd), PyArray_DOUBLE);
   if (world == NULL) {
     goto exit;
   }
-
 
   /* Make the call */
   preoffset_array(pixcrd, origin);
@@ -271,6 +281,11 @@ PyWcs_all_pix2sky(
 
   if (status == 0 || status == 8) {
     return (PyObject*)world;
+  } else if (status == -1) {
+    PyErr_SetString(
+      PyExc_ValueError,
+      "Wrong number of dimensions in input array.  Expected 2.");
+    return NULL;
   } else {
     Py_DECREF(world);
     if (status > 0 && status < WCS_ERRMSG_MAX) {

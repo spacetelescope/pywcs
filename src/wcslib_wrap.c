@@ -743,6 +743,7 @@ PyWcsprm_p2s(
     PyObject* args,
     PyObject* kwds) {
 
+  int            naxis      = 2;
   PyObject*      pixcrd_obj = NULL;
   int            origin     = 1;
   PyArrayObject* pixcrd     = NULL;
@@ -761,10 +762,20 @@ PyWcsprm_p2s(
     return NULL;
   }
 
+  naxis = self->x.naxis;
+
   pixcrd = (PyArrayObject*)PyArray_ContiguousFromAny
     (pixcrd_obj, PyArray_DOUBLE, 2, 2);
   if (pixcrd == NULL) {
     return NULL;
+  }
+
+  if (PyArray_DIM(pixcrd, 1) < naxis) {
+    PyErr_Format(
+      PyExc_RuntimeError,
+      "Input array must be 2-dimensional, where the second dimension >= %d",
+      naxis);
+    goto exit;
   }
 
   /* Now we allocate a bunch of numpy arrays to store the results in.
@@ -863,6 +874,7 @@ PyWcsprm_s2p(
     PyObject* args,
     PyObject* kwds) {
 
+  int            naxis     = 2;
   PyObject*      world_obj = NULL;
   int            origin    = 1;
   PyArrayObject* world     = NULL;
@@ -881,10 +893,20 @@ PyWcsprm_s2p(
     return NULL;
   }
 
+  naxis = self->x.naxis;
+
   world = (PyArrayObject*)PyArray_ContiguousFromAny
     (world_obj, PyArray_DOUBLE, 2, 2);
   if (world == NULL) {
     return NULL;
+  }
+
+  if (PyArray_DIM(world, 1) < naxis) {
+    PyErr_Format(
+      PyExc_RuntimeError,
+      "Input array must be 2-dimensional, where the second dimension >= %d",
+      naxis);
+    goto exit;
   }
 
   /* Now we allocate a bunch of numpy arrays to store the
