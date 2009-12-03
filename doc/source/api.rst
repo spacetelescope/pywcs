@@ -1,3 +1,5 @@
+.. include:: references.rst
+
 API documentation
 =================
 
@@ -6,35 +8,14 @@ API documentation
 
 .. automodule:: pywcs.pywcs
 
-`WCS`
-`````
+Classes
+-------
 
-.. autoclass:: pywcs.WCS
-   :members:
-   :inherited-members:
-   :undoc-members:
+.. toctree::
+   :maxdepth: 2
 
-`Wcsprm`
-````````
-
-.. autoclass:: pywcs.Wcsprm
-   :members:
-   :inherited-members:
-   :undoc-members:
-
-`DistortionLookupTable`
-```````````````````````
-
-.. autoclass:: pywcs.DistortionLookupTable
-   :members:
-   :inherited-members:
-   :undoc-members:
-
-`Sip`
-`````
-
-.. autoclass:: pywcs.Sip
-   :members:
-   :inherited-members:
-   :undoc-members:
+   api_wcs.rst
+   api_wcsprm.rst
+   api_distortion.rst
+   api_sip.rst
 

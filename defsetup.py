@@ -38,10 +38,11 @@ except AttributeError:
 
 ######################################################################
 # WCSLIB
-WCSVERSION = "4.3.3"
+WCSVERSION = "4.4.4"
 WCSLIB = "wcslib-%s" % WCSVERSION # Path to wcslib
 WCSLIBC = join(WCSLIB, "C") # Path to wcslib source files
 WCSFILES = [ # List of wcslib files to compile
+    'flexed/wcspih.c',
     'flexed/wcsulex.c',
     'flexed/wcsutrn.c',
     'cel.c',
@@ -55,7 +56,6 @@ WCSFILES = [ # List of wcslib files to compile
     'wcs.c',
     'wcsfix.c',
     'wcshdr.c',
-    'wcspih.c',
     'wcsunits.c',
     'wcsutil.c']
 WCSFILES = [join(WCSLIBC, x) for x in WCSFILES]
@@ -186,8 +186,11 @@ PYWCS_SOURCES = [join('src', x) for x in PYWCS_SOURCES]
 ######################################################################
 # DISTUTILS SETUP
 libraries = []
-define_macros = [('ECHO', None), ('WCSTRIG_MACRO', None),
-                 ('PYWCS_BUILD', None), ('_GNU_SOURCE', None)]
+define_macros = [('ECHO', None),
+                 ('WCSTRIG_MACRO', None),
+                 ('HAVE_SINCOS', 1),
+                 ('PYWCS_BUILD', None),
+                 ('_GNU_SOURCE', None)]
 undef_macros = []
 extra_compile_args = []
 if BUILD.lower() == 'debug':

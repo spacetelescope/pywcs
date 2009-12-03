@@ -707,7 +707,8 @@ PyWcsprm_mix(
     if (result == NULL ||
         PyDict_SetItemString(result, "imgcrd", (PyObject*)imgcrd) ||
         PyDict_SetItemString(result, "phi", (PyObject*)phi) ||
-        PyDict_SetItemString(result, "theta", (PyObject*)theta)) {
+        PyDict_SetItemString(result, "theta", (PyObject*)theta) ||
+        PyDict_SetItemString(result, "world", (PyObject*)world)) {
       status = 2;
     }
   }
@@ -1426,6 +1427,22 @@ PyWcsprm_set_alt(
   note_change(self);
 
   return 0;
+}
+
+/*@null@*/ static PyObject*
+PyWcsprm_get_axis_types(
+    PyWcsprm* self,
+    /*@unused@*/ void* closure) {
+
+  Py_ssize_t naxis = 0;
+
+  if (is_null(self->x.types)) {
+    return NULL;
+  }
+
+  naxis = (Py_ssize_t)self->x.naxis;
+
+  return get_int_array("axis_types", self->x.types, 1, &naxis, (PyObject*)self);
 }
 
 /*@null@*/ static PyObject*
@@ -2487,6 +2504,7 @@ PyWcsprm_set_zsource(
 
 static PyGetSetDef PyWcsprm_getset[] = {
   {"alt", (getter)PyWcsprm_get_alt, (setter)PyWcsprm_set_alt, (char *)doc_alt},
+  {"axis_types", (getter)PyWcsprm_get_axis_types, NULL, (char *)doc_axis_types},
   {"cd", (getter)PyWcsprm_get_cd, (setter)PyWcsprm_set_cd, (char *)doc_cd},
   {"cdelt", (getter)PyWcsprm_get_cdelt, (setter)PyWcsprm_set_cdelt, (char *)doc_cdelt},
   {"cel_offset", (getter)PyWcsprm_get_cel_offset, (setter)PyWcsprm_set_cel_offset, (char *)doc_cel_offset},
@@ -2618,5 +2636,6 @@ _setup_wcsprm_type(
           PyModule_AddIntConstant(m, "WCSSUB_LATITUDE", WCSSUB_LATITUDE) ||
           PyModule_AddIntConstant(m, "WCSSUB_CUBEFACE", WCSSUB_CUBEFACE) ||
           PyModule_AddIntConstant(m, "WCSSUB_SPECTRAL", WCSSUB_SPECTRAL) ||
-          PyModule_AddIntConstant(m, "WCSSUB_STOKES", WCSSUB_STOKES));
+          PyModule_AddIntConstant(m, "WCSSUB_STOKES", WCSSUB_STOKES) ||
+          PyModule_AddIntConstant(m, "WCSSUB_CELESTIAL", WCSSUB_CELESTIAL));
 }

@@ -30,7 +30,7 @@
 ###########################################################################
 
 # It gets to be really tedious to type long docstrings in ANSI C
-# syntax (since multi-line strings literals are not valid).
+# syntax (since multi-line string literals are not valid).
 # Therefore, the docstrings are written here in doc/docstrings.py,
 # which are then converted by setup.py into docstrings.h, which is
 # included by pywcs.c
@@ -100,7 +100,7 @@ alt = """
 ``str``
 
 Character code for alternate coordinate descriptions.  For example,
-the ``"a"`` in keyword names such as ``CTYPEia``).  This is a space
+the ``"a"`` in keyword names such as ``CTYPEia``.  This is a space
 character for the primary coordinate description, or one of the 26
 upper-case letters, A-Z.
 """
@@ -118,6 +118,55 @@ ap_order = """
 
 The order of the polynomial in the `SIP`_ ``AP_i_j`` array
 (``AP_ORDER``).
+"""
+
+axis_types = """
+``int array[naxis]``
+
+An array of four-digit type codes for each axis.
+
+- First digit (i.e. 1000s):
+
+  - 0: Non-specific coordinate type.
+
+  - 1: Stokes coordinate.
+
+  - 2: Celestial coordinate (including ``CUBEFACE``).
+
+  - 3: Spectral coordinate.
+
+- Second digit (i.e. 100s):
+
+  - 0: Linear axis.
+
+  - 1: Quantized axis (``STOKES``, ``CUBEFACE``).
+
+  - 2: Non-linear celestial axis.
+
+  - 3: Non-linear spectral axis.
+
+  - 4: Logarithmic axis.
+
+  - 5: Tabular axis.
+
+- Third digit (i.e. 10s):
+
+  - 0: Group number, e.g. lookup table number
+
+- The fourth digit is used as a qualifier depending on the axis type.
+
+  - For celestial axes:
+
+    - 0: Longitude coordinate.
+
+    - 1: Latitude coordinate.
+
+    - 2: ``CUBEFACE`` number.
+
+  - For lookup tables: the axis number in a multidimensional table.
+
+``CTYPEia`` in ``"4-3"`` form with unrecognized algorithm code will
+have its type set to -1 and generate an error.
 """
 
 b = """
@@ -165,15 +214,16 @@ ignore them if given in conjunction with ``PCi_ja``.
 alternatives are present in the header.
 
 ``CDi_ja`` and ``CROTAia`` keywords, if found, are to be stored in the
-`cd` and `crota` arrays which are dimensioned similarly to `pc` and
-`cdelt`.
+`~pywcs.Wcsprm.cd` and `~pywcs.Wcsprm.crota` arrays which are
+dimensioned similarly to `~pywcs.Wcsprm.pc` and `~pywcs.Wcsprm.cdelt`.
 
 These alternate specifications of the linear transformation matrix are
-translated immediately to ``PCi_ja`` by `set` and are nowhere visible
-to the lower-level routines.  In particular, `~pywcs.Wcsprm.set`
-resets `~pywcs.Wcsprm.cdelt` to unity if ``CDi_ja`` is present (and no
-``PCi_ja``).  If no ``CROTAia`` is associated with the latitude axis,
-`set` reverts to a unity ``PCi_ja`` matrix.
+translated immediately to ``PCi_ja`` by `~pywcs.Wcsprm.set` and are
+nowhere visible to the lower-level routines.  In particular,
+`~pywcs.Wcsprm.set` resets `~pywcs.Wcsprm.cdelt` to unity if
+``CDi_ja`` is present (and no ``PCi_ja``).  If no ``CROTAia`` is
+associated with the latitude axis, `set` reverts to a unity ``PCi_ja``
+matrix.
 """
 
 cdelt = """
@@ -514,6 +564,12 @@ of tuples of the form (*i*, *m*, *value*):
 
     - *value*: string. Parameter value.
 
+Note that, if they were not given, `~pywcs.Wcsprm.set` resets the
+entries for ``PVi_1a``, ``PVi_2a``, ``PVi_3a``, and ``PVi_4a`` for
+longitude axis *i* to match (``phi_0``, ``theta_0``), the native
+longitude and latitude of the reference point given by ``LONPOLEa``
+and ``LATPOLEa``.
+
 .. seealso::
 
    `~pywcs.Wcsprm.set_pv`
@@ -614,7 +670,9 @@ The native latitude of the celestial pole, ``LATPOLEa`` (deg).
 lattyp = """
 ``string`` (read-only)
 
-Celestial axis type for latitude, e.g. ``RA``.
+Celestial axis type for longitude, e.g. "RA", "DEC", "GLON", "GLAT",
+etc. extracted from 'RA--', 'DEC-', 'GLON', 'GLAT', etc. in the first
+four characters of ``CTYPEia`` but with trailing dashes removed.
 
 .. warning::
 
@@ -631,7 +689,9 @@ The index into the sky coordinate array containing longitude values.
 lngtyp = """
 ``string`` (read-only)
 
-Celestial axis type for longitude, e.g. ``DEC``.
+Celestial axis type for longitude, e.g. "RA", "DEC", "GLON", "GLAT",
+etc. extracted from 'RA--', 'DEC-', 'GLON', 'GLAT', etc. in the first
+four characters of ``CTYPEia`` but with trailing dashes removed.
 
 .. warning::
 
@@ -702,6 +762,10 @@ Returns dictionary with the following keys:
     ``imgcrd[self.lat]`` are the projected *x*- and *y*-coordinates,
     in decimal degrees.
 
+- *world* (double array[naxis])
+
+  - Another reference to the *world* argument passed in.
+
 **Exceptions:**
 
 - `MemoryError` Memory allocation failed.
@@ -726,6 +790,37 @@ Returns dictionary with the following keys:
 .. seealso::
 
    `~pywcs.Wcsprm.lat`, `~pywcs.Wcsprm.lng`
+
+.. note::
+
+  Initially, the specified solution interval is checked to see if it's
+  a "crossing" interval.  If it isn't, a search is made for a crossing
+  solution by iterating on the unknown celestial coordinate starting
+  at the upper limit of the solution interval and decrementing by the
+  specified step size.  A crossing is indicated if the trial value of
+  the pixel coordinate steps through the value specified.  If a
+  crossing interval is found then the solution is determined by a
+  modified form of "regula falsi" division of the crossing interval.
+  If no crossing interval was found within the specified solution
+  interval then a search is made for a "non-crossing" solution as may
+  arise from a point of tangency.  The process is complicated by
+  having to make allowance for the discontinuities that occur in all
+  map projections.
+
+  Once one solution has been determined others may be found by
+  subsequent invokations of `~pywcs.Wcsprm.mix` with suitably
+  restricted solution intervals.
+
+  Note the circumstance that arises when the solution point lies at a
+  native pole of a projection in which the pole is represented as a
+  finite curve, for example the zenithals and conics.  In such cases
+  two or more valid solutions may exist but `~pywcs.Wcsprm.mix` only
+  ever returns one.
+
+  Because of its generality, `~pywcs.Wcsprm.mix` is very
+  compute-intensive.  For compute-limited applications, more efficient
+  special-case solvers could be written for simple projections, for
+  example non-oblique cylindrical projections.
 """ % __.ORIGIN()
 
 mjdavg = """
@@ -811,7 +906,7 @@ Returns a dictionary with the following keys:
 
   - Array of intermediate sky coordinates.  For celestial axes,
     ``imgcrd[][self.lng]`` and ``imgcrd[][self.lat]`` are the
-    projected *x*-, and *y*-coordinates, in decimal degrees.  For
+    projected *x*-, and *y*-coordinates, in pseudo degrees.  For
     spectral axes, ``imgcrd[][self.spec]`` is the intermediate
     spectral coordinate, in SI units.
 
@@ -825,15 +920,15 @@ Returns a dictionary with the following keys:
 - *world*: double array[ncoord][nelem]
 
   - Array of sky coordinates.  For celestial axes,
-    ``world[][self.lng]`` and ``world[][self.lat]`` are the
-    celestial longitude and latitude, in decimal degrees.  For
-    spectral axes, ``world[][self.spec]`` is the intermediate
-    spectral coordinate, in SI units.
+    ``world[][self.lng]`` and ``world[][self.lat]`` are the celestial
+    longitude and latitude, in degrees.  For spectral axes,
+    ``world[][self.spec]`` is the intermediate spectral coordinate, in
+    SI units.
 
 - *stat*: int array[ncoord]
 
   - Status return value for each coordinate. ``0`` for success,
-    ``1`` for invalid pixel coordinate.
+    ``1+`` for invalid pixel coordinate.
 
 **Exceptions:**
 
@@ -981,9 +1076,9 @@ Returns a dictionary with the following keys:
 
   - Array of intermediate sky coordinates.  For celestial axes,
     ``imgcrd[][self.lng]`` and ``imgcrd[][self.lat]`` are the
-    projected *x*-, and *y*-coordinates, in "degrees".  For quadcube
-    projections with a ``CUBEFACE`` axis, the face number is also
-    returned in ``imgcrd[][self.cubeface]``.  For spectral axes,
+    projected *x*-, and *y*-coordinates, in pseudo "degrees".  For
+    quadcube projections with a ``CUBEFACE`` axis, the face number is
+    also returned in ``imgcrd[][self.cubeface]``.  For spectral axes,
     ``imgcrd[][self.spec]`` is the intermediate spectral coordinate,
     in SI units.
 
@@ -995,7 +1090,7 @@ Returns a dictionary with the following keys:
 - *stat*: int array[ncoord]
 
   - Status return value for each coordinate. ``0`` for
-    success, ``1`` for invalid pixel coordinate.
+    success, ``1+`` for invalid pixel coordinate.
 
 **Exceptions:**
 
@@ -1034,11 +1129,11 @@ until after `~pywcs.Wcsprm.set` is called.
 
 `~pywcs.Wcsprm.set` strips off trailing blanks in all string members.
 
-Among all the obvious details, `~pywcs.Wcsprm.set` recognizes the
-``NCP`` projection and converts it to the equivalent ``SIN``
-projection and it also recognizes ``GLS`` as a synonym for ``SFL``.
-It does alias translation for the AIPS spectral types (``FREQ-LSR``,
-``FELO-HEL``, etc.) but without changing the input header keywords.
+`~pywcs.Wcsprm.set` recognizes the ``NCP`` projection and converts it
+to the equivalent ``SIN`` projection and it also recognizes ``GLS`` as
+a synonym for ``SFL``.  It does alias translation for the AIPS
+spectral types (``FREQ-LSR``, ``FELO-HEL``, etc.) but without changing
+the input header keywords.
 
 **Exceptions:**
 
@@ -1197,10 +1292,14 @@ sptr(*ctype, i=-1*)
 Translates the spectral axis in a WCS object.  For example, a ``FREQ``
 axis may be translated into ``ZOPT-F2W`` and vice versa.
 
-- *ctype*: string.  Required spectral ``CTYPEia``.  Wildcarding may be
-  used, i.e.  if the final three characters are specified as
-  ``"???"``, or if just the eighth character is specified as ``"?"``,
-  the correct algorithm code will be substituted and returned.
+- *ctype*: string.  Required spectral ``CTYPEia``, maximum of 8
+  characters.  The first four characters are required to be given and
+  are never modified.  The remaining four, the algorithm code, are
+  completely determined by, and must be consistent with, the first
+  four characters.  Wildcarding may be used, i.e.  if the final three
+  characters are specified as ``"???"``, or if just the eighth
+  character is specified as ``"?"``, the correct algorithm code will
+  be substituted and returned.
 
 - *i*: int.  Index of the spectral axis (0-relative).  If ``i < 0`` (or not
   provided), it will be set to the first spectral axis identified
@@ -1284,7 +1383,8 @@ special integer constants.  The available types are:
 
   - ``'stokes'`` / ``WCSSUB_STOKES``: Stokes axis
 
-Returns a `~pywcs.WCS` object.
+Returns a `~pywcs.WCS` object, which is a deep copy of the original
+object.
 
 **Exceptions:**
 
@@ -1295,6 +1395,40 @@ Returns a `~pywcs.WCS` object.
 
 - `NonseparableSubimageCoordinateSystem`: Non-separable subimage
   coordinate system.
+
+.. note::
+
+  Combinations of subimage axes of particular types may be extracted
+  in the same order as they occur in the input image by combining the
+  integer constants.  For example::
+
+    wcs.sub([WCSSUB_LONGITUDE | WCSSUB_LATITUDE | WCSSUB_SPECTRAL])
+
+  would extract the longitude, latitude, and spectral axes in the same
+  order as the input image.  If one of each were present, the
+  resulting object would have three dimensions.
+
+  For convenience, ``WCSSUB_CELESTIAL`` is defined as the combination
+  ``WCSSUB_LONGITUDE | WCSSUB_LATITUDE | WCSSUB_CUBEFACE``.
+
+  The codes may also be negated to extract all but the types
+  specified, for example::
+
+    wcs.sub([
+      WCSSUB_LONGITUDE,
+      WCSSUB_LATITUDE,
+      WCSSUB_CUBEFACE,
+      -(WCSSUB_SPECTRAL | WCSSUB_STOKES)])
+
+  The last of these specifies all axis types other than spectral or
+  Stokes.  Extraction is done in the order specified by `axes`, i.e. a
+  longitude axis (if present) would be extracted first (via
+  ``axes[0]``) and not subsequently (via ``axes[3]``).  Likewise for
+  the latitude and cubeface axes in this example.
+
+  The number of dimensions in the returned object may be less than or
+  greater than the length of `axes`.  However, it will never exceed
+  the number of axes in the input image.
 """
 
 theta0 = """
