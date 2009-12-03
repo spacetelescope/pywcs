@@ -9,4 +9,4 @@ recursive-include doc/source *.rst
 include src/*.h
 include examples/*.py
 include examples/*.fits
-recursive-include wcslib-4.3.3 *
+recursive-include wcslib-4.4.4 *
