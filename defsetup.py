@@ -188,7 +188,6 @@ PYWCS_SOURCES = [join('src', x) for x in PYWCS_SOURCES]
 libraries = []
 define_macros = [('ECHO', None),
                  ('WCSTRIG_MACRO', None),
-                 ('HAVE_SINCOS', 1),
                  ('PYWCS_BUILD', None),
                  ('_GNU_SOURCE', None)]
 undef_macros = []
@@ -215,6 +214,9 @@ else:
 if sys.platform == 'win32':
     define_macros.append(('YY_NO_UNISTD_H', None))
     define_macros.append(('_CRT_SECURE_NO_WARNINGS', None))
+
+if sys.platform.startswith('linux'):
+    define_macros.append(('HAVE_SINCOS', None))
 
 if not sys.platform.startswith('sun') and \
    not sys.platform == 'win32':
