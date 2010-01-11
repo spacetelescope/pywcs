@@ -1,6 +1,8 @@
 # Set the WCS information manually by setting properties of the WCS
 # object.
 
+from __future__ import division # confidence high
+
 import numpy
 import pywcs
 import pyfits

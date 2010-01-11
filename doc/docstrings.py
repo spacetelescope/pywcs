@@ -29,6 +29,8 @@
 
 ###########################################################################
 
+from __future__ import division # confidence high
+
 # It gets to be really tedious to type long docstrings in ANSI C
 # syntax (since multi-line string literals are not valid).
 # Therefore, the docstrings are written here in doc/docstrings.py,
