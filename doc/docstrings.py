@@ -30,6 +30,7 @@
 ###########################################################################
 
 from __future__ import division # confidence high
+del division
 
 # It gets to be really tedious to type long docstrings in ANSI C
 # syntax (since multi-line string literals are not valid).
