@@ -247,7 +247,7 @@ naxis kwarg.
         return copy
     sub.__doc__ = _pywcs._Wcsprm.sub.__doc__
 
-    def calcFootprint(self, header=None):
+    def calcFootprint(self, header=None, undistort=True):
         """
         Calculates the footprint of the image on the sky.
 
@@ -282,7 +282,10 @@ naxis kwarg.
         corners[2,1] = naxis2
         corners[3,0] = naxis1
         corners[3,1] = 1.
-        return self.all_pix2sky(corners, 1)
+        if undistort:
+            return self.all_pix2sky(corners, 1)
+        else:
+            return self.wcs_pix2sky(corners,1)
 
     def _read_det2im_kw(self, header, fobj):
         """
