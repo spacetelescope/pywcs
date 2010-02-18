@@ -294,7 +294,7 @@ naxis kwarg.
         crval = [0.,0.]
         cdelt = [1.,1.]
 
-        if not isinstance(fobj, pyfits.NP_pyfits.HDUList):
+        if not isinstance(fobj, pyfits.HDUList):
             return (None, None)
 
         try:
@@ -347,7 +347,7 @@ naxis kwarg.
             if header.has_key(distortion):
                 dis = header[distortion].lower()
                 if dis == 'lookup':
-                    assert isinstance(fobj, pyfits.NP_pyfits.HDUList), \
+                    assert isinstance(fobj, pyfits.HDUList), \
                         'A pyfits HDUList is required for Lookup table distortion.'
                     dp = (d_kw+str(i)+key).strip()
                     d_extver = header[dp+'.EXTVER']
