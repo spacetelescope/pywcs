@@ -46,16 +46,6 @@ typedef struct {
   /*@shared@*/ /*@null@*/ sip_t*         sip;
   distortion_lookup_t*                   cpdis[2];
   /*@shared@*/ /*@null@*/ struct wcsprm* wcs;
-
-  /* Temporary buffers for performing calculations */
-  unsigned int                           alloc_ncoord;
-  unsigned int                           alloc_nelem;
-  void*                                  mem;
-  /*@null@*/ double*                     tmp;
-  /*@null@*/ double*                     imgcrd;
-  /*@null@*/ double*                     phi;
-  /*@null@*/ double*                     theta;
-  /*@null@*/ int*                        stat;
 } pipeline_t;
 
 /**
