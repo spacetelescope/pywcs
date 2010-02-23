@@ -102,9 +102,9 @@ PyDistLookup_init(
   PyArrayObject* array_obj = NULL;
 
   if (!PyArg_ParseTuple(args, "O(dd)(dd)(dd):DistortionLookupTable.__init__",
-                       &py_array_obj,
-                       &(self->x.crpix[0]), &(self->x.crpix[1]),
-                       &(self->x.crval[0]), &(self->x.crval[1]),
+                        &py_array_obj,
+                        &(self->x.crpix[0]), &(self->x.crpix[1]),
+                        &(self->x.crval[0]), &(self->x.crval[1]),
                         &(self->x.cdelt[0]), &(self->x.cdelt[1]))) {
     return -1;
   }
