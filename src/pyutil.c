@@ -248,6 +248,35 @@ wcslib_get_error_message(int status) {
   Property helpers
  ***************************************************************************/
 
+#define SHAPE_STR_LEN 128
+
+/* Helper function to display the desired shape of an array as a
+   string, eg. 2x2 */
+static void
+shape_to_string(
+    npy_int ndims,
+    const npy_intp* dims,
+    char* str /* [SHAPE_STR_LEN] */) {
+
+  int i;
+  char value[32]; /* More than large enough to hold string rep of a
+                     64-bit integer (way overkill) */
+
+  if (ndims > 3) {
+    strncpy(str, "ERROR", 6);
+    return;
+  }
+
+  str[0] = 0;
+  for (i = 0; i < ndims; ++i) {
+    snprintf(value, 32, "%d", dims[i]);
+    strncat(str, value, 32);
+    if (i != ndims - 1) {
+      strncat(str, "x", 2);
+    }
+  }
+}
+
 /* get_string is inlined */
 
 int
@@ -366,6 +395,7 @@ set_double_array(
   PyArrayObject* value_array = NULL;
   npy_int        i           = 0;
   PyObject*      ignored     = NULL;
+  char           shape_str[SHAPE_STR_LEN];
 
   if (check_delete(propname, value)) {
     return -1;
@@ -380,10 +410,11 @@ set_double_array(
   if (dims != NULL) {
     for (i = 0; i < ndims; ++i) {
       if (PyArray_DIM(value_array, i) != dims[i]) {
+        shape_to_string(ndims, dims, shape_str);
         ignored = PyErr_Format(
             PyExc_ValueError,
-            "'%s' array is the wrong shape",
-            propname);
+            "'%s' array is the wrong shape, must be %s",
+            propname, shape_str);
         Py_DECREF(value_array);
         return -1;
       }
@@ -407,6 +438,7 @@ set_int_array(
   PyArrayObject* value_array = NULL;
   npy_int        i           = 0;
   PyObject*      ignored     = NULL;;
+  char           shape_str[SHAPE_STR_LEN];
 
   if (check_delete(propname, value)) {
     return -1;
@@ -421,10 +453,11 @@ set_int_array(
   if (dims != NULL) {
     for (i = 0; i < ndims; ++i) {
       if (PyArray_DIM(value_array, i) != dims[i]) {
+        shape_to_string(ndims, dims, shape_str);
         ignored = PyErr_Format(
             PyExc_ValueError,
-            "'%s' array is the wrong shape",
-            propname);
+            "'%s' array is the wrong shape, must be %s",
+            propname, shape_str);
         Py_DECREF(value_array);
         return -1;
       }
@@ -473,7 +506,7 @@ set_str_list(
   if (PySequence_Size(value) != len) {
     ignored = PyErr_Format(
         PyExc_ValueError,
-        "len(%s) != %u",
+        "len(%s) must be %u",
         propname,
         (unsigned int)len);
     return -1;
