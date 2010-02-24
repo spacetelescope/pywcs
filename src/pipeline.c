@@ -90,8 +90,8 @@ pipeline_all_pixel2world(
   int           status     = 1;
 
   /* Temporary buffer for performing WCS calculations */
-  void*              buffer = NULL;
-  void*              mem = NULL;
+  unsigned char*     buffer = NULL;
+  unsigned char*     mem = NULL;
   /*@null@*/ double* tmp;
   /*@null@*/ double* imgcrd;
   /*@null@*/ double* phi;
@@ -128,19 +128,19 @@ pipeline_all_pixel2world(
       goto exit;
     }
 
-    imgcrd = mem;
+    imgcrd = (double *)mem;
     mem += ncoord * nelem * sizeof(double);
 
-    phi = mem;
+    phi = (double *)mem;
     mem += ncoord * sizeof(double);
 
-    theta = mem;
+    theta = (double *)mem;
     mem += ncoord * sizeof(double);
 
-    tmp = mem;
+    tmp = (double *)mem;
     mem += ncoord * nelem * sizeof(double);
 
-    stat = mem;
+    stat = (int *)mem;
     /* mem += ncoord * nelem * sizeof(int); */
 
     if (has_det2im || has_sip || has_p4) {
