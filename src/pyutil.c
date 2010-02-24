@@ -437,7 +437,7 @@ set_int_array(
     int* dest) {
   PyArrayObject* value_array = NULL;
   npy_int        i           = 0;
-  PyObject*      ignored     = NULL;;
+  PyObject*      ignored     = NULL;
   char           shape_str[SHAPE_STR_LEN];
 
   if (check_delete(propname, value)) {
