@@ -353,12 +353,12 @@ naxis kwarg.
                     assert isinstance(fobj, pyfits.HDUList), \
                         'A pyfits HDUList is required for Lookup table distortion.'
                     dp = (d_kw+str(i)+key).strip()
-                    d_extver = header[dp+'.EXTVER']
+                    d_extver = header.get(dp+'.EXTVER', 1)
                     d_data = fobj['WCSDVARR', d_extver].data
                     d_header = fobj['WCSDVARR', d_extver].header
-                    d_crpix = (d_header['CRPIX1'], d_header['CRPIX2'])
-                    d_crval = (d_header['CRVAL1'], d_header['CRVAL2'])
-                    d_cdelt = (d_header['CDELT1'], d_header['CDELT2'])
+                    d_crpix = (d_header.get('CRPIX1', 0.0), d_header.get('CRPIX2', 0.0))
+                    d_crval = (d_header.get('CRVAL1', 0.0), d_header.get('CRVAL2', 0.0))
+                    d_cdelt = (d_header.get('CDELT1', 1.0), d_header.get('CDELT2', 1.0))
                     d_lookup = DistortionLookupTable(d_data, d_crpix,
                                                      d_crval, d_cdelt)
                     tables[i] = d_lookup
