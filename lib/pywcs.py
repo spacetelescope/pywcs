@@ -809,6 +809,104 @@ naxis kwarg.
         print 'CRPIX    : %r %r' % (self.wcs.crpix[0], self.wcs.crpix[1])
         print 'NAXIS    : %r %r' % (self.naxis1, self.naxis2)
 
+    def get_axis_types(self):
+        """
+        ``list of dicts``
+
+        Similar to `self.wcsprm.axis_types <_pywcs._Wcsprm.axis_types>`
+        but provides the information in a more Python-friendly format.
+
+        Returns a list of dictionaries, one for each axis, each
+        containing attributes about the type of that axis.
+
+        Each dictionary has the following keys:
+
+        - 'coordinate_type':
+
+          - None: Non-specific coordinate type.
+
+          - 'stokes': Stokes coordinate.
+
+          - 'celestial': Celestial coordinate (including ``CUBEFACE``).
+
+          - 'spectral': Spectral coordinate.
+
+        - 'scale':
+
+          - 'linear': Linear axis.
+
+          - 'quantized': Quantized axis (``STOKES``, ``CUBEFACE``).
+
+          - 'non-linear celestial': Non-linear celestial axis.
+
+          - 'non-linear spectral': Non-linear spectral axis.
+
+          - 'logarithmic': Logarithmic axis.
+
+          - 'tabular': Tabular axis.
+
+        - 'group'
+
+          - Group number, e.g. lookup table number
+
+        - 'number'
+
+          - For celestial axes:
+
+            - 0: Longitude coordinate.
+
+            - 1: Latitude coordinate.
+
+            - 2: ``CUBEFACE`` number.
+
+          - For lookup tables:
+
+            - the axis number in a multidimensional table.
+
+        ``CTYPEia`` in ``"4-3"`` form with unrecognized algorithm code will
+        generate an error.
+        """
+        if self.wcs is None:
+            raise AttributeError(
+                "This WCS object does not have a wcsprm object.")
+
+        coordinate_type_map = {
+            0: None,
+            1: 'stokes',
+            2: 'celestial',
+            3: 'spectral'
+            }
+
+        scale_map = {
+            0: 'linear',
+            1: 'quantized',
+            2: 'non-linear celestial',
+            3: 'non-linear spectral',
+            4: 'logarithmic',
+            5: 'tabular'
+            }
+
+        result = []
+        for axis_type in self.wcs.axis_types:
+            subresult = {}
+
+            coordinate_type = (axis_type // 1000) % 10
+            subresult['coordinate_type'] = coordinate_type_map[coordinate_type]
+
+            scale = (axis_type // 100) % 10
+            subresult['scale'] = scale_map[scale]
+
+            group = (axis_type // 10) % 10
+            subresult['group'] = group
+
+            number = axis_type % 10
+            subresult['number'] = number
+
+            result.append(subresult)
+
+        return result
+
+
 def DEGTORAD(deg):
     return (deg * np.pi / 180.)
 
