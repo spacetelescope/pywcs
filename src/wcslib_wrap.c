@@ -120,7 +120,7 @@ is_valid_alt_key(
 
 static inline void
 note_change(PyWcsprm* self) {
-  self->x.flag = -1;
+  self->x.flag = 0;
 }
 
 static void
@@ -199,6 +199,7 @@ PyWcsprm_init(
     }
 
     note_change(self);
+    self->x.flag = -1;
     status = wcsini(1, naxis, &self->x);
 
     if (status != 0) {
@@ -1266,6 +1267,7 @@ PyWcsprm_sub(
   }
 
   py_dest_wcs = (PyWcsprm*)PyWcsprm_cnew();
+  py_dest_wcs->x.flag = -1;
   status = wcsini(1, alloc_size, &py_dest_wcs->x);
   if (status != 0) {
     goto exit;
@@ -1531,6 +1533,10 @@ PyWcsprm_get_cdelt(
 
   naxis = self->x.naxis;
 
+  if (self->x.altlin & has_cd) {
+    PyErr_WarnEx(NULL, "cdelt will be ignored since cd is present", 1);
+  }
+
   return get_double_array("cdelt", self->x.cdelt, 1, &naxis, (PyObject*)self);
 }
 
@@ -1547,6 +1553,10 @@ PyWcsprm_set_cdelt(
   }
 
   dims = (npy_int)self->x.naxis;
+
+  if (self->x.altlin & has_cd) {
+    PyErr_WarnEx(NULL, "cdelt will be ignored since cd is present", 1);
+  }
 
   note_change(self);
 

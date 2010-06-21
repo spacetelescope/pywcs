@@ -236,6 +236,12 @@ cdelt = """
 
 Coordinate increments (``CDELTia``) for each coord axis.
 
+If a ``CDi_ja`` linear transformation matrix is present, a warning is
+raised and `~pywcs.Wcsprm.cdelt` is ignored.  The ``CDi_ja`` matrix
+may be deleted by::
+
+  del wcs.wcs.cd
+
 An undefined value is represented by NaN.
 """
 
@@ -983,6 +989,13 @@ The ``PCi_ja`` (pixel coordinate) transformation matrix.  The order is::
 
   [[PC1_1, PC1_2],
    [PC2_1, PC2_2]]
+
+For historical compatibility, two alternate specifications of the
+``CDi_ja`` and ``CROTAia`` keywords are supported.
+
+`~pywcs.Wcsprm.has_pci_ja`, `~pywcs.Wcsprm.has_cdi_ja` and
+`~pywcs.Wcsprm.has_crotaia` can be used to determine which of these
+alternatives are present in the header.
 """
 
 phi0 = """

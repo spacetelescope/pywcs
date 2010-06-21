@@ -161,10 +161,6 @@ class WCS(WCSBase):
                                     relax=relax, naxis=naxis)
             self.naxis = wcsprm.naxis
             # Set some reasonable defaults.
-            wcsprm.crpix = np.zeros((self.naxis,), np.double)
-            wcsprm.crval = np.zeros((self.naxis,), np.double)
-            wcsprm.ctype = ['RA---TAN', 'DEC--TAN']
-            wcsprm.cd = np.array([[1.0, 0.0], [0.0, 1.0]], np.double)
             det2im = (None, None)
             cpdis = (None, None)
             sip = None
