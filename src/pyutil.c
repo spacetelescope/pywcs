@@ -373,13 +373,13 @@ set_double(
     return -1;
   }
 
-  if (!PyFloat_Check(value)) {
-    return -1;
-  }
-
   *dest = PyFloat_AsDouble(value);
 
-  return 0;
+  if (PyErr_Occurred()) {
+    return -1;
+  } else {
+    return 0;
+  }
 }
 
 /* get_double_array is inlined */
