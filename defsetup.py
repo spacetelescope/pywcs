@@ -247,7 +247,7 @@ PYWCS_EXTENSIONS = [
               )
     ]
 
-pkg = ["pywcs" ]
+pkg = ["pywcs", "pywcs.tests"]
 
 setupargs = {
     'version' :     VERSION,
