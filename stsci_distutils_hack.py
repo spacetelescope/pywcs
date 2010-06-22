@@ -96,9 +96,7 @@ def run( pytools_version = None ) :
 
     # If they have multiple packages, they have to specify package_dir.  Otherwise,
     # we can create one for them.
-    if not 'package_dir' in setupargs :
-        setupargs['package_dir'] = { pkg[0] : 'lib' }
-
+    
     setup(
         name =              pkg[0],
         packages =          pkg,

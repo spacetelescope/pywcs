@@ -261,5 +261,6 @@ setupargs = {
                     ( 'pywcs/include', ['src/*.h']),
                     ( 'pywcs/include/wcslib', [ WCSLIBC + '/*.h'] ),
                     ],
+    'package_dir' : {pkg[0]: 'lib', pkg[1]: 'test'},
 }
 
