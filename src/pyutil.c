@@ -61,7 +61,7 @@ PyArrayProxy_New(
       nd, (npy_intp*)dims,
       NULL,
       (void*)data,
-      NPY_CONTIGUOUS | NPY_WRITEABLE,
+      NPY_CONTIGUOUS,
       NULL);
 
   if (result == NULL) {
