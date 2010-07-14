@@ -166,10 +166,13 @@ class WCS(WCSBase):
             sip = None
         else:
             try:
-                header_string = repr(header.ascard)
+                header_string = str(header.ascard)
                 wcsprm = _pywcs._Wcsprm(header=header_string, key=key,
                                         relax=relax)
             except _pywcs.NoWcsKeywordsFoundError:
+                # The header may have SIP or distortions, but no core
+                # WCS.  That isn't an error -- we want a "default"
+                # (identity) core Wcs transformation in that case.
                 wcsprm = _pywcs._Wcsprm(header=None, key=key,
                                         relax=relax)
 
@@ -799,8 +802,9 @@ naxis kwarg.
         Temporary function for internal use.
         """
         print 'WCS Keywords\n'
-        print 'CD_11  CD_12: %r %r' % (self.wcs.cd[0,0],  self.wcs.cd[0,1])
-        print 'CD_21  CD_22: %r %r' % (self.wcs.cd[1,0],  self.wcs.cd[1,1])
+        if hasattr(self.wcs, 'cd'):
+            print 'CD_11  CD_12: %r %r' % (self.wcs.cd[0,0],  self.wcs.cd[0,1])
+            print 'CD_21  CD_22: %r %r' % (self.wcs.cd[1,0],  self.wcs.cd[1,1])
         print 'CRVAL    : %r %r' % (self.wcs.crval[0], self.wcs.crval[1])
         print 'CRPIX    : %r %r' % (self.wcs.crpix[0], self.wcs.crpix[1])
         print 'NAXIS    : %r %r' % (self.naxis1, self.naxis2)
