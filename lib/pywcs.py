@@ -210,7 +210,7 @@ class WCS(WCSBase):
                 # The header may have SIP or distortions, but no core
                 # WCS.  That isn't an error -- we want a "default"
                 # (identity) core Wcs transformation in that case.
-                if colsel is not None:
+                if colsel is None:
                     wcsprm = _pywcs._Wcsprm(header=None, key=key,
                                             relax=relax, keysel=keysel_flags,
                                             colsel=colsel)
