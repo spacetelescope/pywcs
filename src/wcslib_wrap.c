@@ -281,15 +281,25 @@ PyWcsprm_init(
       Py_DECREF(colsel_array);
     }
 
-    status = wcsbth(header,
-                    (int)nkeyrec,
-                    relax,
-                    ctrl,
-                    keysel,
-                    colsel_ints,
-                    &nreject,
-                    &nwcs,
-                    &wcs);
+    if (keysel < 0) {
+      status = wcspih(header,
+                      (int)nkeyrec,
+                      relax,
+                      ctrl,
+                      &nreject,
+                      &nwcs,
+                      &wcs);
+    } else {
+      status = wcsbth(header,
+                      (int)nkeyrec,
+                      relax,
+                      ctrl,
+                      keysel,
+                      colsel_ints,
+                      &nreject,
+                      &nwcs,
+                      &wcs);
+    }
 
     free(colsel_ints);
 

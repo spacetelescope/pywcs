@@ -135,9 +135,13 @@ class WCS(WCSBase):
           from the header.  See :meth:`~pywcs.Wcsprm.sub` for more
           details about this parameter.
 
-        - *keysel*: A list of flags used to restrict the keyword types
-          considered by wcslib.  Each element in the list should be
-          one of the following strings:
+        - *keysel*: A list of flags used to select the keyword types
+          considered by wcslib.  When ``None``, only the standard
+          image header keywords are considered.  To use binary table
+          image array or pixel list keywords, *keysel* must be set.
+
+          Each element in the list should be one of the following
+          strings:
 
             - 'image': Image header keywords
 
@@ -200,6 +204,8 @@ class WCS(WCSBase):
                     else:
                         raise ValueError(
                             "keysel must be a list of 'image', 'binary' and/or 'pixel'")
+            else:
+                keysel_flags = -1
 
             try:
                 header_string = str(header.ascard)
