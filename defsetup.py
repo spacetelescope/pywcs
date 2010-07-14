@@ -42,6 +42,7 @@ WCSVERSION = "4.4.4"
 WCSLIB = "wcslib-%s" % WCSVERSION # Path to wcslib
 WCSLIBC = join(WCSLIB, "C") # Path to wcslib source files
 WCSFILES = [ # List of wcslib files to compile
+    'flexed/wcsbth.c',
     'flexed/wcspih.c',
     'flexed/wcsulex.c',
     'flexed/wcsutrn.c',

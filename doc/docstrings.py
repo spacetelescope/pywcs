@@ -1600,7 +1600,8 @@ To perform all distortion corrections and WCS tranformation, use
 """
 
 Wcsprm = """
-Wcsprm(*header=None, key=' ', relax=False, naxis=2*)
+Wcsprm(*header=None, key=' ', relax=False, naxis=2, keysel=0,
+       colsel=None*)
 
 `~pywcs.Wcsprm` is a direct wrapper around `wcslib`_, and provides
 access to the core WCS transformations that it supports.
@@ -1630,6 +1631,20 @@ Sect. 5.2.1), integer (Sect. 5.2.3), and floating-point values
 
 - *naxis*: The number of sky coordinates axes for the object.
   (*naxis* may only be provided if *header* is ``None``.)
+
+- *keysel*: Vector of flag bits that may be used to restrict the
+  keyword types considered:
+
+     - ``WCSHDR_IMGHEAD``: Image header keywords.
+
+     - ``WCSHDR_BIMGARR``: Binary table image array.
+
+     - ``WCSHDR_PIXLIST``: Pixel list keywords.
+
+   If zero, there is no restriction.
+
+- *colsel*: A sequence of table column numbers used to restrict the
+  keywords considered.  ``None`` indicates no restriction.
 
 **Exceptions:**
 

@@ -164,25 +164,44 @@ PyWcsprm_init(
   char *         key           = " ";
   int            relax         = 0;
   int            naxis         = -1;
+  int            keysel        = 0;
+  PyObject*      colsel        = Py_None;
+  PyArrayObject* colsel_array  = NULL;
+  int*           colsel_ints   = NULL;
   int            ctrl          = 0;
   int            nreject       = 0;
   int            nwcs          = 0;
   struct wcsprm* wcs           = NULL;
   int            i             = 0;
-  const char*    keywords[]    = {"header", "key", "relax", "naxis", NULL};
+  const char*    keywords[]    = {"header", "key", "relax", "naxis", "keysel",
+                                  "colsel", NULL};
   PyObject*      ignored       = NULL;
   int            ignored_int;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "|Osii:WCSBase.__init__",
-                                  (char **)keywords, &header_obj, &key,
-                                   &relax, &naxis)) {
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "|OsiiiO:WCSBase.__init__",
+                                   (char **)keywords, &header_obj, &key,
+                                   &relax, &naxis, &keysel, &colsel)) {
     return -1;
   }
 
   if (header_obj == NULL || header_obj == Py_None) {
-    if (relax || key[0] != ' ' || key[1] != '\0') {
+    if (relax) {
       PyErr_SetString(PyExc_ValueError,
-                      "If no header is provided, relax and key may not be "
+                      "If no header is provided, relax may not be "
+                      "provided either.");
+      return -1;
+    }
+
+    if (keysel) {
+      PyErr_SetString(PyExc_ValueError,
+                      "If no header is provided, keysel may not be "
+                      "provided either.");
+      return -1;
+    }
+
+    if (colsel != Py_None) {
+      PyErr_SetString(PyExc_ValueError,
+                      "If no header is provided, colsel may not be "
                       "provided either.");
       return -1;
     }
@@ -207,6 +226,8 @@ PyWcsprm_init(
                       "Could not initialize wcsprm object");
       return -1;
     }
+
+    self->x.alt[0] = key[0];
 
     wcsprm_c2python(&self->x);
 
@@ -237,13 +258,40 @@ PyWcsprm_init(
       return -1;
     }
 
-    status = wcspih(header,
+    if (colsel != Py_None) {
+      colsel_array = (PyArrayObject*) PyArray_ContiguousFromAny(
+        colsel, 1, 1, PyArray_INT);
+      if (colsel_array == NULL) {
+        return -1;
+      }
+
+      colsel_ints = malloc(sizeof(int) * (PyArray_DIM(colsel_array, 0) + 1));
+      if (colsel_ints == NULL) {
+        Py_DECREF(colsel_array);
+        PyErr_SetString(PyExc_MemoryError,
+                        "Memory allocation error.");
+        return -1;
+      }
+
+      colsel_ints[0] = PyArray_DIM(colsel_array, 0);
+      for (i = 0; i < colsel_ints[0]; ++i) {
+        colsel_ints[i+1] = colsel_array->data[i];
+      }
+
+      Py_DECREF(colsel_array);
+    }
+
+    status = wcsbth(header,
                     (int)nkeyrec,
                     relax,
                     ctrl,
+                    keysel,
+                    colsel_ints,
                     &nreject,
                     &nwcs,
                     &wcs);
+
+    free(colsel_ints);
 
     if (status != 0) {
       PyErr_SetString(PyExc_MemoryError,
@@ -2647,5 +2695,8 @@ _setup_wcsprm_type(
           PyModule_AddIntConstant(m, "WCSSUB_CUBEFACE", WCSSUB_CUBEFACE) ||
           PyModule_AddIntConstant(m, "WCSSUB_SPECTRAL", WCSSUB_SPECTRAL) ||
           PyModule_AddIntConstant(m, "WCSSUB_STOKES", WCSSUB_STOKES) ||
-          PyModule_AddIntConstant(m, "WCSSUB_CELESTIAL", WCSSUB_CELESTIAL));
+          PyModule_AddIntConstant(m, "WCSSUB_CELESTIAL", WCSSUB_CELESTIAL) ||
+          PyModule_AddIntConstant(m, "WCSHDR_IMGHEAD", WCSHDR_IMGHEAD) ||
+          PyModule_AddIntConstant(m, "WCSHDR_BIMGARR", WCSHDR_BIMGARR) ||
+          PyModule_AddIntConstant(m, "WCSHDR_PIXLIST", WCSHDR_PIXLIST));
 }

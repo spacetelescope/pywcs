@@ -89,6 +89,9 @@ WCSSUB_SPECTRAL = _pywcs.WCSSUB_SPECTRAL
 WCSSUB_STOKES = _pywcs.WCSSUB_STOKES
 
 # A wrapper around the C WCS type
+
+# TODO: More involved form of *relax*
+
 class WCS(WCSBase):
     """
     WCS objects perform standard WCS transformations, and correct for
@@ -97,7 +100,7 @@ class WCS(WCSBase):
     """
 
     def __init__(self, header=None, fobj=None, key=' ', minerr=0.0,
-                 relax=False, naxis=None):
+                 relax=False, naxis=None, keysel=None, colsel=None):
         """
         - *header*: A PyFITS header object.  If *header* is not
           provided, the object will be initialized to default
@@ -132,6 +135,26 @@ class WCS(WCSBase):
           from the header.  See :meth:`~pywcs.Wcsprm.sub` for more
           details about this parameter.
 
+        - *keysel*: A list of flags used to restrict the keyword types
+          considered by wcslib.  Each element in the list should be
+          one of the following strings:
+
+            - 'image': Image header keywords
+
+            - 'binary': Binary table image array keywords
+
+            - 'pixel': Pixel list keywords
+
+          Keywords such as ``EQUIna`` or ``RFRQna`` that are common to
+          binary table image arrays and pixel lists (including
+          ``WCSNna`` and ``TWCSna``) are selected by both 'binary' and
+          'pixel'.
+
+        - *colsel*: A sequence of table column numbers used
+          to restrict the WCS transformations considered to only those
+          pertaining to the specified columns.  If `None`, there is no
+          restriction.
+
         .. warning::
 
           pywcs supports arbitrary *n* dimensions for the core WCS
@@ -165,16 +188,34 @@ class WCS(WCSBase):
             cpdis = (None, None)
             sip = None
         else:
+            keysel_flags = 0
+            if keysel is not None:
+                for element in keysel:
+                    if element.lower() == 'image':
+                        keysel_flags |= _pywcs.WCSHDR_IMGHEAD
+                    elif element.lower() == 'binary':
+                        keysel_flags |= _pywcs.WCSHDR_BIMGARR
+                    elif element.lower() == 'pixel':
+                        keysel_flags |= _pywcs.WCSHDR_PIXLIST
+                    else:
+                        raise ValueError(
+                            "keysel must be a list of 'image', 'binary' and/or 'pixel'")
+
             try:
                 header_string = str(header.ascard)
                 wcsprm = _pywcs._Wcsprm(header=header_string, key=key,
-                                        relax=relax)
+                                        relax=relax, keysel=keysel_flags,
+                                        colsel=colsel)
             except _pywcs.NoWcsKeywordsFoundError:
                 # The header may have SIP or distortions, but no core
                 # WCS.  That isn't an error -- we want a "default"
                 # (identity) core Wcs transformation in that case.
-                wcsprm = _pywcs._Wcsprm(header=None, key=key,
-                                        relax=relax)
+                if colsel is not None:
+                    wcsprm = _pywcs._Wcsprm(header=None, key=key,
+                                            relax=relax, keysel=keysel_flags,
+                                            colsel=colsel)
+                else:
+                    raise
 
             if naxis is not None:
                 wcsprm = wcsprm.sub(naxis)
