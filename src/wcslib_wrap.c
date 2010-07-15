@@ -192,7 +192,7 @@ PyWcsprm_init(
       return -1;
     }
 
-    if (keysel) {
+    if (keysel > 0) {
       PyErr_SetString(PyExc_ValueError,
                       "If no header is provided, keysel may not be "
                       "provided either.");
