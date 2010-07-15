@@ -164,7 +164,7 @@ PyWcsprm_init(
   char *         key           = " ";
   int            relax         = 0;
   int            naxis         = -1;
-  int            keysel        = 0;
+  int            keysel        = -1;
   PyObject*      colsel        = Py_None;
   PyArrayObject* colsel_array  = NULL;
   int*           colsel_ints   = NULL;
