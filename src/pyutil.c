@@ -269,7 +269,7 @@ shape_to_string(
 
   str[0] = 0;
   for (i = 0; i < ndims; ++i) {
-    snprintf(value, 32, "%d", dims[i]);
+      snprintf(value, 32, "%d", (int)dims[i]);
     strncat(str, value, 32);
     if (i != ndims - 1) {
       strncat(str, "x", 2);
