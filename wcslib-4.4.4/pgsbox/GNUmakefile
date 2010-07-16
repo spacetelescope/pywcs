@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------
-# GNU makefile for building PGSBOX 4.4.
+# GNU makefile for building PGSBOX 4.5.
 #
 # Summary of the main targets
 # ---------------------------
@@ -9,8 +9,8 @@
 #
 #   cleaner:   clean, and also delete the test executables.
 #
-#   realclean (or cleanest):  cleaner, and also delete the pgsbox and
-#              WCSLIB object libraries.
+#   cleanest (distclean, or realclean):  cleaner, and also delete the pgsbox
+#              and WCSLIB object libraries.
 #
 #   check (or test): Compile and run the test programs.  By default they are
 #              executed in batch mode; use
@@ -26,12 +26,12 @@
 #      instead and re-run configure.
 #
 #   2) In compiling the test programs, this makefile assumes that the
-#      WCSLIB 4.4 sources reside in ../C and ../Fortran (as in the
+#      WCSLIB 4.5 sources reside in ../C and ../Fortran (as in the
 #      distribution kit).
 #
 # Author: Mark Calabretta, Australia Telescope National Facility
 # http://www.atnf.csiro.au/~mcalabre/index.html
-# $Id: GNUmakefile,v 4.4.1.2 2009/08/10 23:57:01 cal103 Exp cal103 $
+# $Id: GNUmakefile,v 4.5 2010/07/16 07:01:27 cal103 Exp $
 #-----------------------------------------------------------------------------
 # Get configure settings.
 include ../makedefs
@@ -79,8 +79,8 @@ vpath %.inc ../Fortran
 # Static and static pattern rules
 #--------------------------------
 
-.PHONY : build check clean cleaner cleanest install realclean test tests \
-         wcslib
+.PHONY : build check clean cleaner cleanest distclean install realclean test \
+         tests wcslib
 
 build : lib
 
@@ -91,12 +91,12 @@ $(PGSBOXLIB) : $(MODULES:%=$(PGSBOXLIB)(%))
 	   $(RANLIB) $@
 
 clean :
-	- $(RM) *.o *.i a.out core $(EXTRA_CLEAN)
+	- $(RM) -r *.o *.i a.out core *.dSYM $(EXTRA_CLEAN)
 
 cleaner : clean
 	- $(RM) pgtest cpgtest
 
-realclean cleanest : cleaner
+cleanest distclean realclean : cleaner
 	- $(RM) $(PGSBOXLIB) $(LIBWCS)
 
 check test : tests

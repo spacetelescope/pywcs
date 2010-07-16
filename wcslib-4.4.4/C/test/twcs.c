@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.4 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2009, Mark Calabretta
+  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: twcs.c,v 4.4.1.1 2009/08/12 06:35:54 cal103 Exp cal103 $
+  $Id: twcs.c,v 4.5 2010/07/16 07:01:26 cal103 Exp $
 *=============================================================================
 *
 * twcs tests wcss2p() and wcsp2s() for closure on an oblique 2-D slice through
@@ -69,7 +69,7 @@ const double RESTFRQ  =   1.42040575e9;
 const double RESTWAV  =   0.0;
 
 int NPV = 3;
-struct pvcard PV[3];            /* Projection parameters are set in main(). */
+struct pvcard PV[3];		/* Projection parameters are set in main(). */
 
 
 int main()
@@ -153,18 +153,18 @@ int main()
   /* (phi0,theta0) = (0,90), but without any fiducial offset, */
   /* i.e. iwith PVi_0a == 0 (by default).                     */
   /*----------------------------------------------------------*/
-  PV[0].i = 4;                  /* Longitude is on axis 4.     */
-  PV[0].m = 1;                  /* Parameter number 1.         */
-  PV[0].value =  0.0;           /* Fiducial native longitude.  */
+  PV[0].i = 4;			/* Longitude is on axis 4.     */
+  PV[0].m = 1;			/* Parameter number 1.         */
+  PV[0].value =  0.0;		/* Fiducial native longitude.  */
 
-  PV[1].i = 4;                  /* Longitude is on axis 4.     */
-  PV[1].m = 2;                  /* Parameter number 2.         */
-  PV[1].value = 90.0;           /* Fiducial native latitude.   */
+  PV[1].i = 4;			/* Longitude is on axis 4.     */
+  PV[1].m = 2;			/* Parameter number 2.         */
+  PV[1].value = 90.0;		/* Fiducial native latitude.   */
 
   /* Set the PVi_m keyvaluess for the latitude axis.          */
-  PV[2].i = 2;                  /* Latitude is on axis 2.      */
-  PV[2].m = 1;                  /* Parameter number 1.         */
-  PV[2].value = -30.0;          /* PVi_1.                      */
+  PV[2].i = 2;			/* Latitude is on axis 2.      */
+  PV[2].m = 1;			/* Parameter number 1.         */
+  PV[2].value = -30.0;		/* PVi_1.                      */
 
 
   /* The following routine simulates the actions of a FITS header parser. */
@@ -309,8 +309,8 @@ struct wcsprm *wcs;
   }
 
   /* Extract information from the FITS header. */
-  if ((status = wcsset_(wcs))) {
-    printf("wcsset_ ERROR%3d\n", status);
+  if ((status = wcsset(wcs))) {
+    printf("wcsset ERROR%3d\n", status);
   }
 
   return;

@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.4 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2009, Mark Calabretta
+  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: doxextr.l,v 4.4.1.1 2009/08/10 08:55:27 cal103 Exp cal103 $
+  $Id: doxextr.l,v 4.5 2010/07/16 07:01:27 cal103 Exp $
 *=============================================================================
 *
 * doxextr.l is a Flex description file containing a lexical scanner definition
@@ -101,624 +101,633 @@ DASH {WS1}-{WS1}
 %}
 
 %%
-	const int id = 24;
-	
-	char *(func[128]), listype[8], *(proto[128]), name[32], *param,
-	     text[128];
-	int  ifunc, ilist, indent, listndt[8], lmore, nfunc, pass1, pcont,
-	     plist, section, special, subsection, td;
-	
-	void listitem(int indent, char listype[8], int listndt[8],
-	              int *ilist);
-	void endlist(int isItem, int indent, char listype[8], int listndt[8],
-	             int *ilist);
-	void endspecial(int *special);
-	void printe(const char *text, const char *name);
-	
-	ilist   = 0;
-	listndt[0] = -1;
-	listype[0] = '-';
-	lmore   = 0;
-	*name   = '\0';
-	nfunc   = 0;
-	pass1   = 1;
-	pcont   = 0;
-	plist   = 0;
-	section = PROLOG;
-	special = 0;
-	subsection = 0;
-	td = 0;
-	
-	BEGIN(PROLOG);
-	
+        const int id = 24;
+
+        char *(func[128]), listype[8], *(proto[128]), name[32], *param,
+             text[128];
+        int  ifunc, ilist, indent, listndt[8], lmore, nfunc, pass1, pcont,
+             plist, section, special, subsection, td;
+
+        void listitem(int indent, char listype[8], int listndt[8],
+                      int *ilist);
+        void endlist(int isItem, int indent, char listype[8], int listndt[8],
+                     int *ilist);
+        void endspecial(int *special);
+        void printe(const char *text, const char *name);
+
+        ilist   = 0;
+        listndt[0] = -1;
+        listype[0] = '-';
+        lmore   = 0;
+        *name   = '\0';
+        nfunc   = 0;
+        pass1   = 1;
+        pcont   = 0;
+        plist   = 0;
+        section = PROLOG;
+        special = 0;
+        subsection = 0;
+        td = 0;
+
+        BEGIN(PROLOG);
+
 <PROLOG>\n {}
 
 <PROLOG>^\/ |
 <PROLOG>^{WS1} |
 <PROLOG>^\*=+ {
-	  /* Copyright notice. */
-	  BEGIN(FLUSH);
-	}
+          /* Copyright notice. */
+          BEGIN(FLUSH);
+        }
 
 <*>^\*{WS0}\n\*{WS0}\n {
-	  /* Consecutive blank lines denoting the end of a section. */
-	  if (pass1) {
-	    BEGIN(FLUSH);
-	  } else if (section != BODY) {
-	    if (section != PROLOG) {
-	      endlist(0, 0, listype, listndt, &ilist);
-	      endspecial(&special);
-	
-	      printf("*/\n");
-	      section = PROLOG;
-	    }
-	
-	    BEGIN(PROLOG);
-	  }
-	}
+          /* Consecutive blank lines denoting the end of a section. */
+          if (pass1) {
+            BEGIN(FLUSH);
+          } else if (section != BODY) {
+            if (section != PROLOG) {
+              endlist(0, 0, listype, listndt, &ilist);
+              endspecial(&special);
+
+              printf("*/\n");
+              section = PROLOG;
+            }
+
+            BEGIN(PROLOG);
+          }
+        }
 
 <*>^\*=+\*\/ {
-	  /* End of prologue. */
-	  if (pass1) {
-	    section = BODY;
-	    BEGIN(FLUSH);
-	  } else {
-	    if (section != PROLOG) {
-	      endlist(0, 0, listype, listndt, &ilist);
-	      endspecial(&special);
-	
-	      printf("*/\n");
-	    }
-	    return 0;
-	  }
-	}
+          /* End of prologue. */
+          if (pass1) {
+            section = BODY;
+            BEGIN(FLUSH);
+          } else {
+            if (section != PROLOG) {
+              endlist(0, 0, listype, listndt, &ilist);
+              endspecial(&special);
+
+              printf("*/\n");
+            }
+            return 0;
+          }
+        }
 
 <*>{WS0}-+\n {
-	  /* Discard underlining. */
-	}
+          /* Discard underlining. */
+        }
 
 <*>^\*{WS0}\n {
-	  if (!pass1) {
-	    endspecial(&special);
-	
-	    lmore = yyleng;
-	    yymore();
-	  }
-	}
+          if (!pass1) {
+            endspecial(&special);
+
+            lmore = yyleng;
+            yymore();
+          }
+        }
 
 <*>^\*" " {
-	  /* First-level prologue indentation. */
-	  if (pass1) {
-	    BEGIN(FLUSH);
-	  } else {
-	    endspecial(&special);
-	
-	    lmore = yyleng;
-	    yymore();
-	  }
-	}
+          /* First-level prologue indentation. */
+          if (pass1) {
+            BEGIN(FLUSH);
+          } else {
+            endspecial(&special);
+
+            lmore = yyleng;
+            yymore();
+          }
+        }
 
 <*>^-/\n {
-	  /* Horizontal rule. */
-	  if (!pass1) {
-	    printf("* <HR>\n");
-	  }
-	  BEGIN(FLUSH);
-	}
+          /* Horizontal rule. */
+          if (!pass1) {
+            printf("* <HR>\n");
+          }
+          BEGIN(FLUSH);
+        }
 
 <*>^#{WS0} {
-	  /* HTML table. */
-	  if (pass1) {
-	    BEGIN(FLUSH);
-	  } else {
-	    if (special != TABLE) {
-	      endspecial(&special);
-	
-	      printf("* <HR><TABLE BORDER=0>\n");
-	      special = TABLE;
-	    }
-	    printf("* <TR>\n");
-	    printf("*%s", yytext+lmore+1);
-	    td = 0;
-	    BEGIN(TABLEROW);
-	  }
-	}
+          /* HTML table. */
+          if (pass1) {
+            BEGIN(FLUSH);
+          } else {
+            if (special != TABLE) {
+              endspecial(&special);
+
+              printf("* <HR><TABLE BORDER=0>\n");
+              special = TABLE;
+            }
+            printf("* <TR>\n");
+            printf("*%s", yytext+lmore+1);
+            td = 0;
+            BEGIN(TABLEROW);
+          }
+        }
 
 <*>^=/\n |
 <*>^=" ".* {
-	  /* Verbatim text (code). */
-	  if (!pass1) {
-	    if (special != VERBATIM) {
-	      endspecial(&special);
-	
-	      printf("* @code\n");
-	      special = VERBATIM;
-	    }
-	    printf(" %s\n", yytext+lmore+1);
-	  }
-	  BEGIN(FLUSH);
-	}
+          /* Verbatim text (code). */
+          if (!pass1) {
+            if (special != VERBATIM) {
+              endspecial(&special);
+
+              printf("* @code\n");
+              special = VERBATIM;
+            }
+            printf(" %s\n", yytext+lmore+1);
+          }
+          BEGIN(FLUSH);
+        }
 
 <PROLOG>"Summary of the"{WS1} |
 <PROLOG>"Summary of"{WS1} {
-	  /* The next token will be the file name. */
-	  section = SUMMARY;
-	  BEGIN(FILEMARK);
-	}
+          /* The next token will be the file name. */
+          section = SUMMARY;
+          BEGIN(FILEMARK);
+        }
 
 <PROLOG>{NAME}"()"{DASH} {
-	  /* Description of a function API. */
-	  section = FUNCTION;
-	  subsection = 0;
-	
-	  yyless(lmore);
-	  BEGIN(FNMARK);
-	}
+          /* Description of a function API. */
+          section = FUNCTION;
+          subsection = 0;
+
+          yyless(lmore);
+          BEGIN(FNMARK);
+        }
 
 <PROLOG>{NAME}{WS1}struct{DASH} {
-	  /* Description of structure members. */
-	  section = STRUCTURE;
-	  subsection = 0;
-	
-	  yyless(lmore);
-	  BEGIN(STRUCTMARK);
-	}
+          /* Description of structure members. */
+          section = STRUCTURE;
+          subsection = 0;
+
+          yyless(lmore);
+          BEGIN(STRUCTMARK);
+        }
 
 <PROLOG>{NAME}{WS1}union{DASH} {
-	  /* Description of union members. */
-	  section = STRUCTURE;
-	  subsection = 0;
-	
-	  yyless(lmore);
-	  BEGIN(UNIONMARK);
-	}
+          /* Description of union members. */
+          section = STRUCTURE;
+          subsection = 0;
+
+          yyless(lmore);
+          BEGIN(UNIONMARK);
+        }
 
 <PROLOG>Global" "variable:" ".*{DASH} {
-	  /* Description of global variable. */
-	  section = VARIABLE;
-	
-	  yyless(lmore+17);
-	  BEGIN(VARMARK);
-	}
+          /* Description of global variable. */
+          section = VARIABLE;
+
+          yyless(lmore+17);
+          BEGIN(VARMARK);
+        }
 
 <PROLOG>{NAME}("()")*{WS1}(define|macro){DASH} {
-	  /* Description of preprocessor definition. */
-	  section = DEFINE;
-	
-	  yyless(lmore);
-	  BEGIN(DEFMARK);
-	}
+          /* Description of preprocessor definition. */
+          section = DEFINE;
+
+          yyless(lmore);
+          BEGIN(DEFMARK);
+        }
 
 <PROLOG>. {
-	  BEGIN(FLUSH);
-	}
+          BEGIN(FLUSH);
+        }
 
 <FILEMARK>{NAME} {
-	  printf("/** @file %s.h\n*\n", yytext);
-	  BEGIN(FLUSH);
-	}
+          printf("/** @file %s.h\n*\n", yytext);
+          BEGIN(FLUSH);
+        }
 
 <SUMMARY>[A-Z].{1,50}: {
-	  /* Sub-section header. */
-	  endlist(0, 0, listype, listndt, &ilist);
-	
-	  printf("*\n* <B>%*s</B> @n\n", yyleng-(lmore+1), yytext+lmore);
-	  BEGIN(FLUSH);
-	}
+          /* Sub-section header. */
+          endlist(0, 0, listype, listndt, &ilist);
+
+          printf("*\n* <B>%*s</B> @n\n", yyleng-(lmore+1), yytext+lmore);
+          BEGIN(FLUSH);
+        }
 
 <SUMMARY>{WS1}"- " |
 <SUMMARY>{WS1}/{NWS}:\[^:] {
-	  /* Unnumbered list item. */
-	  lmore -= 2;
-	  indent = yyleng - lmore;
-	  if (yytext[yyleng-2] == '-') {
-	    /* The two-character pattern was matched. */
-	    indent -= 2;
-	  }
-	  endlist(1, indent, listype, listndt, &ilist);
-	
-	  if (lmore) printf("*\n");
-	
-	  if (indent > listndt[ilist]) {
-	    ilist++;
-	    listndt[ilist] = indent;
-	    listype[ilist] = 'U';
-	    printf("%-*s<%cL>\n", indent, "*", listype[ilist]);
-	  }
-	  printf("%-*s<LI> ", indent, "*");
-	
-	  BEGIN(PRINTE);
-	}
+          /* Unnumbered list item. */
+          lmore -= 2;
+          indent = yyleng - lmore;
+          if (yytext[yyleng-2] == '-') {
+            /* The two-character pattern was matched. */
+            indent -= 2;
+          }
+          endlist(1, indent, listype, listndt, &ilist);
+
+          if (lmore) printf("*\n");
+
+          if (indent > listndt[ilist]) {
+            ilist++;
+            listndt[ilist] = indent;
+            listype[ilist] = 'U';
+            printf("%-*s<%cL>\n", indent, "*", listype[ilist]);
+          }
+          printf("%-*s<LI> ", indent, "*");
+
+          BEGIN(PRINTE);
+        }
 
 <SUMMARY>{WS1} {
-	  lmore -= 2;
-	  indent = yyleng - lmore;
-	  endlist(0, indent, listype, listndt, &ilist);
-	
-	  yymore();
-	  BEGIN(PRINTE);
-	}
+          lmore -= 2;
+          indent = yyleng - lmore;
+          endlist(0, indent, listype, listndt, &ilist);
+
+          yymore();
+          BEGIN(PRINTE);
+        }
 
 <SUMMARY>. {
-	  endlist(0, 0, listype, listndt, &ilist);
-	
-	  yymore();
-	  BEGIN(PRINTE);
-	}
+          endlist(0, 0, listype, listndt, &ilist);
+
+          yymore();
+          BEGIN(PRINTE);
+        }
 
 <FNMARK>{NAME} {
-	  strcpy(name, yytext);
-	  for (ifunc = 0; ifunc < nfunc; ifunc++) {
-	    if (strcmp(yytext, func[ifunc]) == 0) {
-	      printf("\n/** @fn %s\n*\n", proto[ifunc]);
-	      break;
-	    }
-	  }
-	
-	  if (ifunc == nfunc) {
-	    printf("\n/** @fn %s\n*\n", yytext);
-	  }
-	}
+          strcpy(name, yytext);
+          for (ifunc = 0; ifunc < nfunc; ifunc++) {
+            if (strcmp(yytext, func[ifunc]) == 0) {
+              printf("\n/** @fn %s\n*\n", proto[ifunc]);
+              break;
+            }
+          }
+
+          if (ifunc == nfunc) {
+            printf("\n/** @fn %s\n*\n", yytext);
+          }
+        }
 
 <FNMARK>"()"{DASH} {
-	  BEGIN(BRIEF);
-	}
+          BEGIN(BRIEF);
+        }
 
 <FUNCTION>Given: {
-	  printf("*\n");
-	  subsection = PARAM;
-	  param = "in";
-	  BEGIN(FLUSH);
-	}
+          printf("*\n");
+          subsection = PARAM;
+          param = "in";
+          BEGIN(FLUSH);
+        }
 
 <FUNCTION>"Given and returned:" {
-	  printf("*\n");
-	  subsection = PARAM;
-	  param = "in,out";
-	  BEGIN(FLUSH);
-	}
+          printf("*\n");
+          subsection = PARAM;
+          param = "in,out";
+          BEGIN(FLUSH);
+        }
 
 <FUNCTION>Returned: {
-	  printf("*\n");
-	  subsection = PARAM;
-	  param = "out";
-	  BEGIN(FLUSH);
-	}
+          printf("*\n");
+          subsection = PARAM;
+          param = "out";
+          BEGIN(FLUSH);
+        }
 
 <FUNCTION>"Function return value:" {
-	  printf("*\n");
-	  subsection = RETURN;
-	  BEGIN(FLUSH);
-	}
+          printf("*\n");
+          subsection = RETURN;
+          BEGIN(FLUSH);
+        }
 
 <FUNCTION>"Notes:" {
-	  printf("*\n* @b Notes: @n\n");
-	  subsection = NOTES;
-	  ilist = 0;
-	  BEGIN(FLUSH);
-	}
+          printf("*\n* @b Notes: @n\n");
+          subsection = NOTES;
+          ilist = 0;
+          BEGIN(FLUSH);
+        }
 
 <FUNCTION>{I} {
-	  if (!subsection || subsection == NOTES) {
-	    /* Lists in the function prologue or notes section. */
-	    lmore = yyleng;
-	    yymore();
-	  }
-	
-	  if (subsection) BEGIN(subsection);
-	}
+          if (!subsection || subsection == NOTES) {
+            /* Lists in the function prologue or notes section. */
+            lmore = yyleng;
+            yymore();
+          }
+
+          if (subsection) BEGIN(subsection);
+        }
 
 <FUNCTION>. {
-	  yymore();
-	  BEGIN(PRINTE);
-	}
+          yymore();
+          BEGIN(PRINTE);
+        }
 
 <PARAM>[a-zA-Z].{17}"  ".* {
-	  if (pcont) {
-	    printf("%s\n%-*s", strtok(yytext, " "), id, "*");
-	    pcont = 0;
-	  } else {
-	    sprintf(text, "* @param[%s] %s ", param, strtok(yytext, " "));
-	    printf("%-24s", text);
-	  }
-	  printe(yytext+20, name);
-	  plist = 0;
-	  BEGIN(FLUSH);
-	}
+          if (pcont) {
+            printf("%s\n%-*s", strtok(yytext, " "), id, "*");
+            pcont = 0;
+          } else {
+            sprintf(text, "* @param[%s] %s ", param, strtok(yytext, " "));
+            printf("%-24s", text);
+          }
+          printe(yytext+20, name);
+          plist = 0;
+          BEGIN(FLUSH);
+        }
 
 <PARAM>({NAME},)+{WS0} {
-	  if (pcont) {
-	    printf("%s", yytext);
-	  } else {
-	    printf("* @param[%s] %s", param, yytext);
-	    pcont = 1;
-	  }
-	  plist = 0;
-	  BEGIN(FLUSH);
-	}
+          if (pcont) {
+            printf("%s", yytext);
+          } else {
+            printf("* @param[%s] %s", param, yytext);
+            pcont = 1;
+          }
+          plist = 0;
+          BEGIN(FLUSH);
+        }
 
 <PARAM>{NAME}(,{NAME})? {
-	  if (pcont) {
-	    pcont = 0;
-	  } else {
-	    printf("* @param[%s] ", param);
-	  }
-	  printf("%s\n", yytext);
-	  plist = 0;
-	  BEGIN(FLUSH);
-	}
+          if (pcont) {
+            pcont = 0;
+          } else {
+            printf("* @param[%s] ", param);
+          }
+          printf("%s\n", yytext);
+          plist = 0;
+          BEGIN(FLUSH);
+        }
 
 <PARAM>{IT}[a-z].* {
-	  pcont = 0;
-	  printe(yytext+20, name);
-	  BEGIN(FLUSH);
-	}
+          pcont = 0;
+          printe(yytext+20, name);
+          BEGIN(FLUSH);
+        }
 
 <RETURN>{IT}[a-z].{6}"  ".* {
-	  /* Function return type. */
-	  printf("* @return ");
-	  printe(yytext+20, name);
-	  plist = 0;
-	  BEGIN(FLUSH);
-	}
+          /* Function return type. */
+          printf("* @return ");
+          printe(yytext+20, name);
+          plist = 0;
+          BEGIN(FLUSH);
+        }
 
 <RETURN>{IT}[a-z].* {
-	  /* Function return type. */
-	  printf("* @return\n");
-	  plist = 0;
-	  BEGIN(FLUSH);
-	}
+          /* Function return type. */
+          printf("* @return\n");
+          plist = 0;
+          BEGIN(FLUSH);
+        }
+
+<RETURN>{ID}" [-1]".*:{WS1}.* {
+          /* Status return value, less than 0 or greater than 9. */
+          if (lmore > 2) printf("* @n\n");
+          printf("%-*s- ", id, "*");
+          printe(yytext+(id-2), name);
+          plist = 1;
+          BEGIN(FLUSH);
+        }
 
 <PARAM,RETURN>{ID}"  ".*:{WS1}.* {
-	  /* List of parameter or status return values. */
-	  if (lmore > 2) printf("* @n\n");
-	  printf("%-*s- ", id, "*");
-	  printe(yytext+(id-2), name);
-	  plist = 1;
-	  BEGIN(FLUSH);
-	}
+          /* List of parameter or status return values. */
+          if (lmore > 2) printf("* @n\n");
+          printf("%-*s- ", id, "*");
+          printe(yytext+(id-2), name);
+          plist = 1;
+          BEGIN(FLUSH);
+        }
 
 <PARAM,RETURN>{ID}"  ".* {
-	  /* List of parameter or status return values. */
-	  if (lmore > 2) printf("* @n\n");
-	  printf("*   ");
-	  printe(yytext, name);
-	  BEGIN(FLUSH);
-	}
+          /* List of parameter or status return values. */
+          if (lmore > 2) printf("* @n\n");
+          printf("*   ");
+          printe(yytext, name);
+          BEGIN(FLUSH);
+        }
 
 <PARAM,RETURN>{ID}.* {
-	  /* List of parameter or status return values. */
-	  if (plist) {
-	    printf("%-*s.\n", id, "*");
-	    plist = 0;
-	  } else if (lmore > 2) {
-	    printf("* @n\n");
-	  }
-	  printf("*   ");
-	  printe(yytext, name);
-	  BEGIN(FLUSH);
-	}
+          /* List of parameter or status return values. */
+          if (plist) {
+            printf("%-*s.\n", id, "*");
+            plist = 0;
+          } else if (lmore > 2) {
+            printf("* @n\n");
+          }
+          printf("*   ");
+          printe(yytext, name);
+          BEGIN(FLUSH);
+        }
 
 <NOTES>{WS0}-" " |
 <NOTES>{WS0}[1-9a-z]:" " {
-	  /* List item. */
-	  lmore -= 4;
-	  indent = yyleng - lmore;
-	  if (yytext[yyleng-2] == '-') {
-	    /* The two-character pattern was matched. */
-	    indent -= 2;
-	  } else {
-	    /* The three-character pattern was matched. */
-	    indent -= 3;
-	  }
-	  endlist(1, indent, listype, listndt, &ilist);
-	
-	  if (lmore) printf("*\n");
-	
-	  listitem(indent, listype, listndt, &ilist);
-	
-	  BEGIN(PRINTE);
-	}
+          /* List item. */
+          lmore -= 4;
+          indent = yyleng - lmore;
+          if (yytext[yyleng-2] == '-') {
+            /* The two-character pattern was matched. */
+            indent -= 2;
+          } else {
+            /* The three-character pattern was matched. */
+            indent -= 3;
+          }
+          endlist(1, indent, listype, listndt, &ilist);
+
+          if (lmore) printf("*\n");
+
+          listitem(indent, listype, listndt, &ilist);
+
+          BEGIN(PRINTE);
+        }
 
 <NOTES>{WS1} {
-	  lmore -= 4;
-	  indent = yyleng - lmore;
-	  endlist(0, indent, listype, listndt, &ilist);
-	
-	  yymore();
-	  BEGIN(PRINTE);
-	}
+          lmore -= 4;
+          indent = yyleng - lmore;
+          endlist(0, indent, listype, listndt, &ilist);
+
+          yymore();
+          BEGIN(PRINTE);
+        }
 
 <NOTES>. {
-	  endlist(0, 4, listype, listndt, &ilist);
-	
-	  yymore();
-	  BEGIN(PRINTE);
-	}
+          endlist(0, 4, listype, listndt, &ilist);
+
+          yymore();
+          BEGIN(PRINTE);
+        }
 
 <STRUCTMARK>{NAME} {
-	  strcpy(name, yytext);
-	  printf("\n/** @struct %s\n*\n", yytext);
-	}
+          strcpy(name, yytext);
+          printf("\n/** @struct %s\n*\n", yytext);
+        }
 
 <STRUCTMARK>{WS1}struct{DASH} {
-	  BEGIN(BRIEF);
-	}
+          BEGIN(BRIEF);
+        }
 
 <UNIONMARK>{NAME} {
-	  strcpy(name, yytext);
-	  printf("\n/** @union %s\n*\n", yytext);
-	}
+          strcpy(name, yytext);
+          printf("\n/** @union %s\n*\n", yytext);
+        }
 
 <UNIONMARK>{WS1}union{DASH} {
-	  BEGIN(BRIEF);
-	}
+          BEGIN(BRIEF);
+        }
 
 <STRUCTURE>{I}(char|int|long|double|struct{WS1}{NAME}|union) {
-	  endlist(0, 0, listype, listndt, &ilist);
-	  printf("*/\n");
-	  printf("\n/** @var %s", yytext+lmore+2);
-	  BEGIN(STRUCTVAR);
-	}
+          endlist(0, 0, listype, listndt, &ilist);
+          printf("*/\n");
+          printf("\n/** @var %s", yytext+lmore+2);
+          BEGIN(STRUCTVAR);
+        }
 
 <STRUCTURE>{I}{I}{WS0}-" " |
 <STRUCTURE>{I}{I}{WS0}[0-9a-z]:" " {
-	  /* Start of list. */
-	  lmore -= 2;
-	  indent = yyleng - lmore;
-	  if (yytext[yyleng-2] == '-') {
-	    /* The two-character pattern was matched. */
-	    indent -= 2;
-	  } else {
-	    /* The three-character pattern was matched. */
-	    indent -= 3;
-	  }
-	  endlist(1, indent, listype, listndt, &ilist);
-	
-	  if (lmore) printf("*\n");
-	
-	  listitem(indent, listype, listndt, &ilist);
-	
-	  BEGIN(PRINTE);
-	}
+          /* Start of list. */
+          lmore -= 2;
+          indent = yyleng - lmore;
+          if (yytext[yyleng-2] == '-') {
+            /* The two-character pattern was matched. */
+            indent -= 2;
+          } else {
+            /* The three-character pattern was matched. */
+            indent -= 3;
+          }
+          endlist(1, indent, listype, listndt, &ilist);
+
+          if (lmore) printf("*\n");
+
+          listitem(indent, listype, listndt, &ilist);
+
+          BEGIN(PRINTE);
+        }
 
 <STRUCTURE>{WS1} {
-	  lmore -= 2;
-	  indent = yyleng - lmore;
-	  endlist(0, indent, listype, listndt, &ilist);
-	
-	  yymore();
-	  BEGIN(PRINTE);
-	}
+          lmore -= 2;
+          indent = yyleng - lmore;
+          endlist(0, indent, listype, listndt, &ilist);
+
+          yymore();
+          BEGIN(PRINTE);
+        }
 
 <STRUCTURE>. {
-	  endlist(0, 0, listype, listndt, &ilist);
-	
-	  yymore();
-	  BEGIN(PRINTE);
-	}
+          endlist(0, 0, listype, listndt, &ilist);
+
+          yymore();
+          BEGIN(PRINTE);
+        }
 
 <STRUCTVAR>(\*{WS1}|{WS1}\*?) {
-	    printf("%s", yytext);
-	  }
+            printf("%s", yytext);
+          }
 
 <STRUCTVAR>{NAME}, {
-	  printf("%s::%s\n*\n*   (See next ...)\n", name, yytext);
-	  BEGIN(FLUSH);
-	}
+          printf("%s::%s\n*\n*   (See next ...)\n", name, yytext);
+          BEGIN(FLUSH);
+        }
 
 <STRUCTVAR>{NAME} {
-	  printf("%s::%s\n*\n", name, yytext);
-	  BEGIN(FLUSH);
-	}
+          printf("%s::%s\n*\n", name, yytext);
+          BEGIN(FLUSH);
+        }
 
 <STRUCTVAR>"(*"{NAME}")" {
-	  printf("(*%s::%s\n*\n", name, yytext+2);
-	  BEGIN(FLUSH);
-	}
+          printf("(*%s::%s\n*\n", name, yytext+2);
+          BEGIN(FLUSH);
+        }
 
 
 <VARMARK>.*{DASH} {
-	  printf("\n/** @var %.*s\n*\n", yyleng-3, yytext);
-	  BEGIN(BRIEF);
-	}
+          printf("\n/** @var %.*s\n*\n", yyleng-3, yytext);
+          BEGIN(BRIEF);
+        }
 
 <VARIABLE>. {
-	  yymore();
-	  BEGIN(PRINTE);
-	}
+          yymore();
+          BEGIN(PRINTE);
+        }
 
 
 <DEFMARK>{NAME} {
-	  strcpy(name, yytext);
-	  printf("\n/** @def %s\n*\n", yytext);
-	}
+          strcpy(name, yytext);
+          printf("\n/** @def %s\n*\n", yytext);
+        }
 
 <DEFMARK>("()")*{WS1}(define|macro){DASH} {
-	  BEGIN(BRIEF);
-	}
+          BEGIN(BRIEF);
+        }
 
 <DEFINE>. {
-	  yymore();
-	  BEGIN(PRINTE);
-	}
+          yymore();
+          BEGIN(PRINTE);
+        }
 
 <TABLEROW>. {
-	  if (!td) {
-	    printf("<TD>");
-	    td = 1;
-	  }
-	  printf("%s", yytext);
-	}
+          if (!td) {
+            printf("<TD>");
+            td = 1;
+          }
+          printf("%s", yytext);
+        }
 
 <TABLEROW>" "{2,} {
-	  printf("</TD>%s", yytext);
-	  td = 0;
-	}
+          printf("</TD>%s", yytext);
+          td = 0;
+        }
 
 <TABLEROW>\n {
-	  if (td) printf("</TD>\n");
-	  td = 0;
-	  printf("* </TR>\n");
-	  yyless(0);
-	  BEGIN(FLUSH);
-	}
+          if (td) printf("</TD>\n");
+          td = 0;
+          printf("* </TR>\n");
+          yyless(0);
+          BEGIN(FLUSH);
+        }
 
 <BODY>^(void|int|double){WS1}{NAME}{WS0}\([^)]* {
-	  proto[nfunc] = malloc((yyleng+2)*sizeof(char));
-	  sprintf(proto[nfunc], "%s)", yytext);
-	  func[nfunc] = malloc(16*sizeof(char));
-	  strtok(yytext, " ");
-	  strcpy(func[nfunc], strtok(0x0, " ("));
-	  nfunc++;
-	  BEGIN(FLUSH);
-	}
+          proto[nfunc] = malloc((yyleng+2)*sizeof(char));
+          sprintf(proto[nfunc], "%s)", yytext);
+          func[nfunc] = malloc(16*sizeof(char));
+          strtok(yytext, " ");
+          strcpy(func[nfunc], strtok(0x0, " ("));
+          nfunc++;
+          BEGIN(FLUSH);
+        }
 
 <BODY>^. {
-	  BEGIN(FLUSH);
-	}
+          BEGIN(FLUSH);
+        }
 
 <BODY>\n {}
 
 
 <BRIEF>.* {
-	  printf("* @brief %s.\n*\n", yytext);
-	  BEGIN(FLUSH);
-	}
+          printf("* @brief %s.\n*\n", yytext);
+          BEGIN(FLUSH);
+        }
 
 <PRINTE>.* {
-	  printe(yytext, name);
-	  BEGIN(FLUSH);
-	}
+          printe(yytext, name);
+          BEGIN(FLUSH);
+        }
 
 <PRINTF>.* {
-	  printf("%s\n", yytext);
-	  BEGIN(FLUSH);
-	}
+          printf("%s\n", yytext);
+          BEGIN(FLUSH);
+        }
 
 <FLUSH>.*\n {
-	  /* Throw away the rest of the line and begin the next cycle. */
-	  lmore = 0;
-	  BEGIN(section);
-	}
+          /* Throw away the rest of the line and begin the next cycle. */
+          lmore = 0;
+          BEGIN(section);
+        }
 
 <<EOF>> {
-	  if (pass1) {
-	    lmore = 0;
-	    *name = '\0';
-	    pass1 = 0;
-	    section = PROLOG;
-	    subsection = 0;
-	
-	    BEGIN(PROLOG);
-	    rewind(yyin);
-	    yyrestart(yyin);
-	
-	  } else {
-	    printf("*/\n");
-	    return 0;
-	  }
-	}
+          if (pass1) {
+            lmore = 0;
+            *name = '\0';
+            pass1 = 0;
+            section = PROLOG;
+            subsection = 0;
+
+            BEGIN(PROLOG);
+            rewind(yyin);
+            yyrestart(yyin);
+
+          } else {
+            printf("*/\n");
+            return 0;
+          }
+        }
 
 %%
 

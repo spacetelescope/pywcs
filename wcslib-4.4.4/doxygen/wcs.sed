@@ -1,7 +1,8 @@
 /^[^*]/{p;d;}
 
-s|CROTAia|<TT><B>&</B></TT>|g
+s|CROTAia|<TT><B>CROTA</B>ia</TT>|g
 s|EPOCH|<TT><B>&</B></TT>|g
+s|VELREF|<TT><B>&</B></TT>|g
 
 s|PVi_\([0-4]\)a|<B><TT>PV</TT>i<TT>_\1</TT>a</B>|g
 s|'a'|'<B>a</B>'|g

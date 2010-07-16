@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.4 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2009, Mark Calabretta
+  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: twcsfix.c,v 4.4.1.1 2009/08/10 08:54:26 cal103 Exp cal103 $
+  $Id: twcsfix.c,v 4.5 2010/07/16 07:01:26 cal103 Exp $
 *=============================================================================
 *
 * twcsfix tests the translation routines for non-standard WCS keyvalues, the
@@ -106,8 +106,8 @@ int main()
     return 1;
   }
 
-  if ((status = wcsset_(&wcs))) {
-    printf("wcsset_ ERROR %d: %s.\n", status, wcs_errmsg[status]);
+  if ((status = wcsset(&wcs))) {
+    printf("wcsset ERROR %d: %s.\n", status, wcs_errmsg[status]);
     return 1;
   }
 
@@ -179,14 +179,14 @@ struct wcsprm *wcs;
   strcpy(wcs->dateobs, DATEOBS);
 
 
-  /* Translate non-standard units specifications before wcsset_(). */
+  /* Translate non-standard units specifications before wcsset(). */
   for (i = 0; i < NAXIS; i++) {
     wcsutrn(7, wcs->cunit[i]);
   }
 
   /* Extract information from the FITS header. */
-  if ((status = wcsset_(wcs))) {
-    printf("wcsset_ ERROR %d: %s.\n", status, wcs_errmsg[status]);
+  if ((status = wcsset(wcs))) {
+    printf("wcsset ERROR %d: %s.\n", status, wcs_errmsg[status]);
   }
 
   return;

@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.4 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2009, Mark Calabretta
+  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcsutil.h,v 4.4.1.1 2009/08/10 08:52:49 cal103 Exp cal103 $
+  $Id: wcsutil.h,v 4.5 2010/07/16 07:01:25 cal103 Exp $
 *=============================================================================
 *
 * Summary of the wcsutil routines
@@ -59,9 +59,10 @@
 *
 * wcsutil_null_fill() - Fill a character string with NULLs
 * --------------------------------------------------------
-* wcsutil_null_fill() pads a character string with NULL characters.
+* wcsutil_null_fill() strips off trailing blanks and pads the character array
+* holding the string with NULL characters.
 *
-* Used mainly to make character strings intelligible in the GNU debugger - it
+* Used mainly to make character strings intelligible in the GNU debugger which
 * prints the rubbish following the terminating NULL, obscuring the valid part
 * of the string.
 *

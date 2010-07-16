@@ -34,7 +34,7 @@
 #if __STDC_VERSION__ >= 199901L
 
 /* C99 says to define __STDC_LIMIT_MACROS before including stdint.h,
- * if you want the limit (max/min) macros for int types. 
+ * if you want the limit (max/min) macros for int types.
  */
 #ifndef __STDC_LIMIT_MACROS
 #define __STDC_LIMIT_MACROS 1
@@ -51,7 +51,7 @@ typedef uint32_t flex_uint32_t;
 typedef signed char flex_int8_t;
 typedef short int flex_int16_t;
 typedef int flex_int32_t;
-typedef unsigned char flex_uint8_t; 
+typedef unsigned char flex_uint8_t;
 typedef unsigned short int flex_uint16_t;
 typedef unsigned int flex_uint32_t;
 #endif /* ! C99 */
@@ -92,14 +92,14 @@ typedef unsigned int flex_uint32_t;
 /* The "const" storage-class-modifier is valid. */
 #define YY_USE_CONST
 
-#else	/* ! __cplusplus */
+#else   /* ! __cplusplus */
 
 #if __STDC__
 
 #define YY_USE_CONST
 
-#endif	/* __STDC__ */
-#endif	/* ! __cplusplus */
+#endif  /* __STDC__ */
+#endif  /* ! __cplusplus */
 
 #ifdef YY_USE_CONST
 #define yyconst const
@@ -161,20 +161,20 @@ extern FILE *wcspihin, *wcspihout;
 #define EOB_ACT_LAST_MATCH 2
 
 #define YY_LESS_LINENO(n)
-    
+
 /* Return all but the first "n" matched characters back to the input stream. */
 #define yyless(n) \
-	do \
-		{ \
-		/* Undo effects of setting up wcspihtext. */ \
+        do \
+                { \
+                /* Undo effects of setting up wcspihtext. */ \
         int yyless_macro_arg = (n); \
         YY_LESS_LINENO(yyless_macro_arg);\
-		*yy_cp = (yy_hold_char); \
-		YY_RESTORE_YY_MORE_OFFSET \
-		(yy_c_buf_p) = yy_cp = yy_bp + yyless_macro_arg - YY_MORE_ADJ; \
-		YY_DO_BEFORE_ACTION; /* set up wcspihtext again */ \
-		} \
-	while ( 0 )
+                *yy_cp = (yy_hold_char); \
+                YY_RESTORE_YY_MORE_OFFSET \
+                (yy_c_buf_p) = yy_cp = yy_bp + yyless_macro_arg - YY_MORE_ADJ; \
+                YY_DO_BEFORE_ACTION; /* set up wcspihtext again */ \
+                } \
+        while ( 0 )
 
 #define unput(c) yyunput( c, (yytext_ptr)  )
 
@@ -191,66 +191,66 @@ typedef unsigned int yy_size_t;
 #ifndef YY_STRUCT_YY_BUFFER_STATE
 #define YY_STRUCT_YY_BUFFER_STATE
 struct yy_buffer_state
-	{
-	FILE *yy_input_file;
+        {
+        FILE *yy_input_file;
 
-	char *yy_ch_buf;		/* input buffer */
-	char *yy_buf_pos;		/* current position in input buffer */
+        char *yy_ch_buf;                /* input buffer */
+        char *yy_buf_pos;               /* current position in input buffer */
 
-	/* Size of input buffer in bytes, not including room for EOB
-	 * characters.
-	 */
-	yy_size_t yy_buf_size;
+        /* Size of input buffer in bytes, not including room for EOB
+         * characters.
+         */
+        yy_size_t yy_buf_size;
 
-	/* Number of characters read into yy_ch_buf, not including EOB
-	 * characters.
-	 */
-	int yy_n_chars;
+        /* Number of characters read into yy_ch_buf, not including EOB
+         * characters.
+         */
+        int yy_n_chars;
 
-	/* Whether we "own" the buffer - i.e., we know we created it,
-	 * and can realloc() it to grow it, and should free() it to
-	 * delete it.
-	 */
-	int yy_is_our_buffer;
+        /* Whether we "own" the buffer - i.e., we know we created it,
+         * and can realloc() it to grow it, and should free() it to
+         * delete it.
+         */
+        int yy_is_our_buffer;
 
-	/* Whether this is an "interactive" input source; if so, and
-	 * if we're using stdio for input, then we want to use getc()
-	 * instead of fread(), to make sure we stop fetching input after
-	 * each newline.
-	 */
-	int yy_is_interactive;
+        /* Whether this is an "interactive" input source; if so, and
+         * if we're using stdio for input, then we want to use getc()
+         * instead of fread(), to make sure we stop fetching input after
+         * each newline.
+         */
+        int yy_is_interactive;
 
-	/* Whether we're considered to be at the beginning of a line.
-	 * If so, '^' rules will be active on the next match, otherwise
-	 * not.
-	 */
-	int yy_at_bol;
+        /* Whether we're considered to be at the beginning of a line.
+         * If so, '^' rules will be active on the next match, otherwise
+         * not.
+         */
+        int yy_at_bol;
 
     int yy_bs_lineno; /**< The line count. */
     int yy_bs_column; /**< The column count. */
-    
-	/* Whether to try to fill the input buffer when we reach the
-	 * end of it.
-	 */
-	int yy_fill_buffer;
 
-	int yy_buffer_status;
+        /* Whether to try to fill the input buffer when we reach the
+         * end of it.
+         */
+        int yy_fill_buffer;
+
+        int yy_buffer_status;
 
 #define YY_BUFFER_NEW 0
 #define YY_BUFFER_NORMAL 1
-	/* When an EOF's been seen but there's still some text to process
-	 * then we mark the buffer as YY_EOF_PENDING, to indicate that we
-	 * shouldn't try reading from the input source any more.  We might
-	 * still have a bunch of tokens to match, though, because of
-	 * possible backing-up.
-	 *
-	 * When we actually see the EOF, we change the status to "new"
-	 * (via wcspihrestart()), so that the user can continue scanning by
-	 * just pointing wcspihin at a new input file.
-	 */
+        /* When an EOF's been seen but there's still some text to process
+         * then we mark the buffer as YY_EOF_PENDING, to indicate that we
+         * shouldn't try reading from the input source any more.  We might
+         * still have a bunch of tokens to match, though, because of
+         * possible backing-up.
+         *
+         * When we actually see the EOF, we change the status to "new"
+         * (via wcspihrestart()), so that the user can continue scanning by
+         * just pointing wcspihin at a new input file.
+         */
 #define YY_BUFFER_EOF_PENDING 2
 
-	};
+        };
 #endif /* !YY_STRUCT_YY_BUFFER_STATE */
 
 /* Stack of input buffers. */
@@ -275,13 +275,13 @@ static YY_BUFFER_STATE * yy_buffer_stack = 0; /**< Stack as an array. */
 
 /* yy_hold_char holds the character lost when wcspihtext is formed. */
 static char yy_hold_char;
-static int yy_n_chars;		/* number of characters read into yy_ch_buf */
+static int yy_n_chars;          /* number of characters read into yy_ch_buf */
 int wcspihleng;
 
 /* Points to current character in buffer. */
 static char *yy_c_buf_p = (char *) 0;
-static int yy_init = 0;		/* whether we need to initialize */
-static int yy_start = 0;	/* start state number */
+static int yy_init = 0;         /* whether we need to initialize */
+static int yy_start = 0;        /* start state number */
 
 /* Flag which is used to allow wcspihwrap()'s to do buffer switches
  * instead of setting up a fresh wcspihin.  A bit of a hack ...
@@ -313,24 +313,24 @@ void wcspihfree (void *  );
 #define yy_new_buffer wcspih_create_buffer
 
 #define yy_set_interactive(is_interactive) \
-	{ \
-	if ( ! YY_CURRENT_BUFFER ){ \
+        { \
+        if ( ! YY_CURRENT_BUFFER ){ \
         wcspihensure_buffer_stack (); \
-		YY_CURRENT_BUFFER_LVALUE =    \
+                YY_CURRENT_BUFFER_LVALUE =    \
             wcspih_create_buffer(wcspihin,YY_BUF_SIZE ); \
-	} \
-	YY_CURRENT_BUFFER_LVALUE->yy_is_interactive = is_interactive; \
-	}
+        } \
+        YY_CURRENT_BUFFER_LVALUE->yy_is_interactive = is_interactive; \
+        }
 
 #define yy_set_bol(at_bol) \
-	{ \
-	if ( ! YY_CURRENT_BUFFER ){\
+        { \
+        if ( ! YY_CURRENT_BUFFER ){\
         wcspihensure_buffer_stack (); \
-		YY_CURRENT_BUFFER_LVALUE =    \
+                YY_CURRENT_BUFFER_LVALUE =    \
             wcspih_create_buffer(wcspihin,YY_BUF_SIZE ); \
-	} \
-	YY_CURRENT_BUFFER_LVALUE->yy_at_bol = at_bol; \
-	}
+        } \
+        YY_CURRENT_BUFFER_LVALUE->yy_at_bol = at_bol; \
+        }
 
 #define YY_AT_BOL() (YY_CURRENT_BUFFER_LVALUE->yy_at_bol)
 
@@ -7993,21 +7993,21 @@ static void yy_fatal_error (yyconst char msg[]  );
  * corresponding action - sets up wcspihtext.
  */
 #define YY_DO_BEFORE_ACTION \
-	(yytext_ptr) = yy_bp; \
-	wcspihleng = (size_t) (yy_cp - yy_bp); \
-	(yy_hold_char) = *yy_cp; \
-	*yy_cp = '\0'; \
-	(yy_c_buf_p) = yy_cp;
+        (yytext_ptr) = yy_bp; \
+        wcspihleng = (size_t) (yy_cp - yy_bp); \
+        (yy_hold_char) = *yy_cp; \
+        *yy_cp = '\0'; \
+        (yy_c_buf_p) = yy_cp;
 
 #define YY_NUM_RULES 94
 #define YY_END_OF_BUFFER 95
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
-	{
-	flex_int32_t yy_verify;
-	flex_int32_t yy_nxt;
-	};
+        {
+        flex_int32_t yy_verify;
+        flex_int32_t yy_nxt;
+        };
 static yyconst flex_int16_t yy_accept[441] =
     {   0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -8129,8 +8129,8 @@ char *wcspihtext;
 #line 1 "wcspih.l"
 /*============================================================================
 
-  WCSLIB 4.4 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2009, Mark Calabretta
+  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -8157,7 +8157,7 @@ char *wcspihtext;
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcspih.c,v 4.4.1.1 2009/08/10 08:54:01 cal103 Exp cal103 $
+  $Id: wcspih.c,v 4.5 2010/07/16 07:01:26 cal103 Exp $
 *=============================================================================
 *
 * wcspih.l is a Flex description file containing the definition of a lexical
@@ -8229,24 +8229,24 @@ char *wcspihtext;
                            int *nreject, int *nwcs, struct wcsprm **wcs)
 
 #define YY_INPUT(inbuff, count, bufsize) \
-	{ \
-	  if (wcspih_nkeyrec) { \
-	    strncpy(inbuff, wcspih_hdr, 80); \
-	    inbuff[80] = '\n'; \
-	    wcspih_hdr += 80; \
-	    wcspih_nkeyrec--; \
-	    count = 81; \
-	  } else { \
-	    count = YY_NULL; \
-	  } \
-	}
+        { \
+          if (wcspih_nkeyrec) { \
+            strncpy(inbuff, wcspih_hdr, 80); \
+            inbuff[80] = '\n'; \
+            wcspih_hdr += 80; \
+            wcspih_nkeyrec--; \
+            count = 81; \
+          } else { \
+            count = YY_NULL; \
+          } \
+        }
 
 /* These global variables are required by YY_INPUT. */
 char *wcspih_hdr;
 int  wcspih_nkeyrec;
 
-int wcspih_final(int alts[], double epoch[], int velref[], double vsource[],
-        int *nwcs, struct wcsprm **wcs);
+int wcspih_final(int alts[], double epoch[], double vsource[], int *nwcs,
+        struct wcsprm **wcs);
 int wcspih_inits(int naxis, int alts[], int npv[], int nps[], int *nwcs,
         struct wcsprm **wcs);
 void wcspih_naxes(int naxis, int i, int j, char a, int alts[], int *npptr);
@@ -8301,7 +8301,7 @@ extern int wcspihwrap (void );
 #endif
 
     static void yyunput (int c,char *buf_ptr  );
-    
+
 #ifndef yytext_ptr
 static void yy_flex_strncpy (char *,yyconst char *,int );
 #endif
@@ -8338,17 +8338,17 @@ static int input (void );
  */
 #ifndef YY_INPUT
 #define YY_INPUT(buf,result,max_size) \
-	errno=0; \
-	while ( (result = read( fileno(wcspihin), (char *) buf, max_size )) < 0 ) \
-	{ \
-		if( errno != EINTR) \
-		{ \
-			YY_FATAL_ERROR( "input in flex scanner failed" ); \
-			break; \
-		} \
-		errno=0; \
-		clearerr(wcspihin); \
-	}\
+        errno=0; \
+        while ( (result = read( fileno(wcspihin), (char *) buf, max_size )) < 0 ) \
+        { \
+                if( errno != EINTR) \
+                { \
+                        YY_FATAL_ERROR( "input in flex scanner failed" ); \
+                        break; \
+                } \
+                errno=0; \
+                clearerr(wcspihin); \
+        }\
 \
 
 #endif
@@ -8397,1169 +8397,1163 @@ extern int wcspihlex (void);
 #endif
 
 #define YY_RULE_SETUP \
-	if ( wcspihleng > 0 ) \
-		YY_CURRENT_BUFFER_LVALUE->yy_at_bol = \
-				(wcspihtext[wcspihleng - 1] == '\n'); \
-	YY_USER_ACTION
+        if ( wcspihleng > 0 ) \
+                YY_CURRENT_BUFFER_LVALUE->yy_at_bol = \
+                                (wcspihtext[wcspihleng - 1] == '\n'); \
+        YY_USER_ACTION
 
 /** The main scanner function which does all the work.
  */
 YY_DECL
 {
-	register yy_state_type yy_current_state;
-	register char *yy_cp, *yy_bp;
-	register int yy_act;
-    
+        register yy_state_type yy_current_state;
+        register char *yy_cp, *yy_bp;
+        register int yy_act;
+
 #line 151 "wcspih.l"
 
-	/* Keyword indices, as used in the WCS papers, e.g. PCi_ja, PVi_ma. */
-	char a;
-	int  i, j, m;
-	
-	char *cptr, *errmsg, errtxt[80], *hptr, *keep;
-	int  altlin, alts[27], iax, idx, ipx, ix, jx, naxis, *npptr,
-	     nps[27], npv[27], pass, status, valtype, velref[27], voff;
-	double epoch[27], vsource[27];
-	void *vptr, *wptr;
-	struct wcsprm *wcsp;
-	int wcspihlex_destroy(void);
-	
-	naxis = 0;
-	for (iax = 0; iax < 27; iax++) {
-	  alts[iax] = 0;
-	  npv[iax] = 0;
-	  nps[iax] = 0;
-	  epoch[iax]   = UNDEFINED;
-	  velref[iax]  = 0;
-	  vsource[iax] = UNDEFINED;
-	}
-	
-	/* Parameters used to implement YY_INPUT. */
-	wcspih_hdr = header;
-	wcspih_nkeyrec = nkeyrec;
-	
-	/* Our handle on the input stream. */
-	hptr = header;
-	keep = 0x0;
-	*nreject = 0;
-	
-	/* Keyword parameters. */
-	i = j = m = 0;
-	a = ' ';
-	
-	/* For decoding the keyvalue. */
-	valtype = -1;
-	idx     = -1;
-	vptr    = 0x0;
-	
-	/* For keywords that require special handling. */
-	altlin = 0;
-	npptr  = 0x0;
-	
-	/* The data structures produced. */
-	*nwcs = 0;
-	*wcs  = 0x0;
-	
-	pass = 1;
-	
-	/* Return here via longjmp() invoked by yy_fatal_error(). */
-	if (setjmp(wcspih_abort_jmp_env)) {
-	  return 3;
-	}
-	
-	BEGIN(INITIAL);
+        /* Keyword indices, as used in the WCS papers, e.g. PCi_ja, PVi_ma. */
+        char a;
+        int  i, j, m;
+
+        char *cptr, *errmsg, errtxt[80], *hptr, *keep;
+        int  altlin, alts[27], iax, idx, ipx, ix, jx, naxis, *npptr,
+             nps[27], npv[27], pass, status, valtype, voff;
+        double epoch[27], vsource[27];
+        void *vptr, *wptr;
+        struct wcsprm *wcsp;
+        int wcspihlex_destroy(void);
+
+        naxis = 0;
+        for (iax = 0; iax < 27; iax++) {
+          alts[iax] = 0;
+          npv[iax] = 0;
+          nps[iax] = 0;
+          epoch[iax]   = UNDEFINED;
+          vsource[iax] = UNDEFINED;
+        }
+
+        /* Parameters used to implement YY_INPUT. */
+        wcspih_hdr = header;
+        wcspih_nkeyrec = nkeyrec;
+
+        /* Our handle on the input stream. */
+        hptr = header;
+        keep = 0x0;
+        *nreject = 0;
+
+        /* Keyword parameters. */
+        i = j = m = 0;
+        a = ' ';
+
+        /* For decoding the keyvalue. */
+        valtype = -1;
+        idx     = -1;
+        vptr    = 0x0;
+
+        /* For keywords that require special handling. */
+        altlin = 0;
+        npptr  = 0x0;
+
+        /* The data structures produced. */
+        *nwcs = 0;
+        *wcs  = 0x0;
+
+        pass = 1;
+
+        /* Return here via longjmp() invoked by yy_fatal_error(). */
+        if (setjmp(wcspih_abort_jmp_env)) {
+          return 3;
+        }
+
+        BEGIN(INITIAL);
 
 
-#line 8474 "wcspih.c"
+#line 8473 "wcspih.c"
 
-	if ( !(yy_init) )
-		{
-		(yy_init) = 1;
+        if ( !(yy_init) )
+                {
+                (yy_init) = 1;
 
 #ifdef YY_USER_INIT
-		YY_USER_INIT;
+                YY_USER_INIT;
 #endif
 
-		if ( ! (yy_start) )
-			(yy_start) = 1;	/* first start state */
+                if ( ! (yy_start) )
+                        (yy_start) = 1; /* first start state */
 
-		if ( ! wcspihin )
-			wcspihin = stdin;
+                if ( ! wcspihin )
+                        wcspihin = stdin;
 
-		if ( ! wcspihout )
-			wcspihout = stdout;
+                if ( ! wcspihout )
+                        wcspihout = stdout;
 
-		if ( ! YY_CURRENT_BUFFER ) {
-			wcspihensure_buffer_stack ();
-			YY_CURRENT_BUFFER_LVALUE =
-				wcspih_create_buffer(wcspihin,YY_BUF_SIZE );
-		}
+                if ( ! YY_CURRENT_BUFFER ) {
+                        wcspihensure_buffer_stack ();
+                        YY_CURRENT_BUFFER_LVALUE =
+                                wcspih_create_buffer(wcspihin,YY_BUF_SIZE );
+                }
 
-		wcspih_load_buffer_state( );
-		}
+                wcspih_load_buffer_state( );
+                }
 
-	while ( 1 )		/* loops until end-of-file is reached */
-		{
-		yy_cp = (yy_c_buf_p);
+        while ( 1 )             /* loops until end-of-file is reached */
+                {
+                yy_cp = (yy_c_buf_p);
 
-		/* Support of wcspihtext. */
-		*yy_cp = (yy_hold_char);
+                /* Support of wcspihtext. */
+                *yy_cp = (yy_hold_char);
 
-		/* yy_bp points to the position in yy_ch_buf of the start of
-		 * the current run.
-		 */
-		yy_bp = yy_cp;
+                /* yy_bp points to the position in yy_ch_buf of the start of
+                 * the current run.
+                 */
+                yy_bp = yy_cp;
 
-		yy_current_state = (yy_start);
-		yy_current_state += YY_AT_BOL();
+                yy_current_state = (yy_start);
+                yy_current_state += YY_AT_BOL();
 yy_match:
-		while ( (yy_current_state = yy_nxt[yy_current_state][ YY_SC_TO_UI(*yy_cp) ]) > 0 )
-			{
-			if ( yy_accept[yy_current_state] )
-				{
-				(yy_last_accepting_state) = yy_current_state;
-				(yy_last_accepting_cpos) = yy_cp;
-				}
+                while ( (yy_current_state = yy_nxt[yy_current_state][ YY_SC_TO_UI(*yy_cp) ]) > 0 )
+                        {
+                        if ( yy_accept[yy_current_state] )
+                                {
+                                (yy_last_accepting_state) = yy_current_state;
+                                (yy_last_accepting_cpos) = yy_cp;
+                                }
 
-			++yy_cp;
-			}
+                        ++yy_cp;
+                        }
 
-		yy_current_state = -yy_current_state;
+                yy_current_state = -yy_current_state;
 
 yy_find_action:
-		yy_act = yy_accept[yy_current_state];
+                yy_act = yy_accept[yy_current_state];
 
-		YY_DO_BEFORE_ACTION;
+                YY_DO_BEFORE_ACTION;
 
-do_action:	/* This label is used only to access EOF actions. */
+do_action:      /* This label is used only to access EOF actions. */
 
-		switch ( yy_act )
-	{ /* beginning of action switch */
-			case 0: /* must back up */
-			/* undo the effects of YY_DO_BEFORE_ACTION */
-			*yy_cp = (yy_hold_char);
-			yy_cp = (yy_last_accepting_cpos) + 1;
-			yy_current_state = (yy_last_accepting_state);
-			goto yy_find_action;
+                switch ( yy_act )
+        { /* beginning of action switch */
+                        case 0: /* must back up */
+                        /* undo the effects of YY_DO_BEFORE_ACTION */
+                        *yy_cp = (yy_hold_char);
+                        yy_cp = (yy_last_accepting_cpos) + 1;
+                        yy_current_state = (yy_last_accepting_state);
+                        goto yy_find_action;
 
 case 1:
 YY_RULE_SETUP
-#line 210 "wcspih.l"
+#line 209 "wcspih.l"
 {
-	  if (pass == 1) {
-	    sscanf(wcspihtext, "NAXIS   = %d", &naxis);
-	  }
-	
-	  if (naxis < 0) {
-	    errmsg = errtxt;
-	    sprintf(errmsg, "Negative value of NAXIS ignored: %d", naxis);
-	    naxis = 0;
-	    BEGIN(ERROR);
-	  } else {
-	    BEGIN(DISCARD);
-	  }
-	}
-	YY_BREAK
+          if (pass == 1) {
+            sscanf(wcspihtext, "NAXIS   = %d", &naxis);
+          }
+
+          if (naxis < 0) {
+            errmsg = errtxt;
+            sprintf(errmsg, "Negative value of NAXIS ignored: %d", naxis);
+            naxis = 0;
+            BEGIN(ERROR);
+          } else {
+            BEGIN(DISCARD);
+          }
+        }
+        YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 225 "wcspih.l"
+#line 224 "wcspih.l"
 {
-	  if (pass == 1) {
-	    sscanf(wcspihtext, "WCSAXES%c= %d", &a, &i);
-	    wcspih_naxes(naxis, i, 0, a, alts, 0);
-	  }
-	  BEGIN(FLUSH);
-	}
-	YY_BREAK
+          if (pass == 1) {
+            sscanf(wcspihtext, "WCSAXES%c= %d", &a, &i);
+            wcspih_naxes(naxis, i, 0, a, alts, 0);
+          }
+          BEGIN(FLUSH);
+        }
+        YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 233 "wcspih.l"
+#line 232 "wcspih.l"
 {
-	  valtype = FLOAT;
-	  if (pass == 2) vptr = &((*wcs)->crpix);
-	  BEGIN(CCCCCia);
-	}
-	YY_BREAK
+          valtype = FLOAT;
+          if (pass == 2) vptr = &((*wcs)->crpix);
+          BEGIN(CCCCCia);
+        }
+        YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 239 "wcspih.l"
+#line 238 "wcspih.l"
 {
-	  valtype = FLOAT;
-	  if (pass == 2) vptr = &((*wcs)->pc);
-	  altlin = 1;
-	  BEGIN(CCi_ja);
-	}
-	YY_BREAK
+          valtype = FLOAT;
+          if (pass == 2) vptr = &((*wcs)->pc);
+          altlin = 1;
+          BEGIN(CCi_ja);
+        }
+        YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 246 "wcspih.l"
+#line 245 "wcspih.l"
 {
-	  valtype = FLOAT;
-	  if (pass == 2) vptr = &((*wcs)->cd);
-	  altlin = 2;
-	  BEGIN(CCi_ja);
-	}
-	YY_BREAK
+          valtype = FLOAT;
+          if (pass == 2) vptr = &((*wcs)->cd);
+          altlin = 2;
+          BEGIN(CCi_ja);
+        }
+        YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 253 "wcspih.l"
+#line 252 "wcspih.l"
 {
-	  valtype = FLOAT;
-	  if (pass == 2) vptr = &((*wcs)->cdelt);
-	  BEGIN(CCCCCia);
-	}
-	YY_BREAK
+          valtype = FLOAT;
+          if (pass == 2) vptr = &((*wcs)->cdelt);
+          BEGIN(CCCCCia);
+        }
+        YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 259 "wcspih.l"
+#line 258 "wcspih.l"
 {
-	  valtype = FLOAT;
-	  if (pass == 2) vptr = &((*wcs)->crota);
-	  altlin = 4;
-	  BEGIN(CROTAi);
-	}
-	YY_BREAK
+          valtype = FLOAT;
+          if (pass == 2) vptr = &((*wcs)->crota);
+          altlin = 4;
+          BEGIN(CROTAi);
+        }
+        YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 266 "wcspih.l"
+#line 265 "wcspih.l"
 {
-	  valtype = STRING;
-	  if (pass == 2) vptr = &((*wcs)->cunit);
-	  BEGIN(CCCCCia);
-	}
-	YY_BREAK
+          valtype = STRING;
+          if (pass == 2) vptr = &((*wcs)->cunit);
+          BEGIN(CCCCCia);
+        }
+        YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 272 "wcspih.l"
+#line 271 "wcspih.l"
 {
-	  valtype = STRING;
-	  if (pass == 2) vptr = &((*wcs)->ctype);
-	  BEGIN(CCCCCia);
-	}
-	YY_BREAK
+          valtype = STRING;
+          if (pass == 2) vptr = &((*wcs)->ctype);
+          BEGIN(CCCCCia);
+        }
+        YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 278 "wcspih.l"
+#line 277 "wcspih.l"
 {
-	  valtype = FLOAT;
-	  if (pass == 2) vptr = &((*wcs)->crval);
-	  BEGIN(CCCCCia);
-	}
-	YY_BREAK
+          valtype = FLOAT;
+          if (pass == 2) vptr = &((*wcs)->crval);
+          BEGIN(CCCCCia);
+        }
+        YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 284 "wcspih.l"
+#line 283 "wcspih.l"
 {
-	  valtype = FLOAT;
-	  if (pass == 2) vptr = &((*wcs)->lonpole);
-	  BEGIN(CCCCCCCa);
-	}
-	YY_BREAK
+          valtype = FLOAT;
+          if (pass == 2) vptr = &((*wcs)->lonpole);
+          BEGIN(CCCCCCCa);
+        }
+        YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 290 "wcspih.l"
+#line 289 "wcspih.l"
 {
-	  valtype = FLOAT;
-	  if (pass == 2) vptr = &((*wcs)->latpole);
-	  BEGIN(CCCCCCCa);
-	}
-	YY_BREAK
+          valtype = FLOAT;
+          if (pass == 2) vptr = &((*wcs)->latpole);
+          BEGIN(CCCCCCCa);
+        }
+        YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 296 "wcspih.l"
+#line 295 "wcspih.l"
 {
-	  valtype = FLOAT;
-	  if (pass == 2) vptr = &((*wcs)->restfrq);
-	  BEGIN(CCCCCCCa);
-	}
-	YY_BREAK
+          valtype = FLOAT;
+          if (pass == 2) vptr = &((*wcs)->restfrq);
+          BEGIN(CCCCCCCa);
+        }
+        YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 302 "wcspih.l"
+#line 301 "wcspih.l"
 {
-	  valtype = FLOAT;
-	  if (pass == 2) vptr = &((*wcs)->restfrq);
-	  unput(' ');
-	  BEGIN(CCCCCCCa);
-	}
-	YY_BREAK
+          valtype = FLOAT;
+          if (pass == 2) vptr = &((*wcs)->restfrq);
+          unput(' ');
+          BEGIN(CCCCCCCa);
+        }
+        YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 309 "wcspih.l"
+#line 308 "wcspih.l"
 {
-	  valtype = FLOAT;
-	  if (pass == 2) vptr = &((*wcs)->restwav);
-	  BEGIN(CCCCCCCa);
-	}
-	YY_BREAK
+          valtype = FLOAT;
+          if (pass == 2) vptr = &((*wcs)->restwav);
+          BEGIN(CCCCCCCa);
+        }
+        YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 315 "wcspih.l"
+#line 314 "wcspih.l"
 {
-	  valtype = FLOAT;
-	  if (pass == 2) vptr = &((*wcs)->pv);
-	  npptr = npv;
-	  BEGIN(CCi_ma);
-	}
-	YY_BREAK
+          valtype = FLOAT;
+          if (pass == 2) vptr = &((*wcs)->pv);
+          npptr = npv;
+          BEGIN(CCi_ma);
+        }
+        YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 322 "wcspih.l"
+#line 321 "wcspih.l"
 {
-	  valtype = FLOAT;
-	  if (pass == 2) vptr = &((*wcs)->pv);
-	  npptr = npv;
-	  BEGIN(PROJPn);
-	}
-	YY_BREAK
+          valtype = FLOAT;
+          if (pass == 2) vptr = &((*wcs)->pv);
+          npptr = npv;
+          BEGIN(PROJPn);
+        }
+        YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 329 "wcspih.l"
+#line 328 "wcspih.l"
 {
-	  valtype = STRING;
-	  if (pass == 2) vptr = &((*wcs)->ps);
-	  npptr = nps;
-	  BEGIN(CCi_ma);
-	}
-	YY_BREAK
+          valtype = STRING;
+          if (pass == 2) vptr = &((*wcs)->ps);
+          npptr = nps;
+          BEGIN(CCi_ma);
+        }
+        YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 336 "wcspih.l"
+#line 335 "wcspih.l"
 {
-	  valtype = STRING;
-	  if (pass == 2) vptr = &((*wcs)->cname);
-	  BEGIN(CCCCCia);
-	}
-	YY_BREAK
+          valtype = STRING;
+          if (pass == 2) vptr = &((*wcs)->cname);
+          BEGIN(CCCCCia);
+        }
+        YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 342 "wcspih.l"
+#line 341 "wcspih.l"
 {
-	  valtype = FLOAT;
-	  if (pass == 2) vptr = &((*wcs)->crder);
-	  BEGIN(CCCCCia);
-	}
-	YY_BREAK
+          valtype = FLOAT;
+          if (pass == 2) vptr = &((*wcs)->crder);
+          BEGIN(CCCCCia);
+        }
+        YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 348 "wcspih.l"
+#line 347 "wcspih.l"
 {
-	  valtype = FLOAT;
-	  if (pass == 2) vptr = &((*wcs)->csyer);
-	  BEGIN(CCCCCia);
-	}
-	YY_BREAK
+          valtype = FLOAT;
+          if (pass == 2) vptr = &((*wcs)->csyer);
+          BEGIN(CCCCCia);
+        }
+        YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 354 "wcspih.l"
+#line 353 "wcspih.l"
 {
-	  valtype = STRING;
-	  if (pass == 2) vptr = (*wcs)->dateavg;
-	  if (ctrl < -10) keep = wcspih_hdr - 80;
-	  BEGIN(CCCCCCCC);
-	}
-	YY_BREAK
+          valtype = STRING;
+          if (pass == 2) vptr = (*wcs)->dateavg;
+          if (ctrl < -10) keep = wcspih_hdr - 80;
+          BEGIN(CCCCCCCC);
+        }
+        YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 361 "wcspih.l"
+#line 360 "wcspih.l"
 {
-	  valtype = STRING;
-	  if (pass == 2) vptr = (*wcs)->dateobs;
-	  if (ctrl < -10) keep = wcspih_hdr - 80;
-	  BEGIN(CCCCCCCC);
-	}
-	YY_BREAK
+          valtype = STRING;
+          if (pass == 2) vptr = (*wcs)->dateobs;
+          if (ctrl < -10) keep = wcspih_hdr - 80;
+          BEGIN(CCCCCCCC);
+        }
+        YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 368 "wcspih.l"
+#line 367 "wcspih.l"
 {
-	  sscanf(wcspihtext, "EPOCH%c", &a);
-	
-	  if (a == ' ' || relax & WCSHDR_EPOCHa) {
-	    valtype = FLOAT;
-	    if (pass == 2) {
-	      vptr = epoch;
-	      if (a >= 'A') {
-	        vptr = (void *)((double *)vptr + alts[a-'A'+1]);
-	      }
-	    }
-	
-	    unput(' ');
-	    BEGIN(CCCCCCCa);
-	
-	  } else if (relax & WCSHDR_reject) {
-	    errmsg = "EPOCH keyword may not have an alternate version code";
-	    BEGIN(ERROR);
-	
-	  } else {
-	    BEGIN(DISCARD);
-	  }
-	}
-	YY_BREAK
+          sscanf(wcspihtext, "EPOCH%c", &a);
+
+          if (a == ' ' || relax & WCSHDR_EPOCHa) {
+            valtype = FLOAT;
+            if (pass == 2) {
+              vptr = epoch;
+              if (a >= 'A') {
+                vptr = (void *)((double *)vptr + alts[a-'A'+1]);
+              }
+            }
+
+            unput(' ');
+            BEGIN(CCCCCCCa);
+
+          } else if (relax & WCSHDR_reject) {
+            errmsg = "EPOCH keyword may not have an alternate version code";
+            BEGIN(ERROR);
+
+          } else {
+            BEGIN(DISCARD);
+          }
+        }
+        YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 392 "wcspih.l"
+#line 391 "wcspih.l"
 {
-	  valtype = FLOAT;
-	  if (pass == 2) vptr = &((*wcs)->equinox);
-	  BEGIN(CCCCCCCa);
-	}
-	YY_BREAK
+          valtype = FLOAT;
+          if (pass == 2) vptr = &((*wcs)->equinox);
+          BEGIN(CCCCCCCa);
+        }
+        YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 398 "wcspih.l"
+#line 397 "wcspih.l"
 {
-	  valtype = FLOAT;
-	  if (pass == 2) vptr = &((*wcs)->mjdavg);
-	  if (ctrl < -10) keep = wcspih_hdr - 80;
-	  BEGIN(CCCCCCCC);
-	}
-	YY_BREAK
+          valtype = FLOAT;
+          if (pass == 2) vptr = &((*wcs)->mjdavg);
+          if (ctrl < -10) keep = wcspih_hdr - 80;
+          BEGIN(CCCCCCCC);
+        }
+        YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 405 "wcspih.l"
+#line 404 "wcspih.l"
 {
-	  valtype = FLOAT;
-	  if (pass == 2) vptr = &((*wcs)->mjdobs);
-	  if (ctrl < -10) keep = wcspih_hdr - 80;
-	  BEGIN(CCCCCCCC);
-	}
-	YY_BREAK
+          valtype = FLOAT;
+          if (pass == 2) vptr = &((*wcs)->mjdobs);
+          if (ctrl < -10) keep = wcspih_hdr - 80;
+          BEGIN(CCCCCCCC);
+        }
+        YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 412 "wcspih.l"
+#line 411 "wcspih.l"
 {
-	  valtype = FLOAT;
-	  if (pass == 2) vptr = (*wcs)->obsgeo;
-	  if (ctrl < -10) keep = wcspih_hdr - 80;
-	  BEGIN(CCCCCCCC);
-	}
-	YY_BREAK
+          valtype = FLOAT;
+          if (pass == 2) vptr = (*wcs)->obsgeo;
+          if (ctrl < -10) keep = wcspih_hdr - 80;
+          BEGIN(CCCCCCCC);
+        }
+        YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 419 "wcspih.l"
+#line 418 "wcspih.l"
 {
-	  valtype = FLOAT;
-	  if (pass == 2) vptr = (*wcs)->obsgeo + 1;
-	  if (ctrl < -10) keep = wcspih_hdr - 80;
-	  BEGIN(CCCCCCCC);
-	}
-	YY_BREAK
+          valtype = FLOAT;
+          if (pass == 2) vptr = (*wcs)->obsgeo + 1;
+          if (ctrl < -10) keep = wcspih_hdr - 80;
+          BEGIN(CCCCCCCC);
+        }
+        YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 426 "wcspih.l"
+#line 425 "wcspih.l"
 {
-	  valtype = FLOAT;
-	  if (pass == 2) vptr = (*wcs)->obsgeo + 2;
-	  if (ctrl < -10) keep = wcspih_hdr - 80;
-	  BEGIN(CCCCCCCC);
-	}
-	YY_BREAK
+          valtype = FLOAT;
+          if (pass == 2) vptr = (*wcs)->obsgeo + 2;
+          if (ctrl < -10) keep = wcspih_hdr - 80;
+          BEGIN(CCCCCCCC);
+        }
+        YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 433 "wcspih.l"
+#line 432 "wcspih.l"
 {
-	  valtype = STRING;
-	  if (pass == 2) vptr = (*wcs)->radesys;
-	  BEGIN(CCCCCCCa);
-	}
-	YY_BREAK
+          valtype = STRING;
+          if (pass == 2) vptr = (*wcs)->radesys;
+          BEGIN(CCCCCCCa);
+        }
+        YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 439 "wcspih.l"
+#line 438 "wcspih.l"
 {
-	  if (relax & WCSHDR_RADECSYS) {
-	    valtype = STRING;
-	    if (pass == 2) vptr = (*wcs)->radesys;
-	    unput(' ');
-	    BEGIN(CCCCCCCa);
-	
-	  } else if (relax & WCSHDR_reject) {
-	    errmsg = "RADECSYS is non-standard, use RADESYSa";
-	    BEGIN(ERROR);
-	
-	  } else {
-	    BEGIN(DISCARD);
-	  }
-	}
-	YY_BREAK
+          if (relax & WCSHDR_RADECSYS) {
+            valtype = STRING;
+            if (pass == 2) vptr = (*wcs)->radesys;
+            unput(' ');
+            BEGIN(CCCCCCCa);
+
+          } else if (relax & WCSHDR_reject) {
+            errmsg = "RADECSYS is non-standard, use RADESYSa";
+            BEGIN(ERROR);
+
+          } else {
+            BEGIN(DISCARD);
+          }
+        }
+        YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 455 "wcspih.l"
+#line 454 "wcspih.l"
 {
-	  valtype = STRING;
-	  if (pass == 2) vptr = (*wcs)->specsys;
-	  BEGIN(CCCCCCCa);
-	}
-	YY_BREAK
+          valtype = STRING;
+          if (pass == 2) vptr = (*wcs)->specsys;
+          BEGIN(CCCCCCCa);
+        }
+        YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 461 "wcspih.l"
+#line 460 "wcspih.l"
 {
-	  valtype = STRING;
-	  if (pass == 2) vptr = (*wcs)->ssysobs;
-	  BEGIN(CCCCCCCa);
-	}
-	YY_BREAK
+          valtype = STRING;
+          if (pass == 2) vptr = (*wcs)->ssysobs;
+          BEGIN(CCCCCCCa);
+        }
+        YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 467 "wcspih.l"
+#line 466 "wcspih.l"
 {
-	  valtype = STRING;
-	  if (pass == 2) vptr = (*wcs)->ssyssrc;
-	  BEGIN(CCCCCCCa);
-	}
-	YY_BREAK
+          valtype = STRING;
+          if (pass == 2) vptr = (*wcs)->ssyssrc;
+          BEGIN(CCCCCCCa);
+        }
+        YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 473 "wcspih.l"
+#line 472 "wcspih.l"
 {
-	  valtype = FLOAT;
-	  if (pass == 2) vptr = &((*wcs)->velangl);
-	  BEGIN(CCCCCCCa);
-	}
-	YY_BREAK
+          valtype = FLOAT;
+          if (pass == 2) vptr = &((*wcs)->velangl);
+          BEGIN(CCCCCCCa);
+        }
+        YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 479 "wcspih.l"
+#line 478 "wcspih.l"
 {
-	  valtype = FLOAT;
-	  if (pass == 2) vptr = &((*wcs)->velosys);
-	  BEGIN(CCCCCCCa);
-	}
-	YY_BREAK
+          valtype = FLOAT;
+          if (pass == 2) vptr = &((*wcs)->velosys);
+          BEGIN(CCCCCCCa);
+        }
+        YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 485 "wcspih.l"
+#line 484 "wcspih.l"
 {
-	  sscanf(wcspihtext, "VELREF%c", &a);
-	
-	  if (a == ' ' || relax & WCSHDR_VELREFa) {
-	    valtype = INTEGER;
-	    if (pass == 2) {
-	      vptr = velref;
-	      if (a >= 'A') {
-	        vptr = (void *)((int *)vptr + alts[a-'A'+1]);
-	      }
-	    }
-	
-	    unput(' ');
-	    BEGIN(CCCCCCCa);
-	
-	  } else if (relax & WCSHDR_reject) {
-	    errmsg = "VELREF keyword may not have an alternate version code";
-	    BEGIN(ERROR);
-	
-	  } else {
-	    BEGIN(DISCARD);
-	  }
-	}
-	YY_BREAK
+          sscanf(wcspihtext, "VELREF%c", &a);
+
+          if (a == ' ' || relax & WCSHDR_VELREFa) {
+            valtype = INTEGER;
+            if (pass == 2) vptr = &((*wcs)->velref);
+
+            unput(a);
+            BEGIN(CCCCCCCa);
+
+          } else if (relax & WCSHDR_reject) {
+            errmsg = "VELREF keyword may not have an alternate version code";
+            BEGIN(ERROR);
+
+          } else {
+            BEGIN(DISCARD);
+          }
+        }
+        YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 509 "wcspih.l"
+#line 503 "wcspih.l"
 {
-	  sscanf(wcspihtext, "VSOURCE%c", &a);
-	
-	  if (relax & WCSHDR_VSOURCE) {
-	    valtype = FLOAT;
-	    if (pass == 2) {
-	      vptr = vsource;
-	      if (a >= 'A') {
-	        vptr = (void *)((double *)vptr + alts[a-'A'+1]);
-	      }
-	    }
-	
-	    unput(' ');
-	    BEGIN(CCCCCCCa);
-	
-	  } else if (relax & WCSHDR_reject) {
-	    errmsg = "Deprecated VSOURCEa keyword rejected";
-	    BEGIN(ERROR);
-	
-	  } else {
-	    BEGIN(DISCARD);
-	  }
-	}
-	YY_BREAK
+          sscanf(wcspihtext, "VSOURCE%c", &a);
+
+          if (relax & WCSHDR_VSOURCE) {
+            valtype = FLOAT;
+            if (pass == 2) {
+              vptr = vsource;
+              if (a >= 'A') {
+                vptr = (void *)((double *)vptr + alts[a-'A'+1]);
+              }
+            }
+
+            unput(' ');
+            BEGIN(CCCCCCCa);
+
+          } else if (relax & WCSHDR_reject) {
+            errmsg = "Deprecated VSOURCEa keyword rejected";
+            BEGIN(ERROR);
+
+          } else {
+            BEGIN(DISCARD);
+          }
+        }
+        YY_BREAK
 case 40:
+YY_RULE_SETUP
+#line 527 "wcspih.l"
+{
+          valtype = STRING;
+          if (pass == 2) vptr = (*wcs)->wcsname;
+          BEGIN(CCCCCCCa);
+        }
+        YY_BREAK
+case 41:
 YY_RULE_SETUP
 #line 533 "wcspih.l"
 {
-	  valtype = STRING;
-	  if (pass == 2) vptr = (*wcs)->wcsname;
-	  BEGIN(CCCCCCCa);
-	}
-	YY_BREAK
-case 41:
+          valtype = FLOAT;
+          if (pass == 2) vptr = &((*wcs)->zsource);
+          BEGIN(CCCCCCCa);
+        }
+        YY_BREAK
+case 42:
 YY_RULE_SETUP
 #line 539 "wcspih.l"
 {
-	  valtype = FLOAT;
-	  if (pass == 2) vptr = &((*wcs)->zsource);
-	  BEGIN(CCCCCCCa);
-	}
-	YY_BREAK
-case 42:
-YY_RULE_SETUP
-#line 545 "wcspih.l"
-{
-	  yyless(0);
-	  if (wcspih_nkeyrec) {
-	    wcspih_nkeyrec = 0;
-	    errmsg = "Keyrecords following the END keyrecord were ignored";
-	    BEGIN(ERROR);
-	  } else {
-	    BEGIN(DISCARD);
-	  }
-	}
-	YY_BREAK
+          yyless(0);
+          if (wcspih_nkeyrec) {
+            wcspih_nkeyrec = 0;
+            errmsg = "Keyrecords following the END keyrecord were ignored";
+            BEGIN(ERROR);
+          } else {
+            BEGIN(DISCARD);
+          }
+        }
+        YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 556 "wcspih.l"
+#line 550 "wcspih.l"
 {
-	  BEGIN(DISCARD);
-	}
-	YY_BREAK
+          BEGIN(DISCARD);
+        }
+        YY_BREAK
 case 44:
-#line 561 "wcspih.l"
+#line 555 "wcspih.l"
 case 45:
+YY_RULE_SETUP
+#line 555 "wcspih.l"
+{
+          sscanf(wcspihtext, "%d%c", &i, &a);
+          idx = i - 1;
+          BEGIN(VALUE);
+        }
+        YY_BREAK
+case 46:
 YY_RULE_SETUP
 #line 561 "wcspih.l"
 {
-	  sscanf(wcspihtext, "%d%c", &i, &a);
-	  idx = i - 1;
-	  BEGIN(VALUE);
-	}
-	YY_BREAK
-case 46:
+          /* Invalid axis number will be caught by <VALUE>. */
+          sscanf(wcspihtext, "%3d", &i);
+          BEGIN(VALUE);
+        }
+        YY_BREAK
+case 47:
 YY_RULE_SETUP
 #line 567 "wcspih.l"
 {
-	  /* Invalid axis number will be caught by <VALUE>. */
-	  sscanf(wcspihtext, "%3d", &i);
-	  BEGIN(VALUE);
-	}
-	YY_BREAK
-case 47:
-YY_RULE_SETUP
-#line 573 "wcspih.l"
-{
-	  BEGIN(DISCARD);
-	}
-	YY_BREAK
+          BEGIN(DISCARD);
+        }
+        YY_BREAK
 case 48:
-#line 578 "wcspih.l"
+#line 572 "wcspih.l"
 case 49:
-#line 579 "wcspih.l"
+#line 573 "wcspih.l"
 case 50:
-#line 580 "wcspih.l"
+#line 574 "wcspih.l"
 case 51:
 YY_RULE_SETUP
-#line 580 "wcspih.l"
+#line 574 "wcspih.l"
 {
-	  sscanf(wcspihtext, "%d_%d%c", &i, &j, &a);
-	  if (pass == 2) {
-	    wcsp = *wcs;
-	    if (a != ' ') {
-	      wcsp += alts[a-'A'+1];
-	    }
-	
-	    idx = (i-1)*(wcsp->naxis) + j - 1;
-	  }
-	  BEGIN(VALUE);
-	}
-	YY_BREAK
+          sscanf(wcspihtext, "%d_%d%c", &i, &j, &a);
+          if (pass == 2) {
+            wcsp = *wcs;
+            if (a != ' ') {
+              wcsp += alts[a-'A'+1];
+            }
+
+            idx = (i-1)*(wcsp->naxis) + j - 1;
+          }
+          BEGIN(VALUE);
+        }
+        YY_BREAK
 case 52:
-#line 594 "wcspih.l"
+#line 588 "wcspih.l"
 case 53:
-#line 595 "wcspih.l"
+#line 589 "wcspih.l"
 case 54:
-#line 596 "wcspih.l"
+#line 590 "wcspih.l"
 case 55:
-#line 597 "wcspih.l"
+#line 591 "wcspih.l"
 case 56:
-#line 598 "wcspih.l"
+#line 592 "wcspih.l"
 case 57:
 YY_RULE_SETUP
-#line 598 "wcspih.l"
+#line 592 "wcspih.l"
 {
-	  /* Invalid axis numbers will be caught by <VALUE>. */
-	  sscanf(wcspihtext, "%d_%d", &i, &j);
-	  BEGIN(VALUE);
-	}
-	YY_BREAK
+          /* Invalid axis numbers will be caught by <VALUE>. */
+          sscanf(wcspihtext, "%d_%d", &i, &j);
+          BEGIN(VALUE);
+        }
+        YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 604 "wcspih.l"
+#line 598 "wcspih.l"
 {
-	  /* This covers the defunct forms CD00i00j and PC00i00j. */
-	  if (((relax & WCSHDR_PC00i00j) && (altlin == 1)) ||
-	      ((relax & WCSHDR_CD00i00j) && (altlin == 2))) {
-	    sscanf(wcspihtext, "%3d%3d", &i, &j);
-	    a = ' ';
-	    if (pass == 2) {
-	      idx = (i-1)*((*wcs)->naxis) + j - 1;
-	    }
-	    BEGIN(VALUE);
-	
-	  } else if (relax & WCSHDR_reject) {
-	    errmsg = errtxt;
-	    sprintf(errmsg, "Defunct form of %si_ja keyword",
-	                     (altlin==1) ? "PC" : "CD");
-	    BEGIN(ERROR);
-	
-	  } else {
-	    BEGIN(DISCARD);
-	  }
-	}
-	YY_BREAK
+          /* This covers the defunct forms CD00i00j and PC00i00j. */
+          if (((relax & WCSHDR_PC00i00j) && (altlin == 1)) ||
+              ((relax & WCSHDR_CD00i00j) && (altlin == 2))) {
+            sscanf(wcspihtext, "%3d%3d", &i, &j);
+            a = ' ';
+            if (pass == 2) {
+              idx = (i-1)*((*wcs)->naxis) + j - 1;
+            }
+            BEGIN(VALUE);
+
+          } else if (relax & WCSHDR_reject) {
+            errmsg = errtxt;
+            sprintf(errmsg, "Defunct form of %si_ja keyword",
+                             (altlin==1) ? "PC" : "CD");
+            BEGIN(ERROR);
+
+          } else {
+            BEGIN(DISCARD);
+          }
+        }
+        YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 626 "wcspih.l"
+#line 620 "wcspih.l"
 {
-	  BEGIN(DISCARD);
-	}
-	YY_BREAK
+          BEGIN(DISCARD);
+        }
+        YY_BREAK
 case 60:
-#line 631 "wcspih.l"
+#line 625 "wcspih.l"
 case 61:
 YY_RULE_SETUP
-#line 631 "wcspih.l"
+#line 625 "wcspih.l"
 {
-	  sscanf(wcspihtext, "%d%c", &i, &a);
-	  if (a == ' ' || relax & WCSHDR_CROTAia) {
-	    idx = i - 1;
-	    BEGIN(VALUE);
-	
-	  } else if (relax & WCSHDR_reject) {
-	    errmsg = "CROTAn keyword may not have an alternate version code";
-	    BEGIN(ERROR);
-	
-	  } else {
-	    BEGIN(DISCARD);
-	  }
-	}
-	YY_BREAK
+          sscanf(wcspihtext, "%d%c", &i, &a);
+          if (a == ' ' || relax & WCSHDR_CROTAia) {
+            idx = i - 1;
+            BEGIN(VALUE);
+
+          } else if (relax & WCSHDR_reject) {
+            errmsg = "CROTAn keyword may not have an alternate version code";
+            BEGIN(ERROR);
+
+          } else {
+            BEGIN(DISCARD);
+          }
+        }
+        YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 646 "wcspih.l"
+#line 640 "wcspih.l"
 {
-	  sscanf(wcspihtext, "%d", &i);
-	  a = ' ';
-	  idx = i - 1;
-	  BEGIN(VALUE);
-	}
-	YY_BREAK
+          sscanf(wcspihtext, "%d", &i);
+          a = ' ';
+          idx = i - 1;
+          BEGIN(VALUE);
+        }
+        YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 653 "wcspih.l"
+#line 647 "wcspih.l"
 {
-	  BEGIN(DISCARD);
-	}
-	YY_BREAK
+          BEGIN(DISCARD);
+        }
+        YY_BREAK
 case 64:
-#line 658 "wcspih.l"
+#line 652 "wcspih.l"
 case 65:
 YY_RULE_SETUP
-#line 658 "wcspih.l"
+#line 652 "wcspih.l"
 {
-	  idx = -1;
-	
-	  if (YY_START == CCCCCCCa) {
-	    sscanf(wcspihtext, "%c", &a);
-	  } else {
-	    unput(wcspihtext[0]);
-	    a = 0;
-	  }
-	  BEGIN(VALUE);
-	}
-	YY_BREAK
+          idx = -1;
+
+          if (YY_START == CCCCCCCa) {
+            sscanf(wcspihtext, "%c", &a);
+          } else {
+            unput(wcspihtext[0]);
+            a = 0;
+          }
+          BEGIN(VALUE);
+        }
+        YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 670 "wcspih.l"
+#line 664 "wcspih.l"
 {
-	  BEGIN(DISCARD);
-	}
-	YY_BREAK
+          BEGIN(DISCARD);
+        }
+        YY_BREAK
 case 67:
-#line 675 "wcspih.l"
+#line 669 "wcspih.l"
 case 68:
-#line 676 "wcspih.l"
+#line 670 "wcspih.l"
 case 69:
-#line 677 "wcspih.l"
+#line 671 "wcspih.l"
 case 70:
 YY_RULE_SETUP
-#line 677 "wcspih.l"
+#line 671 "wcspih.l"
 {
-	  sscanf(wcspihtext, "%d_%d%c", &i, &m, &a);
-	  idx = -1;
-	  BEGIN(VALUE);
-	}
-	YY_BREAK
+          sscanf(wcspihtext, "%d_%d%c", &i, &m, &a);
+          idx = -1;
+          BEGIN(VALUE);
+        }
+        YY_BREAK
 case 71:
-#line 684 "wcspih.l"
+#line 678 "wcspih.l"
 case 72:
-#line 685 "wcspih.l"
+#line 679 "wcspih.l"
 case 73:
-#line 686 "wcspih.l"
+#line 680 "wcspih.l"
 case 74:
-#line 687 "wcspih.l"
+#line 681 "wcspih.l"
 case 75:
-#line 688 "wcspih.l"
+#line 682 "wcspih.l"
 case 76:
 YY_RULE_SETUP
-#line 688 "wcspih.l"
+#line 682 "wcspih.l"
 {
-	  /* Invalid parameters will be caught by <VALUE>. */
-	  sscanf(wcspihtext, "%d_%d", &i, &m);
-	  BEGIN(VALUE);
-	}
-	YY_BREAK
+          /* Invalid parameters will be caught by <VALUE>. */
+          sscanf(wcspihtext, "%d_%d", &i, &m);
+          BEGIN(VALUE);
+        }
+        YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 694 "wcspih.l"
+#line 688 "wcspih.l"
 {
-	  BEGIN(DISCARD);
-	}
-	YY_BREAK
+          BEGIN(DISCARD);
+        }
+        YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 698 "wcspih.l"
+#line 692 "wcspih.l"
 {
-	  if (relax & WCSHDR_PROJPn) {
-	    sscanf(wcspihtext, "%d", &m);
-	    i = 0;
-	    a = ' ';
-	    idx = -1;
-	    BEGIN(VALUE);
-	
-	  } else if (relax & WCSHDR_reject) {
-	    errmsg = "Defunct PROJPn keyword rejected";
-	    BEGIN(ERROR);
-	
-	  } else {
-	    BEGIN(DISCARD);
-	  }
-	}
-	YY_BREAK
+          if (relax & WCSHDR_PROJPn) {
+            sscanf(wcspihtext, "%d", &m);
+            i = 0;
+            a = ' ';
+            idx = -1;
+            BEGIN(VALUE);
+
+          } else if (relax & WCSHDR_reject) {
+            errmsg = "Defunct PROJPn keyword rejected";
+            BEGIN(ERROR);
+
+          } else {
+            BEGIN(DISCARD);
+          }
+        }
+        YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 715 "wcspih.l"
+#line 709 "wcspih.l"
 {
-	  BEGIN(DISCARD);
-	}
-	YY_BREAK
+          BEGIN(DISCARD);
+        }
+        YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 719 "wcspih.l"
+#line 713 "wcspih.l"
 {
-	  /* Do checks on i, j & m. */
-	  if (i > 99 || j > 99 || m > 99) {
-	    if (relax & WCSHDR_reject) {
-	      errmsg = errtxt;
-	      if (i > 99 || j > 99) {
-	        sprintf(errmsg, "Axis number exceeds 99");
-	      } else if (m > 99) {
-	        sprintf(errmsg, "Parameter number exceeds 99");
-	      }
-	      BEGIN(ERROR);
-	
-	    } else {
-	      /* Pretend we don't recognize it. */
-	      BEGIN(DISCARD);
-	    }
-	
-	  } else {
-	    if (valtype == INTEGER) {
-	      BEGIN(INTEGER_VAL);
-	    } else if (valtype == FLOAT) {
-	      BEGIN(FLOAT_VAL);
-	    } else if (valtype == STRING) {
-	      BEGIN(STRING_VAL);
-	    } else {
-	      errmsg = errtxt;
-	      sprintf(errmsg, "Internal parser ERROR, bad data type: %d",
-	        valtype);
-	      BEGIN(ERROR);
-	    }
-	  }
-	}
-	YY_BREAK
+          /* Do checks on i, j & m. */
+          if (i > 99 || j > 99 || m > 99) {
+            if (relax & WCSHDR_reject) {
+              errmsg = errtxt;
+              if (i > 99 || j > 99) {
+                sprintf(errmsg, "Axis number exceeds 99");
+              } else if (m > 99) {
+                sprintf(errmsg, "Parameter number exceeds 99");
+              }
+              BEGIN(ERROR);
+
+            } else {
+              /* Pretend we don't recognize it. */
+              BEGIN(DISCARD);
+            }
+
+          } else {
+            if (valtype == INTEGER) {
+              BEGIN(INTEGER_VAL);
+            } else if (valtype == FLOAT) {
+              BEGIN(FLOAT_VAL);
+            } else if (valtype == STRING) {
+              BEGIN(STRING_VAL);
+            } else {
+              errmsg = errtxt;
+              sprintf(errmsg, "Internal parser ERROR, bad data type: %d",
+                valtype);
+              BEGIN(ERROR);
+            }
+          }
+        }
+        YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 752 "wcspih.l"
+#line 746 "wcspih.l"
 {
-	  errmsg = "Invalid KEYWORD = VALUE syntax";
-	  BEGIN(ERROR);
-	}
-	YY_BREAK
+          errmsg = "Invalid KEYWORD = VALUE syntax";
+          BEGIN(ERROR);
+        }
+        YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 757 "wcspih.l"
+#line 751 "wcspih.l"
 {
-	  if (pass == 1) {
-	    wcspih_naxes(naxis, i, j, a, alts, npptr);
-	    BEGIN(FLUSH);
-	
-	  } else {
-	    if (vptr) {
-	      /* Determine the coordinate representation. */
-	      for (iax = 0; iax < *nwcs; iax++) {
-	        /* The loop here is for keywords that apply */
-	        /* to every alternate; these have a == 0. */
-	        if (a >= 'A') {
-	          iax = alts[a-'A'+1];
-	        }
-	
-	        wptr = vptr;
-	        if (iax) {
-	          voff = (char *)(*wcs+iax) - (char *)(*wcs);
-	          wptr = (void *)((char *)vptr + voff);
-	        }
-	
-	        /* Apply keyword parameterization. */
-	        if (idx >= 0) {
-	          wptr = *((int **)wptr) + idx;
-	        }
-	
-	        /* Read the keyvalue. */
-	        sscanf(wcspihtext, "%d", (int *)wptr);
-	
-	        if (a) break;
-	      }
-	
-	      BEGIN(COMMENT);
-	
-	    } else {
-	      errmsg = "Internal parser ERROR, null int pointer";
-	      BEGIN(ERROR);
-	    }
-	  }
-	}
-	YY_BREAK
+          if (pass == 1) {
+            wcspih_naxes(naxis, i, j, a, alts, npptr);
+            BEGIN(FLUSH);
+
+          } else {
+            if (vptr) {
+              /* Determine the coordinate representation. */
+              for (iax = 0; iax < *nwcs; iax++) {
+                /* The loop here is for keywords that apply */
+                /* to every alternate; these have a == 0. */
+                if (a >= 'A') {
+                  iax = alts[a-'A'+1];
+                }
+
+                wptr = vptr;
+                if (iax) {
+                  voff = (char *)(*wcs+iax) - (char *)(*wcs);
+                  wptr = (void *)((char *)vptr + voff);
+                }
+
+                /* Apply keyword parameterization. */
+                if (idx >= 0) {
+                  wptr = *((int **)wptr) + idx;
+                }
+
+                /* Read the keyvalue. */
+                sscanf(wcspihtext, "%d", (int *)wptr);
+
+                if (a) break;
+              }
+
+              BEGIN(COMMENT);
+
+            } else {
+              errmsg = "Internal parser ERROR, null int pointer";
+              BEGIN(ERROR);
+            }
+          }
+        }
+        YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 798 "wcspih.l"
+#line 792 "wcspih.l"
 {
-	  errmsg = "An integer value was expected";
-	  BEGIN(ERROR);
-	}
-	YY_BREAK
+          errmsg = "An integer value was expected";
+          BEGIN(ERROR);
+        }
+        YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 803 "wcspih.l"
+#line 797 "wcspih.l"
 {
-	  if (pass == 1) {
-	    wcspih_naxes(naxis, i, j, a, alts, npptr);
-	    BEGIN(FLUSH);
-	
-	  } else {
-	    if (vptr) {
-	      /* Determine the coordinate representation. */
-	      for (iax = 0; iax < *nwcs; iax++) {
-	        /* The loop here is for keywords like MJD-OBS that */
-	        /* apply to every alternate; these have a == 0.  */
-	        if (a >= 'A') {
-	          iax = alts[a-'A'+1];
-	        }
-	
-	        wptr = vptr;
-	        if (iax) {
-	          voff = (char *)(*wcs+iax) - (char *)(*wcs);
-	          wptr = (void *)((char *)vptr + voff);
-	        }
-	
-	        /* Apply keyword parameterization. */
-	        if (idx >= 0) {
-	          wptr = *((double **)wptr) + idx;
-	
-	        } else if (npptr == npv) {
-	          ipx = (*wcs+iax)->npv++;
-	          (*wcs+iax)->pv[ipx].i = i;
-	          (*wcs+iax)->pv[ipx].m = m;
-	          wptr = &((*wcs+iax)->pv[ipx].value);
-	        }
-	
-	        /* Read the keyvalue. */
-	        sscanf(wcspihtext, "%lf", (double *)wptr);
-	
-	        /* Flag the presence of PCi_ja, or CDi_ja and/or CROTAia. */
-	        if (altlin) {
-	          (*wcs+iax)->altlin |= altlin;
-	          altlin = 0;
-	        }
-	
-	        if (a) break;
-	      }
-	
-	      BEGIN(COMMENT);
-	
-	    } else {
-	      errmsg = "Internal parser ERROR, null float pointer";
-	      BEGIN(ERROR);
-	    }
-	  }
-	}
-	YY_BREAK
+          if (pass == 1) {
+            wcspih_naxes(naxis, i, j, a, alts, npptr);
+            BEGIN(FLUSH);
+
+          } else {
+            if (vptr) {
+              /* Determine the coordinate representation. */
+              for (iax = 0; iax < *nwcs; iax++) {
+                /* The loop here is for keywords like MJD-OBS that */
+                /* apply to every alternate; these have a == 0.  */
+                if (a >= 'A') {
+                  iax = alts[a-'A'+1];
+                }
+
+                wptr = vptr;
+                if (iax) {
+                  voff = (char *)(*wcs+iax) - (char *)(*wcs);
+                  wptr = (void *)((char *)vptr + voff);
+                }
+
+                /* Apply keyword parameterization. */
+                if (idx >= 0) {
+                  wptr = *((double **)wptr) + idx;
+
+                } else if (npptr == npv) {
+                  ipx = (*wcs+iax)->npv++;
+                  (*wcs+iax)->pv[ipx].i = i;
+                  (*wcs+iax)->pv[ipx].m = m;
+                  wptr = &((*wcs+iax)->pv[ipx].value);
+                }
+
+                /* Read the keyvalue. */
+                sscanf(wcspihtext, "%lf", (double *)wptr);
+
+                /* Flag the presence of PCi_ja, or CDi_ja and/or CROTAia. */
+                if (altlin) {
+                  (*wcs+iax)->altlin |= altlin;
+                  altlin = 0;
+                }
+
+                if (a) break;
+              }
+
+              BEGIN(COMMENT);
+
+            } else {
+              errmsg = "Internal parser ERROR, null float pointer";
+              BEGIN(ERROR);
+            }
+          }
+        }
+        YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 856 "wcspih.l"
+#line 850 "wcspih.l"
 {
-	  errmsg = "A floating-point value was expected";
-	  BEGIN(ERROR);
-	}
-	YY_BREAK
+          errmsg = "A floating-point value was expected";
+          BEGIN(ERROR);
+        }
+        YY_BREAK
 case 86:
 /* rule 86 can match eol */
 YY_RULE_SETUP
-#line 861 "wcspih.l"
+#line 855 "wcspih.l"
 {
-	  if (pass == 1) {
-	    wcspih_naxes(naxis, i, j, a, alts, npptr);
-	    BEGIN(FLUSH);
-	
-	  } else {
-	    if (vptr) {
-	      /* Determine the coordinate representation. */
-	      for (iax = 0; iax < *nwcs; iax++) {
-	        /* The loop here is for keywords like DATE-OBS that */
-	        /* apply to every alternate; these have a == 0.   */
-	        if (a >= 'A') {
-	          iax = alts[a-'A'+1];
-	        }
-	
-	        wptr = vptr;
-	        if (iax) {
-	          voff = (char *)(*wcs+iax) - (char *)(*wcs);
-	          wptr = (void *)((char *)vptr + voff);
-	        }
-	
-	        /* Apply keyword parameterization. */
-	        if (idx >= 0) {
-	          wptr = *((char (**)[72])wptr) + idx;
-	
-	        } else if (npptr == nps) {
-	          ipx = (*wcs+iax)->nps++;
-	          (*wcs+iax)->ps[ipx].i = i;
-	          (*wcs+iax)->ps[ipx].m = m;
-	          wptr = (*wcs+iax)->ps[ipx].value;
-	        }
-	
-	        /* Read the keyvalue. */
-	        cptr = (char *)wptr;
-	        strcpy(cptr, wcspihtext+1);
-	
-	        /* Squeeze out repeated quotes. */
-	        ix = 0;
-	        for (jx = 0; jx < 72; jx++) {
-	          if (ix < jx) {
-	            cptr[ix] = cptr[jx];
-	          }
-	
-	          if (cptr[jx] == '\0') {
-	            if (ix) cptr[ix-1] = '\0';
-	            break;
-	          } else if (cptr[jx] == '\'' && cptr[jx+1] == '\'') {
-	            jx++;
-	          }
-	
-	          ix++;
-	        }
-	
-	        if (a) break;
-	      }
-	
-	      BEGIN(COMMENT);
-	
-	    } else {
-	      errmsg = "Internal parser ERROR, null string pointer";
-	      BEGIN(ERROR);
-	    }
-	  }
-	}
-	YY_BREAK
+          if (pass == 1) {
+            wcspih_naxes(naxis, i, j, a, alts, npptr);
+            BEGIN(FLUSH);
+
+          } else {
+            if (vptr) {
+              /* Determine the coordinate representation. */
+              for (iax = 0; iax < *nwcs; iax++) {
+                /* The loop here is for keywords like DATE-OBS that */
+                /* apply to every alternate; these have a == 0.   */
+                if (a >= 'A') {
+                  iax = alts[a-'A'+1];
+                }
+
+                wptr = vptr;
+                if (iax) {
+                  voff = (char *)(*wcs+iax) - (char *)(*wcs);
+                  wptr = (void *)((char *)vptr + voff);
+                }
+
+                /* Apply keyword parameterization. */
+                if (idx >= 0) {
+                  wptr = *((char (**)[72])wptr) + idx;
+
+                } else if (npptr == nps) {
+                  ipx = (*wcs+iax)->nps++;
+                  (*wcs+iax)->ps[ipx].i = i;
+                  (*wcs+iax)->ps[ipx].m = m;
+                  wptr = (*wcs+iax)->ps[ipx].value;
+                }
+
+                /* Read the keyvalue. */
+                cptr = (char *)wptr;
+                strcpy(cptr, wcspihtext+1);
+
+                /* Squeeze out repeated quotes. */
+                ix = 0;
+                for (jx = 0; jx < 72; jx++) {
+                  if (ix < jx) {
+                    cptr[ix] = cptr[jx];
+                  }
+
+                  if (cptr[jx] == '\0') {
+                    if (ix) cptr[ix-1] = '\0';
+                    break;
+                  } else if (cptr[jx] == '\'' && cptr[jx+1] == '\'') {
+                    jx++;
+                  }
+
+                  ix++;
+                }
+
+                if (a) break;
+              }
+
+              BEGIN(COMMENT);
+
+            } else {
+              errmsg = "Internal parser ERROR, null string pointer";
+              BEGIN(ERROR);
+            }
+          }
+        }
+        YY_BREAK
 case 87:
+YY_RULE_SETUP
+#line 920 "wcspih.l"
+{
+          errmsg = "A string value was expected";
+          BEGIN(ERROR);
+        }
+        YY_BREAK
+case 88:
+#line 926 "wcspih.l"
+case 89:
 YY_RULE_SETUP
 #line 926 "wcspih.l"
 {
-	  errmsg = "A string value was expected";
-	  BEGIN(ERROR);
-	}
-	YY_BREAK
-case 88:
-#line 932 "wcspih.l"
-case 89:
-YY_RULE_SETUP
-#line 932 "wcspih.l"
-{
-	  BEGIN(FLUSH);
-	}
-	YY_BREAK
+          BEGIN(FLUSH);
+        }
+        YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 936 "wcspih.l"
+#line 930 "wcspih.l"
 {
-	  errmsg = "Malformed keycomment";
-	  BEGIN(ERROR);
-	}
-	YY_BREAK
+          errmsg = "Malformed keycomment";
+          BEGIN(ERROR);
+        }
+        YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 941 "wcspih.l"
+#line 935 "wcspih.l"
 {
-	  if (pass == 2) {
-	    if (ctrl < 0) {
-	      /* Preserve discards. */
-	      keep = wcspih_hdr - 80;
-	
-	    } else if (ctrl > 2) {
-	      fprintf(stderr, "%.80s\n  Discarded.\n", wcspih_hdr-80);
-	    }
-	  }
-	  BEGIN(FLUSH);
-	}
-	YY_BREAK
+          if (pass == 2) {
+            if (ctrl < 0) {
+              /* Preserve discards. */
+              keep = wcspih_hdr - 80;
+
+            } else if (ctrl > 2) {
+              fprintf(stderr, "%.80s\n  Discarded.\n", wcspih_hdr-80);
+            }
+          }
+          BEGIN(FLUSH);
+        }
+        YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 954 "wcspih.l"
+#line 948 "wcspih.l"
 {
-	  (*nreject)++;
-	  if (pass == 2) {
-	    if (ctrl%10 == -1) {
-	      /* Preserve rejects. */
-	      keep = wcspih_hdr - 80;
-	    }
-	
-	    if (abs(ctrl%10) > 1) {
-	      fprintf(stderr, "%.80s\n%4d: %s.\n", wcspih_hdr-80, *nreject,
-	        errmsg);
-	    }
-	  }
-	  BEGIN(FLUSH);
-	}
-	YY_BREAK
+          (*nreject)++;
+          if (pass == 2) {
+            if (ctrl%10 == -1) {
+              /* Preserve rejects. */
+              keep = wcspih_hdr - 80;
+            }
+
+            if (abs(ctrl%10) > 1) {
+              fprintf(stderr, "%.80s\n%4d: %s.\n", wcspih_hdr-80, *nreject,
+                errmsg);
+            }
+          }
+          BEGIN(FLUSH);
+        }
+        YY_BREAK
 case 93:
 /* rule 93 can match eol */
 YY_RULE_SETUP
-#line 970 "wcspih.l"
+#line 964 "wcspih.l"
 {
-	  if (pass == 2 && keep) {
-	    if (hptr < keep) {
-	      strncpy(hptr, keep, 80);
-	    }
-	    hptr += 80;
-	  }
-	
-	  i = j = m = 0;
-	  a = ' ';
-	  valtype = -1;
-	  keep = 0x0;
-	  altlin = 0;
-	  npptr = 0x0;
-	  BEGIN(INITIAL);
-	}
-	YY_BREAK
+          if (pass == 2 && keep) {
+            if (hptr < keep) {
+              strncpy(hptr, keep, 80);
+            }
+            hptr += 80;
+          }
+
+          i = j = m = 0;
+          a = ' ';
+          valtype = -1;
+          keep = 0x0;
+          altlin = 0;
+          npptr = 0x0;
+          BEGIN(INITIAL);
+        }
+        YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(CROTAi):
 case YY_STATE_EOF(PROJPn):
@@ -9576,405 +9570,405 @@ case YY_STATE_EOF(COMMENT):
 case YY_STATE_EOF(DISCARD):
 case YY_STATE_EOF(ERROR):
 case YY_STATE_EOF(FLUSH):
-#line 987 "wcspih.l"
+#line 981 "wcspih.l"
 {
-	  /* End-of-input. */
-	  if (pass == 1) {
-	    if ((status = wcspih_inits(naxis, alts, npv, nps, nwcs, wcs)) ||
-	         *nwcs == 0) {
-	      wcspihlex_destroy();
-	      return status;
-	    }
-	
-	    if (abs(ctrl%10) > 2) {
-	      if (*nwcs == 1) {
-	        fprintf(stderr, "Found one coordinate representation.\n");
-	      } else {
-	        fprintf(stderr, "Found %d coordinate representations.\n",
-	          *nwcs);
-	      }
-	    }
-	
-	    wcspih_hdr = header;
-	    wcspih_nkeyrec = nkeyrec;
-	    *nreject = 0;
-	
-	    pass = 2;
-	    i = j = m = 0;
-	    a = ' ';
-	    valtype = -1;
-	
-	    wcspihrestart(wcspihin);
-	
-	  } else {
-	    wcspihlex_destroy();
-	
-	    if (ctrl < 0) {
-	      *hptr = '\0';
-	    } else if (ctrl == 1) {
-	      fprintf(stderr, "%d WCS keyrecords were rejected.\n",
-	        *nreject);
-	    }
-	
-	    return wcspih_final(alts, epoch, velref, vsource, nwcs, wcs);
-	  }
-	}
-	YY_BREAK
+          /* End-of-input. */
+          if (pass == 1) {
+            if ((status = wcspih_inits(naxis, alts, npv, nps, nwcs, wcs)) ||
+                 *nwcs == 0) {
+              wcspihlex_destroy();
+              return status;
+            }
+
+            if (abs(ctrl%10) > 2) {
+              if (*nwcs == 1) {
+                fprintf(stderr, "Found one coordinate representation.\n");
+              } else {
+                fprintf(stderr, "Found %d coordinate representations.\n",
+                  *nwcs);
+              }
+            }
+
+            wcspih_hdr = header;
+            wcspih_nkeyrec = nkeyrec;
+            *nreject = 0;
+
+            pass = 2;
+            i = j = m = 0;
+            a = ' ';
+            valtype = -1;
+
+            wcspihrestart(wcspihin);
+
+          } else {
+            wcspihlex_destroy();
+
+            if (ctrl < 0) {
+              *hptr = '\0';
+            } else if (ctrl == 1) {
+              fprintf(stderr, "%d WCS keyrecords were rejected.\n",
+                *nreject);
+            }
+
+            return wcspih_final(alts, epoch, vsource, nwcs, wcs);
+          }
+        }
+        YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 1030 "wcspih.l"
+#line 1024 "wcspih.l"
 ECHO;
-	YY_BREAK
-#line 9629 "wcspih.c"
+        YY_BREAK
+#line 9623 "wcspih.c"
 
-	case YY_END_OF_BUFFER:
-		{
-		/* Amount of text matched not including the EOB char. */
-		int yy_amount_of_matched_text = (int) (yy_cp - (yytext_ptr)) - 1;
+        case YY_END_OF_BUFFER:
+                {
+                /* Amount of text matched not including the EOB char. */
+                int yy_amount_of_matched_text = (int) (yy_cp - (yytext_ptr)) - 1;
 
-		/* Undo the effects of YY_DO_BEFORE_ACTION. */
-		*yy_cp = (yy_hold_char);
-		YY_RESTORE_YY_MORE_OFFSET
+                /* Undo the effects of YY_DO_BEFORE_ACTION. */
+                *yy_cp = (yy_hold_char);
+                YY_RESTORE_YY_MORE_OFFSET
 
-		if ( YY_CURRENT_BUFFER_LVALUE->yy_buffer_status == YY_BUFFER_NEW )
-			{
-			/* We're scanning a new file or input source.  It's
-			 * possible that this happened because the user
-			 * just pointed wcspihin at a new source and called
-			 * wcspihlex().  If so, then we have to assure
-			 * consistency between YY_CURRENT_BUFFER and our
-			 * globals.  Here is the right place to do so, because
-			 * this is the first action (other than possibly a
-			 * back-up) that will match for the new input source.
-			 */
-			(yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_n_chars;
-			YY_CURRENT_BUFFER_LVALUE->yy_input_file = wcspihin;
-			YY_CURRENT_BUFFER_LVALUE->yy_buffer_status = YY_BUFFER_NORMAL;
-			}
+                if ( YY_CURRENT_BUFFER_LVALUE->yy_buffer_status == YY_BUFFER_NEW )
+                        {
+                        /* We're scanning a new file or input source.  It's
+                         * possible that this happened because the user
+                         * just pointed wcspihin at a new source and called
+                         * wcspihlex().  If so, then we have to assure
+                         * consistency between YY_CURRENT_BUFFER and our
+                         * globals.  Here is the right place to do so, because
+                         * this is the first action (other than possibly a
+                         * back-up) that will match for the new input source.
+                         */
+                        (yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_n_chars;
+                        YY_CURRENT_BUFFER_LVALUE->yy_input_file = wcspihin;
+                        YY_CURRENT_BUFFER_LVALUE->yy_buffer_status = YY_BUFFER_NORMAL;
+                        }
 
-		/* Note that here we test for yy_c_buf_p "<=" to the position
-		 * of the first EOB in the buffer, since yy_c_buf_p will
-		 * already have been incremented past the NUL character
-		 * (since all states make transitions on EOB to the
-		 * end-of-buffer state).  Contrast this with the test
-		 * in input().
-		 */
-		if ( (yy_c_buf_p) <= &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)] )
-			{ /* This was really a NUL. */
-			yy_state_type yy_next_state;
+                /* Note that here we test for yy_c_buf_p "<=" to the position
+                 * of the first EOB in the buffer, since yy_c_buf_p will
+                 * already have been incremented past the NUL character
+                 * (since all states make transitions on EOB to the
+                 * end-of-buffer state).  Contrast this with the test
+                 * in input().
+                 */
+                if ( (yy_c_buf_p) <= &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)] )
+                        { /* This was really a NUL. */
+                        yy_state_type yy_next_state;
 
-			(yy_c_buf_p) = (yytext_ptr) + yy_amount_of_matched_text;
+                        (yy_c_buf_p) = (yytext_ptr) + yy_amount_of_matched_text;
 
-			yy_current_state = yy_get_previous_state(  );
+                        yy_current_state = yy_get_previous_state(  );
 
-			/* Okay, we're now positioned to make the NUL
-			 * transition.  We couldn't have
-			 * yy_get_previous_state() go ahead and do it
-			 * for us because it doesn't know how to deal
-			 * with the possibility of jamming (and we don't
-			 * want to build jamming into it because then it
-			 * will run more slowly).
-			 */
+                        /* Okay, we're now positioned to make the NUL
+                         * transition.  We couldn't have
+                         * yy_get_previous_state() go ahead and do it
+                         * for us because it doesn't know how to deal
+                         * with the possibility of jamming (and we don't
+                         * want to build jamming into it because then it
+                         * will run more slowly).
+                         */
 
-			yy_next_state = yy_try_NUL_trans( yy_current_state );
+                        yy_next_state = yy_try_NUL_trans( yy_current_state );
 
-			yy_bp = (yytext_ptr) + YY_MORE_ADJ;
+                        yy_bp = (yytext_ptr) + YY_MORE_ADJ;
 
-			if ( yy_next_state )
-				{
-				/* Consume the NUL. */
-				yy_cp = ++(yy_c_buf_p);
-				yy_current_state = yy_next_state;
-				goto yy_match;
-				}
+                        if ( yy_next_state )
+                                {
+                                /* Consume the NUL. */
+                                yy_cp = ++(yy_c_buf_p);
+                                yy_current_state = yy_next_state;
+                                goto yy_match;
+                                }
 
-			else
-				{
-				yy_cp = (yy_c_buf_p);
-				goto yy_find_action;
-				}
-			}
+                        else
+                                {
+                                yy_cp = (yy_c_buf_p);
+                                goto yy_find_action;
+                                }
+                        }
 
-		else switch ( yy_get_next_buffer(  ) )
-			{
-			case EOB_ACT_END_OF_FILE:
-				{
-				(yy_did_buffer_switch_on_eof) = 0;
+                else switch ( yy_get_next_buffer(  ) )
+                        {
+                        case EOB_ACT_END_OF_FILE:
+                                {
+                                (yy_did_buffer_switch_on_eof) = 0;
 
-				if ( wcspihwrap( ) )
-					{
-					/* Note: because we've taken care in
-					 * yy_get_next_buffer() to have set up
-					 * wcspihtext, we can now set up
-					 * yy_c_buf_p so that if some total
-					 * hoser (like flex itself) wants to
-					 * call the scanner after we return the
-					 * YY_NULL, it'll still work - another
-					 * YY_NULL will get returned.
-					 */
-					(yy_c_buf_p) = (yytext_ptr) + YY_MORE_ADJ;
+                                if ( wcspihwrap( ) )
+                                        {
+                                        /* Note: because we've taken care in
+                                         * yy_get_next_buffer() to have set up
+                                         * wcspihtext, we can now set up
+                                         * yy_c_buf_p so that if some total
+                                         * hoser (like flex itself) wants to
+                                         * call the scanner after we return the
+                                         * YY_NULL, it'll still work - another
+                                         * YY_NULL will get returned.
+                                         */
+                                        (yy_c_buf_p) = (yytext_ptr) + YY_MORE_ADJ;
 
-					yy_act = YY_STATE_EOF(YY_START);
-					goto do_action;
-					}
+                                        yy_act = YY_STATE_EOF(YY_START);
+                                        goto do_action;
+                                        }
 
-				else
-					{
-					if ( ! (yy_did_buffer_switch_on_eof) )
-						YY_NEW_FILE;
-					}
-				break;
-				}
+                                else
+                                        {
+                                        if ( ! (yy_did_buffer_switch_on_eof) )
+                                                YY_NEW_FILE;
+                                        }
+                                break;
+                                }
 
-			case EOB_ACT_CONTINUE_SCAN:
-				(yy_c_buf_p) =
-					(yytext_ptr) + yy_amount_of_matched_text;
+                        case EOB_ACT_CONTINUE_SCAN:
+                                (yy_c_buf_p) =
+                                        (yytext_ptr) + yy_amount_of_matched_text;
 
-				yy_current_state = yy_get_previous_state(  );
+                                yy_current_state = yy_get_previous_state(  );
 
-				yy_cp = (yy_c_buf_p);
-				yy_bp = (yytext_ptr) + YY_MORE_ADJ;
-				goto yy_match;
+                                yy_cp = (yy_c_buf_p);
+                                yy_bp = (yytext_ptr) + YY_MORE_ADJ;
+                                goto yy_match;
 
-			case EOB_ACT_LAST_MATCH:
-				(yy_c_buf_p) =
-				&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)];
+                        case EOB_ACT_LAST_MATCH:
+                                (yy_c_buf_p) =
+                                &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)];
 
-				yy_current_state = yy_get_previous_state(  );
+                                yy_current_state = yy_get_previous_state(  );
 
-				yy_cp = (yy_c_buf_p);
-				yy_bp = (yytext_ptr) + YY_MORE_ADJ;
-				goto yy_find_action;
-			}
-		break;
-		}
+                                yy_cp = (yy_c_buf_p);
+                                yy_bp = (yytext_ptr) + YY_MORE_ADJ;
+                                goto yy_find_action;
+                        }
+                break;
+                }
 
-	default:
-		YY_FATAL_ERROR(
-			"fatal flex scanner internal error--no action found" );
-	} /* end of action switch */
-		} /* end of scanning one token */
+        default:
+                YY_FATAL_ERROR(
+                        "fatal flex scanner internal error--no action found" );
+        } /* end of action switch */
+                } /* end of scanning one token */
 } /* end of wcspihlex */
 
 /* yy_get_next_buffer - try to read in a new buffer
  *
  * Returns a code representing an action:
- *	EOB_ACT_LAST_MATCH -
- *	EOB_ACT_CONTINUE_SCAN - continue scanning from current position
- *	EOB_ACT_END_OF_FILE - end of file
+ *      EOB_ACT_LAST_MATCH -
+ *      EOB_ACT_CONTINUE_SCAN - continue scanning from current position
+ *      EOB_ACT_END_OF_FILE - end of file
  */
 static int yy_get_next_buffer (void)
 {
-    	register char *dest = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
-	register char *source = (yytext_ptr);
-	register int number_to_move, i;
-	int ret_val;
+        register char *dest = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
+        register char *source = (yytext_ptr);
+        register int number_to_move, i;
+        int ret_val;
 
-	if ( (yy_c_buf_p) > &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars) + 1] )
-		YY_FATAL_ERROR(
-		"fatal flex scanner internal error--end of buffer missed" );
+        if ( (yy_c_buf_p) > &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars) + 1] )
+                YY_FATAL_ERROR(
+                "fatal flex scanner internal error--end of buffer missed" );
 
-	if ( YY_CURRENT_BUFFER_LVALUE->yy_fill_buffer == 0 )
-		{ /* Don't try to fill the buffer, so this is an EOF. */
-		if ( (yy_c_buf_p) - (yytext_ptr) - YY_MORE_ADJ == 1 )
-			{
-			/* We matched a single character, the EOB, so
-			 * treat this as a final EOF.
-			 */
-			return EOB_ACT_END_OF_FILE;
-			}
+        if ( YY_CURRENT_BUFFER_LVALUE->yy_fill_buffer == 0 )
+                { /* Don't try to fill the buffer, so this is an EOF. */
+                if ( (yy_c_buf_p) - (yytext_ptr) - YY_MORE_ADJ == 1 )
+                        {
+                        /* We matched a single character, the EOB, so
+                         * treat this as a final EOF.
+                         */
+                        return EOB_ACT_END_OF_FILE;
+                        }
 
-		else
-			{
-			/* We matched some text prior to the EOB, first
-			 * process it.
-			 */
-			return EOB_ACT_LAST_MATCH;
-			}
-		}
+                else
+                        {
+                        /* We matched some text prior to the EOB, first
+                         * process it.
+                         */
+                        return EOB_ACT_LAST_MATCH;
+                        }
+                }
 
-	/* Try to read more data. */
+        /* Try to read more data. */
 
-	/* First move last chars to start of buffer. */
-	number_to_move = (int) ((yy_c_buf_p) - (yytext_ptr)) - 1;
+        /* First move last chars to start of buffer. */
+        number_to_move = (int) ((yy_c_buf_p) - (yytext_ptr)) - 1;
 
-	for ( i = 0; i < number_to_move; ++i )
-		*(dest++) = *(source++);
+        for ( i = 0; i < number_to_move; ++i )
+                *(dest++) = *(source++);
 
-	if ( YY_CURRENT_BUFFER_LVALUE->yy_buffer_status == YY_BUFFER_EOF_PENDING )
-		/* don't do the read, it's not guaranteed to return an EOF,
-		 * just force an EOF
-		 */
-		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars) = 0;
+        if ( YY_CURRENT_BUFFER_LVALUE->yy_buffer_status == YY_BUFFER_EOF_PENDING )
+                /* don't do the read, it's not guaranteed to return an EOF,
+                 * just force an EOF
+                 */
+                YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars) = 0;
 
-	else
-		{
-			int num_to_read =
-			YY_CURRENT_BUFFER_LVALUE->yy_buf_size - number_to_move - 1;
+        else
+                {
+                        int num_to_read =
+                        YY_CURRENT_BUFFER_LVALUE->yy_buf_size - number_to_move - 1;
 
-		while ( num_to_read <= 0 )
-			{ /* Not enough room in the buffer - grow it. */
+                while ( num_to_read <= 0 )
+                        { /* Not enough room in the buffer - grow it. */
 
-			/* just a shorter name for the current buffer */
-			YY_BUFFER_STATE b = YY_CURRENT_BUFFER;
+                        /* just a shorter name for the current buffer */
+                        YY_BUFFER_STATE b = YY_CURRENT_BUFFER;
 
-			int yy_c_buf_p_offset =
-				(int) ((yy_c_buf_p) - b->yy_ch_buf);
+                        int yy_c_buf_p_offset =
+                                (int) ((yy_c_buf_p) - b->yy_ch_buf);
 
-			if ( b->yy_is_our_buffer )
-				{
-				int new_size = b->yy_buf_size * 2;
+                        if ( b->yy_is_our_buffer )
+                                {
+                                int new_size = b->yy_buf_size * 2;
 
-				if ( new_size <= 0 )
-					b->yy_buf_size += b->yy_buf_size / 8;
-				else
-					b->yy_buf_size *= 2;
+                                if ( new_size <= 0 )
+                                        b->yy_buf_size += b->yy_buf_size / 8;
+                                else
+                                        b->yy_buf_size *= 2;
 
-				b->yy_ch_buf = (char *)
-					/* Include room in for 2 EOB chars. */
-					wcspihrealloc((void *) b->yy_ch_buf,b->yy_buf_size + 2  );
-				}
-			else
-				/* Can't grow it, we don't own it. */
-				b->yy_ch_buf = 0;
+                                b->yy_ch_buf = (char *)
+                                        /* Include room in for 2 EOB chars. */
+                                        wcspihrealloc((void *) b->yy_ch_buf,b->yy_buf_size + 2  );
+                                }
+                        else
+                                /* Can't grow it, we don't own it. */
+                                b->yy_ch_buf = 0;
 
-			if ( ! b->yy_ch_buf )
-				YY_FATAL_ERROR(
-				"fatal error - scanner input buffer overflow" );
+                        if ( ! b->yy_ch_buf )
+                                YY_FATAL_ERROR(
+                                "fatal error - scanner input buffer overflow" );
 
-			(yy_c_buf_p) = &b->yy_ch_buf[yy_c_buf_p_offset];
+                        (yy_c_buf_p) = &b->yy_ch_buf[yy_c_buf_p_offset];
 
-			num_to_read = YY_CURRENT_BUFFER_LVALUE->yy_buf_size -
-						number_to_move - 1;
+                        num_to_read = YY_CURRENT_BUFFER_LVALUE->yy_buf_size -
+                                                number_to_move - 1;
 
-			}
+                        }
 
-		if ( num_to_read > YY_READ_BUF_SIZE )
-			num_to_read = YY_READ_BUF_SIZE;
+                if ( num_to_read > YY_READ_BUF_SIZE )
+                        num_to_read = YY_READ_BUF_SIZE;
 
-		/* Read in more data. */
-		YY_INPUT( (&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move]),
-			(yy_n_chars), (size_t) num_to_read );
+                /* Read in more data. */
+                YY_INPUT( (&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move]),
+                        (yy_n_chars), (size_t) num_to_read );
 
-		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
-		}
+                YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
+                }
 
-	if ( (yy_n_chars) == 0 )
-		{
-		if ( number_to_move == YY_MORE_ADJ )
-			{
-			ret_val = EOB_ACT_END_OF_FILE;
-			wcspihrestart(wcspihin  );
-			}
+        if ( (yy_n_chars) == 0 )
+                {
+                if ( number_to_move == YY_MORE_ADJ )
+                        {
+                        ret_val = EOB_ACT_END_OF_FILE;
+                        wcspihrestart(wcspihin  );
+                        }
 
-		else
-			{
-			ret_val = EOB_ACT_LAST_MATCH;
-			YY_CURRENT_BUFFER_LVALUE->yy_buffer_status =
-				YY_BUFFER_EOF_PENDING;
-			}
-		}
+                else
+                        {
+                        ret_val = EOB_ACT_LAST_MATCH;
+                        YY_CURRENT_BUFFER_LVALUE->yy_buffer_status =
+                                YY_BUFFER_EOF_PENDING;
+                        }
+                }
 
-	else
-		ret_val = EOB_ACT_CONTINUE_SCAN;
+        else
+                ret_val = EOB_ACT_CONTINUE_SCAN;
 
-	(yy_n_chars) += number_to_move;
-	YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)] = YY_END_OF_BUFFER_CHAR;
-	YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars) + 1] = YY_END_OF_BUFFER_CHAR;
+        (yy_n_chars) += number_to_move;
+        YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)] = YY_END_OF_BUFFER_CHAR;
+        YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars) + 1] = YY_END_OF_BUFFER_CHAR;
 
-	(yytext_ptr) = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[0];
+        (yytext_ptr) = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[0];
 
-	return ret_val;
+        return ret_val;
 }
 
 /* yy_get_previous_state - get the state just before the EOB char was reached */
 
     static yy_state_type yy_get_previous_state (void)
 {
-	register yy_state_type yy_current_state;
-	register char *yy_cp;
-    
-	yy_current_state = (yy_start);
-	yy_current_state += YY_AT_BOL();
+        register yy_state_type yy_current_state;
+        register char *yy_cp;
 
-	for ( yy_cp = (yytext_ptr) + YY_MORE_ADJ; yy_cp < (yy_c_buf_p); ++yy_cp )
-		{
-		if ( *yy_cp )
-			{
-			yy_current_state = yy_nxt[yy_current_state][YY_SC_TO_UI(*yy_cp)];
-			}
-		else
-			yy_current_state = yy_NUL_trans[yy_current_state];
-		if ( yy_accept[yy_current_state] )
-			{
-			(yy_last_accepting_state) = yy_current_state;
-			(yy_last_accepting_cpos) = yy_cp;
-			}
-		}
+        yy_current_state = (yy_start);
+        yy_current_state += YY_AT_BOL();
 
-	return yy_current_state;
+        for ( yy_cp = (yytext_ptr) + YY_MORE_ADJ; yy_cp < (yy_c_buf_p); ++yy_cp )
+                {
+                if ( *yy_cp )
+                        {
+                        yy_current_state = yy_nxt[yy_current_state][YY_SC_TO_UI(*yy_cp)];
+                        }
+                else
+                        yy_current_state = yy_NUL_trans[yy_current_state];
+                if ( yy_accept[yy_current_state] )
+                        {
+                        (yy_last_accepting_state) = yy_current_state;
+                        (yy_last_accepting_cpos) = yy_cp;
+                        }
+                }
+
+        return yy_current_state;
 }
 
 /* yy_try_NUL_trans - try to make a transition on the NUL character
  *
  * synopsis
- *	next_state = yy_try_NUL_trans( current_state );
+ *      next_state = yy_try_NUL_trans( current_state );
  */
     static yy_state_type yy_try_NUL_trans  (yy_state_type yy_current_state )
 {
-	register int yy_is_jam;
-    	register char *yy_cp = (yy_c_buf_p);
+        register int yy_is_jam;
+        register char *yy_cp = (yy_c_buf_p);
 
-	yy_current_state = yy_NUL_trans[yy_current_state];
-	yy_is_jam = (yy_current_state == 0);
+        yy_current_state = yy_NUL_trans[yy_current_state];
+        yy_is_jam = (yy_current_state == 0);
 
-	if ( ! yy_is_jam )
-		{
-		if ( yy_accept[yy_current_state] )
-			{
-			(yy_last_accepting_state) = yy_current_state;
-			(yy_last_accepting_cpos) = yy_cp;
-			}
-		}
+        if ( ! yy_is_jam )
+                {
+                if ( yy_accept[yy_current_state] )
+                        {
+                        (yy_last_accepting_state) = yy_current_state;
+                        (yy_last_accepting_cpos) = yy_cp;
+                        }
+                }
 
-	return yy_is_jam ? 0 : yy_current_state;
+        return yy_is_jam ? 0 : yy_current_state;
 }
 
     static void yyunput (int c, register char * yy_bp )
 {
-	register char *yy_cp;
-    
+        register char *yy_cp;
+
     yy_cp = (yy_c_buf_p);
 
-	/* undo effects of setting up wcspihtext */
-	*yy_cp = (yy_hold_char);
+        /* undo effects of setting up wcspihtext */
+        *yy_cp = (yy_hold_char);
 
-	if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
-		{ /* need to shift things up to make room */
-		/* +2 for EOB chars. */
-		register int number_to_move = (yy_n_chars) + 2;
-		register char *dest = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[
-					YY_CURRENT_BUFFER_LVALUE->yy_buf_size + 2];
-		register char *source =
-				&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move];
+        if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
+                { /* need to shift things up to make room */
+                /* +2 for EOB chars. */
+                register int number_to_move = (yy_n_chars) + 2;
+                register char *dest = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[
+                                        YY_CURRENT_BUFFER_LVALUE->yy_buf_size + 2];
+                register char *source =
+                                &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move];
 
-		while ( source > YY_CURRENT_BUFFER_LVALUE->yy_ch_buf )
-			*--dest = *--source;
+                while ( source > YY_CURRENT_BUFFER_LVALUE->yy_ch_buf )
+                        *--dest = *--source;
 
-		yy_cp += (int) (dest - source);
-		yy_bp += (int) (dest - source);
-		YY_CURRENT_BUFFER_LVALUE->yy_n_chars =
-			(yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_buf_size;
+                yy_cp += (int) (dest - source);
+                yy_bp += (int) (dest - source);
+                YY_CURRENT_BUFFER_LVALUE->yy_n_chars =
+                        (yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_buf_size;
 
-		if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
-			YY_FATAL_ERROR( "flex scanner push-back overflow" );
-		}
+                if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
+                        YY_FATAL_ERROR( "flex scanner push-back overflow" );
+                }
 
-	*--yy_cp = (char) c;
+        *--yy_cp = (char) c;
 
-	(yytext_ptr) = yy_bp;
-	(yy_hold_char) = *yy_cp;
-	(yy_c_buf_p) = yy_cp;
+        (yytext_ptr) = yy_bp;
+        (yy_hold_char) = *yy_cp;
+        (yy_c_buf_p) = yy_cp;
 }
 
 #ifndef YY_NO_INPUT
@@ -9985,182 +9979,182 @@ static int yy_get_next_buffer (void)
 #endif
 
 {
-	int c;
-    
-	*(yy_c_buf_p) = (yy_hold_char);
+        int c;
 
-	if ( *(yy_c_buf_p) == YY_END_OF_BUFFER_CHAR )
-		{
-		/* yy_c_buf_p now points to the character we want to return.
-		 * If this occurs *before* the EOB characters, then it's a
-		 * valid NUL; if not, then we've hit the end of the buffer.
-		 */
-		if ( (yy_c_buf_p) < &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)] )
-			/* This was really a NUL. */
-			*(yy_c_buf_p) = '\0';
+        *(yy_c_buf_p) = (yy_hold_char);
 
-		else
-			{ /* need more input */
-			int offset = (yy_c_buf_p) - (yytext_ptr);
-			++(yy_c_buf_p);
+        if ( *(yy_c_buf_p) == YY_END_OF_BUFFER_CHAR )
+                {
+                /* yy_c_buf_p now points to the character we want to return.
+                 * If this occurs *before* the EOB characters, then it's a
+                 * valid NUL; if not, then we've hit the end of the buffer.
+                 */
+                if ( (yy_c_buf_p) < &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)] )
+                        /* This was really a NUL. */
+                        *(yy_c_buf_p) = '\0';
 
-			switch ( yy_get_next_buffer(  ) )
-				{
-				case EOB_ACT_LAST_MATCH:
-					/* This happens because yy_g_n_b()
-					 * sees that we've accumulated a
-					 * token and flags that we need to
-					 * try matching the token before
-					 * proceeding.  But for input(),
-					 * there's no matching to consider.
-					 * So convert the EOB_ACT_LAST_MATCH
-					 * to EOB_ACT_END_OF_FILE.
-					 */
+                else
+                        { /* need more input */
+                        int offset = (yy_c_buf_p) - (yytext_ptr);
+                        ++(yy_c_buf_p);
 
-					/* Reset buffer status. */
-					wcspihrestart(wcspihin );
+                        switch ( yy_get_next_buffer(  ) )
+                                {
+                                case EOB_ACT_LAST_MATCH:
+                                        /* This happens because yy_g_n_b()
+                                         * sees that we've accumulated a
+                                         * token and flags that we need to
+                                         * try matching the token before
+                                         * proceeding.  But for input(),
+                                         * there's no matching to consider.
+                                         * So convert the EOB_ACT_LAST_MATCH
+                                         * to EOB_ACT_END_OF_FILE.
+                                         */
 
-					/*FALLTHROUGH*/
+                                        /* Reset buffer status. */
+                                        wcspihrestart(wcspihin );
 
-				case EOB_ACT_END_OF_FILE:
-					{
-					if ( wcspihwrap( ) )
-						return EOF;
+                                        /*FALLTHROUGH*/
 
-					if ( ! (yy_did_buffer_switch_on_eof) )
-						YY_NEW_FILE;
+                                case EOB_ACT_END_OF_FILE:
+                                        {
+                                        if ( wcspihwrap( ) )
+                                                return EOF;
+
+                                        if ( ! (yy_did_buffer_switch_on_eof) )
+                                                YY_NEW_FILE;
 #ifdef __cplusplus
-					return yyinput();
+                                        return yyinput();
 #else
-					return input();
+                                        return input();
 #endif
-					}
+                                        }
 
-				case EOB_ACT_CONTINUE_SCAN:
-					(yy_c_buf_p) = (yytext_ptr) + offset;
-					break;
-				}
-			}
-		}
+                                case EOB_ACT_CONTINUE_SCAN:
+                                        (yy_c_buf_p) = (yytext_ptr) + offset;
+                                        break;
+                                }
+                        }
+                }
 
-	c = *(unsigned char *) (yy_c_buf_p);	/* cast for 8-bit char's */
-	*(yy_c_buf_p) = '\0';	/* preserve wcspihtext */
-	(yy_hold_char) = *++(yy_c_buf_p);
+        c = *(unsigned char *) (yy_c_buf_p);    /* cast for 8-bit char's */
+        *(yy_c_buf_p) = '\0';   /* preserve wcspihtext */
+        (yy_hold_char) = *++(yy_c_buf_p);
 
-	YY_CURRENT_BUFFER_LVALUE->yy_at_bol = (c == '\n');
+        YY_CURRENT_BUFFER_LVALUE->yy_at_bol = (c == '\n');
 
-	return c;
+        return c;
 }
-#endif	/* ifndef YY_NO_INPUT */
+#endif  /* ifndef YY_NO_INPUT */
 
 /** Immediately switch to a different input stream.
  * @param input_file A readable stream.
- * 
+ *
  * @note This function does not reset the start condition to @c INITIAL .
  */
     void wcspihrestart  (FILE * input_file )
 {
-    
-	if ( ! YY_CURRENT_BUFFER ){
-        wcspihensure_buffer_stack ();
-		YY_CURRENT_BUFFER_LVALUE =
-            wcspih_create_buffer(wcspihin,YY_BUF_SIZE );
-	}
 
-	wcspih_init_buffer(YY_CURRENT_BUFFER,input_file );
-	wcspih_load_buffer_state( );
+        if ( ! YY_CURRENT_BUFFER ){
+        wcspihensure_buffer_stack ();
+                YY_CURRENT_BUFFER_LVALUE =
+            wcspih_create_buffer(wcspihin,YY_BUF_SIZE );
+        }
+
+        wcspih_init_buffer(YY_CURRENT_BUFFER,input_file );
+        wcspih_load_buffer_state( );
 }
 
 /** Switch to a different input buffer.
  * @param new_buffer The new input buffer.
- * 
+ *
  */
     void wcspih_switch_to_buffer  (YY_BUFFER_STATE  new_buffer )
 {
-    
-	/* TODO. We should be able to replace this entire function body
-	 * with
-	 *		wcspihpop_buffer_state();
-	 *		wcspihpush_buffer_state(new_buffer);
+
+        /* TODO. We should be able to replace this entire function body
+         * with
+         *              wcspihpop_buffer_state();
+         *              wcspihpush_buffer_state(new_buffer);
      */
-	wcspihensure_buffer_stack ();
-	if ( YY_CURRENT_BUFFER == new_buffer )
-		return;
+        wcspihensure_buffer_stack ();
+        if ( YY_CURRENT_BUFFER == new_buffer )
+                return;
 
-	if ( YY_CURRENT_BUFFER )
-		{
-		/* Flush out information for old buffer. */
-		*(yy_c_buf_p) = (yy_hold_char);
-		YY_CURRENT_BUFFER_LVALUE->yy_buf_pos = (yy_c_buf_p);
-		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
-		}
+        if ( YY_CURRENT_BUFFER )
+                {
+                /* Flush out information for old buffer. */
+                *(yy_c_buf_p) = (yy_hold_char);
+                YY_CURRENT_BUFFER_LVALUE->yy_buf_pos = (yy_c_buf_p);
+                YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
+                }
 
-	YY_CURRENT_BUFFER_LVALUE = new_buffer;
-	wcspih_load_buffer_state( );
+        YY_CURRENT_BUFFER_LVALUE = new_buffer;
+        wcspih_load_buffer_state( );
 
-	/* We don't actually know whether we did this switch during
-	 * EOF (wcspihwrap()) processing, but the only time this flag
-	 * is looked at is after wcspihwrap() is called, so it's safe
-	 * to go ahead and always set it.
-	 */
-	(yy_did_buffer_switch_on_eof) = 1;
+        /* We don't actually know whether we did this switch during
+         * EOF (wcspihwrap()) processing, but the only time this flag
+         * is looked at is after wcspihwrap() is called, so it's safe
+         * to go ahead and always set it.
+         */
+        (yy_did_buffer_switch_on_eof) = 1;
 }
 
 static void wcspih_load_buffer_state  (void)
 {
-    	(yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_n_chars;
-	(yytext_ptr) = (yy_c_buf_p) = YY_CURRENT_BUFFER_LVALUE->yy_buf_pos;
-	wcspihin = YY_CURRENT_BUFFER_LVALUE->yy_input_file;
-	(yy_hold_char) = *(yy_c_buf_p);
+        (yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_n_chars;
+        (yytext_ptr) = (yy_c_buf_p) = YY_CURRENT_BUFFER_LVALUE->yy_buf_pos;
+        wcspihin = YY_CURRENT_BUFFER_LVALUE->yy_input_file;
+        (yy_hold_char) = *(yy_c_buf_p);
 }
 
 /** Allocate and initialize an input buffer state.
  * @param file A readable stream.
  * @param size The character buffer size in bytes. When in doubt, use @c YY_BUF_SIZE.
- * 
+ *
  * @return the allocated buffer state.
  */
     YY_BUFFER_STATE wcspih_create_buffer  (FILE * file, int  size )
 {
-	YY_BUFFER_STATE b;
-    
-	b = (YY_BUFFER_STATE) wcspihalloc(sizeof( struct yy_buffer_state )  );
-	if ( ! b )
-		YY_FATAL_ERROR( "out of dynamic memory in wcspih_create_buffer()" );
+        YY_BUFFER_STATE b;
 
-	b->yy_buf_size = size;
+        b = (YY_BUFFER_STATE) wcspihalloc(sizeof( struct yy_buffer_state )  );
+        if ( ! b )
+                YY_FATAL_ERROR( "out of dynamic memory in wcspih_create_buffer()" );
 
-	/* yy_ch_buf has to be 2 characters longer than the size given because
-	 * we need to put in 2 end-of-buffer characters.
-	 */
-	b->yy_ch_buf = (char *) wcspihalloc(b->yy_buf_size + 2  );
-	if ( ! b->yy_ch_buf )
-		YY_FATAL_ERROR( "out of dynamic memory in wcspih_create_buffer()" );
+        b->yy_buf_size = size;
 
-	b->yy_is_our_buffer = 1;
+        /* yy_ch_buf has to be 2 characters longer than the size given because
+         * we need to put in 2 end-of-buffer characters.
+         */
+        b->yy_ch_buf = (char *) wcspihalloc(b->yy_buf_size + 2  );
+        if ( ! b->yy_ch_buf )
+                YY_FATAL_ERROR( "out of dynamic memory in wcspih_create_buffer()" );
 
-	wcspih_init_buffer(b,file );
+        b->yy_is_our_buffer = 1;
 
-	return b;
+        wcspih_init_buffer(b,file );
+
+        return b;
 }
 
 /** Destroy the buffer.
  * @param b a buffer created with wcspih_create_buffer()
- * 
+ *
  */
     void wcspih_delete_buffer (YY_BUFFER_STATE  b )
 {
-    
-	if ( ! b )
-		return;
 
-	if ( b == YY_CURRENT_BUFFER ) /* Not sure if we should pop here. */
-		YY_CURRENT_BUFFER_LVALUE = (YY_BUFFER_STATE) 0;
+        if ( ! b )
+                return;
 
-	if ( b->yy_is_our_buffer )
-		wcspihfree((void *) b->yy_ch_buf  );
+        if ( b == YY_CURRENT_BUFFER ) /* Not sure if we should pop here. */
+                YY_CURRENT_BUFFER_LVALUE = (YY_BUFFER_STATE) 0;
 
-	wcspihfree((void *) b  );
+        if ( b->yy_is_our_buffer )
+                wcspihfree((void *) b->yy_ch_buf  );
+
+        wcspihfree((void *) b  );
 }
 
 /* Initializes or reinitializes a buffer.
@@ -10170,12 +10164,12 @@ static void wcspih_load_buffer_state  (void)
     static void wcspih_init_buffer  (YY_BUFFER_STATE  b, FILE * file )
 
 {
-	int oerrno = errno;
-    
-	wcspih_flush_buffer(b );
+        int oerrno = errno;
 
-	b->yy_input_file = file;
-	b->yy_fill_buffer = 1;
+        wcspih_flush_buffer(b );
+
+        b->yy_input_file = file;
+        b->yy_fill_buffer = 1;
 
     /* If b is the current buffer, then wcspih_init_buffer was _probably_
      * called from wcspihrestart() or through yy_get_next_buffer.
@@ -10187,87 +10181,87 @@ static void wcspih_load_buffer_state  (void)
     }
 
         b->yy_is_interactive = 0;
-    
-	errno = oerrno;
+
+        errno = oerrno;
 }
 
 /** Discard all buffered characters. On the next scan, YY_INPUT will be called.
  * @param b the buffer state to be flushed, usually @c YY_CURRENT_BUFFER.
- * 
+ *
  */
     void wcspih_flush_buffer (YY_BUFFER_STATE  b )
 {
-    	if ( ! b )
-		return;
+        if ( ! b )
+                return;
 
-	b->yy_n_chars = 0;
+        b->yy_n_chars = 0;
 
-	/* We always need two end-of-buffer characters.  The first causes
-	 * a transition to the end-of-buffer state.  The second causes
-	 * a jam in that state.
-	 */
-	b->yy_ch_buf[0] = YY_END_OF_BUFFER_CHAR;
-	b->yy_ch_buf[1] = YY_END_OF_BUFFER_CHAR;
+        /* We always need two end-of-buffer characters.  The first causes
+         * a transition to the end-of-buffer state.  The second causes
+         * a jam in that state.
+         */
+        b->yy_ch_buf[0] = YY_END_OF_BUFFER_CHAR;
+        b->yy_ch_buf[1] = YY_END_OF_BUFFER_CHAR;
 
-	b->yy_buf_pos = &b->yy_ch_buf[0];
+        b->yy_buf_pos = &b->yy_ch_buf[0];
 
-	b->yy_at_bol = 1;
-	b->yy_buffer_status = YY_BUFFER_NEW;
+        b->yy_at_bol = 1;
+        b->yy_buffer_status = YY_BUFFER_NEW;
 
-	if ( b == YY_CURRENT_BUFFER )
-		wcspih_load_buffer_state( );
+        if ( b == YY_CURRENT_BUFFER )
+                wcspih_load_buffer_state( );
 }
 
 /** Pushes the new state onto the stack. The new state becomes
  *  the current state. This function will allocate the stack
  *  if necessary.
  *  @param new_buffer The new state.
- *  
+ *
  */
 void wcspihpush_buffer_state (YY_BUFFER_STATE new_buffer )
 {
-    	if (new_buffer == NULL)
-		return;
+        if (new_buffer == NULL)
+                return;
 
-	wcspihensure_buffer_stack();
+        wcspihensure_buffer_stack();
 
-	/* This block is copied from wcspih_switch_to_buffer. */
-	if ( YY_CURRENT_BUFFER )
-		{
-		/* Flush out information for old buffer. */
-		*(yy_c_buf_p) = (yy_hold_char);
-		YY_CURRENT_BUFFER_LVALUE->yy_buf_pos = (yy_c_buf_p);
-		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
-		}
+        /* This block is copied from wcspih_switch_to_buffer. */
+        if ( YY_CURRENT_BUFFER )
+                {
+                /* Flush out information for old buffer. */
+                *(yy_c_buf_p) = (yy_hold_char);
+                YY_CURRENT_BUFFER_LVALUE->yy_buf_pos = (yy_c_buf_p);
+                YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
+                }
 
-	/* Only push if top exists. Otherwise, replace top. */
-	if (YY_CURRENT_BUFFER)
-		(yy_buffer_stack_top)++;
-	YY_CURRENT_BUFFER_LVALUE = new_buffer;
+        /* Only push if top exists. Otherwise, replace top. */
+        if (YY_CURRENT_BUFFER)
+                (yy_buffer_stack_top)++;
+        YY_CURRENT_BUFFER_LVALUE = new_buffer;
 
-	/* copied from wcspih_switch_to_buffer. */
-	wcspih_load_buffer_state( );
-	(yy_did_buffer_switch_on_eof) = 1;
+        /* copied from wcspih_switch_to_buffer. */
+        wcspih_load_buffer_state( );
+        (yy_did_buffer_switch_on_eof) = 1;
 }
 
 /** Removes and deletes the top of the stack, if present.
  *  The next element becomes the new top.
- *  
+ *
  */
 void wcspihpop_buffer_state (void)
 {
-    	if (!YY_CURRENT_BUFFER)
-		return;
+        if (!YY_CURRENT_BUFFER)
+                return;
 
-	wcspih_delete_buffer(YY_CURRENT_BUFFER );
-	YY_CURRENT_BUFFER_LVALUE = NULL;
-	if ((yy_buffer_stack_top) > 0)
-		--(yy_buffer_stack_top);
+        wcspih_delete_buffer(YY_CURRENT_BUFFER );
+        YY_CURRENT_BUFFER_LVALUE = NULL;
+        if ((yy_buffer_stack_top) > 0)
+                --(yy_buffer_stack_top);
 
-	if (YY_CURRENT_BUFFER) {
-		wcspih_load_buffer_state( );
-		(yy_did_buffer_switch_on_eof) = 1;
-	}
+        if (YY_CURRENT_BUFFER) {
+                wcspih_load_buffer_state( );
+                (yy_did_buffer_switch_on_eof) = 1;
+        }
 }
 
 /* Allocates the stack if it does not exist.
@@ -10275,127 +10269,127 @@ void wcspihpop_buffer_state (void)
  */
 static void wcspihensure_buffer_stack (void)
 {
-	int num_to_alloc;
-    
-	if (!(yy_buffer_stack)) {
+        int num_to_alloc;
 
-		/* First allocation is just for 2 elements, since we don't know if this
-		 * scanner will even need a stack. We use 2 instead of 1 to avoid an
-		 * immediate realloc on the next call.
+        if (!(yy_buffer_stack)) {
+
+                /* First allocation is just for 2 elements, since we don't know if this
+                 * scanner will even need a stack. We use 2 instead of 1 to avoid an
+                 * immediate realloc on the next call.
          */
-		num_to_alloc = 1;
-		(yy_buffer_stack) = (struct yy_buffer_state**)wcspihalloc
-								(num_to_alloc * sizeof(struct yy_buffer_state*)
-								);
-		
-		memset((yy_buffer_stack), 0, num_to_alloc * sizeof(struct yy_buffer_state*));
-				
-		(yy_buffer_stack_max) = num_to_alloc;
-		(yy_buffer_stack_top) = 0;
-		return;
-	}
+                num_to_alloc = 1;
+                (yy_buffer_stack) = (struct yy_buffer_state**)wcspihalloc
+                                                                (num_to_alloc * sizeof(struct yy_buffer_state*)
+                                                                );
 
-	if ((yy_buffer_stack_top) >= ((yy_buffer_stack_max)) - 1){
+                memset((yy_buffer_stack), 0, num_to_alloc * sizeof(struct yy_buffer_state*));
 
-		/* Increase the buffer to prepare for a possible push. */
-		int grow_size = 8 /* arbitrary grow size */;
+                (yy_buffer_stack_max) = num_to_alloc;
+                (yy_buffer_stack_top) = 0;
+                return;
+        }
 
-		num_to_alloc = (yy_buffer_stack_max) + grow_size;
-		(yy_buffer_stack) = (struct yy_buffer_state**)wcspihrealloc
-								((yy_buffer_stack),
-								num_to_alloc * sizeof(struct yy_buffer_state*)
-								);
+        if ((yy_buffer_stack_top) >= ((yy_buffer_stack_max)) - 1){
 
-		/* zero only the new slots.*/
-		memset((yy_buffer_stack) + (yy_buffer_stack_max), 0, grow_size * sizeof(struct yy_buffer_state*));
-		(yy_buffer_stack_max) = num_to_alloc;
-	}
+                /* Increase the buffer to prepare for a possible push. */
+                int grow_size = 8 /* arbitrary grow size */;
+
+                num_to_alloc = (yy_buffer_stack_max) + grow_size;
+                (yy_buffer_stack) = (struct yy_buffer_state**)wcspihrealloc
+                                                                ((yy_buffer_stack),
+                                                                num_to_alloc * sizeof(struct yy_buffer_state*)
+                                                                );
+
+                /* zero only the new slots.*/
+                memset((yy_buffer_stack) + (yy_buffer_stack_max), 0, grow_size * sizeof(struct yy_buffer_state*));
+                (yy_buffer_stack_max) = num_to_alloc;
+        }
 }
 
 /** Setup the input buffer state to scan directly from a user-specified character buffer.
  * @param base the character buffer
  * @param size the size in bytes of the character buffer
- * 
- * @return the newly allocated buffer state object. 
+ *
+ * @return the newly allocated buffer state object.
  */
 YY_BUFFER_STATE wcspih_scan_buffer  (char * base, yy_size_t  size )
 {
-	YY_BUFFER_STATE b;
-    
-	if ( size < 2 ||
-	     base[size-2] != YY_END_OF_BUFFER_CHAR ||
-	     base[size-1] != YY_END_OF_BUFFER_CHAR )
-		/* They forgot to leave room for the EOB's. */
-		return 0;
+        YY_BUFFER_STATE b;
 
-	b = (YY_BUFFER_STATE) wcspihalloc(sizeof( struct yy_buffer_state )  );
-	if ( ! b )
-		YY_FATAL_ERROR( "out of dynamic memory in wcspih_scan_buffer()" );
+        if ( size < 2 ||
+             base[size-2] != YY_END_OF_BUFFER_CHAR ||
+             base[size-1] != YY_END_OF_BUFFER_CHAR )
+                /* They forgot to leave room for the EOB's. */
+                return 0;
 
-	b->yy_buf_size = size - 2;	/* "- 2" to take care of EOB's */
-	b->yy_buf_pos = b->yy_ch_buf = base;
-	b->yy_is_our_buffer = 0;
-	b->yy_input_file = 0;
-	b->yy_n_chars = b->yy_buf_size;
-	b->yy_is_interactive = 0;
-	b->yy_at_bol = 1;
-	b->yy_fill_buffer = 0;
-	b->yy_buffer_status = YY_BUFFER_NEW;
+        b = (YY_BUFFER_STATE) wcspihalloc(sizeof( struct yy_buffer_state )  );
+        if ( ! b )
+                YY_FATAL_ERROR( "out of dynamic memory in wcspih_scan_buffer()" );
 
-	wcspih_switch_to_buffer(b  );
+        b->yy_buf_size = size - 2;      /* "- 2" to take care of EOB's */
+        b->yy_buf_pos = b->yy_ch_buf = base;
+        b->yy_is_our_buffer = 0;
+        b->yy_input_file = 0;
+        b->yy_n_chars = b->yy_buf_size;
+        b->yy_is_interactive = 0;
+        b->yy_at_bol = 1;
+        b->yy_fill_buffer = 0;
+        b->yy_buffer_status = YY_BUFFER_NEW;
 
-	return b;
+        wcspih_switch_to_buffer(b  );
+
+        return b;
 }
 
 /** Setup the input buffer state to scan a string. The next call to wcspihlex() will
  * scan from a @e copy of @a str.
  * @param yystr a NUL-terminated string to scan
- * 
+ *
  * @return the newly allocated buffer state object.
  * @note If you want to scan bytes that may contain NUL values, then use
  *       wcspih_scan_bytes() instead.
  */
 YY_BUFFER_STATE wcspih_scan_string (yyconst char * yystr )
 {
-    
-	return wcspih_scan_bytes(yystr,strlen(yystr) );
+
+        return wcspih_scan_bytes(yystr,strlen(yystr) );
 }
 
 /** Setup the input buffer state to scan the given bytes. The next call to wcspihlex() will
  * scan from a @e copy of @a bytes.
  * @param bytes the byte buffer to scan
  * @param len the number of bytes in the buffer pointed to by @a bytes.
- * 
+ *
  * @return the newly allocated buffer state object.
  */
 YY_BUFFER_STATE wcspih_scan_bytes  (yyconst char * yybytes, int  _yybytes_len )
 {
-	YY_BUFFER_STATE b;
-	char *buf;
-	yy_size_t n;
-	int i;
-    
-	/* Get memory for full buffer, including space for trailing EOB's. */
-	n = _yybytes_len + 2;
-	buf = (char *) wcspihalloc(n  );
-	if ( ! buf )
-		YY_FATAL_ERROR( "out of dynamic memory in wcspih_scan_bytes()" );
+        YY_BUFFER_STATE b;
+        char *buf;
+        yy_size_t n;
+        int i;
 
-	for ( i = 0; i < _yybytes_len; ++i )
-		buf[i] = yybytes[i];
+        /* Get memory for full buffer, including space for trailing EOB's. */
+        n = _yybytes_len + 2;
+        buf = (char *) wcspihalloc(n  );
+        if ( ! buf )
+                YY_FATAL_ERROR( "out of dynamic memory in wcspih_scan_bytes()" );
 
-	buf[_yybytes_len] = buf[_yybytes_len+1] = YY_END_OF_BUFFER_CHAR;
+        for ( i = 0; i < _yybytes_len; ++i )
+                buf[i] = yybytes[i];
 
-	b = wcspih_scan_buffer(buf,n );
-	if ( ! b )
-		YY_FATAL_ERROR( "bad buffer in wcspih_scan_bytes()" );
+        buf[_yybytes_len] = buf[_yybytes_len+1] = YY_END_OF_BUFFER_CHAR;
 
-	/* It's okay to grow etc. this buffer, and we should throw it
-	 * away when we're done.
-	 */
-	b->yy_is_our_buffer = 1;
+        b = wcspih_scan_buffer(buf,n );
+        if ( ! b )
+                YY_FATAL_ERROR( "bad buffer in wcspih_scan_bytes()" );
 
-	return b;
+        /* It's okay to grow etc. this buffer, and we should throw it
+         * away when we're done.
+         */
+        b->yy_is_our_buffer = 1;
+
+        return b;
 }
 
 #ifndef YY_EXIT_FAILURE
@@ -10404,40 +10398,40 @@ YY_BUFFER_STATE wcspih_scan_bytes  (yyconst char * yybytes, int  _yybytes_len )
 
 static void yy_fatal_error (yyconst char* msg )
 {
-    	(void) fprintf( stderr, "%s\n", msg );
-	exit( YY_EXIT_FAILURE );
+        (void) fprintf( stderr, "%s\n", msg );
+        exit( YY_EXIT_FAILURE );
 }
 
 /* Redefine yyless() so it works in section 3 code. */
 
 #undef yyless
 #define yyless(n) \
-	do \
-		{ \
-		/* Undo effects of setting up wcspihtext. */ \
+        do \
+                { \
+                /* Undo effects of setting up wcspihtext. */ \
         int yyless_macro_arg = (n); \
         YY_LESS_LINENO(yyless_macro_arg);\
-		wcspihtext[wcspihleng] = (yy_hold_char); \
-		(yy_c_buf_p) = wcspihtext + yyless_macro_arg; \
-		(yy_hold_char) = *(yy_c_buf_p); \
-		*(yy_c_buf_p) = '\0'; \
-		wcspihleng = yyless_macro_arg; \
-		} \
-	while ( 0 )
+                wcspihtext[wcspihleng] = (yy_hold_char); \
+                (yy_c_buf_p) = wcspihtext + yyless_macro_arg; \
+                (yy_hold_char) = *(yy_c_buf_p); \
+                *(yy_c_buf_p) = '\0'; \
+                wcspihleng = yyless_macro_arg; \
+                } \
+        while ( 0 )
 
 /* Accessor  methods (get/set functions) to struct members. */
 
 /** Get the current line number.
- * 
+ *
  */
 int wcspihget_lineno  (void)
 {
-        
+
     return wcspihlineno;
 }
 
 /** Get the input stream.
- * 
+ *
  */
 FILE *wcspihget_in  (void)
 {
@@ -10445,7 +10439,7 @@ FILE *wcspihget_in  (void)
 }
 
 /** Get the output stream.
- * 
+ *
  */
 FILE *wcspihget_out  (void)
 {
@@ -10453,7 +10447,7 @@ FILE *wcspihget_out  (void)
 }
 
 /** Get the length of the current token.
- * 
+ *
  */
 int wcspihget_leng  (void)
 {
@@ -10461,7 +10455,7 @@ int wcspihget_leng  (void)
 }
 
 /** Get the current token.
- * 
+ *
  */
 
 char *wcspihget_text  (void)
@@ -10471,18 +10465,18 @@ char *wcspihget_text  (void)
 
 /** Set the current line number.
  * @param line_number
- * 
+ *
  */
 void wcspihset_lineno (int  line_number )
 {
-    
+
     wcspihlineno = line_number;
 }
 
 /** Set the input stream. This does not discard the current
  * input buffer.
  * @param in_str A readable stream.
- * 
+ *
  * @see wcspih_switch_to_buffer
  */
 void wcspihset_in (FILE *  in_str )
@@ -10536,17 +10530,17 @@ static int yy_init_globals (void)
 /* wcspihlex_destroy is for both reentrant and non-reentrant scanners. */
 int wcspihlex_destroy  (void)
 {
-    
-    /* Pop the buffer stack, destroying each element. */
-	while(YY_CURRENT_BUFFER){
-		wcspih_delete_buffer(YY_CURRENT_BUFFER  );
-		YY_CURRENT_BUFFER_LVALUE = NULL;
-		wcspihpop_buffer_state();
-	}
 
-	/* Destroy the stack itself. */
-	wcspihfree((yy_buffer_stack) );
-	(yy_buffer_stack) = NULL;
+    /* Pop the buffer stack, destroying each element. */
+        while(YY_CURRENT_BUFFER){
+                wcspih_delete_buffer(YY_CURRENT_BUFFER  );
+                YY_CURRENT_BUFFER_LVALUE = NULL;
+                wcspihpop_buffer_state();
+        }
+
+        /* Destroy the stack itself. */
+        wcspihfree((yy_buffer_stack) );
+        (yy_buffer_stack) = NULL;
 
     /* Reset the globals. This is important in a non-reentrant scanner so the next time
      * wcspihlex() is called, initialization will occur. */
@@ -10562,48 +10556,48 @@ int wcspihlex_destroy  (void)
 #ifndef yytext_ptr
 static void yy_flex_strncpy (char* s1, yyconst char * s2, int n )
 {
-	register int i;
-	for ( i = 0; i < n; ++i )
-		s1[i] = s2[i];
+        register int i;
+        for ( i = 0; i < n; ++i )
+                s1[i] = s2[i];
 }
 #endif
 
 #ifdef YY_NEED_STRLEN
 static int yy_flex_strlen (yyconst char * s )
 {
-	register int n;
-	for ( n = 0; s[n]; ++n )
-		;
+        register int n;
+        for ( n = 0; s[n]; ++n )
+                ;
 
-	return n;
+        return n;
 }
 #endif
 
 void *wcspihalloc (yy_size_t  size )
 {
-	return (void *) malloc( size );
+        return (void *) malloc( size );
 }
 
 void *wcspihrealloc  (void * ptr, yy_size_t  size )
 {
-	/* The cast to (char *) in the following accommodates both
-	 * implementations that use char* generic pointers, and those
-	 * that use void* generic pointers.  It works with the latter
-	 * because both ANSI C and C++ allow castless assignment from
-	 * any pointer type to void*, and deal with argument conversions
-	 * as though doing an assignment.
-	 */
-	return (void *) realloc( (char *) ptr, size );
+        /* The cast to (char *) in the following accommodates both
+         * implementations that use char* generic pointers, and those
+         * that use void* generic pointers.  It works with the latter
+         * because both ANSI C and C++ allow castless assignment from
+         * any pointer type to void*, and deal with argument conversions
+         * as though doing an assignment.
+         */
+        return (void *) realloc( (char *) ptr, size );
 }
 
 void wcspihfree (void * ptr )
 {
-	free( (char *) ptr );	/* see wcspihrealloc() for (char *) cast */
+        free( (char *) ptr );   /* see wcspihrealloc() for (char *) cast */
 }
 
 #define YYTABLES_NAME "yytables"
 
-#line 1030 "wcspih.l"
+#line 1024 "wcspih.l"
 
 
 
@@ -10725,22 +10719,18 @@ int wcspih_inits(
 
 
 /*----------------------------------------------------------------------------
-* Interpret any VELREF keywords encountered for each coordinate
-* representation.
+* Interpret special keywords encountered for each coordinate representation.
 *---------------------------------------------------------------------------*/
 
 int wcspih_final(
   int alts[],
   double epoch[],
-  int velref[],
   double vsource[],
   int *nwcs,
   struct wcsprm **wcs)
 
 {
-  const char *specsys[] = {"LSRK", "BARYCENT", "TOPOCENT",
-                           "LSRD", "GEOCENTR", "SOURCE", "GALACTOC"};
-  int iax, ivf, status;
+  int iax, status;
   double beta, c = 299792458.0;
 
   for (iax = 0; iax < *nwcs; iax++) {
@@ -10748,17 +10738,6 @@ int wcspih_final(
     if (undefined((*wcs+iax)->equinox) && !undefined(epoch[iax])) {
       /* Set EQUINOXa. */
       (*wcs+iax)->equinox = epoch[iax];
-    }
-
-    /* Check for VELREF overriding SPECSYSa. */
-    if (velref[iax]) {
-      /* Set SPECSYSa. */
-      if ((*wcs+iax)->specsys[0] == '\0') {
-        ivf = velref[iax]%256 - 1;
-        if (0 <= ivf && ivf < 7) {
-          sprintf((*wcs+iax)->specsys, "%s", specsys[ivf]);
-        }
-      }
     }
 
     /* Check for VSOURCEa overriding ZSOURCEa. */

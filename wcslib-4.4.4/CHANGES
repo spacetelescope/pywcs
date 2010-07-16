@@ -1,3 +1,32 @@
+WCSLIB version 4.5 (2010/07/16)
+-------------------------------
+
+* C library
+
+  - Fixed the interpretation of VELREF when translating AIPS-convention
+    spectral types.  Such translation is now handled by a new special-
+    purpose function, spcaips().  The wcsprm struct has been augmented
+    with an entry for velref which is filled by wcspih() and wcsbth().
+    Previously, selection by VELREF of the radio or optical velocity
+    convention for type VELO was not properly handled.
+
+* Fortran wrappers
+
+  - New wrapper function:
+    - SPCAIPS for spcaips().
+
+  - Changed spc.inc, spc_f.c, wcs.inc and wcs_f.c to track VELREF
+    changes.
+
+  - Declared functions external in the include files to avoid compiler
+    warnings about unused variables (if the particular option is set).
+
+* Utilities
+
+  - Added a '-q' option to fitshdr to quit after a specified number
+    of HDUs.
+
+
 WCSLIB version 4.4.4 (2009/09/14)
 ---------------------------------
 
@@ -163,7 +192,7 @@ WCSLIB version 4.4 (2009/08/10)
   - New configure options, --with-pgplotinc, --with-pgplotlib,
     --with-cfitsioinc and --with-cfitsiolib allow additional directories
     to be added to the library and include file search path.
-    
+
   - Miscellaneous fixes and improvements to the installation process.
 
   - Generate a metadata file for pkg-config.
@@ -558,7 +587,8 @@ WCSLIB version 4.1 (2005/08/31)
     twcs.f, twcsmix.f, twcssub.f, wcs.inc, wcs_f.c, wcshdr.inc,
     wcshdr_f.c.
 
-  - Added *_ERRMSG arrays containing status messages to all include files.
+  - Added *_ERRMSG arrays containing status messages to all include
+    files.
 
   - Removed support for K&R C.
 
@@ -1507,4 +1537,4 @@ WCSLIB version 1.0 (1995/01/31)
   Initial release.
 
 ------------------------------------------------------------------------
-$Id: CHANGES,v 4.5 2009/09/14 06:58:07 cal103 Exp cal103 $
+$Id: CHANGES,v 4.5 2010/07/16 07:01:26 cal103 Exp $

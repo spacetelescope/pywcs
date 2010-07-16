@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.4 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2009, Mark Calabretta
+  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: fitshdr.h,v 4.4.1.1 2009/08/10 08:52:49 cal103 Exp cal103 $
+  $Id: fitshdr.h,v 4.5 2010/07/16 07:01:25 cal103 Exp $
 *=============================================================================
 *
 * The Flexible Image Transport System (FITS), a data format widely used in
@@ -388,7 +388,7 @@ extern "C" {
 #define FITSHDR_KEYVALUE 0x02
 #define FITSHDR_COMMENT  0x04
 #define FITSHDR_KEYREC   0x08
-#define FITSHDR_CARD     0x08	/* Alias for backwards compatibility. */
+#define FITSHDR_CARD     0x08   /* Alias for backwards compatibility. */
 #define FITSHDR_TRAILER  0x10
 
 
@@ -403,9 +403,9 @@ extern const char *fitshdr_errmsg[];
 
 /* Struct used for indexing the keywords. */
 struct fitskeyid {
-  char name[12];		/* Keyword name, null-terminated.           */
-  int  count;			/* Number of occurrences of keyword.        */
-  int  idx[2];			/* Indices into fitskey array.              */
+  char name[12];                /* Keyword name, null-terminated.           */
+  int  count;                   /* Number of occurrences of keyword.        */
+  int  idx[2];                  /* Indices into fitskey array.              */
 };
 
 /* Size of the fitskeyid struct in int units, used by the Fortran wrappers. */
@@ -414,22 +414,22 @@ struct fitskeyid {
 
 /* Struct used for storing FITS keywords. */
 struct fitskey {
-  int  keyno;			/* Header keyrecord sequence number (1-rel).*/
-  int  keyid;			/* Index into fitskeyid[].                  */
-  int  status;			/* Header keyrecord status bit flags.       */
-  char keyword[12];		/* Keyword name, null-filled.               */
-  int  type;			/* Keyvalue type (see above).               */
-  int  padding;			/* (Dummy inserted for alignment purposes.) */
+  int  keyno;                   /* Header keyrecord sequence number (1-rel).*/
+  int  keyid;                   /* Index into fitskeyid[].                  */
+  int  status;                  /* Header keyrecord status bit flags.       */
+  char keyword[12];             /* Keyword name, null-filled.               */
+  int  type;                    /* Keyvalue type (see above).               */
+  int  padding;                 /* (Dummy inserted for alignment purposes.) */
   union {
-    int    i;			/* 32-bit integer and logical values.       */
-    int64  k;			/* 64-bit integer values.                   */
-    int    l[8];		/* Very long signed integer values.         */
-    double f;			/* Floating point values.                   */
-    double c[2];		/* Complex values.                          */
-    char   s[72];		/* String values, null-terminated.          */
-  } keyvalue;			/* Keyvalue.                                */
-  int  ulen;			/* Length of units string.                  */
-  char comment[84];		/* Comment (or keyrecord), null-terminated. */
+    int    i;                   /* 32-bit integer and logical values.       */
+    int64  k;                   /* 64-bit integer values.                   */
+    int    l[8];                /* Very long signed integer values.         */
+    double f;                   /* Floating point values.                   */
+    double c[2];                /* Complex values.                          */
+    char   s[72];               /* String values, null-terminated.          */
+  } keyvalue;                   /* Keyvalue.                                */
+  int  ulen;                    /* Length of units string.                  */
+  char comment[84];             /* Comment (or keyrecord), null-terminated. */
 };
 
 /* Size of the fitskey struct in int units, used by the Fortran wrappers. */

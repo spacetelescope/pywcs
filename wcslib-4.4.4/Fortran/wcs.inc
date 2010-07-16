@@ -1,7 +1,7 @@
 *=======================================================================
 *
-* WCSLIB 4.4 - an implementation of the FITS WCS standard.
-* Copyright (C) 1995-2009, Mark Calabretta
+* WCSLIB 4.5 - an implementation of the FITS WCS standard.
+* Copyright (C) 1995-2010, Mark Calabretta
 *
 * This file is part of WCSLIB.
 *
@@ -28,10 +28,13 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: wcs.inc,v 4.4.1.1 2009/08/10 08:54:51 cal103 Exp cal103 $
+* $Id: wcs.inc,v 4.5 2010/07/16 07:01:26 cal103 Exp $
 *=======================================================================
 
 *     Functions.
+      EXTERNAL  WCSCOPY, WCSFREE, WCSGET, WCSINI, WCSMIX, WCSNPS,
+     :          WCSNPV, WCSP2S, WCSPRT, WCSSPTR, WCSPUT, WCSS2P, WCSSET,
+     :          WCSSUB
       INTEGER   WCSCOPY, WCSFREE, WCSGET, WCSINI, WCSMIX, WCSNPS,
      :          WCSNPV, WCSP2S, WCSPRT, WCSSPTR, WCSPUT, WCSS2P, WCSSET,
      :          WCSSUB
@@ -50,7 +53,7 @@
      :          WCS_NPSMAX, WCS_NPV, WCS_NPVMAX, WCS_OBSGEO, WCS_PC,
      :          WCS_PS, WCS_PV, WCS_RADESYS, WCS_RESTFRQ, WCS_RESTWAV,
      :          WCS_SPECSYS, WCS_SSYSOBS, WCS_SSYSSRC, WCS_VELANGL,
-     :          WCS_VELOSYS, WCS_WCSNAME, WCS_ZSOURCE
+     :          WCS_VELOSYS, WCS_VELREF, WCS_WCSNAME, WCS_ZSOURCE
 
       PARAMETER (WCS_FLAG     = 100)
       PARAMETER (WCS_NAXIS    = 101)
@@ -70,31 +73,32 @@
       PARAMETER (WCS_NPS      = 115)
       PARAMETER (WCS_NPSMAX   = 116)
       PARAMETER (WCS_PS       = 117)
-      PARAMETER (WCS_ALTLIN   = 118)
-      PARAMETER (WCS_CD       = 119)
-      PARAMETER (WCS_CROTA    = 120)
+      PARAMETER (WCS_CD       = 118)
+      PARAMETER (WCS_CROTA    = 119)
+      PARAMETER (WCS_ALTLIN   = 120)
+      PARAMETER (WCS_VELREF   = 121)
 
-      PARAMETER (WCS_ALT      = 121)
-      PARAMETER (WCS_COLNUM   = 122)
-      PARAMETER (WCS_COLAX    = 123)
+      PARAMETER (WCS_ALT      = 122)
+      PARAMETER (WCS_COLNUM   = 123)
+      PARAMETER (WCS_COLAX    = 124)
 
-      PARAMETER (WCS_CNAME    = 124)
-      PARAMETER (WCS_CRDER    = 125)
-      PARAMETER (WCS_CSYER    = 126)
-      PARAMETER (WCS_DATEAVG  = 127)
-      PARAMETER (WCS_DATEOBS  = 128)
-      PARAMETER (WCS_EQUINOX  = 129)
-      PARAMETER (WCS_MJDAVG   = 130)
-      PARAMETER (WCS_MJDOBS   = 131)
-      PARAMETER (WCS_OBSGEO   = 132)
-      PARAMETER (WCS_RADESYS  = 133)
-      PARAMETER (WCS_SPECSYS  = 134)
-      PARAMETER (WCS_SSYSOBS  = 135)
-      PARAMETER (WCS_SSYSSRC  = 136)
-      PARAMETER (WCS_VELANGL  = 137)
-      PARAMETER (WCS_VELOSYS  = 138)
-      PARAMETER (WCS_WCSNAME  = 139)
-      PARAMETER (WCS_ZSOURCE  = 140)
+      PARAMETER (WCS_CNAME    = 125)
+      PARAMETER (WCS_CRDER    = 126)
+      PARAMETER (WCS_CSYER    = 127)
+      PARAMETER (WCS_DATEAVG  = 128)
+      PARAMETER (WCS_DATEOBS  = 129)
+      PARAMETER (WCS_EQUINOX  = 130)
+      PARAMETER (WCS_MJDAVG   = 131)
+      PARAMETER (WCS_MJDOBS   = 132)
+      PARAMETER (WCS_OBSGEO   = 133)
+      PARAMETER (WCS_RADESYS  = 134)
+      PARAMETER (WCS_SPECSYS  = 135)
+      PARAMETER (WCS_SSYSOBS  = 136)
+      PARAMETER (WCS_VELOSYS  = 137)
+      PARAMETER (WCS_ZSOURCE  = 138)
+      PARAMETER (WCS_SSYSSRC  = 139)
+      PARAMETER (WCS_VELANGL  = 140)
+      PARAMETER (WCS_WCSNAME  = 141)
 
 *     Codes for WCS data structure elements used by WCSGET (only).
       INTEGER   WCS_CEL, WCS_CUBEFACE, WCS_LAT, WCS_LATTYP, WCS_LIN,
@@ -102,8 +106,8 @@
      :          WCS_SPEC, WCS_TAB, WCS_TYPES, WCS_WTB
 
       PARAMETER (WCS_NTAB     = 200)
-      PARAMETER (WCS_TAB      = 201)
-      PARAMETER (WCS_NWTB     = 202)
+      PARAMETER (WCS_NWTB     = 201)
+      PARAMETER (WCS_TAB      = 202)
       PARAMETER (WCS_WTB      = 203)
       PARAMETER (WCS_TYPES    = 204)
       PARAMETER (WCS_LNGTYP   = 205)

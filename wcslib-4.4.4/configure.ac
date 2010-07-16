@@ -1,14 +1,17 @@
 #-----------------------------------------------------------------------------
 # Process this file with autoconf-2.53 or later to produce a configure script.
 #-----------------------------------------------------------------------------
+# Use autoconf-2.61 in MacOSX 10.6.2 to avoid spurious messages about deleting
+# conftest.dSYM when configuring in MacOSX 10.6.
+#
 # Author: Mark Calabretta, Australia Telescope National Facility
 # http://www.atnf.csiro.au/~mcalabre/index.html
-# $Id: configure.ac,v 4.4.1.3 2009/09/14 06:51:08 cal103 Exp cal103 $
+# $Id: configure.ac,v 4.5 2010/07/16 07:01:26 cal103 Exp $
 #-----------------------------------------------------------------------------
 
-AC_INIT([WCSLIB], [4.4.4], [mcalabre@atnf.csiro.au], [wcslib-4.4.4])
+AC_INIT([WCSLIB], [4.5], [mcalabre@atnf.csiro.au], [wcslib-4.5])
 AC_PREREQ([2.53])
-AC_REVISION([$Revision: 4.4.1.3 $])
+AC_REVISION([$Revision: 4.5 $])
 AC_SUBST([PACKAGE_VERSION])
 AC_DEFINE_UNQUOTED([WCSLIB_VERSION], [$PACKAGE_VERSION])
 
@@ -455,7 +458,7 @@ if test "x$with_cfitsio" != xno -o \
       AC_MSG_WARN([PGPLOT not found, skipping PGPLOT-dependent tests.])
     else
       AC_MSG_NOTICE([PGPLOT appears to be available.])
-  
+
       TSTDIRS="$TSTDIRS pgsbox"
     fi
   fi

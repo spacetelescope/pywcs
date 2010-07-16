@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.4 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2009, Mark Calabretta
+  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: twcsmix.c,v 4.4.1.1 2009/08/10 08:54:26 cal103 Exp cal103 $
+  $Id: twcsmix.c,v 4.5 2010/07/16 07:01:26 cal103 Exp $
 *=============================================================================
 *
 * twcsmix tests wcsmix() for closure on the 1 degree celestial graticule for
@@ -68,10 +68,10 @@ const double PC[4][4] = {{    1.1,  0.0,  0.0,  0.0},
                          {    0.0,  0.2,  0.0,  1.0}};
 const double CDELT[4] =  {-9.635265432e-6, 1.0, 1.0, -1.0};
 
-                                /* The "xxx" is reset in main(). */
+				/* The "xxx" is reset in main(). */
 char CTYPE[4][9] = {"WAVE-F2W", "XLAT-xxx", "TIME    ", "XLON-xxx"};
 
-                                /* Will be reset in mixex(). */
+				/* Will be reset in mixex(). */
 double CRVAL[4] = {0.214982042, -30.0, -2e3, 150.0};
 double LONPOLE  = 150.0;
 double LATPOLE  = 999.0;
@@ -79,7 +79,7 @@ double RESTFRQ  =   1.42040575e9;
 double RESTWAV  =   0.0;
 
 int NPV;
-struct pvcard PV[10];           /* Projection parameters are set in main(). */
+struct pvcard PV[10];		/* Projection parameters are set in main(). */
 
 int main()
 
@@ -123,22 +123,22 @@ int main()
   /* projections will be exercised with the same obliquity    */
   /* parameters.                                              */
   /*----------------------------------------------------------*/
-  PV[0].i = 4;                  /* Longitude is on axis 4.     */
-  PV[0].m = 1;                  /* Parameter number 1.         */
-  PV[0].value =  0.0;           /* Fiducial native longitude.  */
+  PV[0].i = 4;			/* Longitude is on axis 4.     */
+  PV[0].m = 1;			/* Parameter number 1.         */
+  PV[0].value =  0.0;		/* Fiducial native longitude.  */
 
-  PV[1].i = 4;                  /* Longitude is on axis 4.     */
-  PV[1].m = 2;                  /* Parameter number 2.         */
-  PV[1].value = 90.0;           /* Fiducial native latitude.   */
+  PV[1].i = 4;			/* Longitude is on axis 4.     */
+  PV[1].m = 2;			/* Parameter number 2.         */
+  PV[1].value = 90.0;		/* Fiducial native latitude.   */
 
   /* Set the PVi_m keyvalues for the latitude axis.           */
-  PV[2].i = 2;                  /* Latitude is on axis 2.      */
-  PV[2].m = 1;                  /* Parameter number 1.         */
-  PV[2].value = 0.0;            /* PVi_1 (set below).          */
+  PV[2].i = 2;			/* Latitude is on axis 2.      */
+  PV[2].m = 1;			/* Parameter number 1.         */
+  PV[2].value = 0.0;		/* PVi_1 (set below).          */
 
-  PV[3].i = 2;                  /* Latitude is on axis 2.      */
-  PV[3].m = 2;                  /* Parameter number 2.         */
-  PV[3].value = 0.0;            /* PVi_2 (set below).          */
+  PV[3].i = 2;			/* Latitude is on axis 2.      */
+  PV[3].m = 2;			/* Parameter number 2.         */
+  PV[3].value = 0.0;		/* PVi_2 (set below).          */
 
   /* ARC: zenithal/azimuthal equidistant. */
   strncpy(&CTYPE[1][5], "ARC", 3);
@@ -551,7 +551,7 @@ double imax, imin, jmax, jmin;
   native.crval[wcs->lng] =  0.0;
   native.crval[wcs->lat] = 90.0;
   native.lonpole = 180.0;
-  (void)wcsset_(&native);
+  (void)wcsset(&native);
 
   cpgsci(8);
 
@@ -829,8 +829,8 @@ struct wcsprm *wcs;
   }
 
   /* Extract information from the FITS header. */
-  if ((status = wcsset_(wcs))) {
-    printf("wcsset_ ERROR%3d\n", status);
+  if ((status = wcsset(wcs))) {
+    printf("wcsset ERROR%3d\n", status);
   }
 
   return;

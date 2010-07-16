@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.4 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2009, Mark Calabretta
+  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,10 +28,10 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: spc.h,v 4.4.1.1 2009/08/10 08:52:49 cal103 Exp cal103 $
+  $Id: spc.h,v 4.5 2010/07/16 07:01:25 cal103 Exp $
 *=============================================================================
 *
-* WCSLIB 4.4 - C routines that implement the spectral coordinate systems
+* WCSLIB 4.5 - C routines that implement the spectral coordinate systems
 * recognized by the FITS World Coordinate System (WCS) standard.  Refer to
 *
 *   "Representations of world coordinates in FITS",
@@ -82,6 +82,9 @@
 *
 *   - Given a set of spectral keywords, a translation routine, spctrn(),
 *     produces the corresponding set for the specified spectral CTYPEia.
+*
+*   - spcaips() translates AIPS-convention spectral keywords, CTYPEn and
+*     VELREF, into CTYPEia and SPECSYSa.
 *
 * Spectral variable types - S, P, and X:
 * --------------------------------------
@@ -287,8 +290,7 @@
 * --------------------------------------------
 * spctyp() checks whether a CTYPEia keyvalue is a valid spectral axis type and
 * if so returns information derived from it relating to the associated S-, P-,
-* and X-type spectral variables (see explanation above).  It recognizes and
-* translates AIPS-convention spectral CTYPEia keyvalues.
+* and X-type spectral variables (see explanation above).
 *
 * The return arguments are guaranteed not be modified if CTYPEia is not a
 * valid spectral type; zero-pointers may be specified for any that are not of
@@ -457,9 +459,7 @@
 *                       axes, the character code for the P-type spectral
 *                       variable in the algorithm code (i.e. the eighth
 *                       character of CTYPEia) may be set to '?' (it will not
-*                       be reset).  AIPS-convention spectral types are
-*                       accepted for ctypeS1 but the Doppler frame encoded
-*                       within them will not be used.
+*                       be reset).
 *   crvalS1   double    Value of the S-type spectral variable at the reference
 *                       point, i.e. the CRVALia keyvalue, SI units.
 *   cdeltS1   double    Increment of the S-type spectral variable at the
@@ -487,9 +487,6 @@
 *                       code will be substituted (applies for grism axes as
 *                       well as non-grism).
 *
-*                       AIPS-convention spectral types are not accepted for
-*                       ctypeS2.
-*
 * Returned:
 *   crvalS2   double*   Value of the new S-type spectral variable at the
 *                       reference point, i.e. the new CRVALia keyvalue, SI
@@ -507,6 +504,56 @@
 *                       restwav are not specified when required, or if ctypeS1
 *                       or ctypeS2 are self-inconsistent, or have different
 *                       spectral X-type variables.
+*
+*
+* spcaips() - Translate AIPS-convention spectral keywords
+* -------------------------------------------------------
+* spcaips() translates AIPS-convention spectral keywords, CTYPEn and VELREF,
+* into CTYPEia and SPECSYSa.
+*
+* Given:
+*   ctypeA    const char[9]
+*                       CTYPEia keyvalue (eight characters, need not be null-
+*                       terminated).
+*   velref    int       AIPS-convention VELREF code.  It has the following
+*                       integer values:
+*                         1: LSR kinematic, originally described simply as
+*                            "LSR" without distinction between the kinematic
+*                            and dynamic definitions.
+*                         2: Barycentric, originally described as "HEL"
+*                            meaning heliocentric.
+*                         3: Topocentric, originally described as "OBS"
+*                            meaning geocentric but widely interpreted as
+*                            topocentric.
+*                       AIPS++ extensions to VELREF are also recognized:
+*                         4: LSR dynamic.
+*                         5: Geocentric.
+*                         6: Source rest frame.
+*                         7: Galactocentric.
+*                       For an AIPS 'VELO' axis, a radio convention velocity
+*                       is denoted by adding 256 to VELREF, otherwise an
+*                       optical velocity is indicated (not applicable to
+*                       'FELO' axes).  Unrecognized values of VELREF are
+*                       simply ignored.
+*
+*                       VELREF takes precedence over CTYPEia in defining the
+*                       Doppler frame, e.g. if
+*
+=                         CTYPEn = 'VELO-HEL'
+=                         VELREF = 1
+*
+*                       the Doppler frame is set to LSRK.
+*
+* Returned:
+*   ctype     char[9]   Translated CTYPEia keyvalue, or a copy of ctypeA if no
+*                       translation was performed (null-filled).
+*   specsys   char[9]   Doppler reference frame indicated by VELREF or else by
+*                       CTYPEn.
+*
+* Function return value:
+*             int       Status return value:
+*                        -1: No translation required (not an error).
+*                         0: Success.
 *
 *
 * spcprm struct - Spectral transformation parameters
@@ -621,44 +668,44 @@ extern const char *spc_errmsg[];
 struct spcprm {
   /* Initialization flag (see the prologue above).                          */
   /*------------------------------------------------------------------------*/
-  int   flag;			/* Set to zero to force initialization.     */
+  int   flag;                   /* Set to zero to force initialization.     */
 
   /* Parameters to be provided (see the prologue above).                    */
   /*------------------------------------------------------------------------*/
-  char   type[8];		/* Four-letter spectral variable type.      */
-  char   code[4];		/* Three-letter spectral algorithm code.    */
+  char   type[8];               /* Four-letter spectral variable type.      */
+  char   code[4];               /* Three-letter spectral algorithm code.    */
 
-  double crval;			/* Reference value (CRVALia), SI units.     */
-  double restfrq;		/* Rest frequency, Hz.                      */
-  double restwav;		/* Rest wavelength, m.                      */
+  double crval;                 /* Reference value (CRVALia), SI units.     */
+  double restfrq;               /* Rest frequency, Hz.                      */
+  double restwav;               /* Rest wavelength, m.                      */
 
-  double pv[7];			/* Grism parameters:                        */
-				/*   0: G, grating ruling density.          */
-				/*   1: m, interference order.              */
-				/*   2: alpha, angle of incidence.          */
-				/*   3: n_r, refractive index at lambda_r.  */
-				/*   4: n'_r, dn/dlambda at lambda_r.       */
-				/*   5: epsilon, grating tilt angle.        */
-				/*   6: theta, detector tilt angle.         */
+  double pv[7];                 /* Grism parameters:                        */
+                                /*   0: G, grating ruling density.          */
+                                /*   1: m, interference order.              */
+                                /*   2: alpha, angle of incidence.          */
+                                /*   3: n_r, refractive index at lambda_r.  */
+                                /*   4: n'_r, dn/dlambda at lambda_r.       */
+                                /*   5: epsilon, grating tilt angle.        */
+                                /*   6: theta, detector tilt angle.         */
 
   /* Information derived from the parameters supplied.                      */
   /*------------------------------------------------------------------------*/
-  double w[6];			/* Intermediate values.                     */
-				/*   0: Rest frequency or wavelength (SI).  */
-				/*   1: CRVALX (SI units).                  */
-				/*   2: CDELTX/CDELTia = dX/dS (SI units).  */
-				/* The remainder are grism intermediates.   */
+  double w[6];                  /* Intermediate values.                     */
+                                /*   0: Rest frequency or wavelength (SI).  */
+                                /*   1: CRVALX (SI units).                  */
+                                /*   2: CDELTX/CDELTia = dX/dS (SI units).  */
+                                /* The remainder are grism intermediates.   */
 
-  int isGrism;			/* Grism coordinates?  1: vacuum, 2: air.   */
-  int padding;			/* (Dummy inserted for alignment purposes.) */
+  int isGrism;                  /* Grism coordinates?  1: vacuum, 2: air.   */
+  int padding;                  /* (Dummy inserted for alignment purposes.) */
 
-  int (*spxX2P)(SPX_ARGS);	/* Pointers to the transformation functions */
-  int (*spxP2S)(SPX_ARGS);	/* in the two-step algorithm chain in the   */
-				/* pixel-to-spectral direction.             */
+  int (*spxX2P)(SPX_ARGS);      /* Pointers to the transformation functions */
+  int (*spxP2S)(SPX_ARGS);      /* in the two-step algorithm chain in the   */
+                                /* pixel-to-spectral direction.             */
 
-  int (*spxS2P)(SPX_ARGS);	/* Pointers to the transformation functions */
-  int (*spxP2X)(SPX_ARGS);	/* in the two-step algorithm chain in the   */
-				/* spectral-to-pixel direction.             */
+  int (*spxS2P)(SPX_ARGS);      /* Pointers to the transformation functions */
+  int (*spxP2X)(SPX_ARGS);      /* in the two-step algorithm chain in the   */
+                                /* spectral-to-pixel direction.             */
 };
 
 /* Size of the spcprm struct in int units, used by the Fortran wrappers. */
@@ -691,6 +738,8 @@ int spcxps(const char ctypeS[], double crvalX, double restfrq, double restwav,
 int spctrn(const char ctypeS1[], double crvalS1, double cdeltS1,
            double restfrq, double restwav, char ctypeS2[], double *crvalS2,
            double *cdeltS2);
+
+int spcaips(const char ctypeA[], int velref, char ctype[], char specsys[]);
 
 
 /* Deprecated. */

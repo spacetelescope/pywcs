@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.4 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2009, Mark Calabretta
+  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,10 +28,10 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcsfix.h,v 4.4.1.1 2009/08/10 08:52:49 cal103 Exp cal103 $
+  $Id: wcsfix.h,v 4.5 2010/07/16 07:01:25 cal103 Exp $
 *=============================================================================
 *
-* WCSLIB 4.4 - C routines that implement the FITS World Coordinate System
+* WCSLIB 4.5 - C routines that implement the FITS World Coordinate System
 * (WCS) standard.  Refer to
 *
 *   "Representations of world coordinates in FITS",
@@ -142,8 +142,8 @@
 * Function return value:
 *             int       Status return value:
 *                         0: Success.
-*                         1: One or more of the translation functions returned
-*                            an error.
+*                         1: One or more of the translation functions
+*                            returned an error.
 *
 *
 * cdfix() - Fix erroneously omitted CDi_ja keywords
@@ -244,8 +244,8 @@
 * spcfix() - Translate AIPS-convention spectral types
 * ---------------------------------------------------
 * spcfix() translates AIPS-convention spectral coordinate types,
-* '{FREQ,FELO,VELO}-{OBS,HEL,LSR}' (e.g. 'FREQ-LSR', 'FELO-HEL', 'VELO-OBS')
-* set in wcsprm::ctype[].
+* '{FREQ,FELO,VELO}-{LSR,HEL,OBS}' (e.g. 'FREQ-OBS', 'FELO-HEL', 'VELO-LSR')
+* set in wcsprm::ctype[], subject to VELREF set in wcsprm::velref.
 *
 * Given and returned:
 *   wcs       struct wcsprm*
@@ -293,8 +293,7 @@
 *                         6: Invalid coordinate transformation parameters.
 *                         7: Ill-conditioned coordinate transformation
 *                            parameters.
-*                         8: All of the corner pixel coordinates are
-*                            invalid.
+*                         8: All of the corner pixel coordinates are invalid.
 *                         9: Could not determine reference pixel coordinate.
 *                        10: Could not determine reference pixel value.
 *

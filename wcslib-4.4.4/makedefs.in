@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------
-# GNU makefile definitions for building WCSLIB 4.4.
+# GNU makefile definitions for building WCSLIB 4.5.
 #
 # makedefs is generated from makedefs.in by configure.  It contains variable
 # definitions and some general-purpose rules for building WCSLIB.
@@ -34,16 +34,16 @@
 #      only set by 'configure' if the GNU C compiler is used.  However,
 #      you can set these variables by hand, preferably in makedefs.in.
 #
-#      Shared libraries require position-indepent code (PIC) which imposes
+#      Shared libraries require position-independent code (PIC) which imposes
 #      a performance overhead.  Consequently the static libraries are
 #      compiled separately without this option.
 #
 #      The shared library will be installed with version number, e.g. as
-#      libwcs.so.4.4 or libwcs.4.4.dylib with or without the symlink
+#      libwcs.so.4.5 or libwcs.4.5.dylib with or without the symlink
 #      required to make it visible to the linker (controlled by the SHRLN
 #      variable).  On Macs it is deliberately not created because its very
 #      existence precludes static linking with the cctools linker.
-#      Instead, you could link dynamically by using -lwcs.4.4.
+#      Instead, you could link dynamically by using -lwcs.4.5.
 #
 #   4) PGPLOT is Tim Pearson's Fortran graphics library with separate C
 #      interface available from astro.caltech.edu.  It is only required by
@@ -73,7 +73,7 @@
 #
 # Author: Mark Calabretta, Australia Telescope National Facility
 # http://www.atnf.csiro.au/~mcalabre/index.html
-# $Id: makedefs.in,v 4.4.1.2 2009/09/14 06:50:08 cal103 Exp cal103 $
+# $Id: makedefs.in,v 4.5 2010/07/16 07:01:26 cal103 Exp $
 #-----------------------------------------------------------------------------
 # Version.
   V := @PACKAGE_VERSION@
@@ -159,6 +159,7 @@
 #-----------------------------------------------------------------------------
 
 SHELL := /bin/sh
+VPATH := ..
 
 # Common targets.
 .PHONY : all build printenv show_all
@@ -166,55 +167,55 @@ SHELL := /bin/sh
 all : show_all build
 
 printenv :
-	-@ printenv | sort
+        -@ printenv | sort
 
-show_all ::
-	-@ echo ''
-	-@ uname -a
-	-@ echo ''
-	-@ $(MAKE) --version | head -1
-	-@ echo '  MAKEFLAGS   := $(MAKEFLAGS)'
-	-@ echo ''
-	-@ echo 'For building and installing $(WCSLIBV)...'
-	-@ echo '  ARCH        := $(ARCH)'
-	-@ echo '  FLEX        := $(FLEX)'
-	-@ echo '  FLFLAGS     := $(FLFLAGS)'
-	-@ echo '  CPP         := $(CPP)'
-	-@ echo '  CPPFLAGS    := $(CPPFLAGS)'
-	-@ echo '  WCSTRIG     := $(WCSTRIG)'
-	-@ echo '  CC          := $(CC)'
-	-@ echo '  CFLAGS      := $(CFLAGS)'
-	-@ echo '  FC          := $(FC)'
-	-@ echo '  FFLAGS      := $(FFLAGS)'
-	-@ echo '  LIBWCS      := $(LIBWCS)'
-	-@ echo '  RANLIB      := $(RANLIB)'
-	-@ echo '  SHRLIB      := $(SHRLIB)'
-	-@ echo '  SHRFLAGS    := $(SHRFLAGS)'
-	-@ echo '  SHRLD       := $(SHRLD)'
-	-@ echo '  SHRLN       := $(SHRLN)'
-	-@ echo '  LN_S        := $(LN_S)'
-	-@ echo '  INSTALL     := $(INSTALL)'
-	-@ echo '  LIBDIR      := $(LIBDIR)'
-	-@ echo '  BINDIR      := $(BINDIR)'
-	-@ echo '  INCDIR      := $(INCDIR)'
-	-@ echo '  INCLINK     := $(INCLINK)'
-	-@ echo '  TIMER       := $(TIMER)'
-	-@ echo ''
-	-@ echo 'Important wcsconfig.h defines...'
-	-@ echo "  `grep HAVE_SINCOS wcsconfig.h`"
-	-@ echo "  `grep WCSLIB_INT64 wcsconfig.h`"
-	-@ echo ''
-	-@ echo 'To build utilities and test programs...'
-	-@ echo '  LD          := $(LD)'
-	-@ echo '  LDFLAGS     := $(LDFLAGS)'
-	-@ echo '  PGPLOTINC   := $(PGPLOTINC)'
-	-@ echo '  PGPLOTLIB   := $(PGPLOTLIB)'
-	-@ echo '  CFITSIOINC  := $(CFITSIOINC)'
-	-@ echo '  CFITSIOLIB  := $(CFITSIOLIB)'
-	-@ echo '  GETWCSTAB   := $(GETWCSTAB)'
-	-@ echo '  FLIBS       := $(FLIBS)'
-	-@ echo '  LIBS        := $(LIBS)'
-	-@ echo ''
+show_all :: wcsconfig.h
+        -@ echo ''
+        -@ uname -a
+        -@ echo ''
+        -@ $(MAKE) --version | head -1
+        -@ echo '  MAKEFLAGS   := $(MAKEFLAGS)'
+        -@ echo ''
+        -@ echo 'For building and installing $(WCSLIBV)...'
+        -@ echo '  ARCH        := $(ARCH)'
+        -@ echo '  FLEX        := $(FLEX)'
+        -@ echo '  FLFLAGS     := $(FLFLAGS)'
+        -@ echo '  CPP         := $(CPP)'
+        -@ echo '  CPPFLAGS    := $(CPPFLAGS)'
+        -@ echo '  WCSTRIG     := $(WCSTRIG)'
+        -@ echo '  CC          := $(CC)'
+        -@ echo '  CFLAGS      := $(CFLAGS)'
+        -@ echo '  FC          := $(FC)'
+        -@ echo '  FFLAGS      := $(FFLAGS)'
+        -@ echo '  LIBWCS      := $(LIBWCS)'
+        -@ echo '  RANLIB      := $(RANLIB)'
+        -@ echo '  SHRLIB      := $(SHRLIB)'
+        -@ echo '  SHRFLAGS    := $(SHRFLAGS)'
+        -@ echo '  SHRLD       := $(SHRLD)'
+        -@ echo '  SHRLN       := $(SHRLN)'
+        -@ echo '  LN_S        := $(LN_S)'
+        -@ echo '  INSTALL     := $(INSTALL)'
+        -@ echo '  LIBDIR      := $(LIBDIR)'
+        -@ echo '  BINDIR      := $(BINDIR)'
+        -@ echo '  INCDIR      := $(INCDIR)'
+        -@ echo '  INCLINK     := $(INCLINK)'
+        -@ echo '  TIMER       := $(TIMER)'
+        -@ echo ''
+        -@ echo 'Important wcsconfig.h defines...'
+        -@ echo "  `grep HAVE_SINCOS $<`"
+        -@ echo "  `grep WCSLIB_INT64 $<`"
+        -@ echo ''
+        -@ echo 'To build utilities and test programs...'
+        -@ echo '  LD          := $(LD)'
+        -@ echo '  LDFLAGS     := $(LDFLAGS)'
+        -@ echo '  PGPLOTINC   := $(PGPLOTINC)'
+        -@ echo '  PGPLOTLIB   := $(PGPLOTLIB)'
+        -@ echo '  CFITSIOINC  := $(CFITSIOINC)'
+        -@ echo '  CFITSIOLIB  := $(CFITSIOLIB)'
+        -@ echo '  GETWCSTAB   := $(GETWCSTAB)'
+        -@ echo '  FLIBS       := $(FLIBS)'
+        -@ echo '  LIBS        := $(LIBS)'
+        -@ echo ''
 
 # Code development overrides, for use in the code subdirectories.
 -include ../flavours

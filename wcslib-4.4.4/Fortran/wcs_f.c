@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.4 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2009, Mark Calabretta
+  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcs_f.c,v 4.4.1.1 2009/08/10 08:54:51 cal103 Exp cal103 $
+  $Id: wcs_f.c,v 4.5 2010/07/16 07:01:26 cal103 Exp $
 *===========================================================================*/
 
 #include <string.h>
@@ -71,35 +71,36 @@
 #define WCS_NPS      115
 #define WCS_NPSMAX   116
 #define WCS_PS       117
-#define WCS_ALTLIN   118
-#define WCS_CD       119
-#define WCS_CROTA    120
+#define WCS_CD       118
+#define WCS_CROTA    119
+#define WCS_ALTLIN   120
+#define WCS_VELREF   121
 
-#define WCS_ALT      121
-#define WCS_COLNUM   122
-#define WCS_COLAX    123
+#define WCS_ALT      122
+#define WCS_COLNUM   123
+#define WCS_COLAX    124
 
-#define WCS_CNAME    124
-#define WCS_CRDER    125
-#define WCS_CSYER    126
-#define WCS_DATEAVG  127
-#define WCS_DATEOBS  128
-#define WCS_EQUINOX  129
-#define WCS_MJDAVG   130
-#define WCS_MJDOBS   131
-#define WCS_OBSGEO   132
-#define WCS_RADESYS  133
-#define WCS_SPECSYS  134
-#define WCS_SSYSOBS  135
-#define WCS_SSYSSRC  136
-#define WCS_VELANGL  137
-#define WCS_VELOSYS  138
-#define WCS_WCSNAME  139
-#define WCS_ZSOURCE  140
+#define WCS_CNAME    125
+#define WCS_CRDER    126
+#define WCS_CSYER    127
+#define WCS_DATEAVG  128
+#define WCS_DATEOBS  129
+#define WCS_EQUINOX  130
+#define WCS_MJDAVG   131
+#define WCS_MJDOBS   132
+#define WCS_OBSGEO   133
+#define WCS_RADESYS  134
+#define WCS_SPECSYS  135
+#define WCS_SSYSOBS  136
+#define WCS_VELOSYS  137
+#define WCS_ZSOURCE  138
+#define WCS_SSYSSRC  139
+#define WCS_VELANGL  140
+#define WCS_WCSNAME  141
 
 #define WCS_NTAB     200
-#define WCS_TAB      201
-#define WCS_NWTB     202
+#define WCS_NWTB     201
+#define WCS_TAB      202
 #define WCS_WTB      203
 #define WCS_TYPES    204
 #define WCS_LNGTYP   205

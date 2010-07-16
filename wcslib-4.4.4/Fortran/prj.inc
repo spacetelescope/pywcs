@@ -1,7 +1,7 @@
 *=======================================================================
 *
-* WCSLIB 4.4 - an implementation of the FITS WCS standard.
-* Copyright (C) 1995-2009, Mark Calabretta
+* WCSLIB 4.5 - an implementation of the FITS WCS standard.
+* Copyright (C) 1995-2010, Mark Calabretta
 *
 * This file is part of WCSLIB.
 *
@@ -28,11 +28,25 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: prj.inc,v 4.4.1.1 2009/08/10 08:54:51 cal103 Exp cal103 $
+* $Id: prj.inc,v 4.5 2010/07/16 07:01:26 cal103 Exp $
 *=======================================================================
 
 *     Functions.
+      EXTERNAL  PRJINI, PRJPRT, PRJPUT, PRJGET, PRJSET, PRJX2S, PRJS2X
       INTEGER   PRJINI, PRJPRT, PRJPUT, PRJGET, PRJSET, PRJX2S, PRJS2X
+      EXTERNAL  AZPSET, AZPX2S, AZPS2X,    SFLSET, SFLX2S, SFLS2X,
+     :          SZPSET, SZPX2S, SZPS2X,    PARSET, PARX2S, PARS2X,
+     :          TANSET, TANX2S, TANS2X,    MOLSET, MOLX2S, MOLS2X,
+     :          STGSET, STGX2S, STGS2X,    AITSET, AITX2S, AITS2X,
+     :          SINSET, SINX2S, SINS2X,    COPSET, COPX2S, COPS2X,
+     :          ARCSET, ARCX2S, ARCS2X,    COESET, COEX2S, COES2X,
+     :          ZPNSET, ZPNX2S, ZPNS2X,    CODSET, CODX2S, CODS2X,
+     :          ZEASET, ZEAX2S, ZEAS2X,    COOSET, COOX2S, COOS2X,
+     :          AIRSET, AIRX2S, AIRS2X,    BONSET, BONX2S, BONS2X,
+     :          CYPSET, CYPX2S, CYPS2X,    PCOSET, PCOX2S, PCOS2X,
+     :          CEASET, CEAX2S, CEAS2X,    TSCSET, TSCX2S, TSCS2X,
+     :          CARSET, CARX2S, CARS2X,    CSCSET, CSCX2S, CSCS2X,
+     :          MERSET, MERX2S, MERS2X,    QSCSET, QSCX2S, QSCS2X
       INTEGER   AZPSET, AZPX2S, AZPS2X,    SFLSET, SFLX2S, SFLS2X,
      :          SZPSET, SZPX2S, SZPS2X,    PARSET, PARX2S, PARS2X,
      :          TANSET, TANX2S, TANS2X,    MOLSET, MOLX2S, MOLS2X,

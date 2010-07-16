@@ -1,22 +1,23 @@
 #-----------------------------------------------------------------------------
-# GNU makefile for WCSLIB 4.4 utilities: fitshdr, HPXcvt, wcsgrid and wcsware.
+# GNU makefile for WCSLIB 4.5 utilities: fitshdr, HPXcvt, wcsgrid and wcsware.
 #
 # Summary of the main targets
 # ---------------------------
 #   build:     Build all utilities.
 #   clean (or cleaner): Delete intermediate object files.
-#   realclean (or cleanest): cleaner, and also delete the executables.
+#   cleanest (distclean, or realclean): cleaner, and also delete the
+#              executables.
 #
 # Notes:
 #   1: If you need to make changes then preferably modify ../makedefs.in
 #      instead and re-run configure.
 #
-#   2: In compiling these utilities, this makefile assumes that the WCSLIB 4.4
+#   2: In compiling these utilities, this makefile assumes that the WCSLIB 4.5
 #      sources reside in ../{pgsbox,C} (as in the distribution kit).
 #
 # Author: Mark Calabretta, Australia Telescope National Facility
 # http://www.atnf.csiro.au/~mcalabre/index.html
-# $Id: GNUmakefile,v 4.4.1.1 2009/08/10 08:56:01 cal103 Exp cal103 $
+# $Id: GNUmakefile,v 4.5 2010/07/16 07:01:27 cal103 Exp $
 #-----------------------------------------------------------------------------
 # Get configure settings.
 include ../makedefs
@@ -51,7 +52,7 @@ vpath %.in ..
 # Static and static pattern rules
 #--------------------------------
 
-.PHONY : build clean cleaner cleanest install realclean
+.PHONY : build clean cleaner cleanest distclean install realclean
 
 build : $(UTILS)
 
@@ -87,9 +88,9 @@ wcsgrid : wcsgrid.c $(PGSBOXLIB) $(GETWCSTAB) $(LIBWCS)
 	   $(MAKE) -C ../C $(@F)
 
 clean cleaner :
-	- $(RM) *.o *.i a.out core $(EXTRA_CLEAN)
+	- $(RM) -r *.o *.i a.out core *.dSYM $(EXTRA_CLEAN)
 
-cleanest realclean : cleaner
+cleanest distclean realclean : cleaner
 	- $(RM) $(UTILS)
 
 $(PGSBOXLIB) :

@@ -1,10 +1,14 @@
 /^[^*]/{p;d;}
 
+s|CTYPEn|<TT><B>CTYPE</B>n</TT>|g
+s|VELREF|<TT><B>&</B></TT>|g
+
 s|'AFRQ'|'<TT><B>AFRQ</B></TT>'|g
 s|'AWAV'|'<TT><B>AWAV</B></TT>'|g
 s|'BETA'|'<TT><B>BETA</B></TT>'|g
 s|'ENER'|'<TT><B>ENER</B></TT>'|g
 s|'FREQ'|'<TT><B>FREQ</B></TT>'|g
+s|'FELO'|'<TT><B>FELO</B></TT>'|g
 s|'VELO'|'<TT><B>VELO</B></TT>'|g
 s|'VOPT'|'<TT><B>VOPT</B></TT>'|g
 s|'VRAD'|'<TT><B>VRAD</B></TT>'|g

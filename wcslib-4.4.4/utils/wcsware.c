@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.4 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2009, Mark Calabretta
+  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcsware.c,v 4.4.1.1 2009/08/10 08:56:01 cal103 Exp cal103 $
+  $Id: wcsware.c,v 4.5 2010/07/16 07:01:27 cal103 Exp $
 *=============================================================================
 * wcsware extracts the WCS keywords for an image from the specified FITS file,
 * constructs wcsprm structs for each coordinate representation found and
@@ -249,11 +249,16 @@ int main(int argc, char **argv)
       wcsp2s(wcs+i, 1, nelem, pixcrd, imgcrd, &phi, &theta, world, stat);
       printf("Pixel: ");
       for (j = 0; j < nelem; j++) {
-        printf("%s%12.7g", j?", ":"", pixcrd[j]);
+        printf("%s%14.9g", j?", ":"", pixcrd[j]);
       }
       printf("\nWorld: ");
       for (j = 0; j < nelem; j++) {
-        printf("%s%12.7g", j?", ":"", world[j]);
+        if (j == (wcs+i)->lng || j == (wcs+i)->lat) {
+          /* Print angles in fixed format. */
+          printf("%s%14.6f", j?", ":"", world[j]);
+        } else {
+          printf("%s%14.9g", j?", ":"", world[j]);
+        }
       }
       printf("\n");
     }

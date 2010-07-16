@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.4 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2009, Mark Calabretta
+  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: spc.c,v 4.4.1.2 2009/09/03 02:32:44 cal103 Exp cal103 $
+  $Id: spc.c,v 4.5 2010/07/16 07:01:25 cal103 Exp $
 *===========================================================================*/
 
 #include <math.h>
@@ -37,6 +37,7 @@
 
 #include "wcsmath.h"
 #include "wcstrig.h"
+#include "wcsutil.h"
 #include "spc.h"
 #include "spx.h"
 
@@ -639,21 +640,6 @@ int spctyp(
   sprintf(ctype, "%-8.8s", ctypei);
   ctype[8] = '\0';
 
-  /* Do alias translation for AIPS spectral types. */
-  if (ctype[4] == '-') {
-    if (strcmp(ctype+5, "LSR") == 0 ||
-        strcmp(ctype+5, "HEL") == 0 ||
-        strcmp(ctype+5, "OBS") == 0) {
-      if (strncmp(ctype, "FREQ", 4) == 0 ||
-          strncmp(ctype, "VELO", 4) == 0) {
-        strcpy(ctype+4, "    ");
-      } else if (strncmp(ctype, "FELO", 4) == 0) {
-        strcpy(ctype, "VOPT-F2W");
-      }
-    }
-  }
-
-
   /* Validate the S-type spectral variable. */
   if (strncmp(ctype, "FREQ", 4) == 0) {
     strcpy(sname_t, "Frequency");
@@ -1128,4 +1114,72 @@ int spctrn(
   *cdeltS2 = dS2dX * dXdS1 * cdeltS1;
 
   return 0;
+}
+
+/*--------------------------------------------------------------------------*/
+
+int spcaips(
+  const char ctypeA[9],
+  int  velref,
+  char ctype[9],
+  char specsys[9])
+
+{
+  const char *frames[] = {"LSRK", "BARYCENT", "TOPOCENT",
+                          "LSRD", "GEOCENTR", "SOURCE", "GALACTOC"};
+  char *fcode;
+  int  ivf;
+
+  /* Make a null-filled copy of ctypeA. */
+  if (ctype != ctypeA) strncpy(ctype, ctypeA, 8);
+  ctype[8] = '\0';
+  wcsutil_null_fill(9, ctype);
+  *specsys = '\0';
+
+  /* Is it a recognized AIPS-convention type? */
+  if (strncmp(ctype, "FREQ", 4) == 0 ||
+      strncmp(ctype, "VELO", 4) == 0 ||
+      strncmp(ctype, "FELO", 4) == 0) {
+    /* Look for the Doppler frame. */
+    if ((fcode = ctype+4)) {
+      if (strcmp(fcode, "-LSR") == 0) {
+        strcpy(specsys, "LSRK");
+      } else if (strcmp(fcode, "-HEL") == 0) {
+        strcpy(specsys, "BARYCENT");
+      } else if (strcmp(fcode, "-OBS") == 0) {
+        strcpy(specsys, "TOPOCENT");
+      } else {
+        /* Not a recognized AIPS spectral type. */
+        return -1;
+      }
+
+      *fcode = '\0';
+    }
+
+    /* VELREF takes precedence if present. */
+    ivf = velref%256;
+    if (1 <= ivf && ivf <= 7) {
+      strcpy(specsys, frames[ivf-1]);
+    }
+
+    if (strcmp(ctype, "VELO") == 0) {
+      /* Check that we found an AIPS-convention Doppler frame. */
+      if (*specsys) {
+        /* 'VELO' in AIPS means radio or optical depending on VELREF. */
+        if (velref&256) {
+          strcpy(ctype, "VRAD");
+        } else {
+          strcpy(ctype, "VOPT");
+        }
+      }
+    } else if (strcmp(ctype, "FELO") == 0) {
+      /* Uniform in frequency but expressed as an optical velocity (strictly
+         we should also have found an AIPS-convention Doppler frame). */
+      strcpy(ctype, "VOPT-F2W");
+    }
+
+    return 0;
+  }
+
+  return -1;
 }

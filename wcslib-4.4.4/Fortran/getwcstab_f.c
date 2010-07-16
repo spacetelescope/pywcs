@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.4 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2009, Mark Calabretta
+  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: getwcstab_f.c,v 4.4.1.1 2009/08/10 08:54:51 cal103 Exp cal103 $
+  $Id: getwcstab_f.c,v 4.5 2010/07/16 07:01:26 cal103 Exp $
 *===========================================================================*/
 
 #include <getwcstab.h>
@@ -50,5 +50,8 @@ int ftwcst_(
   int *status)
 
 {
-  return fits_read_wcstab(gFitsFiles[*unit], *nwtb, (void *)(*wtb), status);
+  /* *wtb is meant to hold a pointer to a wtbarr struct.  On 64-bit machines
+     sizeof(void *) = 2 * sizeof(int) = sizeof(long). */
+  long wtbp = *((long *)wtb);
+  return fits_read_wcstab(gFitsFiles[*unit], *nwtb, (void *)wtbp, status);
 }

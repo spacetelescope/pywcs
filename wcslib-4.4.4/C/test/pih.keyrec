@@ -1,6 +1,6 @@
 #-----------------------------------------------------------------------------
-# WCSLIB 4.4 - an implementation of the FITS WCS standard.
-# Copyright (C) 1995-2009, Mark Calabretta
+# WCSLIB 4.5 - an implementation of the FITS WCS standard.
+# Copyright (C) 1995-2010, Mark Calabretta
 #
 # This file is part of WCSLIB.
 #
@@ -27,7 +27,7 @@
 #
 # Author: Mark Calabretta, Australia Telescope National Facility
 # http://www.atnf.csiro.au/~mcalabre/index.html
-# $Id: pih.keyrec,v 4.4.1.1 2009/08/10 08:54:26 cal103 Exp cal103 $
+# $Id: pih.keyrec,v 4.5 2010/07/16 07:01:26 cal103 Exp $
 #-----------------------------------------------------------------------------
 # FITS header keyrecords used for testing by tpih1, tpih2 and tfitshdr.
 #
@@ -365,15 +365,17 @@ CONTINUE  'fox jumps over the'   Relaxed handling of invalid keycomment
 CONTINUE      ' lazy dog'
 PI      =  3.14159265358929323 / [!?] is not a valid units specification
 CONTINUE      'Not a valid string continuation'
-BadKey  =                  111 / Syntax error, invalid keyword
-BADKEY! =                  222 / Syntax error, invalid keyword
-BAD KEY =                  333 / Syntax error, invalid keyword
-BADSTR  =                  BAD / Syntax error, invalid keyvalue
-BADSTR  =                "BAD" / Syntax error, invalid keyvalue
-BADSTR  =          'BAD' 'STR' / Syntax error, invalid string keyvalue
-BADFLT  =              49 + 94 / Syntax error, invalid keyvalue
-BADFLT  =                 1D99 / Syntax error, invalid keyvalue
-BADCOMM =                  999   Syntax error, invalid keycomment
+
+COMMENT  The following are all deliberate syntax errors:
+BadKey  =                  111 / Example of a syntax error, invalid keyword
+BADKEY! =                  222 / Example of a syntax error, invalid keyword
+BAD KEY =                  333 / Example of a syntax error, invalid keyword
+BADSTR  =                  BAD / Example of a syntax error, invalid keyvalue
+BADSTR  =                "BAD" / Example of a syntax error, invalid keyvalue
+BADSTR  =          'BAD' 'STR' / Example syntax error, invalid string keyvalue
+BADFLT  =              49 + 94 / Example of a syntax error, invalid keyvalue
+BADFLT  =                 1D99 / Example of a syntax error, invalid keyvalue
+BADCOMM =                  999   Example of a syntax error, invalid keycomment
 END     =            'ILLEGAL' / Illegal END keyrecord
 
 END

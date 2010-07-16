@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.4 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2009, Mark Calabretta
+  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,10 +28,10 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcshdr.h,v 4.4.1.1 2009/08/10 08:52:49 cal103 Exp cal103 $
+  $Id: wcshdr.h,v 4.5 2010/07/16 07:01:25 cal103 Exp $
 *=============================================================================
 *
-* WCSLIB 4.4 - C routines that implement the FITS World Coordinate System
+* WCSLIB 4.5 - C routines that implement the FITS World Coordinate System
 * (WCS) standard.  Refer to
 *
 *   "Representations of world coordinates in FITS",
@@ -650,27 +650,14 @@
 *      The parser always treats EPOCH as subordinate to EQUINOXa if both are
 *      present, and VSOURCEa is always subordinate to ZSOURCEa.
 *
-*      Likewise, VELREF is subordinate to the formalism of WCS Paper III.  In
-*      the AIPS convention VELREF has the following integer values:
-*        - 1: LSR kinematic, originally described simply as "LSR" without
-*                            distinction between the kinematic and dynamic
-*                            definitions.
-*        - 2: Barycentric, originally described as "HEL" meaning heliocentric.
-*        - 3: Topocentric, originally described as "OBS" meaning geocentric
-*                          but widely interpreted as topocentric.
-*      AIPS++ extensions to VELREF are also recognized:
-*        - 4: LSR dynamic.
-*        - 5: Geocentric.
-*        - 6: Source rest frame.
-*        - 7: Galactocentric.
-*      A radio convention velocity is denoted by adding 256 to these,
-*      otherwise an optical velocity is indicated.
+*      Likewise, VELREF is subordinate to the formalism of WCS Paper III, see
+*      spcaips().
 *
 *      Neither wcspih() nor wcsbth() currently recognize the AIPS-convention
 *      keywords ALTRPIX or ALTRVAL which effectively define an alternative
 *      representation for a spectral axis.
 *
-*   6: Depending on what flags have been set in its "relax" xargument,
+*   6: Depending on what flags have been set in its "relax" argument,
 *      wcsbth() could return as many as 27027 wcsprm structs:
 *
 *      - Up to 27 unattached representations derived from image header

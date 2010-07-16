@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.4 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2009, Mark Calabretta
+  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcshdr.c,v 4.4.1.1 2009/08/10 08:52:49 cal103 Exp cal103 $
+  $Id: wcshdr.c,v 4.5 2010/07/16 07:01:25 cal103 Exp $
 *===========================================================================*/
 
 #include <ctype.h>
@@ -506,6 +506,7 @@ int wcshdo(int relax, struct wcsprm *wcs, int *nkeyrec, char **header)
     col0 = colax[0];
   } else {
     primage = 1;
+    col0 = 0;
   }
 
 

@@ -9,7 +9,7 @@
 #
 # Reminder: add '-d' to FLFLAGS for debugging.
 #
-# $Id: flavours,v 4.4.1.1 2009/08/10 08:42:06 cal103 Exp cal103 $
+# $Id: flavours,v 4.5 2010/07/16 07:01:26 cal103 Exp $
 #-----------------------------------------------------------------------------
 
 # The list of FLAVOURs can be set on the command line.
@@ -124,14 +124,12 @@ ifdef F77
 endif
 
 ifdef FLAVOUR
-  TIMER := date +"%a %Y/%m/%d %X %z, executing on $$HOST with $(FLAVOUR) FLAVOUR "
-else
-  TIMER := date +"%a %Y/%m/%d %X %z, executing on $$HOST with vanilla FLAVOUR"
+  TIMER := $(TIMER) ; echo "    with $(FLAVOUR) FLAVOUR."
 endif
 
 show_all ::
-	-@ echo 'For code development...'
-	-@ echo '  FLAVOURS    := $(FLAVOURS)'
-	-@ echo '  FLAVOUR     := $(FLAVOUR)'
-	-@ echo '  EXTRA_CLEAN := $(EXTRA_CLEAN)'
-	-@ echo ''
+        -@ echo 'For code development...'
+        -@ echo '  FLAVOURS    := $(FLAVOURS)'
+        -@ echo '  FLAVOUR     := $(FLAVOUR)'
+        -@ echo '  EXTRA_CLEAN := $(EXTRA_CLEAN)'
+        -@ echo ''

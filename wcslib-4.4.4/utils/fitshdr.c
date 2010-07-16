@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.4 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2009, Mark Calabretta
+  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: fitshdr.c,v 4.4.1.1 2009/08/10 08:56:01 cal103 Exp cal103 $
+  $Id: fitshdr.c,v 4.5 2010/07/16 07:01:27 cal103 Exp $
 *=============================================================================
 * Usage: fitshdr [infile]
 *-----------------------------------------------------------------------------
@@ -41,6 +41,14 @@
 *
 * Handles large files (>2GiB) via macros in wcsconfig_utils.h.
 *---------------------------------------------------------------------------*/
+
+char usage[] =
+"List headers from a FITS file specified on the command line, or else on\n"
+"stdin, printing them as 80-character keyrecords without trailing blanks.\n"
+"\n"
+"Options:\n"
+"  -q N         Quit after reading the Nth header, where N is an integer\n"
+"               (optional space between -q and N).\n";
 
 /* Get LFS definitions for stdio.h. */
 #include <wcsconfig_utils.h>
@@ -65,34 +73,51 @@ int main(int argc, char **argv)
   char spaces[84] = "                                        "
                     "                                        ";
   char *format, rpfits[8] = "RPFITS";
-  int  len;
-  unsigned int blksiz = 2880, inhdr = 0, nhdr = 0, seekable = 1;
+  int  i, len;
+  unsigned int blksiz = 2880, ihdr = 0, inhdr = 0, nhdr = 0, seekable = 1;
   unsigned long long int iblock = 0, nblock = 0, nbyte;
   struct stat instat;
 
+  /* Parse options. */
+  for (i = 1; i < argc && argv[i][0] == '-'; i++) {
+    switch (argv[i][1]) {
+    case 'q':
+      if (strlen(argv[i]) == 2) {
+        nhdr = atoi(&argv[++i][0]);
+      } else {
+        nhdr = atoi(&argv[i][2]);
+      }
+      break;
+
+    default:
+      fprintf(stderr, "\nUsage: fitshdr [-q N] [<infile>]\n\n%s\n", usage);
+      return 1;
+    }
+  }
+
   /* If an input file name was specified then reopen it as stdin */
   /* (doesn't affect seekability).                               */
-  if (argc > 1) {
-    if (access(argv[1], R_OK) == -1) {
-      perror(argv[1]);
+  if (i < argc) {
+    if (access(argv[i], R_OK) == -1) {
+      perror(argv[i]);
       return 2;
     }
 
-    if (freopen(argv[1], "r", stdin) == NULL) {
-      perror(argv[1]);
+    if (freopen(argv[i], "r", stdin) == NULL) {
+      perror(argv[i]);
       return 2;
     }
   }
 
   /* Check for standard FITS or RPFITS. */
   if (!fread(cbuff, (size_t)80, (size_t)1, stdin)) {
-    perror(argv[1]);
+    perror(argv[i]);
     return 2;
   }
 
   if (strncmp(cbuff, "SIMPLE  = ", 10) == 0) {
     if (!fread(cbuff+80, (size_t)80, (size_t)1, stdin)) {
-      perror(argv[1]);
+      perror(argv[i]);
       return 2;
     }
 
@@ -116,7 +141,7 @@ int main(int argc, char **argv)
 
     /* Read the rest of the first block. */
     if (!fread(cbuff+160, (size_t)(blksiz-160), (size_t)1, stdin)) {
-      perror(argv[1]);
+      perror(argv[i]);
       return 2;
     }
 
@@ -134,13 +159,13 @@ int main(int argc, char **argv)
     blksiz = 2560;
 
     if (!fread(cbuff+80, (size_t)(blksiz-80), (size_t)1, stdin)) {
-      perror(argv[1]);
+      perror(argv[i]);
       return 2;
     }
 
     while (iblock < 4) {
       if (!fread(cbuff, (size_t)blksiz, (size_t)1, stdin)) {
-        perror(argv[1]);
+        perror(argv[i]);
         return 2;
       }
 
@@ -164,7 +189,7 @@ int main(int argc, char **argv)
   }
 
   printf("%s\n%s header number %d at block number %lld.\n%s\n", equals,
-    format, ++nhdr, ++iblock, dashes);
+    format, ++ihdr, ++iblock, dashes);
 
 
   /* Scan through the file. */
@@ -185,7 +210,7 @@ int main(int argc, char **argv)
         if (!fread(cbuff+10, (size_t)(blksiz-10), (size_t)1, stdin)) break;
 
         printf("%s\n%s header number %d at block number %lld.\n%s\n",
-          equals, format, ++nhdr, ++iblock, dashes);
+          equals, format, ++ihdr, ++iblock, dashes);
         inhdr = 1;
         nblock = 0;
 
@@ -238,8 +263,14 @@ int main(int argc, char **argv)
 
     } else {
       if (!nblock) {
+        if (nhdr && ihdr == nhdr) {
+          printf("Stopping at data section number %d which begins at block "
+                 "number %lld.\n", ihdr, iblock);
+          return 0;
+        }
+
         printf("Data section number %d beginning at block number %lld.\n",
-          nhdr, iblock);
+          ihdr, iblock);
       }
 
       nblock++;
@@ -261,9 +292,9 @@ int main(int argc, char **argv)
 
     nbyte = blksiz * iblock;
     printf("%s\nEnd-of-file after %d HDU%s in %lld x %d-byte blocks (%lld "
-      "bytes).\n", equals, nhdr, (nhdr == 1)?"":"s", iblock, blksiz, nbyte);
+      "bytes).\n", equals, ihdr, (ihdr == 1)?"":"s", iblock, blksiz, nbyte);
 
-    if (argc > 1 && !stat(argv[1], &instat)) {
+    if (argc > 1 && !stat(argv[i], &instat)) {
       if (nbyte != instat.st_size) {
         printf("WARNING: File is too short by %lld bytes.\n",
           nbyte - instat.st_size);
@@ -275,7 +306,7 @@ int main(int argc, char **argv)
     fprintf(stderr, "%s\r", spaces);
 
   } else {
-    perror(argv[1]);
+    perror(argv[i]);
     return 2;
   }
 

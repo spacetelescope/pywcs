@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.4 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2009, Mark Calabretta
+  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcsfix.c,v 4.4.1.1 2009/08/10 08:52:49 cal103 Exp cal103 $
+  $Id: wcsfix.c,v 4.5 2010/07/16 07:01:25 cal103 Exp $
 *===========================================================================*/
 
 #include <math.h>
@@ -37,6 +37,7 @@
 #include <string.h>
 
 #include "wcsmath.h"
+#include "wcsutil.h"
 #include "sph.h"
 #include "wcs.h"
 #include "wcsunits.h"
@@ -423,7 +424,7 @@ int celfix(struct wcsprm *wcs)
 int spcfix(struct wcsprm *wcs)
 
 {
-  char *scode;
+  char ctype[9], specsys[9];
   int  i, status;
 
   /* Initialize if required. */
@@ -446,24 +447,16 @@ int spcfix(struct wcsprm *wcs)
     }
   }
 
-  /* Was an AIPS-convention spectral type translated? */
-  scode = wcs->ctype[i] + 4;
-
-  if (strcmp(scode, "-LSR") == 0) {
-    strcpy(wcs->specsys, "LSRK");
-  } else if (strcmp(scode, "-HEL") == 0) {
-    strcpy(wcs->specsys, "BARYCENT");
-  } else if (strcmp(scode, "-OBS") == 0) {
-    strcpy(wcs->specsys, "TOPOCENT");
-  } else {
-    return -1;
+  /* Translate an AIPS-convention spectral type if present. */
+  if ((status = spcaips(wcs->ctype[i], wcs->velref, ctype, specsys))) {
+    return status;
   }
 
-  strcpy(scode, "\0\0\0\0");
+  strcpy(wcs->ctype[i], ctype);
+  if (wcs->specsys[1] == '\0') strcpy(wcs->specsys, specsys);
 
-  if (strcmp(wcs->ctype[i], "FELO") == 0) {
-    strcpy(wcs->ctype[i], "VOPT-F2W");
-  }
+  wcsutil_null_fill(72, wcs->ctype[i]);
+  wcsutil_null_fill(72, wcs->specsys);
 
   return 0;
 }

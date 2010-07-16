@@ -1,7 +1,7 @@
 *=======================================================================
 *
-* WCSLIB 4.4 - an implementation of the FITS WCS standard.
-* Copyright (C) 1995-2009, Mark Calabretta
+* WCSLIB 4.5 - an implementation of the FITS WCS standard.
+* Copyright (C) 1995-2010, Mark Calabretta
 *
 * This file is part of WCSLIB.
 *
@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: tcel1.f,v 4.4.1.1 2009/08/10 08:55:07 cal103 Exp cal103 $
+* $Id: tcel1.f,v 4.5 2010/07/16 07:01:26 cal103 Exp $
 *=======================================================================
 
       PROGRAM TCEL1
@@ -44,7 +44,7 @@
       REAL      XR(512), YR(512)
       DOUBLE PRECISION LAT(181), LNG(361), PHI(361), REF(4), THETA(361),
      :          X(361), Y(361)
-      CHARACTER RET*1, TEXT*72
+      CHARACTER TEXT*72
 
       INCLUDE 'cel.inc'
       INCLUDE 'prj.inc'
@@ -69,12 +69,12 @@
       STATUS = CELGET (NTV, CEL_PRJ, PRJ)
       STATUS = PRJPUT (PRJ, PRJ_CODE, 'BON', 0)
       STATUS = PRJPUT (PRJ, PRJ_PV, 35D0, 1)
-      STATUS = CELPUT (NTV, CEL_PRJ, PRJ)
+      STATUS = CELPUT (NTV, CEL_PRJ, PRJ, 0)
 
 
 *     Celestial graticule.
       STATUS = CELINI (CEL)
-      STATUS = CELPUT (CEL, CEL_PRJ, PRJ)
+      STATUS = CELPUT (CEL, CEL_PRJ, PRJ, 0)
 
 
 *     PGPLOT initialization.
@@ -334,7 +334,7 @@
 *           Flush PGPLOT buffer.
             CALL PGEBUF ()
             WRITE (*, '(A,$)') ' Type <RETURN> for next page: '
-            READ (*, '(A)', END=160) RET
+            READ (*, *, END=160)
 
 *           Cycle through celestial longitudes.
  160        CRVAL1 = CRVAL1 + 15

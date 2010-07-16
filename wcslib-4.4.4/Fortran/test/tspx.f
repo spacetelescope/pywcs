@@ -1,7 +1,7 @@
 *=======================================================================
 *
-* WCSLIB 4.4 - an implementation of the FITS WCS standard.
-* Copyright (C) 1995-2009, Mark Calabretta
+* WCSLIB 4.5 - an implementation of the FITS WCS standard.
+* Copyright (C) 1995-2010, Mark Calabretta
 *
 * This file is part of WCSLIB.
 *
@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: tspx.f,v 4.4.1.1 2009/08/10 08:55:07 cal103 Exp cal103 $
+* $Id: tspx.f,v 4.5 2010/07/16 07:01:26 cal103 Exp $
 *=======================================================================
 
       PROGRAM TSPX
@@ -46,14 +46,6 @@
      :          SPC1(NSPEC), SPC2(NSPEC), STEP, VELO(NSPEC), WAVE(NSPEC)
 
       INCLUDE 'spx.inc'
-
-      EXTERNAL  FREQAFRQ, AFRQFREQ, FREQENER, ENERFREQ,
-     :          FREQWAVN, WAVNFREQ, FREQVRAD, VRADFREQ,
-     :          FREQWAVE, WAVEFREQ, FREQAWAV, AWAVFREQ,
-     :          FREQVELO, VELOFREQ, WAVEVOPT, VOPTWAVE,
-     :          WAVEZOPT, ZOPTWAVE, WAVEAWAV, AWAVWAVE,
-     :          WAVEVELO, VELOWAVE, AWAVVELO, VELOAWAV,
-     :          VELOBETA, BETAVELO
 
       DATA C /2.99792458D8/
 *-----------------------------------------------------------------------

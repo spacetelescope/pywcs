@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.4 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2009, Mark Calabretta
+  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,10 +28,10 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: lin.h,v 4.4.1.1 2009/08/10 08:52:49 cal103 Exp cal103 $
+  $Id: lin.h,v 4.5 2010/07/16 07:01:25 cal103 Exp $
 *=============================================================================
 *
-* WCSLIB 4.4 - C routines that implement the FITS World Coordinate System
+* WCSLIB 4.5 - C routines that implement the FITS World Coordinate System
 * (WCS) standard.  Refer to
 *
 *   "Representations of world coordinates in FITS",
@@ -349,22 +349,22 @@ extern const char *lin_errmsg[];
 struct linprm {
   /* Initialization flag (see the prologue above).                          */
   /*------------------------------------------------------------------------*/
-  int flag;			/* Set to zero to force initialization.     */
+  int flag;                     /* Set to zero to force initialization.     */
 
   /* Parameters to be provided (see the prologue above).                    */
   /*------------------------------------------------------------------------*/
-  int naxis;			/* The number of axes, given by NAXIS.      */
-  double *crpix;		/* CRPIXja keywords for each pixel axis.    */
-  double *pc;			/* PCi_ja  linear transformation matrix.    */
-  double *cdelt;		/* CDELTia keywords for each coord axis.    */
+  int naxis;                    /* The number of axes, given by NAXIS.      */
+  double *crpix;                /* CRPIXja keywords for each pixel axis.    */
+  double *pc;                   /* PCi_ja  linear transformation matrix.    */
+  double *cdelt;                /* CDELTia keywords for each coord axis.    */
 
   /* Information derived from the parameters supplied.                      */
   /*------------------------------------------------------------------------*/
-  double *piximg;		/* Product of CDELTia and PCi_ja matrices.  */
-  double *imgpix;		/* Inverse of the piximg matrix.            */
-  int unity;			/* True if the PCi_ja matrix is unity.      */
+  double *piximg;               /* Product of CDELTia and PCi_ja matrices.  */
+  double *imgpix;               /* Inverse of the piximg matrix.            */
+  int unity;                    /* True if the PCi_ja matrix is unity.      */
 
-  int i_naxis;			/* The remainder are for memory management. */
+  int i_naxis;                  /* The remainder are for memory management. */
   int m_flag, m_naxis;
   double *m_crpix, *m_pc, *m_cdelt;
 };

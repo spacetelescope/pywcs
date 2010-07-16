@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.4 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2009, Mark Calabretta
+  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcs.c,v 4.4.1.2 2009/09/03 02:13:43 cal103 Exp cal103 $
+  $Id: wcs.c,v 4.5 2010/07/16 07:01:25 cal103 Exp $
 *===========================================================================*/
 
 #include <math.h>
@@ -458,7 +458,6 @@ int wcsini(int alloc, int naxis, struct wcsprm *wcs)
   }
 
   /* Defaults for alternate linear transformations. */
-  wcs->altlin = 0;
   cd = wcs->cd;
   for (i = 0; i < naxis; i++) {
     for (j = 0; j < naxis; j++) {
@@ -468,11 +467,14 @@ int wcsini(int alloc, int naxis, struct wcsprm *wcs)
   for (i = 0; i < naxis; i++) {
     wcs->crota[i] = 0.0;
   }
+  wcs->altlin = 0;
+  wcs->velref = 0;
 
   /* Defaults for auxiliary coordinate system information. */
   memset(wcs->alt, 0, 4);
   wcs->alt[0] = ' ';
   wcs->colnum = 0;
+
   memset(wcs->wcsname, 0, 72);
   for (i = 0; i < naxis; i++) {
     wcs->colax[i] = 0;
@@ -805,8 +807,6 @@ int wcssub(
   wcsdst->nps = nps;
 
   /* Alternate linear transformations. */
-  wcsdst->altlin = wcssrc->altlin;
-
   srcp = wcssrc->cd;
   dstp = wcsdst->cd;
   for (i = 0; i < *nsub; i++) {
@@ -822,6 +822,9 @@ int wcssub(
     k = axes[i] - 1;
     *(dstp++) = *(srcp+k);
   }
+
+  wcsdst->altlin = wcssrc->altlin;
+  wcsdst->velref = wcssrc->velref;
 
   /* Auxiliary coordinate system information. */
   strncpy(wcsdst->alt, wcssrc->alt, 4);
@@ -1093,8 +1096,6 @@ int wcsprt(const struct wcsprm *wcs)
   }
 
   /* Alternate linear transformations. */
-  printf("     altlin: %d\n", wcs->altlin);
-
   k = 0;
   printf("         cd: %p\n", (void *)wcs->cd);
   if (wcs->cd) {
@@ -1115,6 +1116,11 @@ int wcsprt(const struct wcsprm *wcs)
     }
     printf("\n");
   }
+
+  printf("     altlin: %d\n", wcs->altlin);
+  printf("     velref: %d\n", wcs->velref);
+
+
 
   /* Auxiliary coordinate system information. */
   printf("        alt: '%c'\n", wcs->alt[0]);
@@ -1614,7 +1620,7 @@ int wcs_types(struct wcsprm *wcs)
   const int  nalias = 2;
   const char aliases [2][4] = {"NCP", "GLS"};
 
-  char ctypei[16], pcode[4], requir[9], scode[4];
+  char ctypei[16], pcode[4], requir[9], scode[4], specsys[9];
   int i, j, m, naxis, *ndx = 0x0, type;
 
 
@@ -1674,6 +1680,11 @@ int wcs_types(struct wcsprm *wcs)
       }
     }
 
+    /* Translate AIPS spectral types. */
+    if (spcaips(ctypei, wcs->velref, ctypei, specsys) == 0) {
+      strcpy(wcs->ctype[i], ctypei);
+      if (wcs->specsys[0] == '\0') strcpy(wcs->specsys, specsys);
+    }
 
     if (!(strlen(ctypei) == 8 && ctypei[4] == '-') ||
         (strlen(ctypei) > 8 && ctypei[8] == '-')) {
@@ -1718,12 +1729,8 @@ int wcs_types(struct wcsprm *wcs)
 
     /* CTYPEia is in "4-3" form; is it a recognized spectral type? */
     if (spctyp(ctypei, 0x0, scode, 0x0, 0x0, 0x0, 0x0, 0x0) == 0) {
-      /* Spectral axis found (possibly linear, e.g. FREQ-LSR). */
-      wcs->types[i] = 3000;
-
-      if (strcmp(scode, "   ") != 0) {
         /* Non-linear spectral axis found. */
-        wcs->types[i] += 300;
+      wcs->types[i] = 3300;
 
         /* Check uniqueness. */
         if (wcs->spec >= 0) {
@@ -1731,7 +1738,6 @@ int wcs_types(struct wcsprm *wcs)
         }
 
         wcs->spec = i;
-      }
 
       continue;
     }
@@ -2931,7 +2937,6 @@ int wcssptr(
   char ctype[9])
 
 {
-  char   *code;
   int    j, status;
   double cdelt, crval;
 
@@ -2971,17 +2976,6 @@ int wcssptr(
   wcs->cdelt[j] = cdelt;
   wcs->crval[j] = crval;
   spctyp(ctype, 0x0, 0x0, 0x0, wcs->cunit[j], 0x0, 0x0, 0x0);
-
-  /* Extract the Doppler frame from AIPS-convention types. */
-  code = wcs->ctype[j] + 4;
-  if (strcmp(code, "-LSR") == 0) {
-    strcpy(wcs->specsys, "LSRK");
-  } else if (strcmp(code, "-HEL") == 0) {
-    strcpy(wcs->specsys, "BARYCENT");
-  } else if (strcmp(code, "-OBS") == 0) {
-    strcpy(wcs->specsys, "TOPOCENT");
-  }
-
   strcpy(wcs->ctype[j], ctype);
 
   /* This keeps things tidy if the spectral axis is linear. */

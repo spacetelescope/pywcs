@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.4 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2009, Mark Calabretta
+  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: twcssub.c,v 4.4.1.1 2009/08/10 08:54:26 cal103 Exp cal103 $
+  $Id: twcssub.c,v 4.5 2010/07/16 07:01:26 cal103 Exp $
 *=============================================================================
 *
 * twcssub tests wcssub() which extracts the coordinate description for a
@@ -73,27 +73,27 @@ int main()
   struct wcsprm wcs, wcsext;
   double *pcij;
 
-  PV[0].i = 1;                  /* Frequency on axis 1. */
-  PV[0].m = 1;                  /* Parameter number 1.  */
-  PV[0].value = -1.0;           /* PV1_1.               */
+  PV[0].i = 1;			/* Frequency on axis 1. */
+  PV[0].m = 1;			/* Parameter number 1.  */
+  PV[0].value = -1.0;		/* PV1_1.               */
 
-  PV[1].i = 3;                  /* Latitude on axis 3.  */
-  PV[1].m = 1;                  /* Parameter number 1.  */
-  PV[1].value = 2.0;            /* PV3_1.               */
+  PV[1].i = 3;			/* Latitude on axis 3.  */
+  PV[1].m = 1;			/* Parameter number 1.  */
+  PV[1].value = 2.0;		/* PV3_1.               */
 
-  PV[2].i = 3;                  /* Latitude on axis 3.  */
-  PV[2].m = 2;                  /* Parameter number 2.  */
-  PV[2].value = 210.0;          /* PV3_2.               */
+  PV[2].i = 3;			/* Latitude on axis 3.  */
+  PV[2].m = 2;			/* Parameter number 2.  */
+  PV[2].value = 210.0;		/* PV3_2.               */
 
-  PV[3].i = 3;                  /* Latitude on axis 3.  */
-  PV[3].m = 3;                  /* Parameter number 3.  */
-  PV[3].value = 60.0;           /* PV3_3.               */
+  PV[3].i = 3;			/* Latitude on axis 3.  */
+  PV[3].m = 3;			/* Parameter number 3.  */
+  PV[3].value = 60.0;		/* PV3_3.               */
 
   NPV = 4;
 
-  PS[0].i = 2;                  /* Time on axis 2.      */
-  PS[0].m = 1;                  /* Parameter number 1.  */
-  strcpy(PS[0].value, "UTC");   /* PS2_1.               */
+  PS[0].i = 2;			/* Time on axis 2.      */
+  PS[0].m = 1;			/* Parameter number 1.  */
+  strcpy(PS[0].value, "UTC");	/* PS2_1.               */
 
   NPS = 1;
 
@@ -143,7 +143,7 @@ int main()
 
 
   /* Initialize the wcsprm struct. */
-  (void) wcsset_(&wcs);
+  (void) wcsset(&wcs);
 
   printf("Testing WCSLIB subimage extraction routine (twcssub.c)\n"
          "------------------------------------------------------\n");
@@ -162,8 +162,8 @@ int main()
     printf("wcssub ERROR %d: %s.\n", status, wcs_errmsg[status]);
   } else if (nsub == 0) {
     printf("None of the requested subimage axes were found.\n");
-  } else if ((status = wcsset_(&wcsext))) {
-    printf("wcsset_ ERROR %d: %s.\n", status, wcs_errmsg[status]);
+  } else if ((status = wcsset(&wcsext))) {
+    printf("wcsset ERROR %d: %s.\n", status, wcs_errmsg[status]);
   } else {
     wcsprt(&wcsext);
   }

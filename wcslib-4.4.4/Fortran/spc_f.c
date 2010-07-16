@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.4 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2009, Mark Calabretta
+  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: spc_f.c,v 4.4.1.1 2009/08/10 08:54:51 cal103 Exp cal103 $
+  $Id: spc_f.c,v 4.5 2010/07/16 07:01:26 cal103 Exp $
 *===========================================================================*/
 
 #include <string.h>
@@ -49,6 +49,7 @@
 #define spcspx_ F77_FUNC(spcspx, SPCSPX)
 #define spcxps_ F77_FUNC(spcxps, SPCXPS)
 #define spctrn_ F77_FUNC(spctrn, SPCTRN)
+#define spcaips_ F77_FUNC(spcaips, SPCAIPS)
 
 #define SPC_FLAG    100
 #define SPC_TYPE    101
@@ -323,6 +324,32 @@ int spctrn_(
 
   wcsutil_blank_fill(9, ctypeS2_);
   strncpy(ctypeS2, ctypeS2_, 8);
+
+  return status;
+}
+
+/*--------------------------------------------------------------------------*/
+
+int spcaips_(
+  const char ctypeA[8],
+  int *velref,
+  char ctype[8],
+  char specsys[8])
+
+{
+  int status;
+  char ctypeA_[9], ctype_[9], specsys_[9];
+
+  strncpy(ctypeA_, ctypeA, 8);
+  ctypeA_[8] = '\0';
+
+  status = spcaips(ctypeA_, *velref, ctype_, specsys_);
+
+  wcsutil_blank_fill(9, ctype_);
+  strncpy(ctype, ctype_, 8);
+
+  wcsutil_blank_fill(9, specsys_);
+  strncpy(specsys, specsys_, 8);
 
   return status;
 }

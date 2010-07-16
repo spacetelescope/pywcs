@@ -1,7 +1,7 @@
 *=======================================================================
 *
-* WCSLIB 4.4 - an implementation of the FITS WCS standard.
-* Copyright (C) 1995-2009, Mark Calabretta
+* WCSLIB 4.5 - an implementation of the FITS WCS standard.
+* Copyright (C) 1995-2010, Mark Calabretta
 *
 * This file is part of WCSLIB.
 *
@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: tfitshdr.f,v 4.4.1.1 2009/08/10 08:55:07 cal103 Exp cal103 $
+* $Id: tfitshdr.f,v 4.5 2010/07/16 07:01:26 cal103 Exp $
 *=======================================================================
 
       PROGRAM TFITSHDR
@@ -42,11 +42,14 @@
 * WCSHDR is called first to extract all WCS-related keyrecords from the
 * input header before passing it on to FITSHDR.
 *
+* KEYS, which is meant to hold a pointer, is declared as an array of
+* length 2 to accomodate 64-bit machines for which sizeof(void *) =
+* 2*sizeof(int).
 *-----------------------------------------------------------------------
       LOGICAL   GOTEND
-      INTEGER   CTRL, I, IERR, IVAL(8), J, K, KEYNO, KEYS, KEYTYP, KTYP,
-     :          NC, NKEYRC, NKEYID, NREJECT, NWCS, RELAX, STATUS, ULEN,
-     :          WCSP
+      INTEGER   CTRL, I, IERR, IVAL(8), J, K, KEYNO, KEYS(2), KEYTYP,
+     :          KTYP, NC, NKEYRC, NKEYID, NREJECT, NWCS, RELAX, STATUS,
+     :          ULEN, WCSP
       DOUBLE PRECISION FVAL(2)
       CHARACTER KEYREC*80, CVAL*72, HEADER*288001, KEYWRD*12, INFILE*9,
      :          TEXT*84

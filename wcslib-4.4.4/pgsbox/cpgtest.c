@@ -1,7 +1,7 @@
 /*============================================================================
 
-  PGSBOX 4.4 - draw curvilinear coordinate axes for PGPLOT.
-  Copyright (C) 1997-2009, Mark Calabretta
+  PGSBOX 4.5 - draw curvilinear coordinate axes for PGPLOT.
+  Copyright (C) 1997-2010, Mark Calabretta
 
   This file is part of PGSBOX.
 
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: cpgtest.c,v 4.4.1.1 2009/08/10 08:55:45 cal103 Exp cal103 $
+  $Id: cpgtest.c,v 4.5 2010/07/16 07:01:27 cal103 Exp $
 *=============================================================================
 *
 *   cpgtest
@@ -275,8 +275,8 @@ int main()
   printf("\nZ versus time plot\n");
 
   /* Function types. */
-  strcpy(fcode[0], "Lin ");
-  strcpy(fcode[1], "Log ");
+  strncpy(fcode[0], "Lin ", 4);
+  strncpy(fcode[1], "Log ", 4);
 
   /* Reference pixel coordinates. */
   nldprm[0] =   0.5;
@@ -1157,8 +1157,8 @@ int main()
   trc[1] = naxis[1] + 0.5;
 
   /* Function types. */
-  strcpy(fcode[0], "Lin ");
-  strcpy(fcode[1], "Lin ");
+  strncpy(fcode[0], "Lin ", 4);
+  strncpy(fcode[1], "Lin ", 4);
 
   /* Reference pixel coordinates. */
   nldprm[0] = 0.5;

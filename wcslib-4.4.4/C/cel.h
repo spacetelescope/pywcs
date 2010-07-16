@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.4 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2009, Mark Calabretta
+  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,10 +28,10 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: cel.h,v 4.4.1.1 2009/08/10 08:52:49 cal103 Exp cal103 $
+  $Id: cel.h,v 4.5 2010/07/16 07:01:25 cal103 Exp $
 *=============================================================================
 *
-* WCSLIB 4.4 - C routines that implement the FITS World Coordinate System
+* WCSLIB 4.5 - C routines that implement the FITS World Coordinate System
 * (WCS) standard.  Refer to
 *
 *   "Representations of world coordinates in FITS",
@@ -323,23 +323,23 @@ extern const char *cel_errmsg[];
 struct celprm {
   /* Initialization flag (see the prologue above).                          */
   /*------------------------------------------------------------------------*/
-  int    flag;			/* Set to zero to force initialization.     */
+  int    flag;                  /* Set to zero to force initialization.     */
 
   /* Parameters to be provided (see the prologue above).                    */
   /*------------------------------------------------------------------------*/
-  int    offset;		/* Force (x,y) = (0,0) at (phi_0,theta_0).  */
-  double phi0, theta0;		/* Native coordinates of fiducial point.    */
-  double ref[4];		/* Celestial coordinates of fiducial        */
+  int    offset;                /* Force (x,y) = (0,0) at (phi_0,theta_0).  */
+  double phi0, theta0;          /* Native coordinates of fiducial point.    */
+  double ref[4];                /* Celestial coordinates of fiducial        */
                                 /* point and native coordinates of          */
                                 /* celestial pole.                          */
 
-  struct prjprm prj;		/* Projection parameters (see prj.h).       */
+  struct prjprm prj;            /* Projection parameters (see prj.h).       */
 
   /* Information derived from the parameters supplied.                      */
   /*------------------------------------------------------------------------*/
-  double euler[5];		/* Euler angles and functions thereof.      */
-  int    latpreq;		/* LATPOLEa requirement.                    */
-  int    isolat;		/* True if |latitude| is preserved.         */
+  double euler[5];              /* Euler angles and functions thereof.      */
+  int    latpreq;               /* LATPOLEa requirement.                    */
+  int    isolat;                /* True if |latitude| is preserved.         */
 };
 
 /* Size of the celprm struct in int units, used by the Fortran wrappers. */

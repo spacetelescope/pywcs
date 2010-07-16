@@ -1,8 +1,8 @@
 ------------------------------------------------------------------------------
-                         WCSLIB 4.4 and PGSBOX 4.4
+                         WCSLIB 4.5 and PGSBOX 4.5
 ------------------------------------------------------------------------------
-    WCSLIB 4.4 - an implementation of the FITS WCS standard.
-    Copyright (C) 1995-2009, Mark Calabretta
+    WCSLIB 4.5 - an implementation of the FITS WCS standard.
+    Copyright (C) 1995-2010, Mark Calabretta
 
     This file is part of WCSLIB.
 
@@ -30,20 +30,20 @@
 
 Please refer to
 
-  ./INSTALL		...Installation instructions.
+  ./INSTALL             ...Installation instructions.
 
-  ./html/index.html	...The WCSLIB programmer's manual in HTML format.
-  ./wcslib.pdf		...The WCSLIB programmer's manual in PDF format.
+  ./html/index.html     ...The WCSLIB programmer's manual in HTML format.
+  ./wcslib.pdf          ...The WCSLIB programmer's manual in PDF format.
 
-  ./CHANGES		...Log of changes made to WCSLIB.
+  ./CHANGES             ...Log of changes made to WCSLIB.
 
-  ./VALIDATION		...List of platforms on which the installation
-			   procedures and test suite were exercised.
+  ./VALIDATION          ...List of platforms on which the installation
+                           procedures and test suite were exercised.
 
-  ./COPYING		...A copy of the GNU General Public License, v3.0.
-  ./COPYING.LESSER	...A copy of the Lesser GNU General Public License.
+  ./COPYING             ...A copy of the GNU General Public License, v3.0.
+  ./COPYING.LESSER      ...A copy of the Lesser GNU General Public License.
 
 
 Author: Mark Calabretta, Australia Telescope National Facility
 http://www.atnf.csiro.au/~mcalabre/index.html
-$Id: README,v 4.4.1.1 2009/08/10 08:42:06 cal103 Exp cal103 $
+$Id: README,v 4.5 2010/07/16 07:01:26 cal103 Exp $

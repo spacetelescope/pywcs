@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.4 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2009, Mark Calabretta
+  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,10 +28,10 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcs.h,v 4.4.1.3 2009/09/03 05:02:16 cal103 Exp cal103 $
+  $Id: wcs.h,v 4.5 2010/07/16 07:01:25 cal103 Exp $
 *=============================================================================
 *
-* WCSLIB 4.4 - C routines that implement the FITS World Coordinate System
+* WCSLIB 4.5 - C routines that implement the FITS World Coordinate System
 * (WCS) standard.  Refer to
 *
 *   "Representations of world coordinates in FITS",
@@ -343,10 +343,11 @@
 * wcsset_() sets up a wcsprm struct according to information supplied within
 * it (refer to the description of the wcsprm struct).
 *
-* wcsset_() recognizes the NCP projection and converts it to the equivalent SIN
-* projection and it also recognizes GLS as a synonym for SFL.  It does alias
-* translation for the AIPS spectral types ('FREQ-LSR', 'FELO-HEL', etc.) but
-* without changing the input header keywords.
+* wcsset() recognizes the NCP projection and converts it to the equivalent SIN
+* projection and it also recognizes GLS as a synonym for SFL.  It also
+* translates the AIPS spectral types ('FREQ-LSR', 'FELO-HEL', etc.), possibly
+* changing the input header keywords wcsprm::ctype and/or wcsprm::specsys if
+* necessary.
 *
 * Note that this routine need not be called directly; it will be invoked by
 * wcsp2s() and wcss2p() if the wcsprm::flag is anything other than a
@@ -610,7 +611,7 @@
 *   i         int*      Index of the spectral axis (0-relative).  If given < 0
 *                       it will be set to the first spectral axis identified
 *                       from the ctype[] keyvalues in the wcsprm struct.
-*   ctype     char[9]   Required spectral CTYPEia.  Wildcarding may be used as
+*   ctype     char[9]   Desired spectral CTYPEia.  Wildcarding may be used as
 *                       for the ctypeS2 argument to spctrn() as described in
 *                       the prologue of spc.h, i.e. if the final three
 *                       characters are specified as "???", or if just the
@@ -900,8 +901,8 @@
 *     (and no PCi_ja or CDi_ja), then wcsset_() reverts to a unity PCi_ja
 *     matrix.
 *
-*   int padding
-*     (An unused variable inserted for alignment purposes only.)
+*   int velref
+*     (Given) AIPS velocity code VELREF, refer to spcaips().
 *
 *   char alt[4]
 *     (Given, auxiliary) Character code for alternate coordinate descriptions
@@ -1318,7 +1319,7 @@ struct wcsprm {
                                 /*   Bit 0: PCi_ja  is present,             */
                                 /*   Bit 1: CDi_ja  is present,             */
                                 /*   Bit 2: CROTAia is present.             */
-  int    padding;               /* (Dummy inserted for alignment purposes.) */
+  int    velref;                /* AIPS velocity code, VELREF.              */
 
   /* Auxiliary coordinate system information, not used by WCSLIB.           */
   char   alt[4];

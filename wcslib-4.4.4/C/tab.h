@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.4 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2009, Mark Calabretta
+  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,10 +28,10 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: tab.h,v 4.4.1.1 2009/08/10 08:52:49 cal103 Exp cal103 $
+  $Id: tab.h,v 4.5 2010/07/16 07:01:25 cal103 Exp $
 *=============================================================================
 *
-* WCSLIB 4.4 - C routines that implement tabular coordinate systems as
+* WCSLIB 4.5 - C routines that implement tabular coordinate systems as
 * defined by the FITS World Coordinate System (WCS) standard.  Refer to
 *
 *   "Representations of world coordinates in FITS",
@@ -462,40 +462,40 @@ extern const char *tab_errmsg[];
 struct tabprm {
   /* Initialization flag (see the prologue above).                          */
   /*------------------------------------------------------------------------*/
-  int    flag;			/* Set to zero to force initialization.     */
+  int    flag;                  /* Set to zero to force initialization.     */
 
   /* Parameters to be provided (see the prologue above).                    */
   /*------------------------------------------------------------------------*/
-  int    M;			/* Number of tabular coordinate axes.       */
-  int    *K;			/* Vector of length M whose elements        */
-				/* (K_1, K_2,... K_M) record the lengths of */
-				/* the axes of the coordinate array and of  */
-				/* each indexing vector.                    */
-  int    *map;			/* Vector of length M usually such that     */
-				/* map[m-1] == i-1 for coordinate array     */
-				/* axis m and image axis i (see above).     */
-  double *crval;		/* Vector of length M containing the index  */
-				/* value for the reference pixel for each   */
-				/* of the tabular coordinate axes.          */
-  double **index;		/* Vector of pointers to M indexing vectors */
-				/* of lengths (K_1, K_2,... K_M).           */
-  double *coord;		/* (1+M)-dimensional tabular coordinate     */
-				/* array (see above).                       */
+  int    M;                     /* Number of tabular coordinate axes.       */
+  int    *K;                    /* Vector of length M whose elements        */
+                                /* (K_1, K_2,... K_M) record the lengths of */
+                                /* the axes of the coordinate array and of  */
+                                /* each indexing vector.                    */
+  int    *map;                  /* Vector of length M usually such that     */
+                                /* map[m-1] == i-1 for coordinate array     */
+                                /* axis m and image axis i (see above).     */
+  double *crval;                /* Vector of length M containing the index  */
+                                /* value for the reference pixel for each   */
+                                /* of the tabular coordinate axes.          */
+  double **index;               /* Vector of pointers to M indexing vectors */
+                                /* of lengths (K_1, K_2,... K_M).           */
+  double *coord;                /* (1+M)-dimensional tabular coordinate     */
+                                /* array (see above).                       */
 
   /* Information derived from the parameters supplied.                      */
   /*------------------------------------------------------------------------*/
-  int    nc;			/* Number of coordinate vectors (of length  */
-				/* M) in the coordinate array.              */
-  int    padding;		/* (Dummy inserted for alignment purposes.) */
-  int    *sense;		/* Vector of M flags that indicate whether  */
-				/* the Mth indexing vector is monotonic     */
-				/* increasing, or else decreasing.          */
-  int    *p0;			/* Vector of M indices.                     */
-  double *delta;		/* Vector of M increments.                  */
-  double *extrema;		/* (1+M)-dimensional array of coordinate    */
-				/* extrema.                                 */
+  int    nc;                    /* Number of coordinate vectors (of length  */
+                                /* M) in the coordinate array.              */
+  int    padding;               /* (Dummy inserted for alignment purposes.) */
+  int    *sense;                /* Vector of M flags that indicate whether  */
+                                /* the Mth indexing vector is monotonic     */
+                                /* increasing, or else decreasing.          */
+  int    *p0;                   /* Vector of M indices.                     */
+  double *delta;                /* Vector of M increments.                  */
+  double *extrema;              /* (1+M)-dimensional array of coordinate    */
+                                /* extrema.                                 */
 
-  int    m_flag, m_M, m_N;	/* The remainder are for memory management. */
+  int    m_flag, m_M, m_N;      /* The remainder are for memory management. */
   int    set_M;
   int    *m_K, *m_map;
   double *m_crval, **m_index, **m_indxs, *m_coord;
