@@ -208,7 +208,7 @@ class WCS(WCSBase):
                 keysel_flags = -1
 
             try:
-                header_string = str(header.ascard)
+                header_string = repr(header.ascard)
                 wcsprm = _pywcs._Wcsprm(header=header_string, key=key,
                                         relax=relax, keysel=keysel_flags,
                                         colsel=colsel)
