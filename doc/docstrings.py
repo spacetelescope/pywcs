@@ -1641,7 +1641,8 @@ Sect. 5.2.1), integer (Sect. 5.2.3), and floating-point values
 
      - ``WCSHDR_PIXLIST``: Pixel list keywords.
 
-   If zero, there is no restriction.
+   If zero, there is no restriction.  If -1, wcspih() is called,
+   rather than wcstbh().
 
 - *colsel*: A sequence of table column numbers used to restrict the
   keywords considered.  ``None`` indicates no restriction.

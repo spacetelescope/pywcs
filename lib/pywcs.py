@@ -137,8 +137,9 @@ class WCS(WCSBase):
 
         - *keysel*: A list of flags used to select the keyword types
           considered by wcslib.  When ``None``, only the standard
-          image header keywords are considered.  To use binary table
-          image array or pixel list keywords, *keysel* must be set.
+          image header keywords are considered (and the underlying
+          wcspih() C function is called).  To use binary table image
+          array or pixel list keywords, *keysel* must be set.
 
           Each element in the list should be one of the following
           strings:
