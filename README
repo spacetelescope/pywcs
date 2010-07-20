@@ -42,14 +42,9 @@ In addition, there are extensions (written in C) to support Spitzer
 Simple Imaging Polynomial (SIP) convention keywords and Paper IV table
 lookup distortion.
 
-pywcs is alpha-quality software.  Please direct any questions to:
+Please direct any questions to:
 
-  Michael Droettboom
-  mdroe@stsci.edu
-
-The current version is focused on providing basic access to the
-functionality in WCSLIB.  Future releases will have better integration
-with PyFITS and more Python-specific utilities.
+  support@stsci.edu
 
 Build instructions
 ------------------
