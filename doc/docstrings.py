@@ -214,8 +214,8 @@ For historical compatibility, two alternate specifications of the
 not formally co-exist with ``PCi_ja``, the approach here is simply to
 ignore them if given in conjunction with ``PCi_ja``.
 
-`~pywcs.Wcsprm.has_pci_ja`, `~pywcs.Wcsprm.has_cdi_ja` and
-`~pywcs.Wcsprm.has_crotaia` can be used to determine which of these
+`~pywcs.Wcsprm.has_pc`, `~pywcs.Wcsprm.has_cd` and
+`~pywcs.Wcsprm.has_crota` can be used to determine which of these
 alternatives are present in the header.
 
 ``CDi_ja`` and ``CROTAia`` keywords, if found, are to be stored in the
@@ -586,8 +586,8 @@ and ``LATPOLEa``.
    `~pywcs.Wcsprm.set_pv`
 """
 
-has_cdi_ja = """
-has_cdi_ja() -> bool
+has_cd = """
+has_cd() -> bool
 
 Returns ``True`` if ``CDi_ja`` is present.  ``CDi_ja`` is an alternate
 specification of the linear transformation matrix, maintained for
@@ -610,8 +610,15 @@ co-exist with ``CDELTia`` and ``CROTAia`` which are to be ignored.
    `cd`
 """
 
-has_crotaia = """
-has_crotaia() -> bool
+has_cdi_ja = """
+has_cdi_ja() -> bool
+
+Alias for `~pywcs.Wcsprm.has_cd`.  Maintained for backward
+compatibility.
+"""
+
+has_crota = """
+has_crota() -> bool
 
 Returns ``True`` if ``CROTAia`` is present.  ``CROTAia`` is an
 alternate specification of the linear transformation matrix,
@@ -628,18 +635,32 @@ ignored.
 
 .. seealso::
 
-   `cd`
+   `crota`
 """
 
-has_pci_ja = """
-has_pci_ja() -> bool
+has_crotaia = """
+has_crota_ia() -> bool
+
+Alias for `~pywcs.Wcsprm.has_crota`.  Maintained for backward
+compatibility.
+"""
+
+has_pc = """
+has_pc() -> bool
 
 Returns ``True`` if ``PCi_ja`` is present.  ``PCi_ja`` is the
 recommended way to specify the linear transformation matrix.
 
 .. seealso::
 
-   `cd`
+   `pc`
+"""
+
+has_pci_ja = """
+has_pci_ja() -> bool
+
+Alias for `~pywcs.Wcsprm.has_pc`.  Maintained for backward
+compatibility.
 """
 
 imgpix_matrix = """

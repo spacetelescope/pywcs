@@ -34,6 +34,10 @@ DAMAGE.
          mdroe@stsci.edu
 */
 
+/* TODO: Add aliases has_cd, has_pc, has_crota */
+
+/* TODO: Use macros to reduce lines of code for setters/getters */
+
 #define NO_IMPORT_ARRAY
 
 #include "wcslib_wrap.h"
@@ -622,7 +626,7 @@ PyWcsprm_has_pci_ja(
 
   int result = 0;
 
-  result = self->x.altlin & has_pc;
+  result = (self->x.altlin == 0 || self->x.altlin & has_pc);
 
   return PyBool_FromLong(result);
 }
@@ -1536,6 +1540,8 @@ PyWcsprm_set_cd(
     return -1;
   }
 
+  note_change(self);
+
   if (value == NULL) {
     self->x.altlin &= ~has_cd;
     return 0;
@@ -1546,8 +1552,6 @@ PyWcsprm_set_cd(
   }
 
   self->x.altlin |= has_cd;
-
-  note_change(self);
 
   return 0;
 }
@@ -1755,6 +1759,8 @@ PyWcsprm_set_crota(
 
   npy_intp naxis = 0;
 
+  note_change(self);
+
   if (is_null(self->x.crota)) {
     return -1;
   }
@@ -1771,8 +1777,6 @@ PyWcsprm_set_crota(
   }
 
   self->x.altlin |= has_crota;
-
-  note_change(self);
 
   return 0;
 }
@@ -2241,7 +2245,7 @@ PyWcsprm_get_pc(
     return NULL;
   }
 
-  if ((self->x.altlin & has_pc) == 0) {
+  if (self->x.altlin != 0 && (self->x.altlin & has_pc) == 0) {
     PyErr_SetString(PyExc_AttributeError, "No pc is present.");
     return NULL;
   }
@@ -2261,8 +2265,20 @@ PyWcsprm_set_pc(
     return -1;
   }
 
+  note_change(self);
+
   if (value == NULL) { /* deletion */
     self->x.altlin &= ~has_pc;
+
+    /* If this results in deleting all flags, pc is still the default,
+       so we should set the pc matrix itself to default values. */
+    if (self->x.altlin == 0) {
+      self->x.pc[0] = 1.0;
+      self->x.pc[1] = 0.0;
+      self->x.pc[2] = 0.0;
+      self->x.pc[3] = 1.0;
+    }
+
     return 0;
   }
 
@@ -2272,7 +2288,6 @@ PyWcsprm_set_pc(
 
   self->x.altlin |= has_pc;
 
-  note_change(self);
 
   return 0;
 }
@@ -2628,8 +2643,11 @@ static PyMethodDef PyWcsprm_methods[] = {
   {"fix", (PyCFunction)PyWcsprm_fix, METH_VARARGS|METH_KEYWORDS, doc_fix},
   {"get_ps", (PyCFunction)PyWcsprm_get_ps, METH_NOARGS, doc_get_ps},
   {"get_pv", (PyCFunction)PyWcsprm_get_pv, METH_NOARGS, doc_get_pv},
+  {"has_cd", (PyCFunction)PyWcsprm_has_cdi_ja, METH_NOARGS, doc_has_cd},
   {"has_cdi_ja", (PyCFunction)PyWcsprm_has_cdi_ja, METH_NOARGS, doc_has_cdi_ja},
+  {"has_crota", (PyCFunction)PyWcsprm_has_crotaia, METH_NOARGS, doc_has_crota},
   {"has_crotaia", (PyCFunction)PyWcsprm_has_crotaia, METH_NOARGS, doc_has_crotaia},
+  {"has_pc", (PyCFunction)PyWcsprm_has_pci_ja, METH_NOARGS, doc_has_pc},
   {"has_pci_ja", (PyCFunction)PyWcsprm_has_pci_ja, METH_NOARGS, doc_has_pci_ja},
   {"is_unity", (PyCFunction)PyWcsprm_is_unity, METH_NOARGS, doc_is_unity},
   {"mix", (PyCFunction)PyWcsprm_mix, METH_VARARGS|METH_KEYWORDS, doc_mix},
