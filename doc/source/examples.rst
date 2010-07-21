@@ -20,7 +20,3 @@ saves those settings to a new FITS header.
 .. literalinclude:: examples/programmatic.py
    :language: python
 
-.. toctree::
-
-   /home/mdboom/Work/builds/vo/doc/source/index.rst
-
