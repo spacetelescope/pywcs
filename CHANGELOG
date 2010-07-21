@@ -1,3 +1,29 @@
+Version 1.9
+===========
+
+- Support binary image arrays and pixel list format WCS by presenting
+  a way to call wcslib's wcsbth()
+
+- Updated underlying wcslib to version 4.5, which fixes the following:
+
+    - Fixed the interpretation of VELREF when translating
+      AIPS-convention spectral types.  Such translation is now handled
+      by a new special- purpose function, spcaips().  The wcsprm
+      struct has been augmented with an entry for velref which is
+      filled by wcspih() and wcsbth().  Previously, selection by
+      VELREF of the radio or optical velocity convention for type VELO
+      was not properly handled.
+
+BUGS:
+
+- The "pc" member is now available with a default "raw" Wcsprm object.
+
+- Make properties that return arrays read-only, since modifying a
+  (mutable) array could result in secondary values not being
+  recomputed based on those changes.
+
+- float properties can now be set using int values
+
 Version 1.3a1
 =============
 

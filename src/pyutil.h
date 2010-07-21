@@ -49,7 +49,7 @@ DAMAGE.
 /* Py_ssize_t for old Pythons */
 /* This code is as recommended by: */
 /* http://www.python.org/dev/peps/pep-0353/#conversion-guidelines */
-#if PY_VERSION_HEX < 0x02050000 
+#if PY_VERSION_HEX < 0x02050000
    #if !defined(PY_SSIZE_T_MIN)
       typedef int Py_ssize_t;
       # define PY_SSIZE_T_MAX INT_MAX

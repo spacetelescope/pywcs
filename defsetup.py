@@ -173,7 +173,7 @@ fd.close()
 
 ######################################################################
 # PYWCS-SPECIFIC AND WRAPPER SOURCE FILES
-PYWCS_VERSION = '1.8.1'
+PYWCS_VERSION = '1.9'
 VERSION = '%s-%s' % (PYWCS_VERSION, WCSVERSION)
 PYWCS_SOURCES = [ # List of pywcs files to compile
     'distortion.c',
