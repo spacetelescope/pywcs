@@ -668,11 +668,6 @@ imgpix_matrix = """
 
 Inverse of the matrix containing the product of the ``CDELTia``
 diagonal matrix and the ``PCi_ja`` matrix.
-
-.. warning::
-
-   This value may not be correct until after `~pywcs.Wcsprm.set` is
-   called.
 """
 
 is_unity = """
@@ -680,11 +675,6 @@ is_unity() -> bool
 
 Returns ``True`` if the linear transformation matrix
 (`~pywcs.Wcsprm.cd`) is unity.
-
-.. warning::
-
-   This value may not be correct until after `~pywcs.Wcsprm.set` is
-   called.
 """
 
 lat = """
@@ -705,11 +695,6 @@ lattyp = """
 Celestial axis type for longitude, e.g. "RA", "DEC", "GLON", "GLAT",
 etc. extracted from 'RA--', 'DEC-', 'GLON', 'GLAT', etc. in the first
 four characters of ``CTYPEia`` but with trailing dashes removed.
-
-.. warning::
-
-   This value may not be correct until after `~pywcs.Wcsprm.set` is
-   called.
 """
 
 lng = """
@@ -724,11 +709,6 @@ lngtyp = """
 Celestial axis type for longitude, e.g. "RA", "DEC", "GLON", "GLAT",
 etc. extracted from 'RA--', 'DEC-', 'GLON', 'GLAT', etc. in the first
 four characters of ``CTYPEia`` but with trailing dashes removed.
-
-.. warning::
-
-   This value may not be correct until after `~pywcs.Wcsprm.set` is
-   called.
 """
 
 lonpole = """
@@ -1056,11 +1036,6 @@ piximg_matrix = """
 
 Matrix containing the product of the ``CDELTia`` diagonal matrix and
 the ``PCi_ja`` matrix.
-
-.. warning::
-
-   This value may not be correct until after `~pywcs.Wcsprm.set` is
-   called.
 """
 
 print_contents = """

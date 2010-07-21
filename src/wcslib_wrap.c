@@ -635,6 +635,8 @@ static PyObject*
 PyWcsprm_is_unity(
     PyWcsprm* self) {
 
+  wcsset_(&self->x);
+
   return PyBool_FromLong(self->x.lin.unity);
 }
 
@@ -2048,6 +2050,8 @@ PyWcsprm_get_imgpix_matrix(
     return NULL;
   }
 
+  wcsset_(&self->x);
+
   return get_double_array("imgpix_matrix", self->x.lin.imgpix, 2, dims,
                           (PyObject*)self);
 }
@@ -2088,6 +2092,8 @@ PyWcsprm_get_lattyp(
     return NULL;
   }
 
+  wcsset_(&self->x);
+
   return get_string("lattyp", self->x.lattyp);
 }
 
@@ -2107,6 +2113,8 @@ PyWcsprm_get_lngtyp(
   if (is_null(self->x.lngtyp)) {
     return NULL;
   }
+
+  wcsset_(&self->x);
 
   return get_string("lngtyp", self->x.lngtyp);
 }
@@ -2321,6 +2329,8 @@ PyWcsprm_get_piximg_matrix(
   if (is_null(self->x.lin.piximg)) {
     return NULL;
   }
+
+  wcsset_(&self->x);
 
   return get_double_array("piximg_matrix", self->x.lin.piximg, 2, dims,
                           (PyObject*)self);
