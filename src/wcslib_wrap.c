@@ -34,10 +34,6 @@ DAMAGE.
          mdroe@stsci.edu
 */
 
-/* TODO: Add aliases has_cd, has_pc, has_crota */
-
-/* TODO: Use macros to reduce lines of code for setters/getters */
-
 #define NO_IMPORT_ARRAY
 
 #include "wcslib_wrap.h"
