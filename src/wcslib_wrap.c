@@ -2268,6 +2268,8 @@ PyWcsprm_set_pc(
     /*@unused@*/ void* closure) {
 
   const npy_intp dims[2] = {2, 2};
+  int i, j, naxis;
+  double* pc;
 
   if (is_null(self->x.pc)) {
     return -1;
@@ -2280,11 +2282,17 @@ PyWcsprm_set_pc(
 
     /* If this results in deleting all flags, pc is still the default,
        so we should set the pc matrix itself to default values. */
-    if (self->x.altlin == 0) {
-      self->x.pc[0] = 1.0;
-      self->x.pc[1] = 0.0;
-      self->x.pc[2] = 0.0;
-      self->x.pc[3] = 1.0;
+    naxis = self->x.naxis;
+    pc = self->x.pc;
+    for (i = 0; i < naxis; i++) {
+      for (j = 0; j < naxis; j++) {
+        if (j == i) {
+          *pc = 1.0;
+        } else {
+          *pc = 0.0;
+        }
+        pc++;
+      }
     }
 
     return 0;
