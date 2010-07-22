@@ -281,6 +281,18 @@ relevant column number.
 It should be set to zero for an image header or pixel list.
 """
 
+coord = """
+``double array[K_M]...[K_2][K_1][M]``
+
+The tabular coordinate array, with the dimensions::
+
+    (K_M, ... K_2, K_1, M)
+
+(see `~pywcs._pywcs.Tabprm.K`) i.e. with the `M` dimension varying
+fastest so that the `M` elements of a coordinate vector are stored
+contiguously in memory.
+"""
+
 copy = """
 Creates a deep copy of the WCS object.
 """
@@ -325,6 +337,13 @@ crval = """
 ``double array[naxis]``
 
 Coordinate reference values (``CRVALia``) for each coordinate axis.
+"""
+
+crval_tabprm = """
+``double array[M]``
+
+Array whose elements contain the index value for the reference pixel
+for each of the tabular coordinate axes.
 """
 
 csyer = """
@@ -420,6 +439,12 @@ data = """
 The array data for the `~pywcs.DistortionLookupTable`.
 """
 
+data_wtbarr = """
+``double array``
+
+The array data for the BINTABLE.
+"""
+
 dateavg = """
 ``string``
 
@@ -453,6 +478,14 @@ than half a day then `ValueError` is raised.
 Returns ``0`` for success; ``-1`` if no change required.
 """
 
+delta = """
+``double array[M]`` (read-only)
+
+Array of interpolated indices into the coordinate array such that
+Upsilon_m, as defined in Paper III, is equal to `~pywcs._pywcs.Tabprm.p0` [m] +
+delta[m].
+"""
+
 det2im = """
 Convert detector coordinates to image plane coordinates.
 """
@@ -465,6 +498,12 @@ correction in the *x*-axis.
 det2im2 = """
 A `~pywcs.DistortionLookupTable` object for detector to image plane
 correction in the *y*-axis.
+"""
+
+dims = """
+``int array[ndim]`` (read-only)
+
+The dimensions of the tabular array `~pywcs._pywcs.Wtbarr.data`.
 """
 
 DistortionLookupTable = """
@@ -492,8 +531,41 @@ applicable to ICRS equatorial or ecliptic coordinates.
 An undefined value is represented by NaN.
 """
 
+extlev = """
+``int`` (read-only)
+
+``EXTLEV`` identifying the binary table extension.
+"""
+
+extnam = """
+``str`` (read-only)
+
+``EXTNAME`` identifying the binary table extension.
+"""
+
+extrema = """
+``double array[K_M]...[K_2][2][M]`` (read-only)
+
+An array recording the minimum and maximum value of each element of
+the coordinate vector in each row of the coordinate array, with the
+dimensions::
+
+    (K_M, ... K_2, 2, M)
+
+(see `~pywcs._pywcs.Tabprm.K`).  The minimum is recorded in the first
+element of the compressed K_1 dimension, then the maximum.  This array
+is used by the inverse table lookup function to speed up table
+searches.
+"""
+
+extver = """
+``int`` (read-only)
+
+``EXTVER`` identifying the binary table extension.
+"""
+
 fix = """
-fix(*translate_units=''*, *naxis=0*)
+fix(translate_units='', naxis=0)
 
 Applies all of the corrections handled separately by
 `~pywcs.Wcsprm.datfix`, `~pywcs.Wcsprm.unitfix`,
@@ -663,6 +735,12 @@ Alias for `~pywcs.Wcsprm.has_pc`.  Maintained for backward
 compatibility.
 """
 
+i = """
+``int`` (read-only)
+
+Image axis number.
+"""
+
 imgpix_matrix = """
 ``double array[2][2]`` (read-only)
 
@@ -675,6 +753,22 @@ is_unity() -> bool
 
 Returns ``True`` if the linear transformation matrix
 (`~pywcs.Wcsprm.cd`) is unity.
+"""
+
+K = """
+``int array[M]`` (read-only)
+
+An array of length `M` whose elements record the lengths of the axes of
+the coordinate array and of each indexing vector.
+"""
+
+kind = """
+``str`` (read-only)
+
+Character identifying the wcstab array type:
+
+    - ``'c'``: coordinate array,
+    - ``'i'``: index vector.
 """
 
 lat = """
@@ -717,8 +811,43 @@ lonpole = """
 The native longitude of the celestial pole, ``LONPOLEa`` (deg).
 """
 
+M = """
+``int`` (read-only)
+
+Number of tabular coordinate axes.
+"""
+
+m = """
+``int`` (read-only)
+
+Array axis number for index vectors.
+"""
+
+map = """
+``int array[M]``
+
+A vector of length `~pywcs._pywcs.Tabprm.M`
+that defines the association between axis *m* in the *M*-dimensional
+coordinate array (1 <= *m* <= *M*) and the indices of the intermediate world
+coordinate and world coordinate arrays.
+
+When the intermediate and world coordinate arrays contain the full
+complement of coordinate elements in image-order, as will usually be
+the case, then ``map[m-1] == i-1`` for axis *i* in the *N*-dimensional
+image (1 <= *i* <= *N*).  In terms of the FITS keywords::
+
+    map[PVi_3a - 1] == i - 1.
+
+However, a different association may result if the intermediate
+coordinates, for example, only contains a (relevant) subset of
+intermediate world coordinate elements.  For example, if *M* == 1 for
+an image with *N* > 1, it is possible to fill the intermediate
+coordinates with the relevant coordinate element with ``nelem`` set to
+1.  In this case ``map[0] = 0`` regardless of the value of *i*.
+"""
+
 mix = """
-mix(*mixpix, mixcel, vspan, vstep, viter, world, pixcrd, origin*) -> dict
+mix(mixpix, mixcel, vspan, vstep, viter, world, pixcrd, origin)
 
 Given either the celestial longitude or latitude plus an element of
 the pixel coordinate, solves for the remaining elements by iterating
@@ -894,6 +1023,19 @@ This value may differ for different coordinate representations of the
 same image.
 """
 
+nc = """
+``int`` (read-only)
+
+Total number of coordinate vectors in the coordinate array being the
+product K_1 * K_2 * ... * K_M.
+"""
+
+ndim = """
+``int`` (read-only)
+
+Expected dimensionality of the wcstab array.
+"""
+
 obsgeo = """
 ``double array[3]``
 
@@ -903,8 +1045,16 @@ Location of the observer in a standard terrestrial reference frame,
 An undefined value is represented by NaN.
 """
 
+p0 = """
+``double array[M]``
+
+Vector of length `~pywcs._pywcs.Tabprm.M` of interpolated indices into
+the coordinate array such that Upsilon_m, as defined in Paper III, is
+equal to ``p0[m] + delta[m]``.
+"""
+
 p2s = """
-p2s(*pixcrd, origin*) -> dict
+p2s(pixcrd, origin)
 
 Converts pixel to sky coordinates.
 
@@ -1041,8 +1191,16 @@ the ``PCi_ja`` matrix.
 print_contents = """
 print_contents()
 
-Print the contents of the WCS object to stdout.  Probably only useful
-for debugging purposes, and may be removed in the future.
+Print the contents of the `~pywcs.Wcsprm` object to stdout.  Probably
+only useful for debugging purposes, and may be removed in the future.
+"""
+
+print_contents_tabprm = """
+print_contents()
+
+Print the contents of the `~pywcs._pywcs.Tabprm` object to stdout.
+Probably only useful for debugging purposes, and may be removed in the
+future.
 """
 
 radesys = """
@@ -1067,8 +1225,14 @@ Rest wavelength (m) from ``RESTWAVa``.
 An undefined value is represented by NaN.
 """
 
+row = """
+``int`` (read-only)
+
+Table row number.
+"""
+
 s2p = """
-s2p(*sky, origin*) -> dict
+s2p(sky, origin)
 
 Transforms sky coordinates to pixel coordinates.
 
@@ -1128,6 +1292,14 @@ Returns a dictionary with the following keys:
    `~pywcs.Wcsprm.lat`, `~pywcs.Wcsprm.lng`
 """ % (__.ORIGIN())
 
+sense = """
+``int array[M]``
+
+A vector of length `~pywcs._pywcs.Tabprm.M` whose elements indicate
+whether the corresponding indexing vector is monotonic increasing
+(+1), or decreasing (-1).
+"""
+
 set = """
 set()
 
@@ -1165,6 +1337,20 @@ the input header keywords.
 
 - `InvalidTransformError`: Ill-conditioned coordinate transformation
   parameters.
+"""
+
+set_tabprm = """
+Allocates memory for work arrays in the Tabprm class and sets up
+the class according to information supplied within it.
+
+Note that this routine need not be called directly; it will be invoked by
+functions that need it.
+
+**Exceptions:**
+
+- `MemoryError`: Memory allocation failed.
+
+- `InvalidTabularParameters`: Invalid tabular parameters.
 """
 
 set_ps = """
@@ -1301,7 +1487,7 @@ Spectral reference frame (standard of rest), ``SPECSYSa``.
 """
 
 sptr = """
-sptr(*ctype, i=-1*)
+sptr(ctype, i=-1)
 
 Translates the spectral axis in a WCS object.  For example, a ``FREQ``
 axis may be translated into ``ZOPT-F2W`` and vice versa.
@@ -1360,7 +1546,7 @@ was measured, ``SSYSSRCa``.
 """
 
 sub = """
-sub(*axes*) -> `~pywcs.WCS` object
+sub(axes)
 
 Extracts the coordinate description for a subimage from a `~pywcs.WCS`
 object.
@@ -1397,6 +1583,9 @@ special integer constants.  The available types are:
 
   - ``'stokes'`` / ``WCSSUB_STOKES``: Stokes axis
 
+  - ``'celestial'`` / ``WCSSUB_CELESTIAL``: An alias for the
+    combination of ``'longitude'``, ``'latitude'`` and ``'cubeface'``.
+
 Returns a `~pywcs.WCS` object, which is a deep copy of the original
 object.
 
@@ -1414,7 +1603,8 @@ object.
 
   Combinations of subimage axes of particular types may be extracted
   in the same order as they occur in the input image by combining the
-  integer constants.  For example::
+  integer constants with the 'binary or' (``|``) operator.  For
+  example::
 
     wcs.sub([WCSSUB_LONGITUDE | WCSSUB_LATITUDE | WCSSUB_SPECTRAL])
 
@@ -1445,6 +1635,20 @@ object.
   the number of axes in the input image.
 """
 
+tab = """
+``list of Tabprm``
+
+A list of tabular coordinate objects associated with this WCS.
+"""
+
+Tabprm = """
+A class to store the information related to tabular coordinates,
+i.e. coordinates that are defined via a lookup table.
+
+This class can not be constructed directly from Python, but instead is
+returned from `~pywcs.Wcsprm.tab`.
+"""
+
 theta0 = """
 ``double``
 
@@ -1459,7 +1663,7 @@ projection-specific default.
 """
 
 to_header = """
-to_header(*relax=False*) -> string
+to_header(relax=False)
 
 `to_header` translates a WCS object into a FITS header.
 
@@ -1517,8 +1721,15 @@ pixel lists forms by manipulating the `~pywcs.Wcsprm.colnum` or
 Returns a raw FITS header as a string.
 """
 
+ttype = """
+``str`` (read-only)
+
+``TTYPEn`` identifying the column of the binary table that contains
+the wcstab array.
+"""
+
 unitfix = """
-unitfix(*translate_units=''*) -> int
+unitfix(translate_units='')
 
 Translates non-standard ``CUNITia`` keyvalues.  For example, ``DEG`` ->
 ``deg``, also stripping off unnecessary whitespace.
@@ -1650,6 +1861,14 @@ Sect. 5.2.1), integer (Sect. 5.2.3), and floating-point values
 - `ValueError`: Invalid key.
 
 - `KeyError`: Key not found in FITS header.
+"""
+
+Wtbarr = """
+Classes to construct coordinate lookup tables from a binary table
+extension (BINTABLE).
+
+This class can not be constructed directly from Python, but instead is
+returned from `~pywcs.Wcsprm.wtb`.
 """
 
 zsource = """

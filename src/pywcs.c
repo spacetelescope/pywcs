@@ -36,6 +36,8 @@ DAMAGE.
 
 #include "pywcs.h"
 #include "wcslib_wrap.h"
+#include "wcslib_tabprm_wrap.h"
+#include "wcslib_wtbarr_wrap.h"
 #include "distortion_wrap.h"
 #include "sip_wrap.h"
 #include "docstrings.h"
@@ -1003,6 +1005,8 @@ struct module_state {
     if (_setup_api(m)                 ||
         _setup_str_list_proxy_type(m) ||
         _setup_wcsprm_type(m)         ||
+        _setup_tabprm_type(m)         ||
+        /* _setup_wtbarr_type(m)         || */
         _setup_distortion_type(m)     ||
         _setup_sip_type(m)            ||
         _setup_pywcs_type(m)          ||

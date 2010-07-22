@@ -186,7 +186,9 @@ PYWCS_SOURCES = [ # List of pywcs files to compile
     'sip.c',
     'sip_wrap.c',
     'str_list_proxy.c',
-    'wcslib_wrap.c']
+    'wcslib_wrap.c',
+    'wcslib_tabprm_wrap.c',
+    'wcslib_wtbarr_wrap.c']
 PYWCS_SOURCES = [join('src', x) for x in PYWCS_SOURCES]
 
 ######################################################################

@@ -37,6 +37,8 @@ DAMAGE.
 #define NO_IMPORT_ARRAY
 
 #include "wcslib_wrap.h"
+#include "wcslib_tabprm_wrap.h"
+#include "wcslib_wtbarr_wrap.h"
 #include <structmember.h> /* from Python */
 
 #include <wcs.h>
@@ -1148,7 +1150,7 @@ PyWcsprm_print_contents(
 
   int ignored;
 
-  if (PyWcsprm_set(self) == NULL) {
+  if (PyWcsprm_cset(self)) {
     return NULL;
   }
 
@@ -1221,6 +1223,48 @@ PyWcsprm_sptr(
                     "Unknown error occurred.  Something is seriously wrong.");
     return NULL;
   }
+}
+
+/*@null@*/ static PyObject*
+PyWcsprm___str__(
+    PyWcsprm* self) {
+
+  const int MAX_LEN = 1 << 18;
+  char buffer[MAX_LEN+1] = {0};
+  int out_pipe[2];
+  int saved_stdout;
+  int ignored;
+  int len;
+
+  if (PyWcsprm_cset(self)) {
+    return NULL;
+  }
+
+  saved_stdout = dup(STDOUT_FILENO);
+
+  if (pipe(out_pipe) != 0) {
+    PyErr_SetString(PyExc_RuntimeError, "Error creating pipe");
+    return NULL;
+  }
+
+  dup2(out_pipe[1], STDOUT_FILENO);
+  close(out_pipe[1]);
+
+  wcsprm_python2c(&self->x);
+  ignored = wcsprt(&self->x);
+  wcsprm_c2python(&self->x);
+  fflush(stdout);
+
+  len = read(out_pipe[0], buffer, MAX_LEN);
+
+  if (len >= MAX_LEN) {
+    PyErr_SetString(PyExc_MemoryError, "Buffer overflow");
+    return NULL;
+  }
+
+  dup2(saved_stdout, STDOUT_FILENO);
+
+  return PyString_FromString(buffer);
 }
 
 /*@null@*/ static PyObject*
@@ -2518,6 +2562,39 @@ PyWcsprm_set_ssyssrc(
 }
 
 static PyObject*
+PyWcsprm_get_tab(
+    PyWcsprm* self,
+    /*@unused@*/ void* closure) {
+
+  PyObject* result;
+  PyObject* subresult;
+  int i, ntab;
+
+  ntab = self->x.ntab;
+
+  result = PyList_New(ntab);
+  if (result == NULL) {
+    return NULL;
+  }
+
+  for (i = 0; i < ntab; ++i) {
+    subresult = (PyObject *)PyTabprm_cnew((PyObject *)self, &(self->x.tab[i]));
+    if (subresult == NULL) {
+      Py_DECREF(result);
+      return NULL;
+    }
+
+    if (PyList_SetItem(result, i, subresult) == -1) {
+      Py_DECREF(subresult);
+      Py_DECREF(result);
+      return NULL;
+    }
+  }
+
+  return result;
+}
+
+static PyObject*
 PyWcsprm_get_theta0(
     PyWcsprm* self,
     /*@unused@*/ void* closure) {
@@ -2583,6 +2660,39 @@ PyWcsprm_set_velosys(
 
   return set_double("velosys", value, &self->x.velosys);
 }
+
+/* static PyObject* */
+/* PyWcsprm_get_wtb( */
+/*     PyWcsprm* self, */
+/*     /\*@unused@*\/ void* closure) { */
+
+/*   PyObject* result; */
+/*   PyObject* subresult; */
+/*   int i, nwtb; */
+
+/*   nwtb = self->x.nwtb; */
+
+/*   result = PyList_New(nwtb); */
+/*   if (result == NULL) { */
+/*     return NULL; */
+/*   } */
+
+/*   for (i = 0; i < nwtb; ++i) { */
+/*     subresult = (PyObject *)PyWtbarr_cnew((PyObject *)self, &(self->x.wtb[i])); */
+/*     if (subresult == NULL) { */
+/*       Py_DECREF(result); */
+/*       return NULL; */
+/*     } */
+
+/*     if (PyList_SetItem(result, i, subresult) == -1) { */
+/*       Py_DECREF(subresult); */
+/*       Py_DECREF(result); */
+/*       return NULL; */
+/*     } */
+/*   } */
+
+/*   return result; */
+/* } */
 
 static PyObject*
 PyWcsprm_get_zsource(
@@ -2654,9 +2764,11 @@ static PyGetSetDef PyWcsprm_getset[] = {
   {"specsys", (getter)PyWcsprm_get_specsys, (setter)PyWcsprm_set_specsys, (char *)doc_specsys},
   {"ssysobs", (getter)PyWcsprm_get_ssysobs, (setter)PyWcsprm_set_ssysobs, (char *)doc_ssysobs},
   {"ssyssrc", (getter)PyWcsprm_get_ssyssrc, (setter)PyWcsprm_set_ssyssrc, (char *)doc_ssyssrc},
+  {"tab", (getter)PyWcsprm_get_tab, NULL, (char *)doc_tab},
   {"theta0", (getter)PyWcsprm_get_theta0, (setter)PyWcsprm_set_theta0, (char *)doc_theta0},
   {"velangl", (getter)PyWcsprm_get_velangl, (setter)PyWcsprm_set_velangl, (char *)doc_velangl},
   {"velosys", (getter)PyWcsprm_get_velosys, (setter)PyWcsprm_set_velosys, (char *)doc_velosys},
+  /* {"wtb", (getter)PyWcsprm_get_wtb, NULL, (char *)doc_tab}, */
   {"zsource", (getter)PyWcsprm_get_zsource, (setter)PyWcsprm_set_zsource, (char *)doc_zsource},
   {NULL}
 };
@@ -2703,13 +2815,13 @@ PyTypeObject PyWcsprmType = {
   0,                            /*tp_getattr*/
   0,                            /*tp_setattr*/
   0,                            /*tp_compare*/
-  0,                            /*tp_repr*/
+  (reprfunc)PyWcsprm___str__,   /*tp_repr*/
   0,                            /*tp_as_number*/
   0,                            /*tp_as_sequence*/
   0,                            /*tp_as_mapping*/
   0,                            /*tp_hash */
   0,                            /*tp_call*/
-  0,                            /*tp_str*/
+  (reprfunc)PyWcsprm___str__,   /*tp_str*/
   0,                            /*tp_getattro*/
   0,                            /*tp_setattro*/
   0,                            /*tp_as_buffer*/
