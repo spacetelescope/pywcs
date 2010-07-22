@@ -1324,7 +1324,7 @@ PyWcsprm_sub(
           element_val = WCSSUB_SPECTRAL;
         } else if (strncmp(element_str, "stokes", 7) == 0) {
           element_val = WCSSUB_STOKES;
-        } else if (strncmp(element_str, "celestial", 7) == 0) {
+        } else if (strncmp(element_str, "celestial", 10) == 0) {
           element_val = WCSSUB_CELESTIAL;
         } else {
           PyErr_SetString(
