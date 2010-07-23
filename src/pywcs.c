@@ -871,6 +871,7 @@ static PyMethodDef PyWcs_methods[] = {
 
 static PyMethodDef module_methods[] = {
     {"_sanity_check", (PyCFunction)_sanity_check, METH_NOARGS, ""},
+    {"find_all_wcs", (PyCFunction)PyWcsprm_find_all_wcs, METH_VARARGS|METH_KEYWORDS, doc_find_all_wcs},
     {NULL}  /* Sentinel */
 };
 

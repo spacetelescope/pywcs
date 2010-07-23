@@ -336,15 +336,14 @@ PyWcsprm_init(
       return -1;
     }
 
-    note_change(self);
     if (wcscopy(1, wcs + i, &self->x) != 0) {
-      ignored_int = wcsfree(&self->x);
       ignored_int = wcsvfree(&nwcs, &wcs);
       PyErr_SetString(PyExc_MemoryError,
                       "Could not initialize wcsprm object");
       return -1;
     }
 
+    note_change(self);
     wcsprm_c2python(&self->x);
     ignored_int = wcsvfree(&nwcs, &wcs);
     return 0;
@@ -381,6 +380,106 @@ PyWcsprm_copy(
       return NULL;
     }
   }
+}
+
+PyObject*
+PyWcsprm_find_all_wcs(
+    PyObject* __,
+    PyObject* args,
+    PyObject* kwds) {
+
+  PyObject*      header_obj    = NULL;
+  char *         header        = NULL;
+  Py_ssize_t     header_length = 0;
+  Py_ssize_t     nkeyrec       = 0;
+  int            relax         = 0;
+  int            keysel        = 0;
+  int            ctrl          = 0;
+  int            nreject       = 0;
+  int            nwcs          = 0;
+  struct wcsprm* wcs           = NULL;
+  PyObject*      result        = NULL;
+  PyWcsprm*      subresult     = NULL;
+  int            i             = 0;
+  int            ignored       = 0;
+  const char*    keywords[]    = {"header", "relax", "keysel", NULL};
+  int            status        = -1;
+
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "O|ii:find_all_wcs",
+                                   (char **)keywords, &header_obj,
+                                   &relax, &keysel)) {
+    return NULL;
+  }
+
+  if (PyString_AsStringAndSize(header_obj, &header, &header_length)) {
+    return NULL;
+  }
+
+  nkeyrec = header_length / 80;
+  if (nkeyrec > 0x7fffffff) {
+    PyErr_SetString(PyExc_MemoryError,
+                    "header is too long");
+    return NULL;
+  }
+
+  if (relax) {
+    relax = WCSHDR_all;
+  }
+
+  if (keysel < 0) {
+    status = wcspih(header,
+                    (int)nkeyrec,
+                    relax,
+                    ctrl,
+                    &nreject,
+                    &nwcs,
+                    &wcs);
+  } else {
+    status = wcsbth(header,
+                    (int)nkeyrec,
+                    relax,
+                    ctrl,
+                    keysel,
+                    NULL,
+                    &nreject,
+                    &nwcs,
+                    &wcs);
+  }
+
+  if (status != 0) {
+    PyErr_SetString(PyExc_MemoryError,
+                    "Memory allocation error.");
+    return NULL;
+  }
+
+  result = PyList_New(nwcs);
+  if (result == NULL) {
+    return NULL;
+  }
+
+  for (i = 0; i < nwcs; ++i) {
+    subresult = PyWcsprm_cnew();
+    if (wcscopy(1, wcs + i, &subresult->x) != 0) {
+      Py_DECREF(result);
+      ignored = wcsvfree(&nwcs, &wcs);
+      PyErr_SetString(PyExc_MemoryError,
+                      "Could not initialize wcsprm object");
+      return NULL;
+    }
+
+    if (PyList_SetItem(result, i, (PyObject *)subresult) == -1) {
+      Py_DECREF(subresult);
+      Py_DECREF(result);
+      ignored = wcsvfree(&nwcs, &wcs);
+      return NULL;
+    }
+
+    subresult->x.flag = 0;
+    wcsprm_c2python(&subresult->x);
+  }
+
+  ignored = wcsvfree(&nwcs, &wcs);
+  return result;
 }
 
 static PyObject*

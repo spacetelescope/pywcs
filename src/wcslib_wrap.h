@@ -48,4 +48,10 @@ typedef struct {
 
 int _setup_wcsprm_type(PyObject* m);
 
+PyObject*
+PyWcsprm_find_all_wcs(
+    PyObject* self,
+    PyObject* args,
+    PyObject* kwds);
+
 #endif

@@ -24,3 +24,13 @@ def test_maps():
     for filename in glob.glob(os.path.join(ROOT_DIR, "maps", "*.fits")):
         yield test_map, filename
 
+def test_spectra():
+    def test_spectrum(filename):
+        hdulist = pyfits.open(filename)
+        wcs = pywcs.WCS(hdulist[0].header)
+
+        all = pywcs.find_all_wcs(hdulist[0].header)
+        assert len(all) == 9
+
+    for filename in glob.glob(os.path.join(ROOT_DIR, "spectra", "*.fits")):
+        yield test_spectrum, filename

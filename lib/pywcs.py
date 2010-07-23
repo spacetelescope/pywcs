@@ -92,6 +92,25 @@ WCSSUB_STOKES = _pywcs.WCSSUB_STOKES
 
 # TODO: More involved form of *relax*
 
+def _parse_keysel(keysel):
+    keysel_flags = 0
+    if keysel is not None:
+        for element in keysel:
+            if element.lower() == 'image':
+                keysel_flags |= _pywcs.WCSHDR_IMGHEAD
+            elif element.lower() == 'binary':
+                keysel_flags |= _pywcs.WCSHDR_BIMGARR
+            elif element.lower() == 'pixel':
+                keysel_flags |= _pywcs.WCSHDR_PIXLIST
+            else:
+                raise ValueError(
+                    "keysel must be a list of 'image', 'binary' and/or 'pixel'")
+    else:
+        keysel_flags = -1
+
+    return keysel_flags
+
+
 class WCS(WCSBase):
     """
     WCS objects perform standard WCS transformations, and correct for
@@ -103,7 +122,7 @@ class WCS(WCSBase):
                  relax=False, naxis=None, keysel=None, colsel=None):
         """
         - *header*: A PyFITS header object.  If *header* is not
-          provided, the object will be initialized to default
+          provided or None, the object will be initialized to default
           values.
 
         - *fobj*: A PyFITS file (hdulist) object. It is needed when
@@ -193,20 +212,7 @@ class WCS(WCSBase):
             cpdis = (None, None)
             sip = None
         else:
-            keysel_flags = 0
-            if keysel is not None:
-                for element in keysel:
-                    if element.lower() == 'image':
-                        keysel_flags |= _pywcs.WCSHDR_IMGHEAD
-                    elif element.lower() == 'binary':
-                        keysel_flags |= _pywcs.WCSHDR_BIMGARR
-                    elif element.lower() == 'pixel':
-                        keysel_flags |= _pywcs.WCSHDR_PIXLIST
-                    else:
-                        raise ValueError(
-                            "keysel must be a list of 'image', 'binary' and/or 'pixel'")
-            else:
-                keysel_flags = -1
+            keysel_flags = _parse_keysel(keysel)
 
             try:
                 header_string = repr(header.ascard)
@@ -962,3 +968,50 @@ def RADTODEG(rad):
     return (rad * 180. / np.pi)
 
 
+def find_all_wcs(header, relax=False, keysel=None):
+    """
+    Find all the WCS transformations in the given header.
+
+    - *header*: A PyFITS header object.
+
+    - *relax*: Degree of permissiveness:
+
+        - ``False``: Recognize only FITS keywords defined by the
+          published WCS standard.
+
+        - ``True``: Admit all recognized informal extensions of the
+          WCS standard.
+
+    - *keysel*: A list of flags used to select the keyword types
+      considered by wcslib.  When ``None``, only the standard image
+      header keywords are considered (and the underlying wcspih() C
+      function is called).  To use binary table image array or pixel
+      list keywords, *keysel* must be set.
+
+      Each element in the list should be one of the following strings:
+
+        - 'image': Image header keywords
+
+        - 'binary': Binary table image array keywords
+
+        - 'pixel': Pixel list keywords
+
+      Keywords such as ``EQUIna`` or ``RFRQna`` that are common to
+      binary table image arrays and pixel lists (including ``WCSNna``
+      and ``TWCSna``) are selected by both 'binary' and 'pixel'.
+
+    Returns a list of `WCS` objects.
+    """
+    header_string = repr(header.ascard)
+
+    keysel_flags = _parse_keysel(keysel)
+
+    wcsprms = _pywcs.find_all_wcs(header_string, relax, keysel_flags)
+
+    result = []
+    for wcsprm in wcsprms:
+        subresult = WCS()
+        subresult.wcs = wcsprm
+        result.append(subresult)
+
+    return result

@@ -564,6 +564,36 @@ extver = """
 ``EXTVER`` identifying the binary table extension.
 """
 
+find_all_wcs = """
+find_all_wcs(relax=0, keysel=0)
+
+Find all WCS transformations in the header.
+
+- *header*: A string containing the raw FITS header data.
+
+- *relax*: Degree of permissiveness:
+
+    - ``False``: Recognize only FITS keywords defined by the published
+      WCS standard.
+
+    - ``True``: Admit all recognized informal extensions of the WCS
+      standard.
+
+- *keysel*: Vector of flag bits that may be used to restrict the
+  keyword types considered:
+
+     - ``WCSHDR_IMGHEAD``: Image header keywords.
+
+     - ``WCSHDR_BIMGARR``: Binary table image array.
+
+     - ``WCSHDR_PIXLIST``: Pixel list keywords.
+
+   If zero, there is no restriction.  If -1, wcspih() is called,
+   rather than wcstbh().
+
+Returns a list of `~pywcs._pywcs._Wcsprm` objects.
+"""
+
 fix = """
 fix(translate_units='', naxis=0)
 
