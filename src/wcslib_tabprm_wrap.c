@@ -53,12 +53,12 @@ DAMAGE.
  * Helper functions                                                        *
  ***************************************************************************/
 
-void
+static inline void
 note_change(PyTabprm* self) {
   self->x->flag = 0;
 }
 
-int
+static int
 make_fancy_dims(PyTabprm* self, npy_intp* ndims, npy_intp* dims) {
   npy_intp i, M;
 
