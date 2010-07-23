@@ -258,12 +258,13 @@ setupargs = {
     'author' :      CONTACT,
     'author_email': EMAIL,
     'url' :         "http://projects.scipy.org/astropy/astrolib/wiki/WikiStart",
-    'platforms' :                       ["unix","windows"],
-    'ext_modules' :                     PYWCS_EXTENSIONS,
+    'platforms' :   ["unix","windows"],
+    'ext_modules' : PYWCS_EXTENSIONS,
     'data_files' : [
-                    ( 'pywcs/include', ['src/*.h']),
-                    ( 'pywcs/include/wcslib', [ WCSLIBC + '/*.h'] ),
-                    ],
-    'package_dir' : {pkg[0]: 'lib', pkg[1]: 'test'},
+        ( 'pywcs/include', ['src/*.h']),
+        ( 'pywcs/include/wcslib', [ WCSLIBC + '/*.h'] ),
+        ( 'pywcs/tests/maps', ['lib/tests/maps/*.fits'])
+        ],
+    'package_dir' : {pkg[0]: 'lib', pkg[1]: 'lib/tests'},
 }
 
