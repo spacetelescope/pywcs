@@ -181,11 +181,13 @@ PyTabprm___str__(
     PyTabprm* self) {
 
   const int MAX_LEN = 1 << 18;
-  char buffer[MAX_LEN+1] = {0};
+  char buffer[MAX_LEN+1];
   int out_pipe[2];
   int saved_stdout;
   int ignored;
   int len;
+
+  buffer[0] = 0;
 
   if (PyTabprm_cset(self)) {
     return NULL;
