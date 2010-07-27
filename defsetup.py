@@ -20,9 +20,12 @@ OPENMP = False
 ######################################################################
 # Helper class
 def write_if_different(filename, data):
-    fd = open(filename, 'r')
-    original_data = fd.read()
-    fd.close()
+    if os.path.exists(filename):
+        fd = open(filename, 'r')
+        original_data = fd.read()
+        fd.close()
+    else:
+        original_data = None
 
     if original_data != data:
         fd = open(filename, 'w')
