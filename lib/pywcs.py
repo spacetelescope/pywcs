@@ -185,10 +185,11 @@ class WCS(WCSBase):
           (the transformations handled by WCSLIB).  However, the Paper
           IV lookup table and SIP distortions must be two dimensional.
           Therefore, if you try to create a WCS object where the core
-          WCS has a different number of dimensions than 2, a
-          `ValueError` exception will be raised.  To avoid this,
-          consider using the *naxis* kwarg to select two dimensions
-          from the core WCS.
+          WCS has a different number of dimensions than 2 and that
+          object also contains a Paper IV lookup table or SIP
+          distortion, a `ValueError` exception will be raised.  To
+          avoid this, consider using the *naxis* kwarg to select two
+          dimensions from the core WCS.
 
         **Exceptions:**
 
@@ -546,6 +547,15 @@ naxis kwarg.
         For a transformation that is not two-dimensional, the
         two-argument form must be used.
 
+        .. note::
+
+            The order of the axes for the result is determined by the
+            `CTYPEia` keywords in the FITS header, therefore it may
+            not always be of the form (*ra*, *dec*).  The
+            `~pywcs.Wcsprm.lat`, `~pywcs.Wcsprm.lng`,
+            `~pywcs.Wcsprm.lattyp` and `~pywcs.Wcsprm.lngtyp` members
+            can be used to determine the order of the axes.
+
         **Exceptions:**
 
         - `MemoryError`: Memory allocation failed.
@@ -568,7 +578,8 @@ naxis kwarg.
 
         - `InvalidTransformError`: Ill-conditioned coordinate
           transformation parameters.
-        """ % (__.TWO_OR_THREE_ARGS('pixel', 'naxis', 8))
+        """ % (__.TWO_OR_THREE_ARGS(
+            'sky coordinates, in degrees', 'naxis', 8))
 
     def wcs_pix2sky(self, *args, **kwargs):
         if self.wcs is None:
@@ -588,6 +599,15 @@ naxis kwarg.
         For a transformation that is not two-dimensional, the
         two-argument form must be used.
 
+        .. note::
+
+            The order of the axes for the result is determined by the
+            `CTYPEia` keywords in the FITS header, therefore it may
+            not always be of the form (*ra*, *dec*).  The
+            `~pywcs.Wcsprm.lat`, `~pywcs.Wcsprm.lng`,
+            `~pywcs.Wcsprm.lattyp` and `~pywcs.Wcsprm.lngtyp` members
+            can be used to determine the order of the axes.
+
         **Exceptions:**
 
         - `MemoryError`: Memory allocation failed.
@@ -610,7 +630,7 @@ naxis kwarg.
 
         - `InvalidTransformError`: Ill-conditioned coordinate
           transformation parameters.
-        """ % (__.TWO_OR_THREE_ARGS('sky', 'naxis', 8))
+        """ % (__.TWO_OR_THREE_ARGS('sky coordinates, in degrees.', 'naxis', 8))
 
     def wcs_sky2pix(self, *args, **kwargs):
         if self.wcs is None:
@@ -626,6 +646,15 @@ naxis kwarg.
 
         For a transformation that is not two-dimensional, the
         two-argument form must be used.
+
+        .. note::
+
+            The order of the axes for the input sky array is
+            determined by the `CTYPEia` keywords in the FITS header,
+            therefore it may not always be of the form (*ra*, *dec*).
+            The `~pywcs.Wcsprm.lat`, `~pywcs.Wcsprm.lng`,
+            `~pywcs.Wcsprm.lattyp` and `~pywcs.Wcsprm.lngtyp` members
+            can be used to determine the order of the axes.
 
         **Exceptions:**
 
@@ -644,7 +673,7 @@ naxis kwarg.
 
         - `InvalidTransformError`: Ill-conditioned coordinate
           transformation parameters.
-        """ % (__.TWO_OR_THREE_ARGS('pixel', 'naxis', 8))
+        """ % (__.TWO_OR_THREE_ARGS('pixel coordinates', 'naxis', 8))
 
     def pix2foc(self, *args, **kwargs):
         return self._array_converter(self._pix2foc, *args, **kwargs)
@@ -660,7 +689,7 @@ naxis kwarg.
         - `MemoryError`: Memory allocation failed.
 
         - `ValueError`: Invalid coordinate transformation parameters.
-        """ % (__.TWO_OR_THREE_ARGS('pixel', '2', 8))
+        """ % (__.TWO_OR_THREE_ARGS('focal coordinates', '2', 8))
 
     def p4_pix2foc(self, *args, **kwargs):
         return self._array_converter(self._p4_pix2foc, *args, **kwargs)
@@ -675,7 +704,7 @@ naxis kwarg.
         - `MemoryError`: Memory allocation failed.
 
         - `ValueError`: Invalid coordinate transformation parameters.
-        """ % (__.TWO_OR_THREE_ARGS('pixel', '2', 8))
+        """ % (__.TWO_OR_THREE_ARGS('focal coordinates', '2', 8))
 
     def det2im(self, *args, **kwargs):
         return self._array_converter(self._det2im, *args, **kwargs)
@@ -690,7 +719,7 @@ naxis kwarg.
         - `MemoryError`: Memory allocation failed.
 
         - `ValueError`: Invalid coordinate transformation parameters.
-        """ % (__.TWO_OR_THREE_ARGS('pixel', '2', 8))
+        """ % (__.TWO_OR_THREE_ARGS('pixel coordinates', '2', 8))
 
     def sip_pix2foc(self, *args, **kwargs):
         if self.sip is None:
@@ -717,7 +746,7 @@ naxis kwarg.
         - `MemoryError`: Memory allocation failed.
 
         - `ValueError`: Invalid coordinate transformation parameters.
-        """ % (__.TWO_OR_THREE_ARGS('pixel', '2', 8))
+        """ % (__.TWO_OR_THREE_ARGS('focal coordinates', '2', 8))
 
     def sip_foc2pix(self, *args, **kwargs):
         if self.sip is None:
@@ -743,7 +772,7 @@ naxis kwarg.
         - `MemoryError`: Memory allocation failed.
 
         - `ValueError`: Invalid coordinate transformation parameters.
-        """ % (__.TWO_OR_THREE_ARGS('focal plane', '2', 8))
+        """ % (__.TWO_OR_THREE_ARGS('pixel coordinates', '2', 8))
 
     def to_header(self, relax=False):
         """

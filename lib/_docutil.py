@@ -55,7 +55,7 @@ Here, *origin* is the coordinate in the upper left corner of the
 image.  In FITS and Fortran standards, this is 1.  In Numpy and C
 standards this is 0.
 
-Returns the %s coordinates.  If the input was a single array and
+Returns the %s.  If the input was a single array and
 origin, a single array is returned, otherwise a tuple of arrays is
 returned.""" % (naxis, out_type), indent)
 

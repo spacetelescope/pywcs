@@ -428,6 +428,8 @@ types; `~pywcs.Wcsprm.cunit` may be used to label coordinate values.
 """
 
 cylfix = """
+cylfix()
+
 Fixes WCS keyvalues for malformed cylindrical projections.
 
 Returns ``0`` for success; ``-1`` if no change required.
@@ -468,6 +470,8 @@ Start of the date of observation in ISO format,
 """
 
 datfix = """
+datfix()
+
 Translates the old ``DATE-OBS`` date format to year-2000 standard form
 ``(yyyy-mm-ddThh:mm:ss)`` and derives ``MJD-OBS`` from it if not
 already set.  Alternatively, if `~pywcs.Wcsprm.mjdobs` is set and
@@ -737,7 +741,7 @@ ignored.
 
 .. seealso::
 
-   `crota`
+   `~pywcs.Wcsprm.crota`
 """
 
 has_crotaia = """
@@ -755,7 +759,7 @@ recommended way to specify the linear transformation matrix.
 
 .. seealso::
 
-   `pc`
+   `~pywcs.Wcsprm.pc`
 """
 
 has_pci_ja = """
@@ -816,7 +820,7 @@ The native latitude of the celestial pole, ``LATPOLEa`` (deg).
 lattyp = """
 ``string`` (read-only)
 
-Celestial axis type for longitude, e.g. "RA", "DEC", "GLON", "GLAT",
+Celestial axis type for latitude, e.g. "RA", "DEC", "GLON", "GLAT",
 etc. extracted from 'RA--', 'DEC-', 'GLON', 'GLAT', etc. in the first
 four characters of ``CTYPEia`` but with trailing dashes removed.
 """
@@ -1223,6 +1227,8 @@ print_contents()
 
 Print the contents of the `~pywcs.Wcsprm` object to stdout.  Probably
 only useful for debugging purposes, and may be removed in the future.
+
+To get a string of the contents, use `repr`.
 """
 
 print_contents_tabprm = """
@@ -1231,6 +1237,8 @@ print_contents()
 Print the contents of the `~pywcs._pywcs.Tabprm` object to stdout.
 Probably only useful for debugging purposes, and may be removed in the
 future.
+
+To get a string of the contents, use `repr`.
 """
 
 radesys = """
@@ -1326,7 +1334,7 @@ sense = """
 ``int array[M]``
 
 A vector of length `~pywcs._pywcs.Tabprm.M` whose elements indicate
-whether the corresponding indexing vector is monotonic increasing
+whether the corresponding indexing vector is monotonically increasing
 (+1), or decreasing (-1).
 """
 
@@ -1370,6 +1378,8 @@ the input header keywords.
 """
 
 set_tabprm = """
+set()
+
 Allocates memory for work arrays in the Tabprm class and sets up
 the class according to information supplied within it.
 
@@ -1808,7 +1818,7 @@ An undefined value is represented by NaN.
 
 .. seealso::
 
-   `specsys`, `ssysobs`
+   `~pywcs.Wcsprm.specsys`, `~pywcs.Wcsprm.ssysobs`
 """
 
 wcs = """
