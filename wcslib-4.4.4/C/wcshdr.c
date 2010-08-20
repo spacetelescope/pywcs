@@ -526,6 +526,19 @@ int wcshdo(int relax, struct wcsprm *wcs, int *nkeyrec, char **header)
   }
 
   /* Linear transformation matrix. */
+  if (wcs->altlin & 2) {
+    k = 0;
+    for (i = 0; i < naxis; i++) {
+      for (j = 0; j < naxis; j++, k++) {
+        sprintf(keyvalue, "%20.12g", wcs->cd[k]);
+        wcshdo_util(relax, "CD", bintab ? "CD" : "C", WCSHDO_TPCn_ka,
+                    bintab ? 0x0 : "CD", i+1, j+1, 0, alt, colnum, colax, keyvalue,
+                    "Legacy coord transformation matrix element",
+                    nkeyrec, header, &status);
+      }
+    }
+  }
+
   k = 0;
   for (i = 0; i < naxis; i++) {
     for (j = 0; j < naxis; j++, k++) {
