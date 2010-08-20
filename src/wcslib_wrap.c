@@ -234,6 +234,9 @@ PyWcsprm_init(
 
     self->x.alt[0] = key[0];
 
+    if (PyWcsprm_cset(self)) {
+      return -1;
+    }
     wcsprm_c2python(&self->x);
 
     return 0;
@@ -344,6 +347,9 @@ PyWcsprm_init(
     }
 
     note_change(self);
+    if (PyWcsprm_cset(self)) {
+      return -1;
+    }
     wcsprm_c2python(&self->x);
     ignored_int = wcsvfree(&nwcs, &wcs);
     return 0;
@@ -367,6 +373,10 @@ PyWcsprm_copy(
   wcsprm_c2python(&self->x);
 
   if (status == 0) {
+    if (PyWcsprm_cset(copy)) {
+      Py_XDECREF(copy);
+      return NULL;
+    }
     wcsprm_c2python(&copy->x);
     return (PyObject*)copy;
   } else {
@@ -475,6 +485,12 @@ PyWcsprm_find_all_wcs(
     }
 
     subresult->x.flag = 0;
+    if (PyWcsprm_cset(subresult)) {
+      Py_DECREF(subresult);
+      Py_DECREF(result);
+      ignored = wcsvfree(&nwcs, &wcs);
+      return NULL;
+    }
     wcsprm_c2python(&subresult->x);
   }
 
@@ -1007,8 +1023,9 @@ PyWcsprm_p2s(
         PyDict_SetItemString(result, "phi", (PyObject*)phi) ||
         PyDict_SetItemString(result, "theta", (PyObject*)theta) ||
         PyDict_SetItemString(result, "world", (PyObject*)world) ||
-        PyDict_SetItemString(result, "stat", (PyObject*)stat))
+        PyDict_SetItemString(result, "stat", (PyObject*)stat)) {
       status = 2;
+    }
   }
 
  exit:
@@ -1139,8 +1156,9 @@ PyWcsprm_s2p(
         PyDict_SetItemString(result, "theta", (PyObject*)theta) ||
         PyDict_SetItemString(result, "imgcrd", (PyObject*)imgcrd) ||
         PyDict_SetItemString(result, "pixcrd", (PyObject*)pixcrd) ||
-        PyDict_SetItemString(result, "stat", (PyObject*)stat))
+        PyDict_SetItemString(result, "stat", (PyObject*)stat)) {
       status = 2;
+    }
   }
 
  exit:
@@ -1488,6 +1506,9 @@ PyWcsprm_sub(
   wcsprm_python2c(&self->x);
   status = wcssub(0, &self->x, &nsub, axes, &py_dest_wcs->x);
   wcsprm_c2python(&self->x);
+  if (PyWcsprm_cset(py_dest_wcs)) {
+    goto exit;
+  }
   wcsprm_c2python(&py_dest_wcs->x);
 
   if (status != 0) {
@@ -2211,6 +2232,10 @@ PyWcsprm_get_lat(
     PyWcsprm* self,
     /*@unused@*/ void* closure) {
 
+  if (PyWcsprm_cset(self)) {
+    return NULL;
+  }
+
   return get_int("lat", self->x.lat);
 }
 
@@ -2253,6 +2278,10 @@ static PyObject*
 PyWcsprm_get_lng(
     PyWcsprm* self,
     /*@unused@*/ void* closure) {
+
+  if (PyWcsprm_cset(self)) {
+    return NULL;
+  }
 
   return get_int("lng", self->x.lng);
 }
