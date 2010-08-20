@@ -496,11 +496,70 @@ naxis kwarg.
 
         return Sip(a, b, ap, bp, (crpix1, crpix2))
 
-    def _array_converter(self, func, *args, **kwargs):
+    def _denormalize_sky(self, sky):
+        if self.wcs.lngtyp != 'RA':
+            raise ValueError(
+                "WCS does not have longitude type of 'RA', therefore " +
+                "(ra, dec) data can not be used as input")
+        if self.wcs.lattype != 'DEC':
+            raise ValueError(
+                "WCS does not have longitude type of 'DEC', therefore " +
+                "(ra, dec) data can not be used as input")
+        if self.wcs.naxis == 2:
+            if self.wcs.lng == 0 and self.wcs.lat == 1:
+                return sky
+            elif self.wcs.lng == 1 and self.wcs.lat == 0:
+                # Reverse the order of the columns
+                return sky[:,::-1]
+            else:
+                raise ValueError(
+                    "WCS does not have longitude and latitude celestial " +
+                    "axes, therefore (ra, dec) data can not be used as input")
+        else:
+            if self.wcs.lng < 0 or self.wcs.lat < 0:
+                raise ValueError(
+                    "WCS does not have both longitude and latitude celestial " +
+                    "axes, therefore (ra, dec) data can not be used as input")
+            out = np.zeros((sky.shape[0], self.wcs.naxis))
+            out[:,self.wcs.lng] = sky[:,0]
+            out[:,self.wcs.lat] = sky[:,1]
+            return out
+
+    def _normalize_sky(self, sky):
+        if self.wcs.lngtyp != 'RA':
+            raise ValueError(
+                "WCS does not have longitude type of 'RA', therefore " +
+                "(ra, dec) data can not be returned")
+        if self.wcs.lattype != 'DEC':
+            raise ValueError(
+                "WCS does not have longitude type of 'DEC', therefore " +
+                "(ra, dec) data can not be returned")
+        if self.wcs.naxis == 2:
+            if self.wcs.lng == 0 and self.wcs.lat == 1:
+                return sky
+            elif self.wcs.lng == 1 and self.wcs.lat == 0:
+                # Reverse the order of the columns
+                return sky[:,::-1]
+            else:
+                raise ValueError(
+                    "WCS does not have longitude and latitude celestial "
+                    "axes, therefore (ra, dec) data can not be returned")
+        else:
+            if self.wcs.lng < 0 or self.wcs.lat < 0:
+                raise ValueError(
+                    "WCS does not have both longitude and latitude celestial "
+                    "axes, therefore (ra, dec) data can not be returned")
+            out = np.empty((sky.shape[0], 2))
+            out[:,0] = sky[:,self.wcs.lng]
+            out[:,1] = sky[:,self.wcs.lat]
+            return out
+
+    def _array_converter(self, func, sky, *args, **kwargs):
         """
         A helper function to support reading either a pair of arrays
         or a single Nx2 array.
         """
+        ra_dec_order = kwargs.get('ra_dec_order')
         if len(args) == 2:
             xy, origin = args
             try:
@@ -509,7 +568,12 @@ naxis kwarg.
             except:
                 raise TypeError(
                     "When providing two arguments, they must be (xy, origin)")
-            return func(xy, origin)
+            if ra_dec_order and sky == 'input':
+                xy = self._denormalize_sky(xy)
+            result = func(xy, origin)
+            if ra_dec_order and sky == 'output':
+                result = self._normalize_sky(result)
+            return result
         elif len(args) == 3:
             x, y, origin = args
             try:
@@ -523,13 +587,18 @@ naxis kwarg.
                 raise ValueError("x and y arrays are not the same size")
             length = x.size
             xy = np.hstack((x.reshape((length, 1)),
-                               y.reshape((length, 1))))
+                            y.reshape((length, 1))))
+            if ra_dec_order and sky == 'input':
+                xy = self._denormalize_sky(xy)
             sky = func(xy, origin)
+            if ra_dec_order and sky == 'output':
+                sky = self._normalize_sky_output(sky)
+                return sky[:, 0], sky[:, 1]
             return [sky[:, i] for i in range(sky.shape[1])]
         raise TypeError("Expected 2 or 3 arguments, %d given" % len(args))
 
     def all_pix2sky(self, *args, **kwargs):
-        return self._array_converter(self._all_pix2sky, *args, **kwargs)
+        return self._array_converter(self._all_pix2sky, 'output', *args, **kwargs)
     all_pix2sky.__doc__ = """
         Transforms pixel coordinates to sky coordinates by doing all
         of the following in order:
@@ -541,6 +610,8 @@ naxis kwarg.
             - `Paper IV`_ table-lookup distortion correction (optionally)
 
             - `wcslib`_ WCS transformation
+
+        %s
 
         %s
 
@@ -579,13 +650,14 @@ naxis kwarg.
         - `InvalidTransformError`: Ill-conditioned coordinate
           transformation parameters.
         """ % (__.TWO_OR_THREE_ARGS(
-            'sky coordinates, in degrees', 'naxis', 8))
+            'sky coordinates, in degrees', 'naxis', 8),
+               __.RA_DEC_ORDER(8))
 
     def wcs_pix2sky(self, *args, **kwargs):
         if self.wcs is None:
             raise ValueError("No basic WCS settings were created.")
         return self._array_converter(lambda xy, o: self.wcs.p2s(xy, o)['world'],
-                                     *args, **kwargs)
+                                     'output', *args, **kwargs)
     wcs_pix2sky.__doc__ = """
         Transforms pixel coordinates to sky coordinates by doing only
         the basic `wcslib`_ transformation.  No `SIP`_ or `Paper IV`_
@@ -593,6 +665,8 @@ naxis kwarg.
         distortion correction, see `~pywcs.WCS.all_pix2sky`,
         `~pywcs.WCS.sip_pix2foc`, `~pywcs.WCS.p4_pix2foc`, or
         `~pywcs.WCS.pix2foc`.
+
+        %s
 
         %s
 
@@ -630,17 +704,20 @@ naxis kwarg.
 
         - `InvalidTransformError`: Ill-conditioned coordinate
           transformation parameters.
-        """ % (__.TWO_OR_THREE_ARGS('sky coordinates, in degrees.', 'naxis', 8))
+        """ % (__.TWO_OR_THREE_ARGS('sky coordinates, in degrees.', 'naxis', 8),
+               __.RA_DEC_ORDER(8))
 
     def wcs_sky2pix(self, *args, **kwargs):
         if self.wcs is None:
             raise ValueError("No basic WCS settings were created.")
         return self._array_converter(lambda xy, o: self.wcs.s2p(xy, o)['pixcrd'],
-                                     *args, **kwargs)
+                                     'input', *args, **kwargs)
     wcs_sky2pix.__doc__ = """
         Transforms sky coordinates to pixel coordinates, using only
         the basic `wcslib`_ WCS transformation.  No `SIP`_ or `Paper
         IV`_ table lookup distortion is applied.
+
+        %s
 
         %s
 
@@ -673,10 +750,11 @@ naxis kwarg.
 
         - `InvalidTransformError`: Ill-conditioned coordinate
           transformation parameters.
-        """ % (__.TWO_OR_THREE_ARGS('pixel coordinates', 'naxis', 8))
+        """ % (__.TWO_OR_THREE_ARGS('pixel coordinates', 'naxis', 8),
+               __.RA_DEC_ORDER(8))
 
     def pix2foc(self, *args, **kwargs):
-        return self._array_converter(self._pix2foc, *args, **kwargs)
+        return self._array_converter(self._pix2foc, None, *args, **kwargs)
     pix2foc.__doc__ = """
         Convert pixel coordinates to focal plane coordinates using the
         `SIP`_ polynomial distortion convention and `Paper IV`_
@@ -692,7 +770,7 @@ naxis kwarg.
         """ % (__.TWO_OR_THREE_ARGS('focal coordinates', '2', 8))
 
     def p4_pix2foc(self, *args, **kwargs):
-        return self._array_converter(self._p4_pix2foc, *args, **kwargs)
+        return self._array_converter(self._p4_pix2foc, None, *args, **kwargs)
     p4_pix2foc.__doc__ = """
         Convert pixel coordinates to focal plane coordinates using
         `Paper IV`_ table-lookup distortion correction.
@@ -707,7 +785,7 @@ naxis kwarg.
         """ % (__.TWO_OR_THREE_ARGS('focal coordinates', '2', 8))
 
     def det2im(self, *args, **kwargs):
-        return self._array_converter(self._det2im, *args, **kwargs)
+        return self._array_converter(self._det2im, None, *args, **kwargs)
     det2im.__doc__ = """
         Convert detector coordinates to image plane coordinates using
         `Paper IV`_ table-lookup distortion correction.
@@ -729,7 +807,7 @@ naxis kwarg.
                 return args[:2]
             else:
                 raise TypeError("Wrong number of arguments")
-        return self._array_converter(self.sip.pix2foc, *args, **kwargs)
+        return self._array_converter(self.sip.pix2foc, None, *args, **kwargs)
     sip_pix2foc.__doc__ = """
         Convert pixel coordinates to focal plane coordinates using the
         `SIP`_ polynomial distortion convention.
@@ -756,7 +834,7 @@ naxis kwarg.
                 return args[:2]
             else:
                 raise TypeError("Wrong number of arguments")
-        return self._array_converter(self.sip.foc2pix, *args, **kwargs)
+        return self._array_converter(self.sip.foc2pix, None, *args, **kwargs)
     sip_foc2pix.__doc__ = """
         Convert focal plane coordinates to pixel coordinates using the
         `SIP`_ polynomial distortion convention.

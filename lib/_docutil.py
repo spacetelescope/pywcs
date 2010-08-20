@@ -67,3 +67,12 @@ def ORIGIN(indent=0):
   with origin at 0.
 """, indent)
 
+def RA_DEC_ORDER(indent=0):
+    return _fix(
+"""
+An optional keyword argument, *ra_dec_order*, may be provided, that
+when `True` will ensure that sky coordinates are always given and
+returned in as (*ra*, *dec*) pairs, regardless of the order of the
+axes specified by the in the ``CTYPE`` keywords.
+""", indent)
+
