@@ -11,5 +11,4 @@
 functions
 `````````
 
-.. automodule:: pywcs
-   :members: find_all_wcs
+.. autofunction:: pywcs.find_all_wcs
