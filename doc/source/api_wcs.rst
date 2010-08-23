@@ -8,3 +8,8 @@
    :inherited-members:
    :undoc-members:
 
+functions
+`````````
+
+.. automodule:: pywcs
+   :members: find_all_wcs

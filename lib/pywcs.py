@@ -82,11 +82,12 @@ WCSBase = _pywcs._Wcs
 DistortionLookupTable = _pywcs.DistortionLookupTable
 Sip = _pywcs.Sip
 class Wcsprm(_pywcs._Wcsprm): pass
-WCSSUB_LATITUDE = _pywcs.WCSSUB_LATITUDE
-WCSSUB_LONGITUDE = _pywcs.WCSSUB_LONGITUDE
-WCSSUB_CUBEFACE = _pywcs.WCSSUB_CUBEFACE
-WCSSUB_SPECTRAL = _pywcs.WCSSUB_SPECTRAL
-WCSSUB_STOKES = _pywcs.WCSSUB_STOKES
+# Copy all the constants from the C extension into this module's namespace
+for key, val in _pywcs.__dict__.items():
+    if (key.startswith('WCSSUB') or
+        key.startswith('WCSHDR') or
+        key.startswith('WCSHDO')):
+        locals()[key] = val
 
 # A wrapper around the C WCS type
 
@@ -141,11 +142,14 @@ class WCS(WCSBase):
 
         - *relax*: Degree of permissiveness:
 
-            - ``False``: Recognize only FITS keywords defined by the
+            - `False`: Recognize only FITS keywords defined by the
               published WCS standard.
 
-            - ``True``: Admit all recognized informal extensions of the
+            - `True`: Admit all recognized informal extensions of the
               WCS standard.
+
+            - `int`: a bit field selecting specific extensions to
+              accept.  See :ref:`relaxread` for details.
 
         - *naxis*: int or sequence.  Extracts specific coordinate axes
           using :meth:`~pywcs.Wcsprm.sub`.  If a header is provided,
@@ -894,11 +898,14 @@ naxis kwarg.
 
         - *relax*: Degree of permissiveness:
 
-          - ``False``: Recognize only FITS keywords defined by the
+          - `False`: Recognize only FITS keywords defined by the
             published WCS standard.
 
-          - ``True``: Admit all recognized informal extensions of the WCS
+          - `True`: Admit all recognized informal extensions of the WCS
             standard.
+
+          - `int`: a bit field selecting specific extensions to write.
+            See :ref:`relaxwrite` for details.
 
         Returns a `pyfits`_ Header object.
         """
@@ -1083,11 +1090,14 @@ def find_all_wcs(header, relax=False, keysel=None):
 
     - *relax*: Degree of permissiveness:
 
-        - ``False``: Recognize only FITS keywords defined by the
+        - `False`: Recognize only FITS keywords defined by the
           published WCS standard.
 
-        - ``True``: Admit all recognized informal extensions of the
+        - `True`: Admit all recognized informal extensions of the
           WCS standard.
+
+        - `int`: a bit field selecting specific extensions to accept.
+          See :ref:`relaxread` for details.
 
     - *keysel*: A list of flags used to select the keyword types
       considered by wcslib.  When ``None``, only the standard image

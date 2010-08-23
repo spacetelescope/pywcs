@@ -248,7 +248,7 @@ An undefined value is represented by NaN.
 cel_offset = """
 ``boolean``
 
-If ``True``, an offset will be applied to ``(x, y)`` to force ``(x,y)
+If `True`, an offset will be applied to ``(x, y)`` to force ``(x,y)
 = (0,0)`` at the fiducial point.
 """
 
@@ -577,11 +577,14 @@ Find all WCS transformations in the header.
 
 - *relax*: Degree of permissiveness:
 
-    - ``False``: Recognize only FITS keywords defined by the published
+    - `False`: Recognize only FITS keywords defined by the published
       WCS standard.
 
-    - ``True``: Admit all recognized informal extensions of the WCS
+    - `True`: Admit all recognized informal extensions of the WCS
       standard.
+
+    - `int`: a bit field selecting specific extensions to accept.  See
+      :ref:`relaxread` for details.
 
 - *keysel*: Vector of flag bits that may be used to restrict the
   keyword types considered:
@@ -695,7 +698,7 @@ and ``LATPOLEa``.
 has_cd = """
 has_cd() -> bool
 
-Returns ``True`` if ``CDi_ja`` is present.  ``CDi_ja`` is an alternate
+Returns `True` if ``CDi_ja`` is present.  ``CDi_ja`` is an alternate
 specification of the linear transformation matrix, maintained for
 historical compatibility.
 
@@ -726,7 +729,7 @@ compatibility.
 has_crota = """
 has_crota() -> bool
 
-Returns ``True`` if ``CROTAia`` is present.  ``CROTAia`` is an
+Returns `True` if ``CROTAia`` is present.  ``CROTAia`` is an
 alternate specification of the linear transformation matrix,
 maintained for historical compatibility.
 
@@ -754,7 +757,7 @@ compatibility.
 has_pc = """
 has_pc() -> bool
 
-Returns ``True`` if ``PCi_ja`` is present.  ``PCi_ja`` is the
+Returns `True` if ``PCi_ja`` is present.  ``PCi_ja`` is the
 recommended way to specify the linear transformation matrix.
 
 .. seealso::
@@ -785,7 +788,7 @@ diagonal matrix and the ``PCi_ja`` matrix.
 is_unity = """
 is_unity() -> bool
 
-Returns ``True`` if the linear transformation matrix
+Returns `True` if the linear transformation matrix
 (`~pywcs.Wcsprm.cd`) is unity.
 """
 
@@ -1752,11 +1755,14 @@ pixel lists forms by manipulating the `~pywcs.Wcsprm.colnum` or
 
 - *relax*: Degree of permissiveness:
 
-    - ``False``: Recognize only FITS keywords defined by the published
+    - `False`: Recognize only FITS keywords defined by the published
       WCS standard.
 
-    - ``True``: Admit all recognized informal extensions of the WCS
+    - `True`: Admit all recognized informal extensions of the WCS
       standard.
+
+    - `int`: a bit field selecting specific extensions to write.
+      See :ref:`relaxwrite` for details.
 
 Returns a raw FITS header as a string.
 """
@@ -1870,11 +1876,14 @@ Sect. 5.2.1), integer (Sect. 5.2.3), and floating-point values
 
 - *relax*: Degree of permissiveness:
 
-    - ``False``: Recognize only FITS keywords defined by the published
+    - `False`: Recognize only FITS keywords defined by the published
       WCS standard.
 
-    - ``True``: Admit all recognized informal extensions of the WCS
+    - `True`: Admit all recognized informal extensions of the WCS
       standard.
+
+    - `int`: a bit field selecting specific extensions to accept.  See
+      :ref:`relaxread` for details.
 
 - *naxis*: The number of sky coordinates axes for the object.
   (*naxis* may only be provided if *header* is ``None``.)
@@ -1888,8 +1897,8 @@ Sect. 5.2.1), integer (Sect. 5.2.3), and floating-point values
 
      - ``WCSHDR_PIXLIST``: Pixel list keywords.
 
-   If zero, there is no restriction.  If -1, wcspih() is called,
-   rather than wcstbh().
+   If zero, there is no restriction.  If -1, the underlying wcslib
+   function ``wcspih()`` is called, rather than ``wcstbh()``.
 
 - *colsel*: A sequence of table column numbers used to restrict the
   keywords considered.  ``None`` indicates no restriction.

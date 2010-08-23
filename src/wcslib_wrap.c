@@ -167,6 +167,7 @@ PyWcsprm_init(
   Py_ssize_t     header_length = 0;
   Py_ssize_t     nkeyrec       = 0;
   char *         key           = " ";
+  PyObject*      relax_obj     = NULL;
   int            relax         = 0;
   int            naxis         = -1;
   int            keysel        = -1;
@@ -183,14 +184,14 @@ PyWcsprm_init(
   PyObject*      ignored       = NULL;
   int            ignored_int;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "|OsiiiO:WCSBase.__init__",
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "|OsOiiO:WCSBase.__init__",
                                    (char **)keywords, &header_obj, &key,
-                                   &relax, &naxis, &keysel, &colsel)) {
+                                   &relax_obj, &naxis, &keysel, &colsel)) {
     return -1;
   }
 
   if (header_obj == NULL || header_obj == Py_None) {
-    if (relax) {
+    if (relax_obj) {
       PyErr_SetString(PyExc_ValueError,
                       "If no header is provided, relax may not be "
                       "provided either.");
@@ -245,8 +246,17 @@ PyWcsprm_init(
       return -1;
     }
 
-    if (relax) {
+    if (relax_obj == Py_True) {
       relax = WCSHDR_all;
+    } else if (relax_obj == NULL || relax_obj == Py_False) {
+      relax = WCSHDR_none;
+    } else {
+      relax = PyInt_AsLong(relax_obj);
+      if (relax == -1) {
+        PyErr_SetString(PyExc_ValueError,
+                        "relax must be True, False or an integer.");
+        return -1;
+      }
     }
 
     if (!is_valid_alt_key(key)) {
@@ -402,6 +412,7 @@ PyWcsprm_find_all_wcs(
   char *         header        = NULL;
   Py_ssize_t     header_length = 0;
   Py_ssize_t     nkeyrec       = 0;
+  PyObject*      relax_obj     = NULL;
   int            relax         = 0;
   int            keysel        = 0;
   int            ctrl          = 0;
@@ -415,9 +426,9 @@ PyWcsprm_find_all_wcs(
   const char*    keywords[]    = {"header", "relax", "keysel", NULL};
   int            status        = -1;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "O|ii:find_all_wcs",
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "O|Oi:find_all_wcs",
                                    (char **)keywords, &header_obj,
-                                   &relax, &keysel)) {
+                                   &relax_obj, &keysel)) {
     return NULL;
   }
 
@@ -432,8 +443,17 @@ PyWcsprm_find_all_wcs(
     return NULL;
   }
 
-  if (relax) {
+  if (relax_obj == Py_True) {
     relax = WCSHDR_all;
+  } else if (relax_obj == NULL || relax_obj == Py_False) {
+    relax = WCSHDR_none;
+  } else {
+    relax = PyInt_AsLong(relax_obj);
+    if (relax == -1) {
+      PyErr_SetString(PyExc_ValueError,
+                      "relax must be True, False or an integer.");
+      return NULL;
+    }
   }
 
   if (keysel < 0) {
@@ -464,6 +484,7 @@ PyWcsprm_find_all_wcs(
 
   result = PyList_New(nwcs);
   if (result == NULL) {
+    ignored = wcsvfree(&nwcs, &wcs);
     return NULL;
   }
 
@@ -1542,6 +1563,7 @@ PyWcsprm_to_header(
     PyObject* args,
     PyObject* kwds) {
 
+  PyObject* relax_obj    = NULL;
   int       relax        = 0;
   int       nkeyrec      = 0;
   char*     header       = NULL;
@@ -1549,13 +1571,22 @@ PyWcsprm_to_header(
   PyObject* result       = NULL;
   const char* keywords[] = {"relax", NULL};
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "|i:to_header",
-                                   (char **)keywords, &relax)) {
+  if (!PyArg_ParseTupleAndKeywords(args, kwds, "|O:to_header",
+                                   (char **)keywords, &relax_obj)) {
     goto exit;
   }
 
-  if (relax) {
-    relax = -1;
+  if (relax_obj == Py_True) {
+    relax = WCSHDO_all;
+  } else if (relax_obj == NULL || relax_obj == Py_False) {
+    relax = WCSHDO_none;
+  } else {
+    relax = PyInt_AsLong(relax_obj);
+    if (relax == -1) {
+      PyErr_SetString(PyExc_ValueError,
+                      "relax must be True, False or an integer.");
+      return NULL;
+    }
   }
 
   wcsprm_python2c(&self->x);
@@ -2978,6 +3009,8 @@ PyTypeObject PyWcsprmType = {
   PyWcsprm_new,                 /* tp_new */
 };
 
+#define CONSTANT(a) PyModule_AddIntConstant(m, #a, a)
+
 int
 _setup_wcsprm_type(
     PyObject* m) {
@@ -2988,14 +3021,39 @@ _setup_wcsprm_type(
 
   Py_INCREF(&PyWcsprmType);
 
-  return (PyModule_AddObject(m, "_Wcsprm", (PyObject *)&PyWcsprmType) ||
-          PyModule_AddIntConstant(m, "WCSSUB_LONGITUDE", WCSSUB_LONGITUDE) ||
-          PyModule_AddIntConstant(m, "WCSSUB_LATITUDE", WCSSUB_LATITUDE) ||
-          PyModule_AddIntConstant(m, "WCSSUB_CUBEFACE", WCSSUB_CUBEFACE) ||
-          PyModule_AddIntConstant(m, "WCSSUB_SPECTRAL", WCSSUB_SPECTRAL) ||
-          PyModule_AddIntConstant(m, "WCSSUB_STOKES", WCSSUB_STOKES) ||
-          PyModule_AddIntConstant(m, "WCSSUB_CELESTIAL", WCSSUB_CELESTIAL) ||
-          PyModule_AddIntConstant(m, "WCSHDR_IMGHEAD", WCSHDR_IMGHEAD) ||
-          PyModule_AddIntConstant(m, "WCSHDR_BIMGARR", WCSHDR_BIMGARR) ||
-          PyModule_AddIntConstant(m, "WCSHDR_PIXLIST", WCSHDR_PIXLIST));
+  return (
+    PyModule_AddObject(m, "_Wcsprm", (PyObject *)&PyWcsprmType) ||
+    CONSTANT(WCSSUB_LONGITUDE) ||
+    CONSTANT(WCSSUB_LATITUDE) ||
+    CONSTANT(WCSSUB_CUBEFACE) ||
+    CONSTANT(WCSSUB_SPECTRAL) ||
+    CONSTANT(WCSSUB_STOKES) ||
+    CONSTANT(WCSSUB_CELESTIAL) ||
+    CONSTANT(WCSHDR_IMGHEAD) ||
+    CONSTANT(WCSHDR_BIMGARR) ||
+    CONSTANT(WCSHDR_PIXLIST) ||
+    CONSTANT(WCSHDR_none) ||
+    CONSTANT(WCSHDR_all) ||
+    CONSTANT(WCSHDR_CROTAia) ||
+    CONSTANT(WCSHDR_EPOCHa) ||
+    CONSTANT(WCSHDR_VELREFa) ||
+    CONSTANT(WCSHDR_CD00i00j) ||
+    CONSTANT(WCSHDR_PC00i00j) ||
+    CONSTANT(WCSHDR_PROJPn) ||
+    CONSTANT(WCSHDR_RADECSYS) ||
+    CONSTANT(WCSHDR_VSOURCE) ||
+    CONSTANT(WCSHDR_DOBSn) ||
+    CONSTANT(WCSHDR_LONGKEY) ||
+    CONSTANT(WCSHDR_CNAMn) ||
+    CONSTANT(WCSHDR_AUXIMG) ||
+    CONSTANT(WCSHDR_ALLIMG) ||
+    CONSTANT(WCSHDO_none) ||
+    CONSTANT(WCSHDO_all) ||
+    CONSTANT(WCSHDO_safe) ||
+    CONSTANT(WCSHDO_DOBSn) ||
+    CONSTANT(WCSHDO_TPCn_ka) ||
+    CONSTANT(WCSHDO_PVn_ma) ||
+    CONSTANT(WCSHDO_CRPXna) ||
+    CONSTANT(WCSHDO_CNAMna) ||
+    CONSTANT(WCSHDO_WCSNna));
 }
