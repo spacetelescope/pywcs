@@ -168,7 +168,6 @@ PyUnits_convert(
     PyObject* kwds) {
 
   int            status       = 1;
-  PyArray_Descr  dtype;
   PyObject*      input        = NULL;
   PyArrayObject* input_arr    = NULL;
   PyArrayObject* output_arr   = NULL;
@@ -180,11 +179,6 @@ PyUnits_convert(
   if (!PyArg_ParseTuple(args, "O:UnitConverter.convert", &input)) {
     goto exit;
   }
-
-  dtype.typeobj = NULL;
-  dtype.kind = 'f';
-  dtype.type = 'D';
-  dtype.byteorder = '=';
 
   input_arr = (PyArrayObject*)PyArray_FromObject(
       input, NPY_DOUBLE, 0, NPY_MAXDIMS);
