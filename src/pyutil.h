@@ -343,4 +343,12 @@ get_deepcopy(
     PyObject* obj,
     PyObject* memo);
 
+/***************************************************************************
+  Miscellaneous helper functions
+ ***************************************************************************/
+
+int
+parse_unsafe_unit_conversion_spec(
+    const char* arg, int* ctrl);
+
 #endif /* __PYUTIL_H__ */

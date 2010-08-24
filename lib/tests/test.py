@@ -34,3 +34,7 @@ def test_spectra():
 
     for filename in glob.glob(os.path.join(ROOT_DIR, "spectra", "*.fits")):
         yield test_spectrum, filename
+
+def test_units():
+    u = pywcs.UnitConverter("log(MHz)", "ln(Hz)")
+    print u.convert([1,2,3,4])

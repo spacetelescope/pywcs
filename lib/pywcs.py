@@ -81,6 +81,7 @@ Please send details about your build and platform to mdroe@stsci.edu"""
 WCSBase = _pywcs._Wcs
 DistortionLookupTable = _pywcs.DistortionLookupTable
 Sip = _pywcs.Sip
+UnitConverter = _pywcs.UnitConverter
 class Wcsprm(_pywcs._Wcsprm): pass
 # Copy all the constants from the C extension into this module's namespace
 for key, val in _pywcs.__dict__.items():

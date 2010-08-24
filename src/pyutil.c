@@ -788,3 +788,42 @@ get_deepcopy(
   }
 }
 
+/***************************************************************************
+ * Miscellaneous helper functions                                          *
+ ***************************************************************************/
+
+int
+parse_unsafe_unit_conversion_spec(
+    const char* arg, int* ctrl) {
+
+  const char* p = NULL;
+
+  *ctrl = 0;
+
+  p = arg;
+  for (p = arg; *p != '\0'; ++p) {
+    switch (*p) {
+    case 's':
+    case 'S':
+      *ctrl |= 1;
+      break;
+    case 'h':
+    case 'H':
+      *ctrl |= 2;
+      break;
+    case 'd':
+    case 'D':
+      *ctrl |= 4;
+      break;
+    default:
+      PyErr_SetString(
+          PyExc_ValueError,
+          "translate_units may only contain the characters 's', 'h' or 'd'");
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
+

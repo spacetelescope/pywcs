@@ -281,6 +281,13 @@ relevant column number.
 It should be set to zero for an image header or pixel list.
 """
 
+convert = """
+convert(array)
+
+Perform the unit conversion on the elements of the given *array*,
+returning an array of the same shape.
+"""
+
 coord = """
 ``double array[K_M]...[K_2][K_1][M]``
 
@@ -1082,6 +1089,12 @@ Location of the observer in a standard terrestrial reference frame,
 An undefined value is represented by NaN.
 """
 
+offset = """
+``double``
+
+The offset of the unit conversion.
+"""
+
 p0 = """
 ``double array[M]``
 
@@ -1225,6 +1238,12 @@ Matrix containing the product of the ``CDELTia`` diagonal matrix and
 the ``PCi_ja`` matrix.
 """
 
+power = """
+``double``
+
+The exponent of the unit conversion.
+"""
+
 print_contents = """
 print_contents()
 
@@ -1332,6 +1351,12 @@ Returns a dictionary with the following keys:
 
    `~pywcs.Wcsprm.lat`, `~pywcs.Wcsprm.lng`
 """ % (__.ORIGIN())
+
+scale = """
+``double``
+
+The scaling factor for the unit conversion.
+"""
 
 sense = """
 ``int array[M]``
@@ -1774,6 +1799,93 @@ ttype = """
 the wcstab array.
 """
 
+UnitConverter = """
+UnitConverter(have, want, translate_units='')
+
+Creates an object for performing conversion from one system of units
+to another.
+
+- *have* string:  FITS unit specification to convert from, with or
+  without surrounding square brackets (for inline specifications);
+  text following the closing bracket is ignored.
+
+- *want* string:  FITS unit specification to convert to, with or
+  without surrounding square brackets (for inline specifications);
+  text following the closing bracket is ignored.
+
+- *ctrl* string (optional): Do potentially unsafe translations of
+  non-standard unit strings.
+
+  Although ``"S"`` is commonly used to represent seconds, its
+  recognizes ``"S"`` formally as Siemens, however rarely that may be
+  translation to ``"s"`` is potentially unsafe since the standard
+  used.  The same applies to ``"H"`` for hours (Henry), and ``"D"``
+  for days (Debye).
+
+  This string controls what to do in such cases, and is
+  case-insensitive.
+
+  - If the string contains ``"s"``, translate ``"S"`` to ``"s"``.
+
+  - If the string contains ``"h"``, translate ``"H"`` to ``"h"``.
+
+  - If the string contains ``"d"``, translate ``"D"`` to ``"d"``.
+
+  Thus ``''`` doesn't do any unsafe translations, whereas ``'shd'``
+  does all of them.
+
+  See :ref:`unit-aliases` for more information.
+
+Use the object's `~pywcs.UnitConverter.convert` method to convert
+values from *have* to *want*.
+
+This function is permissive in accepting whitespace in all contexts in
+a units specification where it does not create ambiguity (e.g. not
+between a metric prefix and a basic unit string), including in strings
+like ``"log (m ** 2)"`` which is formally disallowed.
+
+Table 6 of WCS Paper I lists eleven units for which metric prefixes
+are allowed.  However, in this implementation only prefixes greater
+than unity are allowed for ``"a"`` (annum), ``"yr"`` (year), ``"pc"``
+(parsec), ``"bit"``, and ``"byte"``, and only prefixes less than unity
+are allowed for ``"mag"`` (stellar magnitude).
+
+Metric prefix ``"P"`` (peta) is specifically forbidden for ``"a"``
+(annum) to avoid confusion with ``"Pa"`` (Pascal, not peta-annum).
+Note that metric prefixes are specifically disallowed for ``"h"``
+(hour) and ``"d"`` (day) so that ``"ph"`` (photons) cannot be
+interpreted as pico-hours, nor ``"cd"`` (candela) as centi-days.
+
+Function types ``log()``, ``ln()`` and ``exp()`` may only occur at the
+start of the units specification.
+
+**Exceptions:**
+
+- `ValueError`: Invalid numeric multiplier.
+
+- `SyntaxError`: Dangling binary operator.
+
+- `SyntaxError`: Invalid symbol in INITIAL context.
+
+- `SyntaxError`: Function in invalid context.
+
+- `SyntaxError`: Invalid symbol in EXPON context.
+
+- `SyntaxError`: Unbalanced bracket.
+
+- `SyntaxError`: Unbalanced parenthesis.
+
+- `SyntaxError`: Consecutive binary operators.
+
+- `SyntaxError`: Internal parser error.
+
+- `SyntaxError`: Non-conformant unit specifications.
+
+- `SyntaxError`: Non-conformant functions.
+
+- `ValueError`: Potentially unsafe translation.
+"""
+
 unitfix = """
 unitfix(translate_units='')
 
@@ -1800,6 +1912,8 @@ Translates non-standard ``CUNITia`` keyvalues.  For example, ``DEG`` ->
 
   Thus ``''`` doesn't do any unsafe translations, whereas ``'shd'``
   does all of them.
+
+  See :ref:`unit-aliases` for more information.
 
 Returns ``0`` for success; ``-1`` if no change required.
 """
@@ -1853,8 +1967,7 @@ To perform all distortion corrections and WCS tranformation, use
 """
 
 Wcsprm = """
-Wcsprm(*header=None, key=' ', relax=False, naxis=2, keysel=0,
-       colsel=None*)
+Wcsprm(header=None, key=' ', relax=False, naxis=2, keysel=0, colsel=None)
 
 `~pywcs.Wcsprm` is a direct wrapper around `wcslib`_, and provides
 access to the core WCS transformations that it supports.

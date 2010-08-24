@@ -18,4 +18,5 @@ Classes
    api_wcsprm.rst
    api_distortion.rst
    api_sip.rst
+   api_units.rst
    relax.rst
