@@ -530,7 +530,7 @@ PyWcs_set_wcs(
   self->py_wcsprm = NULL;
   self->x.wcs = NULL;
 
-  if (value != Py_None) {
+  if (value != NULL && value != Py_None) {
     if (!PyObject_TypeCheck(value, &PyWcsprmType)) {
       PyErr_SetString(PyExc_TypeError,
                       "wcs must be Wcsprm object");
@@ -569,7 +569,7 @@ PyWcs_set_cpdis1(
   self->py_distortion_lookup[0] = NULL;
   self->x.cpdis[0] = NULL;
 
-  if (value != Py_None) {
+  if (value != NULL && value != Py_None) {
     if (!PyObject_TypeCheck(value, &PyDistLookupType)) {
       PyErr_SetString(PyExc_TypeError,
                       "cpdis1 must be DistortionLookupTable object");
@@ -608,7 +608,7 @@ PyWcs_set_cpdis2(
   self->py_distortion_lookup[1] = NULL;
   self->x.cpdis[1] = NULL;
 
-  if (value != Py_None) {
+  if (value != NULL && value != Py_None) {
     if (!PyObject_TypeCheck(value, &PyDistLookupType)) {
       PyErr_SetString(PyExc_TypeError,
                       "cpdis2 must be DistortionLookupTable object");
@@ -647,7 +647,7 @@ PyWcs_set_det2im1(
   self->py_det2im[0] = NULL;
   self->x.det2im[0] = NULL;
 
-  if (value != Py_None) {
+  if (value != NULL && value != Py_None) {
     if (!PyObject_TypeCheck(value, &PyDistLookupType)) {
       PyErr_SetString(PyExc_TypeError,
                       "det2im1 must be DistortionLookupTable object");
@@ -686,7 +686,7 @@ PyWcs_set_det2im2(
   self->py_det2im[1] = NULL;
   self->x.det2im[1] = NULL;
 
-  if (value != Py_None) {
+  if (value != NULL && value != Py_None) {
     if (!PyObject_TypeCheck(value, &PyDistLookupType)) {
       PyErr_SetString(PyExc_TypeError,
                       "det2im2 must be DistortionLookupTable object");
@@ -725,7 +725,7 @@ PyWcs_set_sip(
   self->py_sip = NULL;
   self->x.sip = NULL;
 
-  if (value != Py_None) {
+  if (value != NULL && value != Py_None) {
     if (!PyObject_TypeCheck(value, &PySipType)) {
       PyErr_SetString(PyExc_TypeError,
                       "sip must be Sip object");
