@@ -9,7 +9,7 @@
 #
 # Reminder: add '-d' to FLFLAGS for debugging.
 #
-# $Id: flavours,v 4.5 2010/07/16 07:01:26 cal103 Exp $
+# $Id: flavours,v 4.5.1.1 2010/07/16 07:05:32 cal103 Exp cal103 $
 #-----------------------------------------------------------------------------
 
 # The list of FLAVOURs can be set on the command line.
@@ -121,6 +121,10 @@ endif
 # gmake uses FC in place of configure's F77.
 ifdef F77
   FC := $(F77)
+endif
+
+ifndef TIMER
+  TIMER := date +"%a %Y/%m/%d %X %z, executing on $$HOST"
 endif
 
 ifdef FLAVOUR

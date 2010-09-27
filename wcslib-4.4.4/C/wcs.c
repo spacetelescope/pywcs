@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcs.c,v 4.5 2010/07/16 07:01:25 cal103 Exp $
+  $Id: wcs.c,v 4.5.1.2 2010/09/23 01:32:16 cal103 Exp cal103 $
 *===========================================================================*/
 
 #include <math.h>
@@ -1462,7 +1462,7 @@ int wcsset_(struct wcsprm *wcs)
     /* Do simple alias translations. */
     if (strncmp(wcs->ctype[wcs->lng]+5, "GLS", 3) == 0) {
       wcscel->offset = 1;
-      wcscel->phi0   = wcs->crval[wcs->lng];
+      wcscel->phi0   = 0.0;
       wcscel->theta0 = wcs->crval[wcs->lat];
       strcpy(wcsprj->code, "SFL");
 

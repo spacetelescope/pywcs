@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: tsphdpa.c,v 4.5 2010/07/16 07:01:26 cal103 Exp $
+  $Id: tsphdpa.c,v 4.5.1.2 2010/08/12 07:40:30 cal103 Exp cal103 $
 *=============================================================================
 *
 * tsphdpa tests sphdpa().
@@ -43,16 +43,22 @@ int main()
 {
   double dist, lat, lat0, lng, lng0, pa;
 
+  printf("\nEnter reference (lng,lat): ");
+  scanf("%lf%*[ ,	]%lf", &lng0, &lat0);
+
   while (1) {
-    printf("\nEnter reference (lng,lat): ");
-    scanf("%lf%*[ ,	]%lf", &lng0, &lat0);
-    printf("Enter   field   (lng,lat): ");
+    printf("\nEnter   field   (lng,lat): ");
     scanf("%lf%*[ ,	]%lf", &lng, &lat);
 
     sphdpa(1, lng0, lat0, &lng, &lat, &dist, &pa);
 
-    printf("(%.4f,%.4f) - (%.4f,%.4f) -> %.4f, %.4f (dist,pa)\n",
+    printf("(%.4f,%.4f) - (%.4f,%.4f) -> (%.4f,%.4f) (dist,pa)\n",
       lng0, lat0, lng, lat, dist, pa);
+
+    sphpad(1, lng0, lat0, &dist, &pa, &lng, &lat);
+
+    printf("(%.4f,%.4f) + (%.4f,%.4f) -> (%.4f,%.4f) (lng,lat)\n",
+      lng0, lat0, dist, pa, lng, lat);
   }
 
   return 0;

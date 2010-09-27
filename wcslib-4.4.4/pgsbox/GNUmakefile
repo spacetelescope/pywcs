@@ -31,7 +31,7 @@
 #
 # Author: Mark Calabretta, Australia Telescope National Facility
 # http://www.atnf.csiro.au/~mcalabre/index.html
-# $Id: GNUmakefile,v 4.5 2010/07/16 07:01:27 cal103 Exp $
+# $Id: GNUmakefile,v 4.5.1.2 2010/09/23 08:26:57 cal103 Exp cal103 $
 #-----------------------------------------------------------------------------
 # Get configure settings.
 include ../makedefs
@@ -97,7 +97,7 @@ cleaner : clean
 	- $(RM) pgtest cpgtest
 
 cleanest distclean realclean : cleaner
-	- $(RM) $(PGSBOXLIB) $(LIBWCS)
+	- $(RM) libpgsbox-*.a $(LIBWCS)
 
 check test : tests
 	-@ echo ''

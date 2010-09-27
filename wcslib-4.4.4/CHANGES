@@ -1,3 +1,41 @@
+WCSLIB version 4.5.3 (2010/09/23)
+---------------------------------
+
+* Utilities
+
+  - Various improvements to wcsgrid: correct the scaling set via
+    cpgwnad(); label angles other than RA,Dec in decimal degrees; draw
+    the projection boundary for projections other than zenithals.
+
+* (No changes to any of the libraries.)
+
+
+WCSLIB version 4.5.2 (2010/09/23)
+---------------------------------
+
+* C library
+
+  - Fixed the translation of GLS to SFL in wcsset() and celfix() when
+    the reference longitude is non-zero - it introduces an offset in
+    longitude in the normal way.  (This undoes part of the change
+    applied in version 4.4.)
+
+
+WCSLIB version 4.5.1 (2010/08/12)
+---------------------------------
+
+* C library
+
+  - New utility function, sphpad(), computes the coordinates of points
+    offset by given angular distances and position angles from a given
+    point on the sky (complementary to sphdpa()).
+
+* Fortran wrappers
+
+  - New wrapper function:
+    - SPHPAD for sphpad().
+
+
 WCSLIB version 4.5 (2010/07/16)
 -------------------------------
 
@@ -1537,4 +1575,4 @@ WCSLIB version 1.0 (1995/01/31)
   Initial release.
 
 ------------------------------------------------------------------------
-$Id: CHANGES,v 4.5 2010/07/16 07:01:26 cal103 Exp $
+$Id: CHANGES,v 4.5.1.2 2010/09/23 01:47:00 cal103 Exp cal103 $

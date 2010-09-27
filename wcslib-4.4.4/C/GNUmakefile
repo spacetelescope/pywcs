@@ -27,7 +27,7 @@
 #
 # Author: Mark Calabretta, Australia Telescope National Facility
 # http://www.atnf.csiro.au/~mcalabre/index.html
-# $Id: GNUmakefile,v 4.5 2010/07/16 07:01:25 cal103 Exp $
+# $Id: GNUmakefile,v 4.5.1.3 2010/08/12 08:12:48 cal103 Exp cal103 $
 #-----------------------------------------------------------------------------
 # Get configure settings.
 include ../makedefs
@@ -84,6 +84,9 @@ TEST_N := tlin tlog tprj1 tsph tspx ttab1 twcs twcssub tpih1 tbth1 tfitshdr \
 
 # Test programs that do require PGPLOT.
 TEST_P := tspc tprj2 tcel1 tcel2 ttab2 ttab3 twcsmix
+
+# Test programs that aren't automatically exercised.
+TEST_X := tsphdpa
 
 TESTS  := $(TEST_N)
 ifneq "$(PGPLOTINC)" ""
@@ -214,7 +217,7 @@ clean :
         - $(RM) -r *.o *.i a.out core *.dSYM $(EXTRA_CLEAN)
 
 cleaner : clean
-        -  $(RM) $(TEST_N)
+        -  $(RM) $(TEST_N) $(TEST_X)
         -  $(RM) $(TEST_P) tpih2 twcstab twcshdr
         -  $(RM) tofits bth.fits pih.fits wcstab.fits
         -  $(RM) t*_cfitsio
@@ -222,13 +225,13 @@ cleaner : clean
 cleanest distclean realclean : cleaner
         -  $(RM) ../wcsconfig.h ../wcsconfig_tests.h
         -  $(RM) fitshdr.c wcsbth.c wcspih.c wcsulex.c wcsutrn.c
-        -  $(RM) $(LIBWCS) $(PICLIB) $(SHRLIB)
+        -  $(RM) $(PICLIB) libwcs-*.a libwcs.so.* libwcs.*.dylib
 
 check test : tests $(TESTS:%=run_%)
 
 tests : $(TESTS)
 
-$(TEST_N) : % : test/%.c $(LIBWCS)
+$(TEST_N) $(TEST_X) : % : test/%.c $(LIBWCS)
         -@ echo ''
            $(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LIBWCS) $(LIBS)
         -@ $(RM) $@.o
@@ -339,6 +342,7 @@ tprj1   : prj.h wcstrig.h
 tprj2   : prj.h
 tspc    : spc.h spx.h wcstrig.h
 tsph    : sph.h wcstrig.h
+tsphdpa : sph.h wcstrig.h
 tspx    : spx.h
 ttab1   : tab.h
 ttab2   : tab.h

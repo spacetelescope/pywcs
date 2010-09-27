@@ -8157,7 +8157,7 @@ char *wcspihtext;
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcspih.c,v 4.5 2010/07/16 07:01:26 cal103 Exp $
+  $Id: wcspih.c,v 4.5.1.1 2010/07/16 07:05:32 cal103 Exp cal103 $
 *=============================================================================
 *
 * wcspih.l is a Flex description file containing the definition of a lexical

@@ -28,9 +28,9 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: sph.inc,v 4.5 2010/07/16 07:01:26 cal103 Exp $
+* $Id: sph.inc,v 4.5.1.2 2010/08/12 07:39:27 cal103 Exp cal103 $
 *=======================================================================
 
 *     Functions.
-      EXTERNAL  SPHDPA, SPHS2X, SPHX2S
-      INTEGER   SPHDPA, SPHS2X, SPHX2S
+      EXTERNAL  SPHDPA, SPHPAD, SPHS2X, SPHX2S
+      INTEGER   SPHDPA, SPHPAD, SPHS2X, SPHX2S

@@ -28,7 +28,7 @@
 #
 # Author: Mark Calabretta, Australia Telescope National Facility
 # http://www.atnf.csiro.au/~mcalabre/index.html
-# $Id: wcstab.keyrec,v 4.5 2010/07/16 07:01:26 cal103 Exp $
+# $Id: wcstab.keyrec,v 4.5.1.1 2010/07/16 07:05:32 cal103 Exp cal103 $
 #-----------------------------------------------------------------------------
 # List of FITS header keyrecords used by 'twcstab' to construct a FITS file
 # for testing wcstab() and fits_read_wcstab().  The coordinate arrays and

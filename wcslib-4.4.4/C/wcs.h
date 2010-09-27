@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcs.h,v 4.5 2010/07/16 07:01:25 cal103 Exp $
+  $Id: wcs.h,v 4.5.1.1 2010/07/16 07:05:31 cal103 Exp cal103 $
 *=============================================================================
 *
 * WCSLIB 4.5 - C routines that implement the FITS World Coordinate System
@@ -65,7 +65,7 @@
 * to another, is defined as a preprocessor macro function that invokes
 * wcssub().
 *
-* A setup routine, wcsset_(), computes intermediate values in the wcsprm struct
+* A setup routine, wcsset(), computes intermediate values in the wcsprm struct
 * from parameters in it that were supplied by the user.  The struct always
 * needs to be set up by wcsset_() but this need not be called explicitly -
 * refer to the explanation of wcsprm::flag.
@@ -344,10 +344,9 @@
 * it (refer to the description of the wcsprm struct).
 *
 * wcsset() recognizes the NCP projection and converts it to the equivalent SIN
-* projection and it also recognizes GLS as a synonym for SFL.  It also
-* translates the AIPS spectral types ('FREQ-LSR', 'FELO-HEL', etc.), possibly
-* changing the input header keywords wcsprm::ctype and/or wcsprm::specsys if
-* necessary.
+* projection and likewise translates GLS into SFL.  It also translates the
+* AIPS spectral types ('FREQ-LSR', 'FELO-HEL', etc.), possibly changing the
+* input header keywords wcsprm::ctype and/or wcsprm::specsys if necessary.
 *
 * Note that this routine need not be called directly; it will be invoked by
 * wcsp2s() and wcss2p() if the wcsprm::flag is anything other than a

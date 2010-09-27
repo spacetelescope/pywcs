@@ -15,7 +15,7 @@
 #
 # Author: Mark Calabretta, Australia Telescope National Facility
 # http://www.atnf.csiro.au/~mcalabre/index.html
-# $Id: GNUmakefile,v 4.5 2010/07/16 07:01:27 cal103 Exp $
+# $Id: GNUmakefile,v 4.5.1.1 2010/07/16 07:05:33 cal103 Exp cal103 $
 #-----------------------------------------------------------------------------
 # Get configure settings.
 include ../makedefs
@@ -28,23 +28,23 @@ EXTRADOX := mainpage.dox $(wildcard *_extras.dox)
 #--------------
 
 %.dox : ../C/%.h doxextr doxextr.sed %.sed Doxyfile
-        -@ echo ''
-         @ if [ -f $*.sed ] ; then \
-             echo "doxextr $< | sed -f $*.sed | sed -f doxextr.sed > $@" ; \
-             ./doxextr $< | sed -f $*.sed | sed -f doxextr.sed > $@ ; \
-           else \
-             echo "doxextr $< | sed -f doxextr.sed > $@" ; \
-             ./doxextr $< | sed -f doxextr.sed > $@ ; \
-           fi
+	-@ echo ''
+	 @ if [ -f $*.sed ] ; then \
+	     echo "doxextr $< | sed -f $*.sed | sed -f doxextr.sed > $@" ; \
+	     ./doxextr $< | sed -f $*.sed | sed -f doxextr.sed > $@ ; \
+	   else \
+	     echo "doxextr $< | sed -f doxextr.sed > $@" ; \
+	     ./doxextr $< | sed -f doxextr.sed > $@ ; \
+	   fi
 
 %.c : %.l
-        -@ echo ''
-        -@ $(RM) $@
-           $(FLEX) $(FLFLAGS) -t $< | sed -e 's/^[       ]*#/#/' > $@
+	-@ echo ''
+	-@ $(RM) $@
+	   $(FLEX) $(FLFLAGS) -t $< | sed -e 's/^[	 ]*#/#/' > $@
 
 % : %.c
-        -@ echo ''
-           $(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $<
+	-@ echo ''
+	   $(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $<
 
 # Don't fret if there's no specific sed script.
 %.sed : ;
@@ -61,30 +61,30 @@ html : ../html/index.html
 pdf : ../wcslib.pdf
 
 ../wcslib.pdf : latex/refman.tex
-           $(MAKE) -C latex refman.pdf
-        -@ $(RM) $@
-           mv latex/refman.pdf $@
+	   $(MAKE) -C latex refman.pdf
+	-@ $(RM) $@
+	   mv latex/refman.pdf $@
 
 ../html/index.html latex/refman.tex : doxextr wcslib.h
-        -@ echo ''
-           doxygen
+	-@ echo ''
+	   doxygen
 
 wcslib.h : $(DOXMARX) $(EXTRADOX)
-         @ cat ../C/wcslib.h *.dox > $@
+	 @ cat ../C/wcslib.h *.dox > $@
 
 clean :
-        - $(RM) core
+	- $(RM) core
 
 cleaner distclean realclean : clean
-        - $(RM) doxextr wcslib.h
-        - $(RM) $(DOXMARX)
-        - $(RM) wcslib.tag
-        - $(RM) -r ./latex
+	- $(RM) doxextr wcslib.h
+	- $(RM) $(DOXMARX)
+	- $(RM) wcslib.tag
+	- $(RM) -r ./latex
 
 cleanest : cleaner
-        - $(RM) -r ../html ../wcslib.pdf
+	- $(RM) -r ../html ../wcslib.pdf
 
 GNUmakefile : ../makedefs ;
 
 ../makedefs : ../makedefs.in
-           cd .. && ./config.status
+	   cd .. && ./config.status

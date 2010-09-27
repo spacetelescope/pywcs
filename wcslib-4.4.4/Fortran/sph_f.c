@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: sph_f.c,v 4.5 2010/07/16 07:01:26 cal103 Exp $
+  $Id: sph_f.c,v 4.5.1.2 2010/08/12 07:39:27 cal103 Exp cal103 $
 *===========================================================================*/
 
 #include <sph.h>
@@ -38,6 +38,7 @@
 #define sphx2s_ F77_FUNC(sphx2s, SPHX2S)
 #define sphs2x_ F77_FUNC(sphs2x, SPHS2X)
 #define sphdpa_ F77_FUNC(sphdpa, SPHDPA)
+#define sphpad_ F77_FUNC(sphpad, SPHPAD)
 
 /*--------------------------------------------------------------------------*/
 
@@ -86,4 +87,19 @@ int sphdpa_(
 
 {
   return sphdpa(*nfield, *lng0, *lat0, lng, lat, dist, pa);
+}
+
+/*--------------------------------------------------------------------------*/
+
+int sphpad_(
+  const int *nfield,
+  const double *lng0,
+  const double *lat0,
+  const double dist[],
+  const double pa[],
+  double lng[],
+  double lat[])
+
+{
+  return sphpad(*nfield, *lng0, *lat0, dist, pa, lng, lat);
 }

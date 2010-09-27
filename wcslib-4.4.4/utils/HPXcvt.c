@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: HPXcvt.c,v 4.5 2010/07/16 07:01:27 cal103 Exp $
+  $Id: HPXcvt.c,v 4.5.1.1 2010/07/16 07:05:33 cal103 Exp cal103 $
 *=============================================================================
 *
 * HPXcvt reorganises HEALPix data into a 2-D FITS image.  Refer to the usage
