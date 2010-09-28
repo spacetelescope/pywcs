@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcshdr.c,v 4.5.1.1 2010/07/16 07:05:31 cal103 Exp cal103 $
+  $Id: wcshdr.c,v 4.5.1.2 2010/09/28 01:52:45 cal103 Exp cal103 $
 *===========================================================================*/
 
 #include <ctype.h>
