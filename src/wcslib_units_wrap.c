@@ -126,12 +126,12 @@ PyUnits_init(
   }
 
   status = wcsutrn(ctrl, have);
-  if (status) {
+  if (status != -1 && status != 0) {
     goto exit;
   }
 
   status = wcsutrn(ctrl, want);
-  if (status) {
+  if (status != -1 && status != 0) {
     goto exit;
   }
 
@@ -157,8 +157,34 @@ PyUnits_init(
 PyUnits___str__(
     PyUnits* self) {
 
-    /* TODO */
-  return NULL;
+  const size_t BUF_SIZE = 1 << 8;
+  char buffer[BUF_SIZE];
+  char scale[BUF_SIZE];
+  char offset[BUF_SIZE];
+  char power[BUF_SIZE];
+
+  if (self->scale != 1.0) {
+    snprintf(scale, BUF_SIZE, "*%.12g", self->scale);
+  } else {
+    scale[0] = 0;
+  }
+
+  if (self->offset != 0.0) {
+    snprintf(offset, BUF_SIZE, " + %.12g", self->offset);
+  } else {
+    offset[0] = 0;
+  }
+
+  if (self->power != 1.0) {
+    snprintf(power, BUF_SIZE, " ** %.12g", self->power);
+  } else {
+    power[0] = 0;
+  }
+
+  snprintf(buffer, 1 << 8, "<pywcs.UnitConverter (x%s%s)%s>",
+           scale, offset, power);
+
+  return PyString_FromString(buffer);
 }
 
 static PyObject*
