@@ -1333,14 +1333,15 @@ PyWcsprm_sptr(
 PyWcsprm___str__(
     PyWcsprm* self) {
 
-  const int MAX_LEN = 1 << 18;
-  char buffer[MAX_LEN+1];
+  const int CHUNK_SIZE = 1 << 16;
+  char chunk[CHUNK_SIZE];
+  char* buffer = NULL;
+  size_t buffer_size = 0;
   int out_pipe[2];
   int saved_stdout;
   int ignored;
   int len;
-
-  buffer[0] = 0;
+  PyObject* result;
 
   if (PyWcsprm_cset(self)) {
     return NULL;
@@ -1361,16 +1362,26 @@ PyWcsprm___str__(
   wcsprm_c2python(&self->x);
   fflush(stdout);
 
-  len = read(out_pipe[0], buffer, MAX_LEN);
+  while (1) {
+      len = read(out_pipe[0], chunk, CHUNK_SIZE);
 
-  if (len >= MAX_LEN) {
-    PyErr_SetString(PyExc_MemoryError, "Buffer overflow");
-    return NULL;
+      buffer = realloc(buffer, buffer_size + len + 1);
+      memcpy(buffer + buffer_size, chunk, len);
+      buffer_size += len;
+      buffer[buffer_size] = 0;
+
+      if (len < CHUNK_SIZE) {
+          break;
+      }
   }
 
   dup2(saved_stdout, STDOUT_FILENO);
 
-  return PyString_FromString(buffer);
+  result = PyString_FromString(buffer);
+
+  free(buffer);
+
+  return result;
 }
 
 /*@null@*/ static PyObject*
