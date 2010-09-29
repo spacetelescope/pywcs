@@ -60,8 +60,6 @@ together in a pipeline:
 
 from __future__ import division # confidence high
 
-__docformat__ = "epytext"
-
 # stdlib
 import copy
 
@@ -91,8 +89,6 @@ for key, val in _pywcs.__dict__.items():
         locals()[key] = val
 
 # A wrapper around the C WCS type
-
-# TODO: More involved form of *relax*
 
 def _parse_keysel(keysel):
     keysel_flags = 0
