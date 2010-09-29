@@ -1375,6 +1375,7 @@ PyWcsprm___str__(
       }
   }
 
+  close(out_pipe[0]);
   dup2(saved_stdout, STDOUT_FILENO);
 
   result = PyString_FromString(buffer);
