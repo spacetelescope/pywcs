@@ -28,12 +28,14 @@ Header-reading relaxation constants
 
   For example, to accept ``CD00i00j`` and ``PC00i00j`` use::
 
-      relax = WCSHDR_CD00i00j | WCSHDR_PC00i00j;
+      relax = pywcs.WCSHDR_CD00i00j | pywcs.WCSHDR_PC00i00j
 
-  The parser always treats ``EPOCH`` as subordinate to ``EQUINOXa`` if both are
-  present, and ``VSOURCEa`` is always subordinate to ``ZSOURCEa``.
+  The parser always treats ``EPOCH`` as subordinate to ``EQUINOXa`` if
+  both are present, and ``VSOURCEa`` is always subordinate to
+  ``ZSOURCEa``.
 
-  Likewise, ``VELREF`` is subordinate to the formalism of WCS Paper III.
+  Likewise, ``VELREF`` is subordinate to the formalism of WCS Paper
+  III.
 
 The flag bits are:
 
