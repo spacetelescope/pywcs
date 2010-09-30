@@ -144,7 +144,7 @@ PyUnits_init(
   } else if (status == 0) {
     return 0;
   } else if (status >= 1 && status < 13) {
-    PyErr_SetString((PyObject *)units_errexc[status], wcsunits_errmsg[status]);
+    PyErr_SetString(*units_errexc[status], wcsunits_errmsg[status]);
     return -1;
   } else {
     PyErr_SetString(PyExc_RuntimeError,

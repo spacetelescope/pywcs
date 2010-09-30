@@ -1805,13 +1805,13 @@ UnitConverter(have, want, translate_units='')
 Creates an object for performing conversion from one system of units
 to another.
 
-- *have* string:  FITS unit specification to convert from, with or
-  without surrounding square brackets (for inline specifications);
-  text following the closing bracket is ignored.
+- *have* string: :ref:`fits-unit` to convert from, with or without
+  surrounding square brackets (for inline specifications); text
+  following the closing bracket is ignored.
 
-- *want* string:  FITS unit specification to convert to, with or
-  without surrounding square brackets (for inline specifications);
-  text following the closing bracket is ignored.
+- *want* string: :ref:`fits-unit` to convert to, with or without
+  surrounding square brackets (for inline specifications); text
+  following the closing bracket is ignored.
 
 - *ctrl* string (optional): Do potentially unsafe translations of
   non-standard unit strings.
@@ -1834,7 +1834,7 @@ to another.
   Thus ``''`` doesn't do any unsafe translations, whereas ``'shd'``
   does all of them.
 
-  See :ref:`unit-aliases` for more information.
+  See :ref:`fits-unit` for more information.
 
 Use the object's `~pywcs.UnitConverter.convert` method to convert
 values from *have* to *want*.
@@ -1843,21 +1843,6 @@ This function is permissive in accepting whitespace in all contexts in
 a units specification where it does not create ambiguity (e.g. not
 between a metric prefix and a basic unit string), including in strings
 like ``"log (m ** 2)"`` which is formally disallowed.
-
-Table 6 of WCS Paper I lists eleven units for which metric prefixes
-are allowed.  However, in this implementation only prefixes greater
-than unity are allowed for ``"a"`` (annum), ``"yr"`` (year), ``"pc"``
-(parsec), ``"bit"``, and ``"byte"``, and only prefixes less than unity
-are allowed for ``"mag"`` (stellar magnitude).
-
-Metric prefix ``"P"`` (peta) is specifically forbidden for ``"a"``
-(annum) to avoid confusion with ``"Pa"`` (Pascal, not peta-annum).
-Note that metric prefixes are specifically disallowed for ``"h"``
-(hour) and ``"d"`` (day) so that ``"ph"`` (photons) cannot be
-interpreted as pico-hours, nor ``"cd"`` (candela) as centi-days.
-
-Function types ``log()``, ``ln()`` and ``exp()`` may only occur at the
-start of the units specification.
 
 **Exceptions:**
 
@@ -1913,7 +1898,7 @@ Translates non-standard ``CUNITia`` keyvalues.  For example, ``DEG`` ->
   Thus ``''`` doesn't do any unsafe translations, whereas ``'shd'``
   does all of them.
 
-  See :ref:`unit-aliases` for more information.
+  See :ref:`fits-unit` for more information.
 
 Returns ``0`` for success; ``-1`` if no change required.
 """
