@@ -378,8 +378,8 @@ Index into the ``pixcrd`` (pixel coordinate) array for the
 ``CUBEFACE`` axis.  This is used for quadcube projections where the
 cube faces are stored on a separate axis.
 
-The quadcube projections (``TSC``, ``CSC``, ``QSC``) may be represented
-in FITS in either of two ways:
+The quadcube projections (``TSC``, ``CSC``, ``QSC``) may be
+represented in FITS in either of two ways:
 
     - The six faces may be laid out in one plane and numbered as
       follows::
@@ -993,7 +993,7 @@ Returns dictionary with the following keys:
   map projections.
 
   Once one solution has been determined others may be found by
-  subsequent invokations of `~pywcs.Wcsprm.mix` with suitably
+  subsequent invocations of `~pywcs.Wcsprm.mix` with suitably
   restricted solution intervals.
 
   Note the circumstance that arises when the solution point lies at a
@@ -1836,8 +1836,8 @@ to another.
 
   See :ref:`fits-unit` for more information.
 
-Use the object's `~pywcs.UnitConverter.convert` method to convert
-values from *have* to *want*.
+Use the returned object's `~pywcs.UnitConverter.convert` method to
+convert values from *have* to *want*.
 
 This function is permissive in accepting whitespace in all contexts in
 a units specification where it does not create ambiguity (e.g. not
