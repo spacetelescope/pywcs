@@ -620,9 +620,9 @@ PyWcsprm_fix(
   }
 
   if (translate_units != NULL) {
-      if (parse_unsafe_unit_conversion_spec(translate_units, &ctrl)) {
-          return NULL;
-      }
+    if (parse_unsafe_unit_conversion_spec(translate_units, &ctrl)) {
+      return NULL;
+    }
   }
 
   if (naxis_obj != NULL) {
@@ -1363,27 +1363,27 @@ PyWcsprm___str__(
   fflush(stdout);
 
   while (1) {
-      len = read(out_pipe[0], chunk, CHUNK_SIZE);
+    len = read(out_pipe[0], chunk, CHUNK_SIZE);
 
-      if (len == -1) {
-          PyErr_SetFromErrno(PyExc_RuntimeError);
-          free(buffer);
-          return NULL;
-      }
+    if (len == -1) {
+      PyErr_SetFromErrno(PyExc_RuntimeError);
+      free(buffer);
+      return NULL;
+    }
 
-      buffer = realloc(buffer, buffer_size + len + 1);
-      if (buffer == NULL) {
-          PyErr_SetString(PyExc_MemoryError, "Out of memory");
-          return NULL;
-      }
+    buffer = realloc(buffer, buffer_size + len + 1);
+    if (buffer == NULL) {
+      PyErr_SetString(PyExc_MemoryError, "Out of memory");
+      return NULL;
+    }
 
-      memcpy(buffer + buffer_size, chunk, len);
-      buffer_size += len;
-      buffer[buffer_size] = 0;
+    memcpy(buffer + buffer_size, chunk, len);
+    buffer_size += len;
+    buffer[buffer_size] = 0;
 
-      if (len < CHUNK_SIZE) {
-          break;
-      }
+    if (len < CHUNK_SIZE) {
+      break;
+    }
   }
 
   close(out_pipe[0]);
@@ -1614,9 +1614,9 @@ PyWcsprm_unitfix(
   }
 
   if (translate_units != NULL) {
-      if (parse_unsafe_unit_conversion_spec(translate_units, &ctrl)) {
-          return NULL;
-      }
+    if (parse_unsafe_unit_conversion_spec(translate_units, &ctrl)) {
+      return NULL;
+    }
   }
 
   status = unitfix(ctrl, &self->x);
@@ -1666,6 +1666,7 @@ PyWcsprm_set_alt(
   if (value == NULL) { /* deletion */
     self->x.alt[0] = ' ';
     self->x.alt[1] = '\0';
+    note_change(self);
     return 0;
   }
 
@@ -1731,10 +1732,10 @@ PyWcsprm_set_cd(
     return -1;
   }
 
-  note_change(self);
 
   if (value == NULL) {
     self->x.altlin &= ~has_cd;
+    note_change(self);
     return 0;
   }
 
@@ -1743,6 +1744,8 @@ PyWcsprm_set_cd(
   }
 
   self->x.altlin |= has_cd;
+
+  note_change(self);
 
   return 0;
 }
@@ -1829,6 +1832,9 @@ PyWcsprm_set_cel_offset(
     PyWcsprm* self,
     PyObject* value,
     /*@unused@*/ void* closure) {
+
+  note_change(self);
+
   return set_bool("cel_offset", value, &self->x.cel.offset);
 }
 
@@ -1950,14 +1956,13 @@ PyWcsprm_set_crota(
 
   npy_intp naxis = 0;
 
-  note_change(self);
-
   if (is_null(self->x.crota)) {
     return -1;
   }
 
   if (value == NULL) { /* Deletion */
     self->x.altlin &= ~has_crota;
+    note_change(self);
     return 0;
   }
 
@@ -1968,6 +1973,8 @@ PyWcsprm_set_crota(
   }
 
   self->x.altlin |= has_crota;
+
+  note_change(self);
 
   return 0;
 }
@@ -2498,6 +2505,8 @@ PyWcsprm_set_pc(
       }
     }
 
+    note_change(self);
+
     return 0;
   }
 
@@ -2507,6 +2516,7 @@ PyWcsprm_set_pc(
 
   self->x.altlin |= has_pc;
 
+  note_change(self);
 
   return 0;
 }
@@ -3013,36 +3023,36 @@ _setup_wcsprm_type(
   return (
     PyModule_AddObject(m, "_Wcsprm", (PyObject *)&PyWcsprmType) ||
     CONSTANT(WCSSUB_LONGITUDE) ||
-    CONSTANT(WCSSUB_LATITUDE) ||
-    CONSTANT(WCSSUB_CUBEFACE) ||
-    CONSTANT(WCSSUB_SPECTRAL) ||
-    CONSTANT(WCSSUB_STOKES) ||
+    CONSTANT(WCSSUB_LATITUDE)  ||
+    CONSTANT(WCSSUB_CUBEFACE)  ||
+    CONSTANT(WCSSUB_SPECTRAL)  ||
+    CONSTANT(WCSSUB_STOKES)    ||
     CONSTANT(WCSSUB_CELESTIAL) ||
-    CONSTANT(WCSHDR_IMGHEAD) ||
-    CONSTANT(WCSHDR_BIMGARR) ||
-    CONSTANT(WCSHDR_PIXLIST) ||
-    CONSTANT(WCSHDR_none) ||
-    CONSTANT(WCSHDR_all) ||
-    CONSTANT(WCSHDR_CROTAia) ||
-    CONSTANT(WCSHDR_EPOCHa) ||
-    CONSTANT(WCSHDR_VELREFa) ||
-    CONSTANT(WCSHDR_CD00i00j) ||
-    CONSTANT(WCSHDR_PC00i00j) ||
-    CONSTANT(WCSHDR_PROJPn) ||
-    CONSTANT(WCSHDR_RADECSYS) ||
-    CONSTANT(WCSHDR_VSOURCE) ||
-    CONSTANT(WCSHDR_DOBSn) ||
-    CONSTANT(WCSHDR_LONGKEY) ||
-    CONSTANT(WCSHDR_CNAMn) ||
-    CONSTANT(WCSHDR_AUXIMG) ||
-    CONSTANT(WCSHDR_ALLIMG) ||
-    CONSTANT(WCSHDO_none) ||
-    CONSTANT(WCSHDO_all) ||
-    CONSTANT(WCSHDO_safe) ||
-    CONSTANT(WCSHDO_DOBSn) ||
-    CONSTANT(WCSHDO_TPCn_ka) ||
-    CONSTANT(WCSHDO_PVn_ma) ||
-    CONSTANT(WCSHDO_CRPXna) ||
-    CONSTANT(WCSHDO_CNAMna) ||
+    CONSTANT(WCSHDR_IMGHEAD)   ||
+    CONSTANT(WCSHDR_BIMGARR)   ||
+    CONSTANT(WCSHDR_PIXLIST)   ||
+    CONSTANT(WCSHDR_none)      ||
+    CONSTANT(WCSHDR_all)       ||
+    CONSTANT(WCSHDR_CROTAia)   ||
+    CONSTANT(WCSHDR_EPOCHa)    ||
+    CONSTANT(WCSHDR_VELREFa)   ||
+    CONSTANT(WCSHDR_CD00i00j)  ||
+    CONSTANT(WCSHDR_PC00i00j)  ||
+    CONSTANT(WCSHDR_PROJPn)    ||
+    CONSTANT(WCSHDR_RADECSYS)  ||
+    CONSTANT(WCSHDR_VSOURCE)   ||
+    CONSTANT(WCSHDR_DOBSn)     ||
+    CONSTANT(WCSHDR_LONGKEY)   ||
+    CONSTANT(WCSHDR_CNAMn)     ||
+    CONSTANT(WCSHDR_AUXIMG)    ||
+    CONSTANT(WCSHDR_ALLIMG)    ||
+    CONSTANT(WCSHDO_none)      ||
+    CONSTANT(WCSHDO_all)       ||
+    CONSTANT(WCSHDO_safe)      ||
+    CONSTANT(WCSHDO_DOBSn)     ||
+    CONSTANT(WCSHDO_TPCn_ka)   ||
+    CONSTANT(WCSHDO_PVn_ma)    ||
+    CONSTANT(WCSHDO_CRPXna)    ||
+    CONSTANT(WCSHDO_CNAMna)    ||
     CONSTANT(WCSHDO_WCSNna));
 }
