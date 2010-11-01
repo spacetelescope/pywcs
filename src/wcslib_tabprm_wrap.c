@@ -210,27 +210,27 @@ PyTabprm___str__(
   fflush(stdout);
 
   while (1) {
-      len = read(out_pipe[0], chunk, CHUNK_SIZE);
+    len = read(out_pipe[0], chunk, CHUNK_SIZE);
 
-      if (len == -1) {
-          PyErr_SetFromErrno(PyExc_RuntimeError);
-          free(buffer);
-          return NULL;
-      }
+    if (len == -1) {
+      PyErr_SetFromErrno(PyExc_RuntimeError);
+      free(buffer);
+      return NULL;
+    }
 
-      buffer = realloc(buffer, buffer_size + len + 1);
-      if (buffer == NULL) {
-          PyErr_SetString(PyExc_MemoryError, "Out of memory");
-          return NULL;
-      }
+    buffer = realloc(buffer, buffer_size + len + 1);
+    if (buffer == NULL) {
+      PyErr_SetString(PyExc_MemoryError, "Out of memory");
+      return NULL;
+    }
 
-      memcpy(buffer + buffer_size, chunk, len);
-      buffer_size += len;
-      buffer[buffer_size] = 0;
+    memcpy(buffer + buffer_size, chunk, len);
+    buffer_size += len;
+    buffer[buffer_size] = 0;
 
-      if (len < CHUNK_SIZE) {
-          break;
-      }
+    if (len < CHUNK_SIZE) {
+      break;
+    }
   }
 
   close(out_pipe[0]);
