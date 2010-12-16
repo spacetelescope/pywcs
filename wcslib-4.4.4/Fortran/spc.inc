@@ -1,6 +1,6 @@
 *=======================================================================
 *
-* WCSLIB 4.5 - an implementation of the FITS WCS standard.
+* WCSLIB 4.6 - an implementation of the FITS WCS standard.
 * Copyright (C) 1995-2010, Mark Calabretta
 *
 * This file is part of WCSLIB.
@@ -28,14 +28,16 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: spc.inc,v 4.5.1.1 2010/07/16 07:05:32 cal103 Exp cal103 $
+* $Id: spc.inc,v 4.6.1.1 2010/11/16 06:16:19 cal103 Exp cal103 $
 *=======================================================================
 
 *     Functions.
-      EXTERNAL  SPCAIPS, SPCGET, SPCINI, SPCPRT, SPCPUT, SPCS2X, SPCSET,
-     :          SPCSPX,  SPCTRN, SPCTYP, SPCX2S, SPCXPS
-      INTEGER   SPCAIPS, SPCGET, SPCINI, SPCPRT, SPCPUT, SPCS2X, SPCSET,
-     :          SPCSPX,  SPCTRN, SPCTYP, SPCX2S, SPCXPS
+      EXTERNAL  SPCAIPS, SPCGET, SPCGTC, SPCGTD, SPCGTI, SPCINI, SPCPRT,
+     :          SPCPTC, SPCPTD, SPCPTI, SPCPUT, SPCS2X, SPCSET, SPCSPX,
+     :          SPCTRN, SPCTYP, SPCX2S, SPCXPS
+      INTEGER   SPCAIPS, SPCGET, SPCGTC, SPCGTD, SPCGTI, SPCINI, SPCPRT,
+     :          SPCPTC, SPCPTD, SPCPTI, SPCPUT, SPCS2X, SPCSET, SPCSPX,
+     :          SPCTRN, SPCTYP, SPCX2S, SPCXPS
 
 *     Length of the SPCPRM data structure (INTEGER array) on 64-bit
 *     machines.  Only needs to be 42 on 32-bit machines.
@@ -61,9 +63,4 @@
       PARAMETER (SPC_ISGRISM = 201)
 
       CHARACTER SPC_ERRMSG(0:4)*80
-      DATA SPC_ERRMSG /
-     :  'Success',
-     :  'Null spcprm pointer passed',
-     :  'Invalid spectral parameters',
-     :  'One or more of x coordinates were invalid',
-     :  'One or more of the spec coordinates were invalid'/
+      COMMON /SPC_DATA/ SPC_ERRMSG

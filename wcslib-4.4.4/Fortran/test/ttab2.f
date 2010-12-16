@@ -1,6 +1,6 @@
 *=======================================================================
 *
-* WCSLIB 4.5 - an implementation of the FITS WCS standard.
+* WCSLIB 4.6 - an implementation of the FITS WCS standard.
 * Copyright (C) 1995-2010, Mark Calabretta
 *
 * This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: ttab2.f,v 4.5.1.1 2010/07/16 07:05:32 cal103 Exp cal103 $
+* $Id: ttab2.f,v 4.6.1.1 2010/11/16 06:16:19 cal103 Exp cal103 $
 *=======================================================================
 
       PROGRAM TTAB2
@@ -57,7 +57,7 @@
       PARAMETER (NP = 128)
       PARAMETER (SCL = 2.0/(NP-1))
 
-      INTEGER   I, IM, IK, J, L, L1, L2, L3, STAT(NP*NP), STATUS
+      INTEGER   I, IM, IK, J, L, L1, L2, L3, LSTEP, STAT(NP*NP), STATUS
       REAL      ARRAY(NP,NP), CLEV(-10:20), LTM(6), V0, V1, W
       DOUBLE PRECISION X(M,NP,NP), WORLD(M,NP,NP)
       CHARACTER TEXT*80

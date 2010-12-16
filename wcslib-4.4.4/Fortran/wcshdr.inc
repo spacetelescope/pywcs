@@ -1,6 +1,6 @@
 *=======================================================================
 *
-* WCSLIB 4.5 - an implementation of the FITS WCS standard.
+* WCSLIB 4.6 - an implementation of the FITS WCS standard.
 * Copyright (C) 1995-2010, Mark Calabretta
 *
 * This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: wcshdr.inc,v 4.5.1.1 2010/07/16 07:05:32 cal103 Exp cal103 $
+* $Id: wcshdr.inc,v 4.6.1.1 2010/11/16 06:16:19 cal103 Exp cal103 $
 *=======================================================================
 
 *     Functions.
@@ -69,8 +69,4 @@
       PARAMETER (WCSHDR_PIXLIST  = 2**18)
 
       CHARACTER WCSHDR_ERRMSG(0:3)*80
-      DATA WCSHDR_ERRMSG /
-     :  'Success',
-     :  'Null wcsprm pointer passed',
-     :  'Memory allocation failed',
-     :  'Invalid tabular parameters'/
+      COMMON /WCSHDR_DATA/ WCSHDR_ERRMSG

@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  WCSLIB 4.6 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: fitshdr.c,v 4.5.1.1 2010/07/16 07:05:33 cal103 Exp cal103 $
+  $Id: fitshdr.c,v 4.6.1.1 2010/11/16 06:16:20 cal103 Exp cal103 $
 *=============================================================================
 * Usage: fitshdr [infile]
 *-----------------------------------------------------------------------------

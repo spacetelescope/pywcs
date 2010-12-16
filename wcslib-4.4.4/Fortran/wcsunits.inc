@@ -1,6 +1,6 @@
 *=======================================================================
 *
-* WCSLIB 4.5 - an implementation of the FITS WCS standard.
+* WCSLIB 4.6 - an implementation of the FITS WCS standard.
 * Copyright (C) 1995-2010, Mark Calabretta
 *
 * This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: wcsunits.inc,v 4.5.1.1 2010/07/16 07:05:32 cal103 Exp cal103 $
+* $Id: wcsunits.inc,v 4.6.1.1 2010/11/16 06:16:19 cal103 Exp cal103 $
 *=======================================================================
 
 *     Functions.
@@ -67,27 +67,5 @@
      :          WCSUNITS_TYPES(WCSUNITS_NTYPE)*18,
      :          WCSUNITS_UNITS(WCSUNITS_NTYPE)*9
 
-      DATA WCSUNITS_ERRMSG /
-     :  'Success',
-     :  'Invalid numeric multiplier',
-     :  'Dangling binary operator',
-     :  'Invalid symbol in INITIAL context',
-     :  'Function in invalid context',
-     :  'Invalid symbol in EXPON context',
-     :  'Unbalanced bracket',
-     :  'Unbalanced parenthesis',
-     :  'Consecutive binary operators',
-     :  'Internal parser error',
-     :  'Non-conformant unit specifications',
-     :  'Non-conformant functions',
-     :  'Potentially unsafe translation'/
-
-      DATA WCSUNITS_TYPES /
-     :  'plane angle', 'solid angle', 'charge', 'mole', 'temperature',
-     :  'luminous intensity', 'mass', 'length', 'time', 'beam', 'bin',
-     :  'bit', 'count', 'stellar magnitude', 'pixel', 'solar ratio',
-     :  'voxel'/
-
-      DATA WCSUNITS_UNITS /
-     :  'degree', 'steradian', 'Coulomb', 'mole', 'Kelvin', 'candela',
-     :  'kilogram', 'metre', 'second', '', '', '', '', '', '', '', ''/
+      COMMON /WCSUNITS_DATA/ WCSUNITS_ERRMSG, WCSUNITS_TYPES,
+     :                       WCSUNITS_UNITS

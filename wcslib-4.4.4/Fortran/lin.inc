@@ -1,6 +1,6 @@
 *=======================================================================
 *
-* WCSLIB 4.5 - an implementation of the FITS WCS standard.
+* WCSLIB 4.6 - an implementation of the FITS WCS standard.
 * Copyright (C) 1995-2010, Mark Calabretta
 *
 * This file is part of WCSLIB.
@@ -28,14 +28,14 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: lin.inc,v 4.5.1.1 2010/07/16 07:05:32 cal103 Exp cal103 $
+* $Id: lin.inc,v 4.6.1.1 2010/11/16 06:16:19 cal103 Exp cal103 $
 *=======================================================================
 
 *     Functions.
-      EXTERNAL  LININI, LINCPY, LINPUT, LINGET, LINFREE, LINPRT, LINSET,
-     :          LINP2X, LINX2P
-      INTEGER   LININI, LINCPY, LINPUT, LINGET, LINFREE, LINPRT, LINSET,
-     :          LINP2X, LINX2P
+      EXTERNAL  LINCPY, LINFREE, LINGET, LINGTD, LINGTI, LININI, LINP2X,
+     :          LINPRT, LINPTD, LINPTI, LINPUT, LINSET, LINX2P
+      INTEGER   LINCPY, LINFREE, LINGET, LINGTD, LINGTI, LININI, LINP2X,
+     :          LINPRT, LINPTD, LINPTI, LINPUT, LINSET, LINX2P
 
 *     Length of the LINPRM data structure (INTEGER array) on 64-bit
 *     machines.  Only needs to be 14 on 32-bit machines.
@@ -59,8 +59,4 @@
       PARAMETER (LIN_IMGPIX = 202)
 
       CHARACTER LIN_ERRMSG(0:3)*80
-      DATA LIN_ERRMSG /
-     :  'Success',
-     :  'Null linprm pointer passed',
-     :  'Memory allocation failed',
-     :  'PCi_ja matrix is singular'/
+      COMMON /LIN_DATA/ LIN_ERRMSG

@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.5 - an implementation of the FITS WCS standard.
+  WCSLIB 4.6 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2010, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: lin_f.c,v 4.5.1.1 2010/07/16 07:05:32 cal103 Exp cal103 $
+  $Id: lin_f.c,v 4.6.1.1 2010/11/16 06:16:19 cal103 Exp cal103 $
 *===========================================================================*/
 
 #include <lin.h>
@@ -44,6 +44,11 @@
 #define linset_  F77_FUNC(linset,  LINSET)
 #define linp2x_  F77_FUNC(linp2x,  LINP2X)
 #define linx2p_  F77_FUNC(linx2p,  LINX2P)
+
+#define linptd_  F77_FUNC(linptd,  LINPTD)
+#define linpti_  F77_FUNC(linpti,  LINPTI)
+#define lingtd_  F77_FUNC(lingtd,  LINGTD)
+#define lingti_  F77_FUNC(lingti,  LINGTI)
 
 #define LIN_FLAG   100
 #define LIN_NAXIS  101
@@ -121,6 +126,18 @@ int linput_(
   return 0;
 }
 
+int linptd_( int *lin, const int *what, const double *value,
+  const int *i, const int *j)
+{
+  return linput_(lin, what, value, i, j);
+}
+
+int linpti_( int *lin, const int *what, const int *value,
+  const int *i, const int *j)
+{
+  return linput_(lin, what, value, i, j);
+}
+
 /*--------------------------------------------------------------------------*/
 
 int linget_(const int *lin, const int *what, void *value)
@@ -194,6 +211,16 @@ int linget_(const int *lin, const int *what, void *value)
   }
 
   return 0;
+}
+
+int lingtd_(const int *lin, const int *what, double *value)
+{
+  return linget_(lin, what, value);
+}
+
+int lingti_(const int *lin, const int *what, int *value)
+{
+  return linget_(lin, what, value);
 }
 
 /*--------------------------------------------------------------------------*/

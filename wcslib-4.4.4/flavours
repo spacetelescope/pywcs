@@ -4,12 +4,12 @@
 # distribution.  Variables like CC and CFLAGS are exported into the
 # environment so that they will be seen by 'configure', e.g.
 #
-#   gmake cleanest
+#   gmake distclean
 #   gmake FLAVOUR=Linux configure
 #
 # Reminder: add '-d' to FLFLAGS for debugging.
 #
-# $Id: flavours,v 4.5.1.1 2010/07/16 07:05:32 cal103 Exp cal103 $
+# $Id: flavours,v 4.6.1.2 2010/11/24 01:20:14 cal103 Exp cal103 $
 #-----------------------------------------------------------------------------
 
 # The list of FLAVOURs can be set on the command line.
@@ -45,8 +45,9 @@ endif
 ifeq "$(FLAVOUR)" "Linux"
   export CC       := gcc -std=c89 -pedantic
   export CPPFLAGS := $(FEATURES)
-  export CFLAGS   := -g -Wall -Wpadded -Wno-long-long
-  export FFLAGS   := -g -Wimplicit -Wno-globals -I.
+  export CFLAGS   := -g -O0 -Wall -Wpadded -Wno-long-long
+  export FFLAGS   := -g -O0 -Wimplicit -Wunused -Wno-globals -I.
+         VALGRIND := valgrind -v --leak-check=yes
 endif
 
 ifeq "$(FLAVOUR)" "Linuxp"
@@ -64,7 +65,7 @@ ifeq "$(FLAVOUR)" "SUN/GNU"
   export CC       := gcc -std=c89 -pedantic
   export CPPFLAGS := $(FEATURES)
   export CFLAGS   := -g -Wall -Wpadded -Wno-long-long
-  export FFLAGS   := -g -Wimplicit -Wno-globals -I.
+  export FFLAGS   := -g -Wimplicit -Wunused -Wno-globals -I.
 endif
 
 ifeq "$(FLAVOUR)" "SUN/GNU3"
@@ -72,7 +73,7 @@ ifeq "$(FLAVOUR)" "SUN/GNU3"
   export CPPFLAGS := $(FEATURES)
   export CFLAGS   := -g -Wall -Wpadded -Wno-long-long
   export F77      := g77-3.1.1
-  export FFLAGS   := -g -Wimplicit -Wno-globals -I.
+  export FFLAGS   := -g -Wimplicit -Wunused -Wno-globals -I.
   LD      := gcc-3.1.1
 endif
 
@@ -132,8 +133,9 @@ ifdef FLAVOUR
 endif
 
 show_all ::
-        -@ echo 'For code development...'
-        -@ echo '  FLAVOURS    := $(FLAVOURS)'
-        -@ echo '  FLAVOUR     := $(FLAVOUR)'
-        -@ echo '  EXTRA_CLEAN := $(EXTRA_CLEAN)'
-        -@ echo ''
+	-@ echo 'For code development...'
+	-@ echo '  FLAVOURS    := $(FLAVOURS)'
+	-@ echo '  FLAVOUR     := $(FLAVOUR)'
+	-@ echo '  VALGRIND    := $(VALGRIND)'
+	-@ echo '  EXTRA_CLEAN := $(EXTRA_CLEAN)'
+	-@ echo ''
