@@ -245,11 +245,11 @@ may be deleted by::
 An undefined value is represented by NaN.
 """
 
-cel_offset = u"""
+cel_offset = """
 ``boolean``
 
 If `True`, an offset will be applied to ``(x, y)`` to force ``(x,y) =
-(0,0)`` at the fiducial point, (\u03d50, \u03d10).  Default is
+(0,0)`` at the fiducial point, (phi_0, theta_0).  Default is
 `False`.
 """
 
