@@ -37,6 +37,7 @@ DAMAGE.
 #include "pipeline.h"
 #include "sip.h"
 #include "wcs.h"
+#include "wcsprintf.h"
 
 /*
 HOW TO UPDATE THE PUBLIC API
@@ -61,7 +62,7 @@ This allows for a rudimentary version check upon dynamic linking to
 the pywcs module.
  */
 
-#define REVISION 2
+#define REVISION 3
 
 #ifdef PYWCS_BUILD
 
@@ -100,6 +101,7 @@ void** PyWcs_API;
 #define wcss2p (*(int (*)(struct wcsprm *, int, int, const double[], double[], double[], double[], double[], int[])) PyWcs_API[21])
 #define wcsprt (*(int (*)(struct wcsprm *)) PyWcs_API[22])
 #define wcslib_get_error_message (*(const char* (*)(int)) PyWcs_API[23])
+#define wcsprintf_buf (*(const char * (*)()) PyWCS_API[24])
 
 #ifndef NO_IMPORT_PYWCS_API
 int

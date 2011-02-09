@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.6 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2010, Mark Calabretta
+  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcsgrid.c,v 4.6.1.1 2010/11/16 06:16:20 cal103 Exp cal103 $
+  $Id: wcsgrid.c,v 4.7 2011/02/07 07:03:43 cal103 Exp $
 *=============================================================================
 *
 * wcsgrid extracts the WCS keywords for an image from the specified FITS file
@@ -70,6 +70,7 @@ char usage[] =
 #include <wcsfix.h>
 #include <wcs.h>
 #include <getwcstab.h>
+
 
 int main(int argc, char **argv)
 
@@ -259,6 +260,8 @@ int main(int argc, char **argv)
   gcode[1] = 2;
   grid1[0] =    0.0;
   grid2[0] =    0.0;
+
+  /* These are for the projection boundary. */
   grid1[1] = -180.0;
   grid1[2] =  180.0;
   grid2[1] =  -90.0;

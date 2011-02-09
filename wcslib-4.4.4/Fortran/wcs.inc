@@ -1,7 +1,7 @@
 *=======================================================================
 *
-* WCSLIB 4.6 - an implementation of the FITS WCS standard.
-* Copyright (C) 1995-2010, Mark Calabretta
+* WCSLIB 4.7 - an implementation of the FITS WCS standard.
+* Copyright (C) 1995-2011, Mark Calabretta
 *
 * This file is part of WCSLIB.
 *
@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: wcs.inc,v 4.6.1.1 2010/11/16 06:16:19 cal103 Exp cal103 $
+* $Id: wcs.inc,v 4.7 2011/02/07 07:03:42 cal103 Exp $
 *=======================================================================
 
 *     Functions.
@@ -40,7 +40,7 @@
      :          WCSPTC, WCSPTD, WCSPTI, WCSPUT, WCSS2P, WCSSET, WCSSUB
 
 *     Length of the WCSPRM data structure (INTEGER array) on 64-bit
-*     machines.  Only needs to be 403 on 32-bit machines.
+*     machines.  Only needs to be 404 on 32-bit machines.
       INTEGER   WCSLEN
       PARAMETER (WCSLEN = 450)
 

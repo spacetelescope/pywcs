@@ -245,11 +245,12 @@ may be deleted by::
 An undefined value is represented by NaN.
 """
 
-cel_offset = """
+cel_offset = u"""
 ``boolean``
 
-If `True`, an offset will be applied to ``(x, y)`` to force ``(x,y)
-= (0,0)`` at the fiducial point.
+If `True`, an offset will be applied to ``(x, y)`` to force ``(x,y) =
+(0,0)`` at the fiducial point, (\u03d50, \u03d10).  Default is
+`False`.
 """
 
 celfix = """
@@ -493,8 +494,8 @@ delta = """
 ``double array[M]`` (read-only)
 
 Array of interpolated indices into the coordinate array such that
-Upsilon_m, as defined in Paper III, is equal to `~pywcs._pywcs.Tabprm.p0` [m] +
-delta[m].
+Upsilon_m, as defined in Paper III, is equal to
+(`~pywcs._pywcs.Tabprm.p0` [m] + 1) + delta[m].
 """
 
 det2im = """
@@ -1096,11 +1097,11 @@ The offset of the unit conversion.
 """
 
 p0 = """
-``double array[M]``
+``int array[M]``
 
 Vector of length `~pywcs._pywcs.Tabprm.M` of interpolated indices into
 the coordinate array such that Upsilon_m, as defined in Paper III, is
-equal to ``p0[m] + delta[m]``.
+equal to ``(p0[m] + 1) + delta[m]``.
 """
 
 p2s = """

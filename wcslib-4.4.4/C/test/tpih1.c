@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.6 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2010, Mark Calabretta
+  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: tpih1.c,v 4.6.1.1 2010/11/16 06:16:19 cal103 Exp cal103 $
+  $Id: tpih1.c,v 4.7 2011/02/07 07:03:42 cal103 Exp $
 *=============================================================================
 *
 * tpih1 tests wcspih(), the WCS FITS parser for image headers, and wcsfix(),
@@ -53,6 +53,7 @@
 #include <wcs.h>
 #include <wcshdr.h>
 #include <wcsfix.h>
+#include <wcsprintf.h>
 
 int main()
 
@@ -173,10 +174,13 @@ int main()
   printf("\n");
 
 
-  /* Fix non-standard usage and print each of the wcsprm structs. */
+  /* Fix non-standard usage and print each of the wcsprm structs.  The output
+   * from wcsprt() will be written to an internal buffer and then printed just
+   * to show that it can be done. */
+  wcsprintf_set(0x0);
   for (iwcs = 0; iwcs < nwcs; iwcs++) {
-    printf("\n------------------------------------"
-           "------------------------------------\n");
+    wcsprintf("\n------------------------------------"
+              "------------------------------------\n");
 
     /* Fix non-standard WCS keyvalues. */
     if ((status = wcsfix(7, 0, wcs+iwcs, stat))) {
@@ -196,6 +200,7 @@ int main()
       fprintf(stderr, "wcsprt ERROR %d: %s.\n", status, wcs_errmsg[status]);
     }
   }
+  printf("%s", wcsprintf_buf());
 
   status = wcsvfree(&nwcs, &wcs);
 

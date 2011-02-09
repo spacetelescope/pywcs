@@ -1,7 +1,7 @@
 *=======================================================================
 *
-* WCSLIB 4.6 - an implementation of the FITS WCS standard.
-* Copyright (C) 1995-2010, Mark Calabretta
+* WCSLIB 4.7 - an implementation of the FITS WCS standard.
+* Copyright (C) 1995-2011, Mark Calabretta
 *
 * This file is part of WCSLIB.
 *
@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: tlin.f,v 4.6.1.1 2010/11/16 06:16:19 cal103 Exp cal103 $
+* $Id: tlin.f,v 4.7 2011/02/07 07:03:43 cal103 Exp $
 *=======================================================================
 
       PROGRAM TLIN
@@ -48,6 +48,8 @@
 
       INCLUDE 'lin.inc'
       INTEGER LIN(LINLEN)
+      DOUBLE PRECISION DUMMY
+      EQUIVALENCE (LIN,DUMMY)
 
       DATA (CRPIX(I), I=1,NAXIS)
      :           /256D0, 256D0,  64D0, 128D0,   1D0/

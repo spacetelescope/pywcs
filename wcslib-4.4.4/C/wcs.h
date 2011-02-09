@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.6 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2010, Mark Calabretta
+  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,10 +28,10 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcs.h,v 4.6.1.1 2010/11/16 06:16:19 cal103 Exp cal103 $
+  $Id: wcs.h,v 4.7 2011/02/07 07:03:42 cal103 Exp $
 *=============================================================================
 *
-* WCSLIB 4.6 - C routines that implement the FITS World Coordinate System
+* WCSLIB 4.7 - C routines that implement the FITS World Coordinate System
 * (WCS) standard.  Refer to
 *
 *   "Representations of world coordinates in FITS",
@@ -814,8 +814,8 @@
 *
 *     Note that, if they were not given, wcsset_() resets the entries for
 *     PVi_1a, PVi_2a, PVi_3a, and PVi_4a for longitude axis i to match
-*     (phi_0,theta_0), the native longitude and latitude of the reference
-*     point given by LONPOLEa and LATPOLEa.
+*     phi_0 and theta_0 (the native longitude and latitude of the reference
+*     point), LONPOLEa and LATPOLEa respectively.
 *
 *   int nps
 *     (Given) The number of entries in the wcsprm::ps[] array.
@@ -1349,6 +1349,7 @@ struct wcsprm {
   int    nwtb;                  /* Number of wtbarr structs.                */
   struct tabprm *tab;           /* Tabular transformation parameters.       */
   struct wtbarr *wtb;           /* Array of wtbarr structs.                 */
+  int    *padding;              /* (Dummy inserted for alignment purposes.) */
 
   /* Information derived from the FITS header keyvalues by wcsset_().        */
   /*------------------------------------------------------------------------*/

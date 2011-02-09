@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.6 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2010, Mark Calabretta
+  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,10 +28,10 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: tab.h,v 4.6.1.1 2010/11/16 06:16:19 cal103 Exp cal103 $
+  $Id: tab.h,v 4.7 2011/02/07 07:03:42 cal103 Exp $
 *=============================================================================
 *
-* WCSLIB 4.6 - C routines that implement tabular coordinate systems as
+* WCSLIB 4.7 - C routines that implement tabular coordinate systems as
 * defined by the FITS World Coordinate System (WCS) standard.  Refer to
 *
 *   "Representations of world coordinates in FITS",
@@ -402,12 +402,12 @@
 *   double *p0
 *     (Returned) Pointer to the first element of a vector of length tabprm::M
 *     of interpolated indices into the coordinate array such that Upsilon_m,
-*     as defined in Paper III, is equal to p0[m] + tabprm::delta[m].
+*     as defined in Paper III, is equal to (p0[m] + 1) + tabprm::delta[m].
 *
 *   double *delta
 *     (Returned) Pointer to the first element of a vector of length tabprm::M
 *     of interpolated indices into the coordinate array such that Upsilon_m,
-*     as defined in Paper III, is equal to tabprm::p0[m] + delta[m].
+*     as defined in Paper III, is equal to (tabprm::p0[m] + 1) + delta[m].
 *
 *   double *extrema
 *     (Returned) Pointer to the first element of an array that records the

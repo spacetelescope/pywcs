@@ -73,6 +73,7 @@ WCSFILES = [ # List of wcslib files to compile
     'wcs.c',
     'wcsfix.c',
     'wcshdr.c',
+    'wcsprintf.c',
     'wcsunits.c',
     'wcsutil.c']
 WCSFILES = [join(WCSLIBC, x) for x in WCSFILES]
@@ -122,9 +123,6 @@ write_if_different(join(srcroot, 'src', 'wcsconfig.h'), h_file.getvalue())
 
 ######################################################################
 # GENERATE DOCSTRINGS IN C
-def encode_docstring(s):
-    return s.lstrip().encode("string_escape").replace('"', '\\"')
-
 sys.path.append(join('.', srcroot, "lib"))
 docstrings = {}
 execfile(join(srcroot, 'doc', 'docstrings.py'), docstrings)
@@ -132,7 +130,7 @@ keys = [key for key in docstrings.keys()
         if not key.startswith('__') and type(key) in (str, unicode)]
 keys.sort()
 for key in keys:
-    docstrings[key] = docstrings[key].lstrip() + '\0'
+    docstrings[key] = docstrings[key].encode('utf8').lstrip() + '\0'
 
 h_file = cStringIO.StringIO()
 h_file.write("""/*

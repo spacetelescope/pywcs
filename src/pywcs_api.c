@@ -68,7 +68,9 @@ void* PyWcs_API[] = {
   /* 21 */ (void *)wcss2p,
   /* 22 */ (void *)wcsprt,
   /* new for api version 2 */
-  /* 23 */ (void *)wcslib_get_error_message
+  /* 23 */ (void *)wcslib_get_error_message,
+  /* new for api version 3 */
+  /* 24 */ (void *)wcsprintf_buf
 };
 
 int _setup_api(PyObject *m) {

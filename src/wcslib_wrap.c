@@ -45,6 +45,7 @@ DAMAGE.
 #include <wcsfix.h>
 #include <wcshdr.h>
 #include <wcsmath.h>
+#include <wcsprintf.h>
 
 #include "isnan.h"
 #include "str_list_proxy.h"
@@ -1262,6 +1263,8 @@ PyWcsprm_print_contents(
   ignored = wcsprt(&self->x);
   wcsprm_c2python(&self->x);
 
+  printf(wcsprintf_buf());
+
   Py_INCREF(Py_None);
   return Py_None;
 }
@@ -1333,67 +1336,15 @@ PyWcsprm_sptr(
 PyWcsprm___str__(
     PyWcsprm* self) {
 
-  const int CHUNK_SIZE = 1 << 16;
-  char chunk[CHUNK_SIZE];
-  char* buffer = NULL;
-  size_t buffer_size = 0;
-  int out_pipe[2];
-  int saved_stdout;
-  int ignored;
-  int len;
-  PyObject* result;
-
   if (PyWcsprm_cset(self)) {
     return NULL;
   }
 
-  saved_stdout = dup(STDOUT_FILENO);
-
-  if (pipe(out_pipe) != 0) {
-    PyErr_SetString(PyExc_RuntimeError, "Error creating pipe");
-    return NULL;
-  }
-
-  dup2(out_pipe[1], STDOUT_FILENO);
-  close(out_pipe[1]);
-
   wcsprm_python2c(&self->x);
-  ignored = wcsprt(&self->x);
+  wcsprt(&self->x);
   wcsprm_c2python(&self->x);
-  fflush(stdout);
 
-  while (1) {
-    len = read(out_pipe[0], chunk, CHUNK_SIZE);
-
-    if (len == -1) {
-      PyErr_SetFromErrno(PyExc_RuntimeError);
-      free(buffer);
-      return NULL;
-    }
-
-    buffer = realloc(buffer, buffer_size + len + 1);
-    if (buffer == NULL) {
-      PyErr_SetString(PyExc_MemoryError, "Out of memory");
-      return NULL;
-    }
-
-    memcpy(buffer + buffer_size, chunk, len);
-    buffer_size += len;
-    buffer[buffer_size] = 0;
-
-    if (len < CHUNK_SIZE) {
-      break;
-    }
-  }
-
-  close(out_pipe[0]);
-  dup2(saved_stdout, STDOUT_FILENO);
-
-  result = PyString_FromString(buffer);
-
-  free(buffer);
-
-  return result;
+  return PyString_FromString(wcsprintf_buf());
 }
 
 /*@null@*/ static PyObject*
@@ -3019,6 +2970,8 @@ _setup_wcsprm_type(
   }
 
   Py_INCREF(&PyWcsprmType);
+
+  wcsprintf_set(NULL);
 
   return (
     PyModule_AddObject(m, "_Wcsprm", (PyObject *)&PyWcsprmType) ||
