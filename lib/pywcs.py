@@ -397,8 +397,8 @@ naxis kwarg.
 
         tables = {}
         for i in range(1, self.naxis+1):
-            distortion_error = header.get(err_kw+str(i), 0.0)
-            if distortion_error < err:
+            d_error = header.get(err_kw+str(i), 0.0)
+            if d_error < err:
                 tables[i] = None
                 continue
             distortion = dist+str(i)+key
@@ -409,7 +409,10 @@ naxis kwarg.
                         'A pyfits HDUList is required for Lookup table distortion.'
                     dp = (d_kw+str(i)+key).strip()
                     d_extver = header.get(dp+'.EXTVER', 1)
-                    d_data = fobj['WCSDVARR', d_extver].data
+                    if i == header[dp+'.AXIS.%s'%i]:
+                        d_data = fobj['WCSDVARR', d_extver].data
+                    else: 
+                        d_data = (fobj['WCSDVARR', d_extver].data).transpose()
                     d_header = fobj['WCSDVARR', d_extver].header
                     d_crpix = (d_header.get('CRPIX1', 0.0), d_header.get('CRPIX2', 0.0))
                     d_crval = (d_header.get('CRVAL1', 0.0), d_header.get('CRVAL2', 0.0))
