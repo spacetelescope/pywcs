@@ -20,3 +20,13 @@ Classes
    api_sip.rst
    api_units.rst
    relax.rst
+
+Testing pywcs
+=============
+
+The unit tests are written for use with `nose
+<http://code.google.com/p/python-nose/>`.  To run them, install pywcs
+and then at the commandline::
+
+   nosetests pywcs.tests
+
