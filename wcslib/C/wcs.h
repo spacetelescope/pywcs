@@ -67,7 +67,7 @@
 *
 * A setup routine, wcsset(), computes intermediate values in the wcsprm struct
 * from parameters in it that were supplied by the user.  The struct always
-* needs to be set up by wcsset_() but this need not be called explicitly -
+* needs to be set up by wcsset() but this need not be called explicitly -
 * refer to the explanation of wcsprm::flag.
 *
 * wcsp2s() and wcss2p() implement the WCS world coordinate transformations.
@@ -103,7 +103,7 @@
 *        three-dimensional structure using a CUBEFACE axis indexed from
 *        0 to 5 as above.
 *
-*   These routines support both methods; wcsset_() determines which is being
+*   These routines support both methods; wcsset() determines which is being
 *   used by the presence or absence of a CUBEFACE axis in ctype[].  wcsp2s()
 *   and wcss2p() translate the CUBEFACE axis representation to the single
 *   plane representation understood by the lower-level WCSLIB projection
@@ -188,7 +188,7 @@
 * wcssub() extracts the coordinate description for a subimage from a wcsprm
 * struct.  It does a deep copy, using wcsini() to allocate memory for its
 * arrays if required.  Only the "information to be provided" part of the
-* struct is extracted; a call to wcsset_() is required to set up the remainder.
+* struct is extracted; a call to wcsset() is required to set up the remainder.
 *
 * The world coordinate system of the subimage must be separable in the sense
 * that the world coordinates at any point in the subimage must depend only on
@@ -248,7 +248,7 @@
 *                       that were extracted.  The vector length must be
 *                       sufficient to contain all axis numbers.  No checks are
 *                       performed to verify that the coordinate axes are
-*                       consistent, this is done by wcsset_().
+*                       consistent, this is done by wcsset().
 *
 *   wcsdst    struct wcsprm*
 *                       Struct describing the subimage.  wcsprm::flag should
@@ -308,7 +308,7 @@
 * wcsfree() - Destructor for the wcsprm struct
 * --------------------------------------------
 * wcsfree() frees memory allocated for the wcsprm arrays by wcsini() and/or
-* wcsset_().  wcsini() records the memory it allocates and wcsfree() will only
+* wcsset().  wcsini() records the memory it allocates and wcsfree() will only
 * attempt to free this.
 *
 * PLEASE NOTE: wcsfree() must not be invoked on a wcsprm struct that was not
@@ -338,9 +338,9 @@
 *                         1: Null wcsprm pointer passed.
 *
 *
-* wcsset_() - Setup routine for the wcsprm struct
+* wcsset() - Setup routine for the wcsprm struct
 * ----------------------------------------------
-* wcsset_() sets up a wcsprm struct according to information supplied within
+* wcsset() sets up a wcsprm struct according to information supplied within
 * it (refer to the description of the wcsprm struct).
 *
 * wcsset() recognizes the NCP projection and converts it to the equivalent SIN
@@ -650,8 +650,8 @@
 * Then as it reread the header and identified each WCS keyrecord it would load
 * the value into the relevant wcsprm array element.  This is essentially what
 * wcspih() does - refer to the prologue of wcshdr.h.  As the final step,
-* wcsset_() is invoked, either directly or indirectly, to set the derived
-* members of the wcsprm struct.  wcsset_() strips off trailing blanks in all
+* wcsset() is invoked, either directly or indirectly, to set the derived
+* members of the wcsprm struct.  wcsset() strips off trailing blanks in all
 * string members and null-fills the character array.
 *
 *   int flag
@@ -677,7 +677,7 @@
 *       - wcsprm::crota,
 *       - wcsprm::altlin.
 *
-*     This signals the initialization routine, wcsset_(), to recompute the
+*     This signals the initialization routine, wcsset(), to recompute the
 *     returned members of the celprm struct.  celset() will reset flag to
 *     indicate that this has been done.
 *
@@ -742,17 +742,17 @@
 *     defined by WCS Paper I.  Utility function wcsutrn(), described in
 *     wcsunits.h, is available to translate commonly used non-standard units
 *     specifications but this must be done as a separate step before invoking
-*     wcsset_().
+*     wcsset().
 *
-*     For celestial axes, if cunit[][72] is not blank, wcsset_() uses
+*     For celestial axes, if cunit[][72] is not blank, wcsset() uses
 *     wcsunits() to parse it and scale cdelt[], crval[], and cd[][*] to
 *     degrees.  It then resets cunit[][72] to "deg".
 *
-*     For spectral axes, if cunit[][72] is not blank, wcsset_() uses wcsunits()
+*     For spectral axes, if cunit[][72] is not blank, wcsset() uses wcsunits()
 *     to parse it and scale cdelt[], crval[], and cd[][*] to SI units.  It
 *     then resets cunit[][72] accordingly.
 *
-*     wcsset_() ignores cunit[][72] for other coordinate types; cunit[][72] may
+*     wcsset() ignores cunit[][72] for other coordinate types; cunit[][72] may
 *     be used to label coordinate values.
 *
 *     These variables accomodate the longest allowed string-valued FITS
@@ -783,7 +783,7 @@
 *     longitude axis which takes precedence if defined.
 *
 *     lonpole and latpole may be left to default to values set by wcsini()
-*     (see celprm::ref), but in any case they will be reset by wcsset_() to
+*     (see celprm::ref), but in any case they will be reset by wcsset() to
 *     the values actually used.  Note therefore that if the wcsprm struct is
 *     reused without resetting them, whether directly or via wcsini(), they
 *     will no longer have their default values.
@@ -809,10 +809,10 @@
 *     pv[], otherwise it must be set by the user.  See also wcsnpv().
 *
 *     As a FITS header parser encounters each PVi_ma keyword it should load it
-*     into a pvcard struct in the array and increment npv.  wcsset_()
+*     into a pvcard struct in the array and increment npv.  wcsset()
 *     interprets these as required.
 *
-*     Note that, if they were not given, wcsset_() resets the entries for
+*     Note that, if they were not given, wcsset() resets the entries for
 *     PVi_1a, PVi_2a, PVi_3a, and PVi_4a for longitude axis i to match
 *     phi_0 and theta_0 (the native longitude and latitude of the reference
 *     point), LONPOLEa and LATPOLEa respectively.
@@ -832,7 +832,7 @@
 *     ps[], otherwise it must be set by the user.  See also wcsnps().
 *
 *     As a FITS header parser encounters each PSi_ma keyword it should load it
-*     into a pscard struct in the array and increment nps.  wcsset_()
+*     into a pscard struct in the array and increment nps.  wcsset()
 *     interprets these as required (currently no PSi_ma keyvalues are
 *     recognized).
 *
@@ -892,12 +892,12 @@
 *     wcsprm::pc and wcsprm::cdelt will be used as given.
 *
 *     These alternate specifications of the linear transformation matrix are
-*     translated immediately to PCi_ja by wcsset_() and are invisible to the
-*     lower-level WCSLIB routines.  In particular, wcsset_() resets
+*     translated immediately to PCi_ja by wcsset() and are invisible to the
+*     lower-level WCSLIB routines.  In particular, wcsset() resets
 *     wcsprm::cdelt to unity if CDi_ja is present (and no PCi_ja).
 *
 *     If CROTAia are present but none is associated with the latitude axis
-*     (and no PCi_ja or CDi_ja), then wcsset_() reverts to a unity PCi_ja
+*     (and no PCi_ja or CDi_ja), then wcsset() reverts to a unity PCi_ja
 *     matrix.
 *
 *   int velref
@@ -1136,7 +1136,7 @@
 * pscard struct - Store for PSi_ma keyrecords
 * -------------------------------------------
 * The pscard struct is used to pass the parsed contents of PSi_ma keyrecords
-* to wcsset_() via the wcsprm struct.
+* to wcsset() via the wcsprm struct.
 *
 * All members of this struct are to be set by the user.
 *
@@ -1153,7 +1153,7 @@
 * pvcard struct - Store for PVi_ma keyrecords
 * -------------------------------------------
 * The pvcard struct is used to pass the parsed contents of PVi_ma keyrecords
-* to wcsset_() via the wcsprm struct.
+* to wcsset() via the wcsprm struct.
 *
 * All members of this struct are to be set by the user.
 *
@@ -1351,7 +1351,7 @@ struct wcsprm {
   struct wtbarr *wtb;           /* Array of wtbarr structs.                 */
   int    *padding;              /* (Dummy inserted for alignment purposes.) */
 
-  /* Information derived from the FITS header keyvalues by wcsset_().        */
+  /* Information derived from the FITS header keyvalues by wcsset().        */
   /*------------------------------------------------------------------------*/
   int    *types;                /* Coordinate type codes for each axis.     */
   char   lngtyp[8], lattyp[8];  /* Celestial axis types, e.g. RA, DEC.      */
@@ -1393,7 +1393,7 @@ int wcsfree(struct wcsprm *wcs);
 
 int wcsprt(const struct wcsprm *wcs);
 
-int wcsset_(struct wcsprm *wcs);
+int wcsset(struct wcsprm *wcs);
 
 int wcsp2s(struct wcsprm *wcs, int ncoord, int nelem, const double pixcrd[],
            double imgcrd[], double phi[], double theta[], double world[],

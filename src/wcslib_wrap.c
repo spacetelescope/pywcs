@@ -151,31 +151,32 @@ PyWcsprm_init(
   PyObject*      ignored       = NULL;
   int            ignored_int;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "|OsOiiO:WCSBase.__init__",
-                                   (char **)keywords, &header_obj, &key,
-                                   &relax_obj, &naxis, &keysel, &colsel)) {
+  if (!PyArg_ParseTupleAndKeywords(
+          args, kwds, "|OsOiiO:WCSBase.__init__",
+          (char **)keywords, &header_obj, &key, &relax_obj, &naxis, &keysel,
+          &colsel)) {
     return -1;
   }
 
   if (header_obj == NULL || header_obj == Py_None) {
     if (relax_obj != NULL && relax_obj != Py_False) {
-      PyErr_SetString(PyExc_ValueError,
-                      "If no header is provided, relax may not be "
-                      "provided either.");
+      PyErr_SetString(
+          PyExc_ValueError,
+          "If no header is provided, relax may not be provided either.");
       return -1;
     }
 
     if (keysel > 0) {
-      PyErr_SetString(PyExc_ValueError,
-                      "If no header is provided, keysel may not be "
-                      "provided either.");
+      PyErr_SetString(
+          PyExc_ValueError,
+          "If no header is provided, keysel may not be provided either.");
       return -1;
     }
 
     if (colsel != Py_None) {
-      PyErr_SetString(PyExc_ValueError,
-                      "If no header is provided, colsel may not be "
-                      "provided either.");
+      PyErr_SetString(
+          PyExc_ValueError,
+          "If no header is provided, colsel may not be provided either.");
       return -1;
     }
 
@@ -185,8 +186,9 @@ PyWcsprm_init(
     }
 
     if (naxis < 1 || naxis > 15) {
-      PyErr_SetString(PyExc_ValueError,
-                      "naxis must be in range 1-15");
+      PyErr_SetString(
+          PyExc_ValueError,
+          "naxis must be in range 1-15");
       return -1;
     }
 
@@ -195,8 +197,9 @@ PyWcsprm_init(
     status = wcsini(1, naxis, &self->x);
 
     if (status != 0) {
-      PyErr_SetString(PyExc_MemoryError,
-                      "Could not initialize wcsprm object");
+      PyErr_SetString(
+          PyExc_MemoryError,
+          "Could not initialize wcsprm object");
       return -1;
     }
 
@@ -220,8 +223,9 @@ PyWcsprm_init(
     } else {
       relax = PyInt_AsLong(relax_obj);
       if (relax == -1) {
-        PyErr_SetString(PyExc_ValueError,
-                        "relax must be True, False or an integer.");
+        PyErr_SetString(
+            PyExc_ValueError,
+            "relax must be True, False or an integer.");
         return -1;
       }
     }
@@ -231,15 +235,17 @@ PyWcsprm_init(
     }
 
     if (naxis >= 0) {
-      PyErr_SetString(PyExc_ValueError,
-                      "naxis may not be provided if a header is provided.");
+      PyErr_SetString(
+          PyExc_ValueError,
+          "naxis may not be provided if a header is provided.");
       return -1;
     }
 
     nkeyrec = header_length / 80;
     if (nkeyrec > 0x7fffffff) {
-      PyErr_SetString(PyExc_MemoryError,
-                      "header is too long");
+      PyErr_SetString(
+          PyExc_MemoryError,
+          "header is too long");
       return -1;
     }
 
@@ -253,8 +259,9 @@ PyWcsprm_init(
       colsel_ints = malloc(sizeof(int) * (PyArray_DIM(colsel_array, 0) + 1));
       if (colsel_ints == NULL) {
         Py_DECREF(colsel_array);
-        PyErr_SetString(PyExc_MemoryError,
-                        "Memory allocation error.");
+        PyErr_SetString(
+            PyExc_MemoryError,
+            "Memory allocation error.");
         return -1;
       }
 
@@ -267,36 +274,40 @@ PyWcsprm_init(
     }
 
     if (keysel < 0) {
-      status = wcspih(header,
-                      (int)nkeyrec,
-                      relax,
-                      ctrl,
-                      &nreject,
-                      &nwcs,
-                      &wcs);
+      status = wcspih(
+          header,
+          (int)nkeyrec,
+          relax,
+          ctrl,
+          &nreject,
+          &nwcs,
+          &wcs);
     } else {
-      status = wcsbth(header,
-                      (int)nkeyrec,
-                      relax,
-                      ctrl,
-                      keysel,
-                      colsel_ints,
-                      &nreject,
-                      &nwcs,
-                      &wcs);
+      status = wcsbth(
+          header,
+          (int)nkeyrec,
+          relax,
+          ctrl,
+          keysel,
+          colsel_ints,
+          &nreject,
+          &nwcs,
+          &wcs);
     }
 
     free(colsel_ints);
 
     if (status != 0) {
-      PyErr_SetString(PyExc_MemoryError,
-                      "Memory allocation error.");
+      PyErr_SetString(
+          PyExc_MemoryError,
+          "Memory allocation error.");
       return -1;
     }
 
     if (nwcs == 0) {
-      PyErr_SetString(WcsExc_NoWcsKeywordsFound,
-                      "No WCS keywords found in the given header");
+      PyErr_SetString(
+          WcsExc_NoWcsKeywordsFound,
+          "No WCS keywords found in the given header");
       return -1;
     }
 
@@ -318,8 +329,9 @@ PyWcsprm_init(
 
     if (wcscopy(1, wcs + i, &self->x) != 0) {
       ignored_int = wcsvfree(&nwcs, &wcs);
-      PyErr_SetString(PyExc_MemoryError,
-                      "Could not initialize wcsprm object");
+      PyErr_SetString(
+          PyExc_MemoryError,
+          "Could not initialize wcsprm object");
       return -1;
     }
 
@@ -362,8 +374,9 @@ PyWcsprm_copy(
       PyErr_SetString(*wcs_errexc[status], wcscopy_errmsg[status]);
       return NULL;
     } else {
-      PyErr_SetString(PyExc_RuntimeError,
-                      "Unknown error occurred.  Something is seriously wrong.");
+      PyErr_SetString(
+          PyExc_RuntimeError,
+          "Unknown error occurred.  Something is seriously wrong.");
       return NULL;
     }
   }
@@ -393,9 +406,9 @@ PyWcsprm_find_all_wcs(
   const char*    keywords[]    = {"header", "relax", "keysel", NULL};
   int            status        = -1;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "O|Oi:find_all_wcs",
-                                   (char **)keywords, &header_obj,
-                                   &relax_obj, &keysel)) {
+  if (!PyArg_ParseTupleAndKeywords(
+          args, kwds, "O|Oi:find_all_wcs",
+          (char **)keywords, &header_obj, &relax_obj, &keysel)) {
     return NULL;
   }
 
@@ -405,8 +418,9 @@ PyWcsprm_find_all_wcs(
 
   nkeyrec = header_length / 80;
   if (nkeyrec > 0x7fffffff) {
-    PyErr_SetString(PyExc_MemoryError,
-                    "header is too long");
+    PyErr_SetString(
+        PyExc_MemoryError,
+        "header is too long");
     return NULL;
   }
 
@@ -417,35 +431,39 @@ PyWcsprm_find_all_wcs(
   } else {
     relax = PyInt_AsLong(relax_obj);
     if (relax == -1) {
-      PyErr_SetString(PyExc_ValueError,
-                      "relax must be True, False or an integer.");
+      PyErr_SetString(
+          PyExc_ValueError,
+          "relax must be True, False or an integer.");
       return NULL;
     }
   }
 
   if (keysel < 0) {
-    status = wcspih(header,
-                    (int)nkeyrec,
-                    relax,
-                    ctrl,
-                    &nreject,
-                    &nwcs,
-                    &wcs);
+    status = wcspih(
+        header,
+        (int)nkeyrec,
+        relax,
+        ctrl,
+        &nreject,
+        &nwcs,
+        &wcs);
   } else {
-    status = wcsbth(header,
-                    (int)nkeyrec,
-                    relax,
-                    ctrl,
-                    keysel,
-                    NULL,
-                    &nreject,
-                    &nwcs,
-                    &wcs);
+    status = wcsbth(
+        header,
+        (int)nkeyrec,
+        relax,
+        ctrl,
+        keysel,
+        NULL,
+        &nreject,
+        &nwcs,
+        &wcs);
   }
 
   if (status != 0) {
-    PyErr_SetString(PyExc_MemoryError,
-                    "Memory allocation error.");
+    PyErr_SetString(
+        PyExc_MemoryError,
+        "Memory allocation error.");
     return NULL;
   }
 
@@ -460,8 +478,9 @@ PyWcsprm_find_all_wcs(
     if (wcscopy(1, wcs + i, &subresult->x) != 0) {
       Py_DECREF(result);
       ignored = wcsvfree(&nwcs, &wcs);
-      PyErr_SetString(PyExc_MemoryError,
-                      "Could not initialize wcsprm object");
+      PyErr_SetString(
+          PyExc_MemoryError,
+          "Could not initialize wcsprm object");
       return NULL;
     }
 
@@ -502,8 +521,9 @@ PyWcsprm_celfix(
     PyErr_SetString(PyExc_ValueError, wcsfix_errmsg[status]);
     return NULL;
   } else {
-    PyErr_SetString(PyExc_RuntimeError,
-                    "Unknown error occurred.  Something is seriously wrong.");
+    PyErr_SetString(
+        PyExc_RuntimeError,
+        "Unknown error occurred.  Something is seriously wrong.");
     return NULL;
   }
 }
@@ -521,14 +541,15 @@ PyWcsprm_cylfix(
   const char*    keywords[]  = {"naxis", NULL};
   PyObject*      ignored     = NULL;
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "|O:cylfix", (char **)keywords,
-                                   &naxis_obj)) {
+  if (!PyArg_ParseTupleAndKeywords(
+          args, kwds, "|O:cylfix", (char **)keywords,
+          &naxis_obj)) {
     return NULL;
   }
 
   if (naxis_obj != NULL) {
-    naxis_array = (PyArrayObject*)PyArray_ContiguousFromAny(naxis_obj, 1, 1,
-                                                            PyArray_INT);
+    naxis_array = (PyArrayObject*)PyArray_ContiguousFromAny(
+        naxis_obj, 1, 1, PyArray_INT);
     if (naxis_array == NULL) {
       return NULL;
     }
@@ -556,8 +577,9 @@ PyWcsprm_cylfix(
     PyErr_SetString(PyExc_ValueError, wcsfix_errmsg[status]);
     return NULL;
   } else {
-    PyErr_SetString(PyExc_RuntimeError,
-                    "Unknown error occurred.  Something is seriously wrong.");
+    PyErr_SetString(
+        PyExc_RuntimeError,
+        "Unknown error occurred.  Something is seriously wrong.");
     return NULL;
   }
 }
@@ -576,8 +598,9 @@ PyWcsprm_datfix(
     PyErr_SetString(PyExc_ValueError, wcsfix_errmsg[status]);
     return NULL;
   } else {
-    PyErr_SetString(PyExc_RuntimeError,
-                    "Unknown error occurred.  Something is seriously wrong.");
+    PyErr_SetString(
+        PyExc_RuntimeError,
+        "Unknown error occurred.  Something is seriously wrong.");
     return NULL;
   }
 }
@@ -615,8 +638,9 @@ PyWcsprm_fix(
   };
   const char* keywords[] = {"translate_units", "naxis", NULL};
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "|sO:fix", (char **)keywords,
-                                   &translate_units, &naxis_obj)) {
+  if (!PyArg_ParseTupleAndKeywords(
+          args, kwds, "|sO:fix", (char **)keywords,
+          &translate_units, &naxis_obj)) {
     return NULL;
   }
 
@@ -627,8 +651,8 @@ PyWcsprm_fix(
   }
 
   if (naxis_obj != NULL) {
-    naxis_array = (PyArrayObject*)PyArray_ContiguousFromAny(naxis_obj, 1, 1,
-                                                            PyArray_INT);
+    naxis_array = (PyArrayObject*)PyArray_ContiguousFromAny(
+        naxis_obj, 1, 1, PyArray_INT);
     if (naxis_array == NULL) {
       return NULL;
     }
@@ -681,7 +705,9 @@ PyWcsprm_get_ps(
     /*@unused@*/ PyObject* kwds) {
 
   if (self->x.ps == NULL) {
-    PyErr_SetString(PyExc_AssertionError, "No PSi_ma records present.");
+    PyErr_SetString(
+        PyExc_AssertionError,
+        "No PSi_ma records present.");
     return NULL;
   }
 
@@ -695,7 +721,9 @@ PyWcsprm_get_pv(
     /*@unused@*/ PyObject* kwds) {
 
   if (self->x.pv == NULL) {
-    PyErr_SetString(PyExc_AssertionError, "No PVi_ma records present.");
+    PyErr_SetString(
+        PyExc_AssertionError,
+        "No PVi_ma records present.");
     return NULL;
   }
 
@@ -780,16 +808,18 @@ PyWcsprm_mix(
   }
 
   if (viter < 5 || viter > 10) {
-    PyErr_SetString(PyExc_ValueError,
-                    "viter must be in the range 5 - 10");
+    PyErr_SetString(
+        PyExc_ValueError,
+        "viter must be in the range 5 - 10");
     goto exit;
   }
 
   world = (PyArrayObject*)PyArray_ContiguousFromAny
     (world_obj, PyArray_DOUBLE, 1, 1);
   if (world == NULL) {
-    PyErr_SetString(PyExc_TypeError,
-                    "Argument 6 (world) must be a 1-dimensional numpy array");
+    PyErr_SetString(
+        PyExc_TypeError,
+        "Argument 6 (world) must be a 1-dimensional numpy array");
     goto exit;
   }
   if ((int)PyArray_DIM(world, 0) != self->x.naxis) {
@@ -804,29 +834,33 @@ PyWcsprm_mix(
   pixcrd = (PyArrayObject*)PyArray_ContiguousFromAny
     (pixcrd_obj, PyArray_DOUBLE, 1, 1);
   if (pixcrd == NULL) {
-    PyErr_SetString(PyExc_TypeError,
-                    "Argument 7 (pixcrd) must be a 1-dimensional numpy array");
+    PyErr_SetString(
+        PyExc_TypeError,
+        "Argument 7 (pixcrd) must be a 1-dimensional numpy array");
     goto exit;
   }
   if ((int)PyArray_DIM(pixcrd, 0) != self->x.naxis) {
-    ignored = PyErr_Format(PyExc_TypeError,
-                           "Argument 7 (pixcrd) must be the same length as the "
-                           "number of axes (%d)",
-                           self->x.naxis);
+    ignored = PyErr_Format(
+        PyExc_TypeError,
+        "Argument 7 (pixcrd) must be the same length as the "
+        "number of axes (%d)",
+        self->x.naxis);
     goto exit;
   }
 
   if (mixpix < 1 || mixpix > 2) {
-    PyErr_SetString(PyExc_ValueError,
-                    "Argument 1 (mixpix) must specify a pixel coordinate "
-                    "axis number");
+    PyErr_SetString(
+        PyExc_ValueError,
+        "Argument 1 (mixpix) must specify a pixel coordinate "
+        "axis number");
     goto exit;
   }
 
   if (mixcel < 1 || mixcel > 2) {
-    PyErr_SetString(PyExc_ValueError,
-                    "Argument 2 (mixcel) must specify a celestial coordinate "
-                    "axis number (1 for latitude, 2 for longitude)");
+    PyErr_SetString(
+        PyExc_ValueError,
+        "Argument 2 (mixcel) must specify a celestial coordinate "
+        "axis number (1 for latitude, 2 for longitude)");
     goto exit;
   }
 
@@ -858,17 +892,18 @@ PyWcsprm_mix(
   /* Convert pixel coordinates to 1-based */
   preoffset_array(pixcrd, origin);
   wcsprm_python2c(&self->x);
-  status = wcsmix(&self->x,
-                  mixpix,
-                  mixcel,
-                  vspan,
-                  vstep,
-                  viter,
-                  (double*)PyArray_DATA(world),
-                  (double*)PyArray_DATA(phi),
-                  (double*)PyArray_DATA(theta),
-                  (double*)PyArray_DATA(imgcrd),
-                  (double*)PyArray_DATA(pixcrd));
+  status = wcsmix(
+      &self->x,
+      mixpix,
+      mixcel,
+      vspan,
+      vstep,
+      viter,
+      (double*)PyArray_DATA(world),
+      (double*)PyArray_DATA(phi),
+      (double*)PyArray_DATA(theta),
+      (double*)PyArray_DATA(imgcrd),
+      (double*)PyArray_DATA(pixcrd));
   wcsprm_c2python(&self->x);
   unoffset_array(pixcrd, origin);
   unoffset_array(imgcrd, origin);
@@ -902,8 +937,9 @@ PyWcsprm_mix(
       PyErr_SetString(*wcs_errexc[status], wcsmix_errmsg[status]);
       return NULL;
     } else {
-      PyErr_SetString(PyExc_RuntimeError,
-                      "Unknown error occurred.  Something is seriously wrong.");
+      PyErr_SetString(
+          PyExc_RuntimeError,
+          "Unknown error occurred.  Something is seriously wrong.");
       return NULL;
     }
   }
@@ -929,8 +965,9 @@ PyWcsprm_p2s(
   const char*    keywords[] = {
     "pixcrd", "origin", NULL };
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "Oi:p2s", (char **)keywords,
-                                   &pixcrd_obj, &origin)) {
+  if (!PyArg_ParseTupleAndKeywords(
+          args, kwds, "Oi:p2s", (char **)keywords,
+          &pixcrd_obj, &origin)) {
     return NULL;
   }
 
@@ -952,36 +989,36 @@ PyWcsprm_p2s(
 
   /* Now we allocate a bunch of numpy arrays to store the results in.
    */
-  imgcrd = (PyArrayObject*)PyArray_SimpleNew
-    (2, PyArray_DIMS(pixcrd), PyArray_DOUBLE);
+  imgcrd = (PyArrayObject*)PyArray_SimpleNew(
+      2, PyArray_DIMS(pixcrd), PyArray_DOUBLE);
   if (imgcrd == NULL) {
     status = 2;
     goto exit;
   }
 
-  phi = (PyArrayObject*)PyArray_SimpleNew
-    (1, PyArray_DIMS(pixcrd), PyArray_DOUBLE);
+  phi = (PyArrayObject*)PyArray_SimpleNew(
+      1, PyArray_DIMS(pixcrd), PyArray_DOUBLE);
   if (phi == NULL) {
     status = 2;
     goto exit;
   }
 
-  theta = (PyArrayObject*)PyArray_SimpleNew
-    (1, PyArray_DIMS(pixcrd), PyArray_DOUBLE);
+  theta = (PyArrayObject*)PyArray_SimpleNew(
+      1, PyArray_DIMS(pixcrd), PyArray_DOUBLE);
   if (theta == NULL) {
     status = 2;
     goto exit;
   }
 
-  world = (PyArrayObject*)PyArray_SimpleNew
-    (2, PyArray_DIMS(pixcrd), PyArray_DOUBLE);
+  world = (PyArrayObject*)PyArray_SimpleNew(
+      2, PyArray_DIMS(pixcrd), PyArray_DOUBLE);
   if (world == NULL) {
     status = 2;
     goto exit;
   }
 
-  stat = (PyArrayObject*)PyArray_SimpleNew
-    (1, PyArray_DIMS(pixcrd), PyArray_INT);
+  stat = (PyArrayObject*)PyArray_SimpleNew(
+      1, PyArray_DIMS(pixcrd), PyArray_INT);
   if (stat == NULL) {
     status = 2;
     goto exit;
@@ -990,15 +1027,16 @@ PyWcsprm_p2s(
   preoffset_array(pixcrd, origin);
   /* Make the call */
   wcsprm_python2c(&self->x);
-  status = wcsp2s(&self->x,
-                  (int)PyArray_DIM(pixcrd, 0),
-                  (int)PyArray_DIM(pixcrd, 1),
-                  (double*)PyArray_DATA(pixcrd),
-                  (double*)PyArray_DATA(imgcrd),
-                  (double*)PyArray_DATA(phi),
-                  (double*)PyArray_DATA(theta),
-                  (double*)PyArray_DATA(world),
-                  (int*)PyArray_DATA(stat));
+  status = wcsp2s(
+      &self->x,
+      (int)PyArray_DIM(pixcrd, 0),
+      (int)PyArray_DIM(pixcrd, 1),
+      (double*)PyArray_DATA(pixcrd),
+      (double*)PyArray_DATA(imgcrd),
+      (double*)PyArray_DATA(phi),
+      (double*)PyArray_DATA(theta),
+      (double*)PyArray_DATA(world),
+      (int*)PyArray_DATA(stat));
   wcsprm_c2python(&self->x);
   unoffset_array(pixcrd, origin);
   /* unoffset_array(world, origin); */
@@ -1034,8 +1072,9 @@ PyWcsprm_p2s(
     } else if (status == -1) {
       return NULL;
     } else {
-      PyErr_SetString(PyExc_RuntimeError,
-                      "Unknown error occurred.  Something is seriously wrong.");
+      PyErr_SetString(
+          PyExc_RuntimeError,
+          "Unknown error occurred.  Something is seriously wrong.");
       return NULL;
     }
   }
@@ -1061,15 +1100,16 @@ PyWcsprm_s2p(
   const char*    keywords[] = {
     "world", "origin", NULL };
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "Oi:s2p", (char **)keywords,
-                                   &world_obj, &origin)) {
+  if (!PyArg_ParseTupleAndKeywords(
+          args, kwds, "Oi:s2p", (char **)keywords,
+          &world_obj, &origin)) {
     return NULL;
   }
 
   naxis = self->x.naxis;
 
-  world = (PyArrayObject*)PyArray_ContiguousFromAny
-    (world_obj, PyArray_DOUBLE, 2, 2);
+  world = (PyArrayObject*)PyArray_ContiguousFromAny(
+      world_obj, PyArray_DOUBLE, 2, 2);
   if (world == NULL) {
     return NULL;
   }
@@ -1085,36 +1125,36 @@ PyWcsprm_s2p(
   /* Now we allocate a bunch of numpy arrays to store the
    * results in.
    */
-  phi = (PyArrayObject*)PyArray_SimpleNew
-    (1, PyArray_DIMS(world), PyArray_DOUBLE);
+  phi = (PyArrayObject*)PyArray_SimpleNew(
+      1, PyArray_DIMS(world), PyArray_DOUBLE);
   if (phi == NULL) {
     status = 2;
     goto exit;
   }
 
-  theta = (PyArrayObject*)PyArray_SimpleNew
-    (1, PyArray_DIMS(world), PyArray_DOUBLE);
+  theta = (PyArrayObject*)PyArray_SimpleNew(
+      1, PyArray_DIMS(world), PyArray_DOUBLE);
   if (phi == NULL) {
     status = 2;
     goto exit;
   }
 
-  imgcrd = (PyArrayObject*)PyArray_SimpleNew
-    (2, PyArray_DIMS(world), PyArray_DOUBLE);
+  imgcrd = (PyArrayObject*)PyArray_SimpleNew(
+      2, PyArray_DIMS(world), PyArray_DOUBLE);
   if (theta == NULL) {
     status = 2;
     goto exit;
   }
 
-  pixcrd = (PyArrayObject*)PyArray_SimpleNew
-    (2, PyArray_DIMS(world), PyArray_DOUBLE);
+  pixcrd = (PyArrayObject*)PyArray_SimpleNew(
+      2, PyArray_DIMS(world), PyArray_DOUBLE);
   if (pixcrd == NULL) {
     status = 2;
     goto exit;
   }
 
-  stat = (PyArrayObject*)PyArray_SimpleNew
-    (1, PyArray_DIMS(world), PyArray_INT);
+  stat = (PyArrayObject*)PyArray_SimpleNew(
+      1, PyArray_DIMS(world), PyArray_INT);
   if (stat == NULL) {
     status = 2;
     goto exit;
@@ -1123,15 +1163,16 @@ PyWcsprm_s2p(
   /* Make the call */
   /* preoffset_array(world, origin); */
   wcsprm_python2c(&self->x);
-  status = wcss2p(&self->x,
-                  (int)PyArray_DIM(world, 0),
-                  (int)PyArray_DIM(world, 1),
-                  (double*)PyArray_DATA(world),
-                  (double*)PyArray_DATA(phi),
-                  (double*)PyArray_DATA(theta),
-                  (double*)PyArray_DATA(imgcrd),
-                  (double*)PyArray_DATA(pixcrd),
-                  (int*)PyArray_DATA(stat));
+  status = wcss2p(
+      &self->x,
+      (int)PyArray_DIM(world, 0),
+      (int)PyArray_DIM(world, 1),
+      (double*)PyArray_DATA(world),
+      (double*)PyArray_DATA(phi),
+      (double*)PyArray_DATA(theta),
+      (double*)PyArray_DATA(imgcrd),
+      (double*)PyArray_DATA(pixcrd),
+      (int*)PyArray_DATA(stat));
   wcsprm_c2python(&self->x);
   /* unoffset_array(world, origin); */
   unoffset_array(pixcrd, origin);
@@ -1165,8 +1206,9 @@ PyWcsprm_s2p(
       PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
       return NULL;
     } else {
-      PyErr_SetString(PyExc_RuntimeError,
-                      "Unknown error occurred.  Something is seriously wrong.");
+      PyErr_SetString(
+          PyExc_RuntimeError,
+          "Unknown error occurred.  Something is seriously wrong.");
       return NULL;
     }
   }
@@ -1179,7 +1221,7 @@ PyWcsprm_cset(
   int status = 0;
 
   wcsprm_python2c(&self->x);
-  status = wcsset_(&self->x);
+  status = wcsset(&self->x);
   wcsprm_c2python(&self->x);
 
   if (status == 0) {
@@ -1188,8 +1230,9 @@ PyWcsprm_cset(
     PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
     return -1;
   } else {
-    PyErr_SetString(PyExc_RuntimeError,
-                    "Unknown error occurred.  Something is seriously wrong.");
+    PyErr_SetString(
+        PyExc_RuntimeError,
+        "Unknown error occurred.  Something is seriously wrong.");
     return -1;
   }
 }
@@ -1285,8 +1328,9 @@ PyWcsprm_spcfix(
     PyErr_SetString(PyExc_ValueError, wcsfix_errmsg[status]);
     return NULL;
   } else {
-    PyErr_SetString(PyExc_RuntimeError,
-                    "Unknown error occurred.  Something is seriously wrong.");
+    PyErr_SetString(
+        PyExc_RuntimeError,
+        "Unknown error occurred.  Something is seriously wrong.");
     return NULL;
   }
 }
@@ -1303,14 +1347,16 @@ PyWcsprm_sptr(
   int   status           = 0;
   const char* keywords[] = {"ctype", "i", NULL};
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "s|i:sptr", (char **)keywords,
-                                   &py_ctype, &i)) {
+  if (!PyArg_ParseTupleAndKeywords(
+          args, kwds, "s|i:sptr", (char **)keywords,
+          &py_ctype, &i)) {
     return NULL;
   }
 
   if (strlen(py_ctype) > 8) {
-    PyErr_SetString(PyExc_ValueError,
-                    "ctype string has more than 8 characters.");
+    PyErr_SetString(
+        PyExc_ValueError,
+        "ctype string has more than 8 characters.");
   }
 
   strncpy(ctype, py_ctype, 9);
@@ -1326,8 +1372,9 @@ PyWcsprm_sptr(
     PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
     return NULL;
   } else {
-    PyErr_SetString(PyExc_RuntimeError,
-                    "Unknown error occurred.  Something is seriously wrong.");
+    PyErr_SetString(
+        PyExc_RuntimeError,
+        "Unknown error occurred.  Something is seriously wrong.");
     return NULL;
   }
 }
@@ -1366,8 +1413,9 @@ PyWcsprm_sub(
   int        status         = -1;
   const char*    keywords[] = {"axes", NULL};
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "|O:sub", (char **)keywords,
-                                   &py_axes)) {
+  if (!PyArg_ParseTupleAndKeywords(
+          args, kwds, "|O:sub", (char **)keywords,
+          &py_axes)) {
     goto exit;
   }
 
@@ -1491,8 +1539,9 @@ PyWcsprm_sub(
   } else if (status < 0) {
     return NULL;
   } else {
-    PyErr_SetString(PyExc_RuntimeError,
-                    "Unknown error occurred.  Something is seriously wrong.");
+    PyErr_SetString(
+        PyExc_RuntimeError,
+        "Unknown error occurred.  Something is seriously wrong.");
     return NULL;
   }
 }
@@ -1511,8 +1560,9 @@ PyWcsprm_to_header(
   PyObject* result       = NULL;
   const char* keywords[] = {"relax", NULL};
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "|O:to_header",
-                                   (char **)keywords, &relax_obj)) {
+  if (!PyArg_ParseTupleAndKeywords(
+          args, kwds, "|O:to_header",
+          (char **)keywords, &relax_obj)) {
     goto exit;
   }
 
@@ -1523,8 +1573,9 @@ PyWcsprm_to_header(
   } else {
     relax = PyInt_AsLong(relax_obj);
     if (relax == -1) {
-      PyErr_SetString(PyExc_ValueError,
-                      "relax must be True, False or an integer.");
+      PyErr_SetString(
+          PyExc_ValueError,
+          "relax must be True, False or an integer.");
       return NULL;
     }
   }
@@ -1534,8 +1585,9 @@ PyWcsprm_to_header(
   wcsprm_c2python(&self->x);
 
   if (status != 0) {
-    PyErr_SetString(PyExc_RuntimeError,
-                    "Unknown error occurred.  Something is seriously wrong.");
+    PyErr_SetString(
+        PyExc_RuntimeError,
+        "Unknown error occurred.  Something is seriously wrong.");
     goto exit;
   }
 
@@ -1559,8 +1611,9 @@ PyWcsprm_unitfix(
   int   status           = 0;
   const char* keywords[] = {"translate_units", NULL};
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwds, "|s:unitfix", (char **)keywords,
-                                   &translate_units)) {
+  if (!PyArg_ParseTupleAndKeywords(
+          args, kwds, "|s:unitfix", (char **)keywords,
+          &translate_units)) {
     return NULL;
   }
 
@@ -1578,8 +1631,9 @@ PyWcsprm_unitfix(
     PyErr_SetString(PyExc_ValueError, wcsfix_errmsg[status]);
     return NULL;
   } else {
-    PyErr_SetString(PyExc_RuntimeError,
-                    "Unknown error occurred.  Something is seriously wrong.");
+    PyErr_SetString(
+        PyExc_RuntimeError,
+        "Unknown error occurred.  Something is seriously wrong.");
     return NULL;
   }
 }

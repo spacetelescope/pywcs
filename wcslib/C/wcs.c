@@ -1383,7 +1383,7 @@ int wcsprt(const struct wcsprm *wcs)
 
 /*--------------------------------------------------------------------------*/
 
-int wcsset_(struct wcsprm *wcs)
+int wcsset(struct wcsprm *wcs)
 
 {
   char scode[4], stype[5];
@@ -1940,7 +1940,7 @@ int wcsp2s(
   /* Initialize if required. */
   if (wcs == 0x0) return 1;
   if (wcs->flag != WCSSET) {
-    if ((status = wcsset_(wcs))) return status;
+    if ((status = wcsset(wcs))) return status;
   }
 
   /* Sanity check. */
@@ -2165,7 +2165,7 @@ int wcss2p(
   status = 0;
   if (wcs == 0x0) return 1;
   if (wcs->flag != WCSSET) {
-    if ((status = wcsset_(wcs))) return status;
+    if ((status = wcsset(wcs))) return status;
   }
 
   /* Sanity check. */
@@ -2383,7 +2383,7 @@ int wcsmix(
   /* Initialize if required. */
   if (wcs == 0x0) return 1;
   if (wcs->flag != WCSSET) {
-    if ((status = wcsset_(wcs))) return status;
+    if ((status = wcsset(wcs))) return status;
   }
 
   worldlng = world + wcs->lng;
@@ -2944,7 +2944,7 @@ int wcssptr(
   /* Initialize if required. */
   if (wcs == 0x0) return 1;
   if (wcs->flag != WCSSET) {
-    if ((status = wcsset_(wcs))) return status;
+    if ((status = wcsset(wcs))) return status;
   }
 
   if ((j = *i) < 0) {

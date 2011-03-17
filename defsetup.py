@@ -54,8 +54,8 @@ except AttributeError:
 
 ######################################################################
 # WCSLIB
-WCSVERSION = "4.4.4"
-WCSLIB = "wcslib-%s" % WCSVERSION # Path to wcslib
+WCSVERSION = "4.7"
+WCSLIB = "wcslib" # Path to wcslib
 WCSLIBC = join(WCSLIB, "C") # Path to wcslib source files
 WCSFILES = [ # List of wcslib files to compile
     'flexed/wcsbth.c',
@@ -119,6 +119,10 @@ h_file.write("""
 /* 64-bit integer data type. */
 #define WCSLIB_INT64 %s
 """ % (WCSVERSION, determine_64_bit_int()))
+if sys.platform in ('win32', 'cygwin'):
+    h_file.write("""
+#define wcsset wcsset_
+""")
 write_if_different(join(srcroot, 'src', 'wcsconfig.h'), h_file.getvalue())
 
 ######################################################################
@@ -188,7 +192,7 @@ write_if_different(join(srcroot, 'src', 'docstrings.c'), c_file.getvalue())
 
 ######################################################################
 # PYWCS-SPECIFIC AND WRAPPER SOURCE FILES
-PYWCS_VERSION = '1.9'
+PYWCS_VERSION = '1.10'
 VERSION = '%s-%s' % (PYWCS_VERSION, WCSVERSION)
 PYWCS_SOURCES = [ # List of pywcs files to compile
     'distortion.c',
