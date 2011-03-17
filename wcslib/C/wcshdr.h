@@ -67,13 +67,13 @@
 *
 *   - 3: Allocate memory for, and read 'TAB' arrays from the binary table
 *        extension, e.g. using CFITSIO routine fits_read_wcstab() - refer to
-*        the prologue of getwcstab.h.  wcsset_() will automatically take
+*        the prologue of getwcstab.h.  wcsset() will automatically take
 *        control of this allocated memory, in particular causing it to be
 *        free'd by wcsfree().
 *
 *   - 4: Translate non-standard WCS usage using wcsfix(), see wcsfix.h.
 *
-*   - 5: Initialize wcsprm struct(s) using wcsset_() and calculate coordinates
+*   - 5: Initialize wcsprm struct(s) using wcsset() and calculate coordinates
 *        using wcsp2s() and/or wcss2p().  Refer to the prologue of wcs.h for a
 *        description of these and other high-level WCS coordinate
 *        transformation routines.
@@ -195,7 +195,7 @@
 *                       also invokes wcsini() for each struct to allocate
 *                       memory for internal arrays and initialize their
 *                       members to default values.  Refer also to wcsbth()
-*                       note 8.  Note that wcsset_() is not invoked on these
+*                       note 8.  Note that wcsset() is not invoked on these
 *                       structs.
 *
 *                       This allocated memory must be freed by the user, first
@@ -352,7 +352,7 @@
 *                       also invokes wcsini() for each struct to allocate
 *                       memory for internal arrays and initialize their
 *                       members to default values.  Refer also to note 8
-*                       below.  Note that wcsset_() is not invoked on these
+*                       below.  Note that wcsset() is not invoked on these
 *                       structs.
 *
 *                       This allocated memory must be freed by the user, first
@@ -717,7 +717,7 @@
 *      columns and this allows a pixel list to contain up to 27 separate
 *      images.  As usual, if one of these representations happened to contain
 *      more than two celestial axes, for example, then an error would result
-*      when wcsset_() is invoked on it.  In this case the "colsel" argument
+*      when wcsset() is invoked on it.  In this case the "colsel" argument
 *      could be used to restrict the columns used to construct the
 *      representation so that it only contained one pair of celestial axes.
 *
@@ -743,9 +743,9 @@
 * It is then up to the user to allocate memory for, and copy arrays from the
 * BINTABLE extension(s) into the tabprm structs.  A CFITSIO routine,
 * fits_read_wcstab(), has been provided for this purpose, see getwcstab.h.
-* wcsset_() will automatically take control of this allocated memory, in
+* wcsset() will automatically take control of this allocated memory, in
 * particular causing it to be free'd by wcsfree(); the user must not attempt
-* to free it after wcsset_() has been called.
+* to free it after wcsset() has been called.
 *
 * Note that wcspih() and wcsbth() automatically invoke wcstab() on each of the
 * wcsprm structs that they return.

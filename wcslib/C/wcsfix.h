@@ -59,9 +59,9 @@
 * -----------------------
 *   AIPS-convention celestial projection types, NCP and GLS, and spectral
 *   types, 'FREQ-LSR', 'FELO-HEL', etc., set in CTYPEia are translated
-*   on-the-fly by wcsset_() but without modifying the relevant ctype[], pv[] or
+*   on-the-fly by wcsset() but without modifying the relevant ctype[], pv[] or
 *   specsys members of the wcsprm struct.  That is, only the information
-*   extracted from ctype[] is translated when wcsset_() fills in wcsprm::cel
+*   extracted from ctype[] is translated when wcsset() fills in wcsprm::cel
 *   (celprm struct) or wcsprm::spc (spcprm struct).
 *
 *   On the other hand, these routines do change the values of wcsprm::ctype[],
@@ -82,7 +82,7 @@
 * ----------------------
 *   The AIPS-convention CROTAn keywords are recognized as quasi-standard and
 *   as such are accomodated by the wcsprm::crota[] and translated to
-*   wcsprm::pc[][] by wcsset_().  These are not dealt with here, nor are any
+*   wcsprm::pc[][] by wcsset().  These are not dealt with here, nor are any
 *   other non-standard keywords since these routines work only on the contents
 *   of a wcsprm struct and do not deal with FITS headers per se.  In
 *   particular, they do not identify or translate CD00i00j, PC00i00j, PROJPn,

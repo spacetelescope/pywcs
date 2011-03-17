@@ -481,7 +481,7 @@ int wcshdo(int relax, struct wcsprm *wcs, int *nkeyrec, char **header)
   }
 
   if (wcs->flag != WCSSET) {
-    if ((status = wcsset_(wcs))) return status;
+    if ((status = wcsset(wcs))) return status;
   }
 
   if ((naxis = wcs->naxis) == 0) {
