@@ -133,10 +133,6 @@ h_file.write("""
 /* 64-bit integer data type. */
 #define WCSLIB_INT64 %s
 """ % (WCSVERSION, determine_64_bit_int()))
-if sys.platform in ('win32', 'cygwin'):
-    h_file.write("""
-#define wcsset wcsset_
-""")
 write_if_different(join(srcroot, 'src', 'wcsconfig.h'), h_file.getvalue())
 
 ######################################################################
@@ -258,6 +254,8 @@ else:
 if sys.platform == 'win32':
     define_macros.append(('YY_NO_UNISTD_H', None))
     define_macros.append(('_CRT_SECURE_NO_WARNINGS', None))
+    define_macros.append(('_NO_OLDNAMES', None)) # for mingw32
+    define_macros.append(('NO_OLDNAMES', None)) # for mingw64
 
 if sys.platform.startswith('linux'):
     define_macros.append(('HAVE_SINCOS', None))
