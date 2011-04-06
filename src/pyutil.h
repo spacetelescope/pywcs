@@ -42,9 +42,18 @@ DAMAGE.
 #define PY_ARRAY_UNIQUE_SYMBOL pywcs_numpy_api
 
 #include <Python.h>
+
 #include <numpy/arrayobject.h>
 #include <numpy/npy_math.h>
-#include "str_list_proxy.h"
+
+#if PY_MAJOR_VERSION >= 3
+#define PY3K 1
+#else
+#define PY3K 0
+#ifndef Py_TYPE
+  #define Py_TYPE(ob) (((PyObject*)(ob))->ob_type)
+#endif
+#endif
 
 /* Py_ssize_t for old Pythons */
 /* This code is as recommended by: */
@@ -67,6 +76,21 @@ PyArrayProxy_New(
     const npy_intp* dims,
     int typenum,
     const void* data);
+
+typedef int (*str_verify_fn)(char *);
+
+/*@null@*/ PyObject *
+PyStrListProxy_New(
+    PyObject* owner,
+    Py_ssize_t size,
+    Py_ssize_t maxsize,
+    char (*array)[72],
+    str_verify_fn verify
+    );
+
+int
+_setup_str_list_proxy_type(
+    PyObject* m);
 
 static inline void
 offset_c_array(
@@ -195,7 +219,11 @@ get_string(
     /*@unused@*/ const char* propname,
     const char* value) {
 
+  #if PY3K
+  return PyBytes_FromString(value);
+  #else
   return PyString_FromString(value);
+  #endif
 }
 
 int
@@ -224,7 +252,11 @@ get_int(
     /*@unused@*/ const char* propname,
     long value) {
 
+  #if PY3K
+  return PyLong_FromLong(value);
+  #else
   return PyInt_FromLong(value);
+  #endif
 }
 
 int
@@ -285,30 +317,48 @@ set_int_array(
     const npy_intp* dims,
     int* dest);
 
-/* Defined in str_list_proxy.h */
-PyObject *
-PyStrListProxy_New(
+static inline PyObject*
+get_str_list_verified(
+    /*@unused@*/ const char* propname,
+    char (*array)[72],
+    Py_ssize_t len,
+    Py_ssize_t maxlen,
     PyObject* owner,
-    Py_ssize_t size,
-    char (*array)[72]);
+    str_verify_fn verify) {
+
+  return PyStrListProxy_New(owner, len, maxlen, array, verify);
+}
 
 static inline PyObject*
 get_str_list(
     /*@unused@*/ const char* propname,
     char (*array)[72],
     Py_ssize_t len,
+    Py_ssize_t maxlen,
     PyObject* owner) {
 
-  return PyStrListProxy_New(owner, len, array);
+  return get_str_list_verified(propname, array, len, maxlen, owner, NULL);
 }
 
 int
+set_str_list_verified(
+    const char* propname,
+    PyObject* value,
+    Py_ssize_t len,
+    Py_ssize_t maxlen,
+    char (*dest)[72],
+    str_verify_fn verify);
+
+static inline int
 set_str_list(
     const char* propname,
     PyObject* value,
     Py_ssize_t len,
     Py_ssize_t maxlen,
-    char (*dest)[72]);
+    char (*dest)[72]) {
+
+  return set_str_list_verified(propname, value, len, maxlen, dest, NULL);
+}
 
 PyObject*
 get_pscards(

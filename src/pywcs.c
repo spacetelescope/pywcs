@@ -118,7 +118,7 @@ PyWcs_dealloc(
   int ignored;
   ignored = PyWcs_clear(self);
   pipeline_free(&self->x);
-  self->ob_type->tp_free((PyObject*)self);
+  Py_TYPE(self)->tp_free((PyObject*)self);
 }
 
 /*@null@*/ static PyObject *
@@ -877,8 +877,12 @@ static PyMethodDef module_methods[] = {
 };
 
 static PyTypeObject PyWcsType = {
+  #if PY3K
+  PyVarObject_HEAD_INIT(NULL, 0)
+  #else
   PyObject_HEAD_INIT(NULL)
   0,                            /*ob_size*/
+  #endif
   "pywcs._Wcs",                 /*tp_name*/
   sizeof(PyWcs),                /*tp_basicsize*/
   0,                            /*tp_itemsize*/
@@ -940,14 +944,14 @@ struct module_state {
 #endif
 };
 
-#if PY_MAJOR_VERSION >= 3
+#if PY3K
     #define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
 #else
     #define GETSTATE(m) (&_state)
     static struct module_state _state;
 #endif
 
-#if PY_MAJOR_VERSION >= 3
+#if PY3K
     static struct PyModuleDef moduledef = {
         PyModuleDef_HEAD_INIT,
         "_pywcs",
@@ -962,13 +966,13 @@ struct module_state {
 
     #define INITERROR return NULL
 
-    PyObject *
+    PyMODINIT_FUNC
     PyInit__pywcs(void)
 
 #else
     #define INITERROR return
 
-    void
+    PyMODINIT_FUNC
     init_pywcs(void)
 #endif
 
@@ -992,7 +996,7 @@ struct module_state {
     wcs_errexc[12] = &WcsExc_InvalidSubimageSpecification; /* Invalid subimage specification (no spectral axis) */
     wcs_errexc[13] = &WcsExc_NonseparableSubimageCoordinateSystem; /* Non-separable subimage coordinate system */
 
-#if PY_MAJOR_VERSION >= 3
+#if PY3K
     m = PyModule_Create(&moduledef);
 #else
     m = Py_InitModule3("_pywcs", module_methods, NULL);
@@ -1018,7 +1022,7 @@ struct module_state {
         INITERROR;
     }
 
-#if PY_MAJOR_VERSION >= 3
-    return module;
+#if PY3K
+    return m;
 #endif
 }

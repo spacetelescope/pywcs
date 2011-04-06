@@ -75,10 +75,10 @@ The basic workflow is as follows:
          coordinates.  Commonly used for narrow column correction.
 """
 
-from __future__ import division # confidence high
+from __future__ import absolute_import, division # confidence high
 
-from pywcs import *
-import pywcs
-import _pywcs
+from .pywcs import *
+from . import pywcs
+from . import _pywcs
 
 __version__ = "1.10-4.7"

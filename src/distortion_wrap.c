@@ -71,7 +71,7 @@ PyDistLookup_dealloc(
 
   distortion_lookup_t_free(&self->x);
   Py_XDECREF(self->py_data);
-  self->ob_type->tp_free((PyObject*)self);
+  Py_TYPE(self)->tp_free((PyObject*)self);
 }
 
 /*@null@*/ static PyObject *
@@ -333,8 +333,12 @@ static PyMethodDef PyDistLookup_methods[] = {
 };
 
 PyTypeObject PyDistLookupType = {
+#if PY3K
+  PyVarObject_HEAD_INIT(NULL, 0)
+#else
   PyObject_HEAD_INIT(NULL)
   0,                            /*ob_size*/
+#endif
   "pywcs.DistortionLookupTable", /*tp_name*/
   sizeof(PyDistLookup),         /*tp_basicsize*/
   0,                            /*tp_itemsize*/

@@ -58,22 +58,32 @@ together in a pipeline:
    - `wcslib`_ WCS transformation (by a `~pywcs.Wcsprm` object)
 """
 
-from __future__ import division # confidence high
+from __future__ import absolute_import, division # confidence high
 
 # stdlib
 import copy
+import sys
 
 # third-party
 import numpy as np
+try:
+    import pyfits
+    HAS_PYFITS = True
+except ImportError:
+    HAS_PYFITS = False
 
 # local
-import _docutil as __
-import _pywcs
-import pyfits
+from . import _docutil as __
+from . import _pywcs
 
 assert _pywcs._sanity_check(), \
     """PyWcs did not pass its sanity check for your build on your platform.
 Please send details about your build and platform to mdroe@stsci.edu"""
+
+if sys.version_info[0] >= 3:
+    string_types = (bytes,)
+else:
+    string_types = (str, unicode)
 
 # This is here for the sake of epydoc
 WCSBase = _pywcs._Wcs
@@ -119,9 +129,9 @@ class WCS(WCSBase):
     def __init__(self, header=None, fobj=None, key=' ', minerr=0.0,
                  relax=False, naxis=None, keysel=None, colsel=None):
         """
-        - *header*: A PyFITS header object.  If *header* is not
-          provided or None, the object will be initialized to default
-          values.
+        - *header*: A string containing the header content, or a
+          PyFITS header object.  If *header* is not provided or None,
+          the object will be initialized to default values.
 
         - *fobj*: A PyFITS file (hdulist) object. It is needed when
           header keywords point to a `Paper IV`_ Lookup table
@@ -216,8 +226,15 @@ class WCS(WCSBase):
         else:
             keysel_flags = _parse_keysel(keysel)
 
-            try:
+            if isinstance(header, string_types):
+                header_string = header
+            elif HAS_PYFITS:
+                assert isinstance(header, pyfits.Header)
                 header_string = repr(header.ascard)
+            else:
+                raise TypeError(
+                    "header must be a string or a pyfits.Header object")
+            try:
                 wcsprm = _pywcs._Wcsprm(header=header_string, key=key,
                                         relax=relax, keysel=keysel_flags,
                                         colsel=colsel)
@@ -319,7 +336,7 @@ naxis kwarg.
                 naxis1 = self.naxis1
                 naxis2 = self.naxis2
             except AttributeError :
-                print "Need a valid header in order to calculate footprint\n"
+                print("Need a valid header in order to calculate footprint\n")
                 return None
         else:
             naxis1 = header.get('NAXIS1', None)
@@ -351,6 +368,13 @@ naxis kwarg.
         crpix = [0.,0.]
         crval = [0.,0.]
         cdelt = [1.,1.]
+
+        if fobj is None:
+            return (None, None)
+
+        if not HAS_PYFITS:
+            raise ImportError(
+                "pyfits is required to use Paper IV lookup tables")
 
         if not isinstance(fobj, pyfits.HDUList):
             return (None, None)
@@ -388,6 +412,9 @@ naxis kwarg.
         If no `Paper IV`_ distortion keywords are found, ``(None,
         None)`` is returned.
         """
+        if isinstance(header, string_types):
+            return (None, None)
+
         if dist == 'CPDIS':
             d_kw = 'DP'
             err_kw = 'CPERR'
@@ -405,13 +432,17 @@ naxis kwarg.
             if header.has_key(distortion):
                 dis = header[distortion].lower()
                 if dis == 'lookup':
+                    if fobj is not None and not HAS_PYFITS:
+                        raise ImportError(
+                            "pyfits is required to use Paper IV lookup tables")
+
                     assert isinstance(fobj, pyfits.HDUList), \
                         'A pyfits HDUList is required for Lookup table distortion.'
                     dp = (d_kw+str(i)+key).strip()
                     d_extver = header.get(dp+'.EXTVER', 1)
                     if i == header[dp+'.AXIS.%s'%i]:
                         d_data = fobj['WCSDVARR', d_extver].data
-                    else: 
+                    else:
                         d_data = (fobj['WCSDVARR', d_extver].data).transpose()
                     d_header = fobj['WCSDVARR', d_extver].header
                     d_crpix = (d_header.get('CRPIX1', 0.0), d_header.get('CRPIX2', 0.0))
@@ -421,7 +452,7 @@ naxis kwarg.
                                                      d_crval, d_cdelt)
                     tables[i] = d_lookup
                 else:
-                    print 'Polynomial distortion is not implemented.\n'
+                    print('Polynomial distortion is not implemented.\n')
             else:
                 tables[i] = None
 
@@ -437,6 +468,9 @@ naxis kwarg.
 
         If no `SIP`_ header keywords are found, ``None`` is returned.
         """
+        if isinstance(header, string_types):
+            # TODO: Parse SIP from a string without pyfits around
+            return None
 
         if header.has_key("A_ORDER"+key):
             if not header.has_key("B_ORDER"+key):
@@ -909,6 +943,10 @@ naxis kwarg.
 
         Returns a `pyfits`_ Header object.
         """
+        if not HAS_PYFITS:
+            raise ImportError(
+                "pyfits is required to generate a FITS header")
+
         header_string = self.wcs.to_header(relax)
         cards = pyfits.CardList()
         for i in range(0, len(header_string), 80):
@@ -953,7 +991,7 @@ naxis kwarg.
     def get_naxis(self, header=None):
         self.naxis1 = 0.0
         self.naxis2 = 0.0
-        if header != None:
+        if header != None and not isinstance(header, string_types):
             self.naxis1 = header.get('NAXIS1', 0.0)
             self.naxis2 = header.get('NAXIS2', 0.0)
 
@@ -969,13 +1007,13 @@ naxis kwarg.
         """
         Temporary function for internal use.
         """
-        print 'WCS Keywords\n'
+        print('WCS Keywords\n')
         if hasattr(self.wcs, 'cd'):
-            print 'CD_11  CD_12: %r %r' % (self.wcs.cd[0,0],  self.wcs.cd[0,1])
-            print 'CD_21  CD_22: %r %r' % (self.wcs.cd[1,0],  self.wcs.cd[1,1])
-        print 'CRVAL    : %r %r' % (self.wcs.crval[0], self.wcs.crval[1])
-        print 'CRPIX    : %r %r' % (self.wcs.crpix[0], self.wcs.crpix[1])
-        print 'NAXIS    : %r %r' % (self.naxis1, self.naxis2)
+            print('CD_11  CD_12: %r %r' % (self.wcs.cd[0,0],  self.wcs.cd[0,1]))
+            print('CD_21  CD_22: %r %r' % (self.wcs.cd[1,0],  self.wcs.cd[1,1]))
+        print('CRVAL    : %r %r' % (self.wcs.crval[0], self.wcs.crval[1]))
+        print('CRPIX    : %r %r' % (self.wcs.crpix[0], self.wcs.crpix[1]))
+        print('NAXIS    : %r %r' % (self.naxis1, self.naxis2))
 
     def get_axis_types(self):
         """
@@ -1086,7 +1124,7 @@ def find_all_wcs(header, relax=False, keysel=None):
     """
     Find all the WCS transformations in the given header.
 
-    - *header*: A PyFITS header object.
+    - *header*: A string or PyFITS header object.
 
     - *relax*: Degree of permissiveness:
 
@@ -1119,7 +1157,14 @@ def find_all_wcs(header, relax=False, keysel=None):
 
     Returns a list of `WCS` objects.
     """
-    header_string = repr(header.ascard)
+    if isinstance(header, string_types):
+        header_string = header
+    elif HAS_PYFITS:
+        assert isinstance(header, pyfits.Header)
+        header_string = repr(header.ascard)
+    else:
+        raise TypeError(
+            "header must be a string or pyfits.Header object")
 
     keysel_flags = _parse_keysel(keysel)
 

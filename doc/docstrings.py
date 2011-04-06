@@ -1449,7 +1449,7 @@ sequence of tuples of the form (*i*, *m*, *value*):
 
     - *m*: int.  Parameter number, as in ``PVi_ma``, (i.e. 0-relative)
 
-    - *value*: string.  Parameter value.
+    - *value*: float.  Parameter value.
 
 .. seealso::
 

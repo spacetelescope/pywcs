@@ -116,7 +116,7 @@ PyTabprm_dealloc(
     PyTabprm* self) {
 
   PyTabprm_clear(self);
-  self->ob_type->tp_free((PyObject*)self);
+  Py_TYPE(self)->tp_free((PyObject*)self);
 }
 
 PyTabprm*
@@ -191,7 +191,11 @@ PyTabprm___str__(
 
   ignored = tabprt(self->x);
 
+  #if PY3K
+  return PyUnicode_FromString(wcsprintf_buf());
+  #else
   return PyString_FromString(wcsprintf_buf());
+  #endif
 }
 
 /***************************************************************************
@@ -433,8 +437,12 @@ static PyMethodDef PyTabprm_methods[] = {
 };
 
 PyTypeObject PyTabprmType = {
+  #if PY3K
+  PyVarObject_HEAD_INIT(NULL, 0)
+  #else
   PyObject_HEAD_INIT(NULL)
   0,                            /*ob_size*/
+  #endif
   "pywcs.Tabprm",               /*tp_name*/
   sizeof(PyTabprm),             /*tp_basicsize*/
   0,                            /*tp_itemsize*/

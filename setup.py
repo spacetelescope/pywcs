@@ -10,9 +10,9 @@ from __future__ import division # confidence high
 try:
     import pyfits
 except ImportError:
-    print "WARNING: PyFITS must be installed to use pywcs."
-    print "         Since this is not a build-time dependency, the "
-    print "         build will proceed."
+    print("WARNING: PyFITS must be installed to use pywcs.")
+    print("         Since this is not a build-time dependency, the ")
+    print("         build will proceed.")
 
 import os
 if os.getenv("USE_STPYTOOLS") :

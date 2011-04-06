@@ -36,7 +36,7 @@ DAMAGE.
 
 #define NO_IMPORT_ARRAY
 
-#include "str_list_proxy.h"
+#include "pyutil.h"
 
 /***************************************************************************
  * List-of-strings proxy object
@@ -48,7 +48,9 @@ typedef struct {
   PyObject_HEAD
   /*@null@*/ /*@shared@*/ PyObject* pyobject;
   Py_ssize_t size;
+  Py_ssize_t maxsize;
   char (*array)[72];
+  str_verify_fn verify;
 } PyStrListProxy;
 
 static void
@@ -56,7 +58,7 @@ PyStrListProxy_dealloc(
     PyStrListProxy* self) {
 
   Py_XDECREF(self->pyobject);
-  self->ob_type->tp_free((PyObject*)self);
+  Py_TYPE(self)->tp_free((PyObject*)self);
 }
 
 /*@null@*/ static PyObject *
@@ -109,9 +111,15 @@ PyStrListProxy_clear(
 PyStrListProxy_New(
     /*@shared@*/ PyObject* owner,
     Py_ssize_t size,
-    char (*array)[72]) {
+    Py_ssize_t maxsize,
+    char (*array)[72],
+    str_verify_fn verify) {
 
   PyStrListProxy* self = NULL;
+
+  if (maxsize == 0) {
+    maxsize = 68;
+  }
 
   self = (PyStrListProxy*)PyStrListProxyType.tp_alloc(&PyStrListProxyType, 0);
   if (self == NULL) {
@@ -121,7 +129,9 @@ PyStrListProxy_New(
   Py_XINCREF(owner);
   self->pyobject = owner;
   self->size = size;
+  self->maxsize = maxsize;
   self->array = array;
+  self->verify = verify;
   return (PyObject*)self;
 }
 
@@ -142,7 +152,11 @@ PyStrListProxy_getitem(
     return NULL;
   }
 
+  #if PY3K
+  return PyBytes_FromString(self->array[index]);
+  #else
   return PyString_FromString(self->array[index]);
+  #endif
 }
 
 static int
@@ -159,16 +173,25 @@ PyStrListProxy_setitem(
     return -1;
   }
 
+  #if PY3K
+  if (PyBytes_AsStringAndSize(arg, &value, &value_length)) {
+  #else
   if (PyString_AsStringAndSize(arg, &value, &value_length)) {
+  #endif
+      return -1;
+  }
+
+  if (value_length >= self->maxsize) {
+    PyErr_Format(PyExc_ValueError,
+                 "string must be less than %zd characters", self->maxsize);
     return -1;
   }
 
-  if (value_length >= 68) {
-    PyErr_SetString(PyExc_ValueError, "string must be less than 68 characters");
+  if (self->verify && !self->verify(value)) {
     return -1;
   }
 
-  strncpy(self->array[index], value, 72);
+  strncpy(self->array[index], value, self->maxsize);
 
   return 0;
 }
@@ -190,7 +213,7 @@ PyStrListProxy_repr(
   char        next_char = '\0';
 
   /* Overallocating to allow for escaped characters */
-  buffer = malloc((size_t)self->size*80*2 + 2);
+  buffer = malloc((size_t)self->size*self->maxsize*2 + 2);
   if (buffer == NULL) {
     PyErr_SetString(PyExc_MemoryError, "Could not allocate memory.");
     return NULL;
@@ -202,7 +225,7 @@ PyStrListProxy_repr(
   for (i = 0; i < self->size; ++i) {
     *wp++ = '\'';
     rp = self->array[i];
-    for (j = 0; j < 68 && *rp != '\0'; ++j) {
+    for (j = 0; j < self->maxsize && *rp != '\0'; ++j) {
       /* Check if this character should be escaped */
       e = escapes;
       next_char = *rp++;
@@ -232,7 +255,11 @@ PyStrListProxy_repr(
   *wp++ = ']';
   *wp++ = '\0';
 
+  #if PY3K
+  result = PyUnicode_FromString(buffer);
+  #else
   result = PyString_FromString(buffer);
+  #endif
   free(buffer);
   return result;
 }
@@ -251,8 +278,12 @@ static PySequenceMethods PyStrListProxy_sequence_methods = {
 };
 
 static PyTypeObject PyStrListProxyType = {
+  #if PY3K
+  PyVarObject_HEAD_INIT(NULL, 0)
+  #else
   PyObject_HEAD_INIT(NULL)
   0,                          /*ob_size*/
+  #endif
   "pywcs.StrListProxy",       /*tp_name*/
   sizeof(PyStrListProxy),  /*tp_basicsize*/
   0,                          /*tp_itemsize*/

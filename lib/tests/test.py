@@ -2,7 +2,6 @@ import glob
 import os
 
 import numpy as np
-import pyfits
 from numpy.testing import assert_array_almost_equal
 
 import pywcs
@@ -14,30 +13,38 @@ def setup():
 
 def test_maps():
     def test_map(filename):
-        hdulist = pyfits.open(filename)
-        wcs = pywcs.WCS(hdulist[0].header)
+        fd = open(filename, 'rb')
+        header = fd.read()
+        fd.close()
+        wcs = pywcs.WCS(header)
 
         world = wcs.wcs_pix2sky([[97, 97]], 1)
 
         assert_array_almost_equal(world, [[285.0, -66.25]], decimal=1)
 
-    for filename in glob.glob(os.path.join(ROOT_DIR, "maps", "*.fits")):
+        pix = wcs.wcs_sky2pix([[285.0, -66.25]], 1)
+
+        assert_array_almost_equal(pix, [[97, 97]], decimal=0)
+
+    for filename in glob.glob(os.path.join(ROOT_DIR, "maps", "*.hdr")):
         yield test_map, filename
 
 def test_spectra():
     def test_spectrum(filename):
-        hdulist = pyfits.open(filename)
-        wcs = pywcs.WCS(hdulist[0].header)
+        fd = open(filename, 'rb')
+        header = fd.read()
+        fd.close()
+        wcs = pywcs.WCS(header)
 
-        all = pywcs.find_all_wcs(hdulist[0].header)
+        all = pywcs.find_all_wcs(header)
         assert len(all) == 9
 
-    for filename in glob.glob(os.path.join(ROOT_DIR, "spectra", "*.fits")):
+    for filename in glob.glob(os.path.join(ROOT_DIR, "spectra", "*.hdr")):
         yield test_spectrum, filename
 
 def test_units():
     u = pywcs.UnitConverter("log(MHz)", "ln(Hz)")
-    print u.convert([1,2,3,4])
+    print(u.convert([1,2,3,4]))
 
 basic_units = "m s g rad sr K A mol cd".split()
 derived_units = "Hz J W V N Pa C Ohm ohm S F Wb T H lm lx".split()
@@ -53,7 +60,7 @@ def test_all_units():
     def test_self(x):
         try:
             u = pywcs.UnitConverter(x, x)
-        except ValueError, e:
+        except ValueError as e:
             if str(e) == "Potentially unsafe translation" and \
                     x in ("S", "H", "D"):
                 return
@@ -72,7 +79,7 @@ def test_unit_prefixes():
         unit = p + x
         try:
             u = pywcs.UnitConverter(unit, unit)
-        except ValueError, e:
+        except ValueError as e:
             if str(e) == "Potentially unsafe translation" and \
                     x in ("S", "H", "D"):
                 return

@@ -5,11 +5,23 @@ from __future__ import division # confidence high
 CONTACT = "Michael Droettboom"
 EMAIL = "mdroe@stsci.edu"
 
-import cStringIO
 from distutils.core import setup, Extension
 from os.path import join
 import os.path
 import sys
+
+if sys.version_info[0] >= 3:
+    def string_escape(s):
+        s = s.decode('ascii').encode('ascii', 'backslashreplace')
+        s = s.replace(b'\n', b'\\n')
+        return s.decode('ascii')
+    from io import StringIO
+    string_types = (str, bytes)
+else:
+    def string_escape(s):
+        return s.encode('string_escape')
+    from cStringIO import StringIO
+    string_types = (str, unicode)
 
 ######################################################################
 # CONFIGURATION
@@ -20,15 +32,17 @@ OPENMP = False
 ######################################################################
 # Helper class
 def write_if_different(filename, data):
+    data = data.encode('ascii')
+
     if os.path.exists(filename):
-        fd = open(filename, 'r')
+        fd = open(filename, 'rb')
         original_data = fd.read()
         fd.close()
     else:
         original_data = None
 
     if original_data != data:
-        fd = open(filename, 'w')
+        fd = open(filename, 'wb')
         fd.write(data)
         fd.close()
 
@@ -37,14 +51,14 @@ def write_if_different(filename, data):
 try:
     import numpy
 except ImportError:
-    print "numpy must be installed to build pywcs."
-    print "ABORTING."
+    print("numpy must be installed to build pywcs.")
+    print("ABORTING.")
     raise
 
 major, minor, rest = numpy.__version__.split(".", 2)
-if (major, minor) < (1, 3):
-    print "numpy version 1.3 or later must be installed to build pywcs."
-    print "ABORTING."
+if (int(major), int(minor)) < (1, 3):
+    print("numpy version 1.3 or later must be installed to build pywcs.")
+    print("ABORTING.")
     raise ImportError
 
 try:
@@ -111,7 +125,7 @@ if os.path.exists("pywcs"):
     srcroot = 'pywcs'
 else:
     srcroot = '.'
-h_file = cStringIO.StringIO()
+h_file = StringIO()
 h_file.write("""
 /* WCSLIB library version number. */
 #define WCSLIB_VERSION %s
@@ -129,14 +143,16 @@ write_if_different(join(srcroot, 'src', 'wcsconfig.h'), h_file.getvalue())
 # GENERATE DOCSTRINGS IN C
 sys.path.append(join('.', srcroot, "lib"))
 docstrings = {}
-execfile(join(srcroot, 'doc', 'docstrings.py'), docstrings)
+with open(join(srcroot, 'doc', 'docstrings.py'), 'rb') as fd:
+    docstrings_content = fd.read()
+exec(docstrings_content, docstrings)
 keys = [key for key in docstrings.keys()
-        if not key.startswith('__') and type(key) in (str, unicode)]
+        if not key.startswith('__') and type(key) in string_types]
 keys.sort()
 for key in keys:
-    docstrings[key] = docstrings[key].encode('utf8').lstrip() + '\0'
+    docstrings[key] = docstrings[key].encode('utf8').lstrip()
 
-h_file = cStringIO.StringIO()
+h_file = StringIO()
 h_file.write("""/*
 DO NOT EDIT!
 
@@ -157,7 +173,7 @@ h_file.write("\n#endif\n\n")
 
 write_if_different(join(srcroot, 'src', 'docstrings.h'), h_file.getvalue())
 
-c_file = cStringIO.StringIO()
+c_file = StringIO()
 c_file.write("""/*
 DO NOT EDIT!
 
@@ -182,9 +198,9 @@ for key in keys:
     # For portability across various compilers, we need to fill the
     # docstrings in 256-character chunks
     for i in range(0, len(val), 256):
-        chunk = val[i:i+256].encode("string_escape").replace('"', '\\"')
+        chunk = string_escape(val[i:i+256]).replace('"', '\\"')
         c_file.write('   strncpy(doc_%s + %d, "%s", %d);\n' % (
-                key, i, chunk, min(len(val) - i, 256)))
+            key, i, chunk, min(len(val) - i, 256)))
     c_file.write("\n")
 c_file.write("\n}\n\n")
 
@@ -283,8 +299,8 @@ setupargs = {
     'data_files' : [
         ( 'pywcs/include', ['src/*.h']),
         ( 'pywcs/include/wcslib', [ WCSLIBC + '/*.h'] ),
-        ( 'pywcs/tests/maps', ['lib/tests/maps/*.fits']),
-        ( 'pywcs/tests/spectra', ['lib/tests/spectra/*.fits'])
+        ( 'pywcs/tests/maps', ['lib/tests/maps/*.hdr']),
+        ( 'pywcs/tests/spectra', ['lib/tests/spectra/*.hdr'])
         ],
     'package_dir' : {pkg[0]: 'lib', pkg[1]: 'lib/tests'},
 }

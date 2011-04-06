@@ -61,7 +61,7 @@ PyArrayProxy_New(
       nd, (npy_intp*)dims,
       NULL,
       (void*)data,
-      NPY_CONTIGUOUS,
+      NPY_C_CONTIGUOUS | NPY_WRITEABLE,
       NULL);
 
   if (result == NULL) {
@@ -171,11 +171,15 @@ wcsprm_fix_values(
   value_fixer(x->crval, naxis);
   value_fixer(x->csyer, naxis);
   value_fixer(&x->equinox, 1);
+  value_fixer(&x->latpole, 1);
+  value_fixer(&x->lonpole, 1);
   value_fixer(&x->mjdavg, 1);
   value_fixer(&x->mjdobs, 1);
   value_fixer(x->obsgeo, 3);
+  value_fixer(&x->cel.phi0, 1);
   value_fixer(&x->restfrq, 1);
   value_fixer(&x->restwav, 1);
+  value_fixer(&x->cel.theta0, 1);
   value_fixer(&x->velangl, 1);
   value_fixer(&x->velosys, 1);
   value_fixer(&x->zsource, 1);
@@ -295,9 +299,15 @@ set_string(
     return -1;
   }
 
+  #if PY3K
+  if (PyBytes_AsStringAndSize(value, &buffer, &len) == -1) {
+    return -1;
+  }
+  #else
   if (PyString_AsStringAndSize(value, &buffer, &len) == -1) {
     return -1;
   }
+  #endif
 
   if (len > maxlen) {
     PyErr_Format(
@@ -320,18 +330,12 @@ set_bool(
     const char* propname,
     PyObject* value,
     int* dest) {
-  long value_int;
 
   if (check_delete(propname, value)) {
     return -1;
   }
 
-  value_int = PyInt_AsLong(value);
-  if (value_int == -1 && PyErr_Occurred()) {
-    return -1;
-  }
-
-  *dest = value_int ? 1 : 0;
+  *dest = PyObject_IsTrue(value);
 
   return 0;
 }
@@ -349,7 +353,11 @@ set_int(
     return -1;
   }
 
+  #if PY3K
+  value_int = PyLong_AsLong(value);
+  #else
   value_int = PyInt_AsLong(value);
+  #endif
   if (value_int == -1 && PyErr_Occurred()) {
     return -1;
   }
@@ -475,13 +483,16 @@ set_int_array(
 
 /* get_str_list is inlined */
 
+/* set_str_list is inlined */
+
 int
-set_str_list(
+set_str_list_verified(
     const char* propname,
     PyObject* value,
     Py_ssize_t len,
     Py_ssize_t maxlen,
-    char (*dest)[72]) {
+    char (*dest)[72],
+    str_verify_fn verify) {
 
   PyObject*  str      = NULL;
   char*      str_char = NULL;
@@ -524,21 +535,50 @@ set_str_list(
       return -1;
     }
 
+    #if PY3K
+    if (!PyBytes_CheckExact(str)) {
+    #else
     if (!PyString_CheckExact(str)) {
+    #endif
       ignored = PyErr_Format(
           PyExc_TypeError,
+          #if PY3K
+          "'%s' must be a sequence of bytes",
+          #else
           "'%s' must be a sequence of strings",
+          #endif
           propname);
       Py_DECREF(str);
       return -1;
     }
+
+    #if PY3K
+    if (PyBytes_Size(str) > maxlen) {
+    #else
     if (PyString_Size(str) > maxlen) {
+    #endif
       ignored = PyErr_Format(
           PyExc_TypeError,
+          #if PY3K
+          "Each bytes in '%s' must be less than %u characters",
+          #else
           "Each string in '%s' must be less than %u characters",
+          #endif
           propname, (unsigned int)maxlen);
       Py_DECREF(str);
       return -1;
+    }
+
+    if (verify) {
+      #if PY3K
+      str_char = PyBytes_AsString(str);
+      #else
+      str_char = PyString_AsString(str);
+      #endif
+      if (!verify(str_char)) {
+        Py_DECREF(str);
+        return -1;
+      }
     }
 
     Py_DECREF(str);
@@ -556,7 +596,11 @@ set_str_list(
     }
 
     /* We already know its a string of the correct length */
+    #if PY3K
+    if (PyBytes_AsStringAndSize(str, &str_char, &str_len)) {
+    #else
     if (PyString_AsStringAndSize(str, &str_char, &str_len)) {
+    #endif
       /* Theoretically, something has gone really wrong here, since
          we've already verified the list. */
       ignored = PyErr_Format(
@@ -624,12 +668,24 @@ set_pscards(
   int        ival      = 0;
   int        mval      = 0;
   char*      strvalue  = 0;
+  void*      newmem    = NULL;
 
   if (!PySequence_Check(value))
     return -1;
   size = PySequence_Size(value);
   if (size > 0x7fffffff) {
     return -1;
+  }
+
+  if (size > (Py_ssize_t)*npsmax) {
+    newmem = malloc(sizeof(struct pscard) * size);
+    if (newmem == NULL) {
+      PyErr_SetString(PyExc_MemoryError, "Could not allocate memory.");
+      return -1;
+    }
+    free(*ps);
+    *ps = newmem;
+    *npsmax = (int)size;
   }
 
   /* Verify the entire list for correct types first, so we don't have
@@ -644,16 +700,6 @@ set_pscards(
       return -1;
     }
     Py_DECREF(subvalue);
-  }
-
-  if (size > (Py_ssize_t)*npsmax) {
-    free(*ps);
-    *ps = malloc(sizeof(struct pvcard) * size);
-    if (*ps == NULL) {
-      PyErr_SetString(PyExc_MemoryError, "Could not allocate memory.");
-      return -1;
-    }
-    *npsmax = (int)size;
   }
 
   for (i = 0; i < size; ++i) {
@@ -723,6 +769,7 @@ set_pvcards(
   int        ival      = 0;
   int        mval      = 0;
   double     dblvalue  = 0.0;
+  void*      newmem    = NULL;
 
   if (!PySequence_Check(value)) {
     return -1;
@@ -730,6 +777,17 @@ set_pvcards(
   size = PySequence_Size(value);
   if (size > 0x7fffffff) {
     return -1;
+  }
+
+  if (size > (Py_ssize_t)*npvmax) {
+    newmem = malloc(sizeof(struct pvcard) * size);
+    if (newmem == NULL) {
+      PyErr_SetString(PyExc_MemoryError, "Could not allocate memory.");
+      return -1;
+    }
+    free(*pv);
+    *pv = newmem;
+    *npvmax = (int)size;
   }
 
   /* Verify the entire list for correct types first, so we don't have
@@ -744,16 +802,6 @@ set_pvcards(
       return -1;
     }
     Py_DECREF(subvalue);
-  }
-
-  if (size > (Py_ssize_t)*npvmax) {
-    free(*pv);
-    *pv = malloc(sizeof(struct pvcard) * size);
-    if (*pv == NULL) {
-      PyErr_SetString(PyExc_MemoryError, "Could not allocate memory.");
-      return -1;
-    }
-    *npvmax = (int)size;
   }
 
   for (i = 0; i < size; ++i) {

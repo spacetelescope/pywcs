@@ -73,7 +73,7 @@ PyUnits_dealloc(
     PyUnits* self) {
 
   PyUnits_clear(self);
-  self->ob_type->tp_free((PyObject*)self);
+  Py_TYPE(self)->tp_free((PyObject*)self);
 }
 
 PyUnits*
@@ -184,7 +184,11 @@ PyUnits___str__(
   snprintf(buffer, 1 << 8, "<pywcs.UnitConverter (x%s%s)%s>",
            scale, offset, power);
 
+  #if PY3K
+  return PyUnicode_FromString(buffer);
+  #else
   return PyString_FromString(buffer);
+  #endif
 }
 
 static PyObject*
@@ -309,8 +313,12 @@ static PyMethodDef PyUnits_methods[] = {
 };
 
 PyTypeObject PyUnitsType = {
+  #if PY3K
+  PyVarObject_HEAD_INIT(NULL, 0)
+  #else
   PyObject_HEAD_INIT(NULL)
   0,                            /*ob_size*/
+  #endif
   "pywcs.UnitConverter",        /*tp_name*/
   sizeof(PyUnits),              /*tp_basicsize*/
   0,                            /*tp_itemsize*/
@@ -364,16 +372,16 @@ _setup_units_type(
 
   units_errexc[0]  = NULL;               /* Success */
   units_errexc[1]  = &PyExc_ValueError;  /* Invalid numeric multiplier */
-  units_errexc[2]  = &PyExc_SyntaxError; /* Dangling binary operator */
-  units_errexc[3]  = &PyExc_SyntaxError; /* Invalid symbol in INITIAL context */
-  units_errexc[4]  = &PyExc_SyntaxError; /* Function in invalid context */
-  units_errexc[5]  = &PyExc_SyntaxError; /* Invalid symbol in EXPON context */
-  units_errexc[6]  = &PyExc_SyntaxError; /* Unbalanced bracket */
-  units_errexc[7]  = &PyExc_SyntaxError; /* Unbalanced parenthesis */
-  units_errexc[8]  = &PyExc_SyntaxError; /* Conservative binary operators */
-  units_errexc[9]  = &PyExc_SyntaxError; /* Internal parser error */
-  units_errexc[10] = &PyExc_SyntaxError; /* Non-conformant unit specifications */
-  units_errexc[11] = &PyExc_SyntaxError; /* Non-conformant functions */
+  units_errexc[2]  = &PyExc_ValueError; /* Dangling binary operator */
+  units_errexc[3]  = &PyExc_ValueError; /* Invalid symbol in INITIAL context */
+  units_errexc[4]  = &PyExc_ValueError; /* Function in invalid context */
+  units_errexc[5]  = &PyExc_ValueError; /* Invalid symbol in EXPON context */
+  units_errexc[6]  = &PyExc_ValueError; /* Unbalanced bracket */
+  units_errexc[7]  = &PyExc_ValueError; /* Unbalanced parenthesis */
+  units_errexc[8]  = &PyExc_ValueError; /* Conservative binary operators */
+  units_errexc[9]  = &PyExc_ValueError; /* Internal parser error */
+  units_errexc[10] = &PyExc_ValueError; /* Non-conformant unit specifications */
+  units_errexc[11] = &PyExc_ValueError; /* Non-conformant functions */
   units_errexc[12] = &PyExc_ValueError;  /* Potentially unsafe translation */
 
   return 0;

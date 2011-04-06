@@ -45,7 +45,7 @@ PySip_dealloc(
     PySip* self) {
 
   sip_free(&self->x);
-  self->ob_type->tp_free((PyObject*)self);
+  Py_TYPE(self)->tp_free((PyObject*)self);
 }
 
 /*@null@*/ static PyObject *
@@ -478,8 +478,12 @@ static PyMethodDef PySip_methods[] = {
 };
 
 PyTypeObject PySipType = {
+  #if PY3K
+  PyVarObject_HEAD_INIT(NULL, 0)
+  #else
   PyObject_HEAD_INIT(NULL)
   0,                            /*ob_size*/
+  #endif
   "pywcs.Sip",                  /*tp_name*/
   sizeof(PySip),                /*tp_basicsize*/
   0,                            /*tp_itemsize*/

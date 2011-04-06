@@ -86,7 +86,7 @@ PyWtbarr_dealloc(
     PyWtbarr* self) {
 
   PyWtbarr_clear(self);
-  self->ob_type->tp_free((PyObject*)self);
+  Py_TYPE(self)->tp_free((PyObject*)self);
 }
 
 PyWtbarr*
@@ -199,13 +199,13 @@ PyWtbarr_get_kind(
     PyWtbarr* self,
     /*@unused@*/ void* closure) {
 
-  if (self->x->kind == 'c') {
-    return PyString_FromString("c");
-  } else if (self->x->kind == 'i') {
-    return PyString_FromString("i");
-  }
+  char kind = (char)self->x->kind;
 
-  return NULL;
+  #if PY3K
+  return PyUnicode_FromStringAndSize(&kind, 1);
+  #else
+  return PyString_FromStringAndSize(&kind, 1);
+  #endif
 }
 
 /*@null@*/ static PyObject*
@@ -264,8 +264,12 @@ static PyMethodDef PyWtbarr_methods[] = {
 };
 
 PyTypeObject PyWtbarrType = {
+  #if PY3K
+  PyVarObject_HEAD_INIT(NULL, 0)
+  #else
   PyObject_HEAD_INIT(NULL)
   0,                            /*ob_size*/
+  #endif
   "pywcs.Wtbarr",               /*tp_name*/
   sizeof(PyWtbarr),             /*tp_basicsize*/
   0,                            /*tp_itemsize*/
