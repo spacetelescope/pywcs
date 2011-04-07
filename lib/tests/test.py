@@ -1,5 +1,6 @@
 import glob
 import os
+import sys
 
 import numpy as np
 from numpy.testing import assert_array_almost_equal
@@ -60,7 +61,8 @@ def test_all_units():
     def test_self(x):
         try:
             u = pywcs.UnitConverter(x, x)
-        except ValueError as e:
+        except ValueError:
+            e = sys.exc_info()[1]
             if str(e) == "Potentially unsafe translation" and \
                     x in ("S", "H", "D"):
                 return
@@ -79,7 +81,8 @@ def test_unit_prefixes():
         unit = p + x
         try:
             u = pywcs.UnitConverter(unit, unit)
-        except ValueError as e:
+        except ValueError:
+            e = sys.exc_info()[1]
             if str(e) == "Potentially unsafe translation" and \
                     x in ("S", "H", "D"):
                 return

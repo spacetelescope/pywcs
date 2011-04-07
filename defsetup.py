@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from __future__ import division # confidence high
+from __future__ import with_statement, division # confidence high
 
 CONTACT = "Michael Droettboom"
 EMAIL = "mdroe@stsci.edu"
@@ -10,10 +10,13 @@ from os.path import join
 import os.path
 import sys
 
+def b(s):
+    return s.encode('ascii')
+
 if sys.version_info[0] >= 3:
     def string_escape(s):
         s = s.decode('ascii').encode('ascii', 'backslashreplace')
-        s = s.replace(b'\n', b'\\n')
+        s = s.replace(b('\n'), b('\\n'))
         return s.decode('ascii')
     from io import StringIO
     string_types = (str, bytes)

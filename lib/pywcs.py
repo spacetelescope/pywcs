@@ -58,7 +58,7 @@ together in a pipeline:
    - `wcslib`_ WCS transformation (by a `~pywcs.Wcsprm` object)
 """
 
-from __future__ import absolute_import, division # confidence high
+from __future__ import division # confidence high
 
 # stdlib
 import copy
@@ -73,8 +73,12 @@ except ImportError:
     HAS_PYFITS = False
 
 # local
-from . import _docutil as __
-from . import _pywcs
+if sys.version_info[0] >= 3:
+    from . import _docutil as __
+    from . import _pywcs
+else:
+    import _docutil as __
+    import _pywcs
 
 assert _pywcs._sanity_check(), \
     """PyWcs did not pass its sanity check for your build on your platform.
