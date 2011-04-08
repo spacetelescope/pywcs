@@ -279,12 +279,10 @@ void
 wcslib_units_to_python_exc(int status) {
   if (status > 0 && status < 13) {
     PyErr_SetString(PyExc_ValueError, wcsunits_errmsg[status]);
-    return -1;
   } else {
     PyErr_SetString(
         PyExc_RuntimeError,
         "Unknown error occurred.  Something is seriously wrong.");
-    return -1;
   }
 }
 

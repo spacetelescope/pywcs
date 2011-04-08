@@ -633,7 +633,7 @@ PyWcsprm_fix(
   PyObject*      result;
   int            i               = 0;
   int            msg_index       = 0;
-  char*          message;
+  const char*    message;
   PyObject*      ignored         = NULL;
 
   struct message_map_entry {

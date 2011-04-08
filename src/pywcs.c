@@ -941,13 +941,6 @@ struct module_state {
 };
 
 #if PY3K
-    #define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
-#else
-    #define GETSTATE(m) (&_state)
-    static struct module_state _state;
-#endif
-
-#if PY3K
     static struct PyModuleDef moduledef = {
         PyModuleDef_HEAD_INIT,
         "_pywcs",
@@ -973,52 +966,52 @@ struct module_state {
 #endif
 
 {
-    PyObject* m;
+  PyObject* m;
 
-    wcs_errexc[0] = NULL;                         /* Success */
-    wcs_errexc[1] = &PyExc_MemoryError;           /* Null wcsprm pointer passed */
-    wcs_errexc[2] = &PyExc_MemoryError;           /* Memory allocation failed */
-    wcs_errexc[3] = &WcsExc_SingularMatrix;       /* Linear transformation matrix is singular */
-    wcs_errexc[4] = &WcsExc_InconsistentAxisTypes; /* Inconsistent or unrecognized coordinate axis types */
-    wcs_errexc[5] = &PyExc_ValueError;            /* Invalid parameter value */
-    wcs_errexc[6] = &WcsExc_InvalidTransform;     /* Invalid coordinate transformation parameters */
-    wcs_errexc[7] = &WcsExc_InvalidTransform;     /* Ill-conditioned coordinate transformation parameters */
-    wcs_errexc[8] = &WcsExc_InvalidCoordinate;    /* One or more of the pixel coordinates were invalid, */
-    /* as indicated by the stat vector */
-    wcs_errexc[9] = &WcsExc_InvalidCoordinate;    /* One or more of the world coordinates were invalid, */
-                                        /* as indicated by the stat vector */
-    wcs_errexc[10] = &WcsExc_InvalidCoordinate;    /* Invalid world coordinate */
-    wcs_errexc[11] = &WcsExc_NoSolution;           /* no solution found in the specified interval */
-    wcs_errexc[12] = &WcsExc_InvalidSubimageSpecification; /* Invalid subimage specification (no spectral axis) */
-    wcs_errexc[13] = &WcsExc_NonseparableSubimageCoordinateSystem; /* Non-separable subimage coordinate system */
+  wcs_errexc[0] = NULL;                         /* Success */
+  wcs_errexc[1] = &PyExc_MemoryError;           /* Null wcsprm pointer passed */
+  wcs_errexc[2] = &PyExc_MemoryError;           /* Memory allocation failed */
+  wcs_errexc[3] = &WcsExc_SingularMatrix;       /* Linear transformation matrix is singular */
+  wcs_errexc[4] = &WcsExc_InconsistentAxisTypes; /* Inconsistent or unrecognized coordinate axis types */
+  wcs_errexc[5] = &PyExc_ValueError;            /* Invalid parameter value */
+  wcs_errexc[6] = &WcsExc_InvalidTransform;     /* Invalid coordinate transformation parameters */
+  wcs_errexc[7] = &WcsExc_InvalidTransform;     /* Ill-conditioned coordinate transformation parameters */
+  wcs_errexc[8] = &WcsExc_InvalidCoordinate;    /* One or more of the pixel coordinates were invalid, */
+  /* as indicated by the stat vector */
+  wcs_errexc[9] = &WcsExc_InvalidCoordinate;    /* One or more of the world coordinates were invalid, */
+  /* as indicated by the stat vector */
+  wcs_errexc[10] = &WcsExc_InvalidCoordinate;    /* Invalid world coordinate */
+  wcs_errexc[11] = &WcsExc_NoSolution;           /* no solution found in the specified interval */
+  wcs_errexc[12] = &WcsExc_InvalidSubimageSpecification; /* Invalid subimage specification (no spectral axis) */
+  wcs_errexc[13] = &WcsExc_NonseparableSubimageCoordinateSystem; /* Non-separable subimage coordinate system */
 
 #if PY3K
-    m = PyModule_Create(&moduledef);
+  m = PyModule_Create(&moduledef);
 #else
-    m = Py_InitModule3("_pywcs", module_methods, NULL);
+  m = Py_InitModule3("_pywcs", module_methods, NULL);
 #endif
 
-    if (m == NULL)
-        INITERROR;
+  if (m == NULL)
+    INITERROR;
 
-    import_array();
-    fill_docstrings();
+  import_array();
+  fill_docstrings();
 
-    if (_setup_api(m)                 ||
-        _setup_str_list_proxy_type(m) ||
-        _setup_wcsprm_type(m)         ||
-        _setup_tabprm_type(m)         ||
-        _setup_units_type(m)          ||
-        /* _setup_wtbarr_type(m)         || */
-        _setup_distortion_type(m)     ||
-        _setup_sip_type(m)            ||
-        _setup_pywcs_type(m)          ||
-        _define_exceptions(m)) {
-        Py_DECREF(m);
-        INITERROR;
-    }
+  if (_setup_api(m)                 ||
+      _setup_str_list_proxy_type(m) ||
+      _setup_wcsprm_type(m)         ||
+      _setup_tabprm_type(m)         ||
+      _setup_units_type(m)          ||
+      /* _setup_wtbarr_type(m)         || */
+      _setup_distortion_type(m)     ||
+      _setup_sip_type(m)            ||
+      _setup_pywcs_type(m)          ||
+      _define_exceptions(m)) {
+    Py_DECREF(m);
+    INITERROR;
+  }
 
 #if PY3K
-    return m;
+  return m;
 #endif
 }
