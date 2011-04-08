@@ -1,3 +1,26 @@
+- Supports Python 3.x
+
+- Builds on Microsoft Windows without severely patching wcslib.
+
+- Lots of new unit tests
+
+- pywcs will now run without pyfits, though the SIP and distortion
+  lookup table functionality is unavailable.
+
+- Setting wcs.wcs.cunit will now verify that the values are valid unit
+  strings.
+
+Version 1.10
+============
+
+- Adds a UnitConversion class, which gives access to wcslib's unit
+  conversion functionality.  Given two convertible unit strings, pywcs
+  can convert arrays of values from one to the other.
+
+- Now uses wcslib 4.7
+
+- Changes to some wcs values would not always calculate secondary values.
+
 Version 1.9
 ===========
 
