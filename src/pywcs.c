@@ -268,6 +268,7 @@ PyWcs_all_pix2sky(
   }
 
   /* Make the call */
+  Py_BEGIN_ALLOW_THREADS
   preoffset_array(pixcrd, origin);
   wcsprm_python2c(self->x.wcs);
   status = pipeline_all_pixel2world(&self->x,
@@ -277,6 +278,7 @@ PyWcs_all_pix2sky(
                                     (double*)PyArray_DATA(world));
   wcsprm_c2python(self->x.wcs);
   unoffset_array(pixcrd, origin);
+  Py_END_ALLOW_THREADS
   /* unoffset_array(world, origin); */
 
  exit:
@@ -344,6 +346,7 @@ PyWcs_p4_pix2foc(
     goto exit;
   }
 
+  Py_BEGIN_ALLOW_THREADS
   preoffset_array(pixcrd, origin);
   status = p4_pix2foc(2, (void *)self->x.cpdis,
                       (unsigned int)PyArray_DIM(pixcrd, 0),
@@ -351,6 +354,7 @@ PyWcs_p4_pix2foc(
                       (double*)PyArray_DATA(foccrd));
   unoffset_array(pixcrd, origin);
   unoffset_array(foccrd, origin);
+  Py_END_ALLOW_THREADS
 
  exit:
 
@@ -413,6 +417,7 @@ PyWcs_det2im(
     goto exit;
   }
 
+  Py_BEGIN_ALLOW_THREADS
   preoffset_array(detcrd, origin);
   status = p4_pix2foc(2, (void *)self->x.det2im,
                       (unsigned int)PyArray_DIM(detcrd, 0),
@@ -420,6 +425,7 @@ PyWcs_det2im(
                       (double*)PyArray_DATA(imcrd));
   unoffset_array(detcrd, origin);
   unoffset_array(imcrd, origin);
+  Py_END_ALLOW_THREADS
 
  exit:
 
@@ -476,6 +482,7 @@ PyWcs_pix2foc(
     goto _exit;
   }
 
+  Py_BEGIN_ALLOW_THREADS
   preoffset_array(pixcrd, origin);
   status = pipeline_pix2foc(&self->x,
                             (unsigned int)PyArray_DIM(pixcrd, 0),
@@ -484,6 +491,7 @@ PyWcs_pix2foc(
                             (double*)PyArray_DATA(foccrd));
   unoffset_array(pixcrd, origin);
   unoffset_array(foccrd, origin);
+  Py_END_ALLOW_THREADS
 
  _exit:
 
@@ -871,9 +879,9 @@ static PyMethodDef PyWcs_methods[] = {
 };
 
 static PyMethodDef module_methods[] = {
-    {"_sanity_check", (PyCFunction)_sanity_check, METH_NOARGS, ""},
-    {"find_all_wcs", (PyCFunction)PyWcsprm_find_all_wcs, METH_VARARGS|METH_KEYWORDS, doc_find_all_wcs},
-    {NULL}  /* Sentinel */
+  {"_sanity_check", (PyCFunction)_sanity_check, METH_NOARGS, ""},
+  {"find_all_wcs", (PyCFunction)PyWcsprm_find_all_wcs, METH_VARARGS|METH_KEYWORDS, doc_find_all_wcs},
+  {NULL}  /* Sentinel */
 };
 
 static PyTypeObject PyWcsType = {

@@ -455,6 +455,7 @@ PyWcsprm_find_all_wcs(
     }
   }
 
+  Py_BEGIN_ALLOW_THREADS
   if (keysel < 0) {
     status = wcspih(
         header,
@@ -476,6 +477,7 @@ PyWcsprm_find_all_wcs(
         &nwcs,
         &wcs);
   }
+  Py_END_ALLOW_THREADS
 
   if (status != 0) {
     PyErr_SetString(
@@ -929,6 +931,7 @@ PyWcsprm_mix(
   }
 
   /* Convert pixel coordinates to 1-based */
+  Py_BEGIN_ALLOW_THREADS
   preoffset_array(pixcrd, origin);
   wcsprm_python2c(&self->x);
   status = wcsmix(
@@ -946,6 +949,7 @@ PyWcsprm_mix(
   wcsprm_c2python(&self->x);
   unoffset_array(pixcrd, origin);
   unoffset_array(imgcrd, origin);
+  Py_END_ALLOW_THREADS
 
   if (status == 0) {
     result = PyDict_New();
@@ -1063,8 +1067,9 @@ PyWcsprm_p2s(
     goto exit;
   }
 
-  preoffset_array(pixcrd, origin);
   /* Make the call */
+  Py_BEGIN_ALLOW_THREADS
+  preoffset_array(pixcrd, origin);
   wcsprm_python2c(&self->x);
   status = wcsp2s(
       &self->x,
@@ -1080,6 +1085,7 @@ PyWcsprm_p2s(
   unoffset_array(pixcrd, origin);
   /* unoffset_array(world, origin); */
   unoffset_array(imgcrd, origin);
+  Py_END_ALLOW_THREADS
 
   if (status == 0 || status == 8) {
     result = PyDict_New();
@@ -1200,6 +1206,7 @@ PyWcsprm_s2p(
   }
 
   /* Make the call */
+  Py_BEGIN_ALLOW_THREADS
   /* preoffset_array(world, origin); */
   wcsprm_python2c(&self->x);
   status = wcss2p(
@@ -1216,6 +1223,7 @@ PyWcsprm_s2p(
   /* unoffset_array(world, origin); */
   unoffset_array(pixcrd, origin);
   unoffset_array(imgcrd, origin);
+  Py_END_ALLOW_THREADS
 
   if (status == 0 || status == 9) {
     result = PyDict_New();

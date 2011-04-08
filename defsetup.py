@@ -29,7 +29,7 @@ else:
 ######################################################################
 # CONFIGURATION
 # BUILD may be 'debug', 'profile', or 'release'
-BUILD = 'release'
+BUILD = 'debug'
 OPENMP = False
 
 ######################################################################
@@ -235,6 +235,7 @@ define_macros = [('ECHO', None),
                  ('_GNU_SOURCE', None)]
 undef_macros = []
 extra_compile_args = []
+extra_link_args = []
 if BUILD.lower() == 'debug':
     define_macros.append(('DEBUG', None))
     undef_macros.append('NDEBUG')
@@ -283,6 +284,7 @@ PYWCS_EXTENSIONS = [
               define_macros=define_macros,
               undef_macros=undef_macros,
               extra_compile_args=extra_compile_args,
+              extra_link_args=extra_link_args,
               libraries=libraries
               )
     ]
