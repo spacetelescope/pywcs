@@ -57,6 +57,4 @@ PyUnits_cnew(
 
 int _setup_units_type(PyObject* m);
 
-extern PyObject** units_errexc[13];
-
 #endif

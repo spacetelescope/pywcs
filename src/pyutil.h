@@ -196,6 +196,15 @@ _define_exceptions(PyObject* m);
 const char*
 wcslib_get_error_message(int stat);
 
+void
+wcslib_to_python_exc(int status);
+
+void
+wcslib_fix_to_python_exc(int status);
+
+void
+wcslib_units_to_python_exc(int status);
+
 /***************************************************************************
   Property helpers
  ***************************************************************************/

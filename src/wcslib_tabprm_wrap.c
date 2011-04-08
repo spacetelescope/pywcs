@@ -82,6 +82,17 @@ make_fancy_dims(PyTabprm* self, npy_intp* ndims, npy_intp* dims) {
 
 PyObject** tab_errexc[6];
 
+static void
+wcslib_tab_to_python_exc(int status) {
+  if (status > 0 && status < 6) {
+    PyErr_SetString(*tab_errexc[status], tab_errmsg[status]);
+  } else {
+    PyErr_SetString(
+        PyExc_RuntimeError,
+        "Unknown error occurred.  Something is seriously wrong.");
+  }
+}
+
 /***************************************************************************
  * PyTabprm methods
  */
@@ -139,12 +150,8 @@ PyTabprm_cset(
 
   if (status == 0) {
     return 0;
-  } else if (status > 0 && status < WCS_ERRMSG_MAX) {
-    PyErr_SetString(*tab_errexc[status], tab_errmsg[status]);
-    return -1;
   } else {
-    PyErr_SetString(PyExc_RuntimeError,
-                    "Unknown error occurred.  Something is seriously wrong.");
+    wcslib_tab_to_python_exc(status);
     return -1;
   }
 }

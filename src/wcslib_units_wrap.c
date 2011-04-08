@@ -48,8 +48,6 @@ DAMAGE.
 */
 #include "docstrings.h"
 
-PyObject** units_errexc[13];
-
 /***************************************************************************
  * PyTabprm methods
  */
@@ -143,12 +141,8 @@ PyUnits_init(
     return -1;
   } else if (status == 0) {
     return 0;
-  } else if (status >= 1 && status < 13) {
-    PyErr_SetString(*units_errexc[status], wcsunits_errmsg[status]);
-    return -1;
   } else {
-    PyErr_SetString(PyExc_RuntimeError,
-                    "Unknown error occurred.  Something is seriously wrong.");
+    wcslib_units_to_python_exc(status);
     return -1;
   }
 }
@@ -369,20 +363,6 @@ _setup_units_type(
   Py_INCREF(&PyUnitsType);
 
   PyModule_AddObject(m, "UnitConverter", (PyObject *)&PyUnitsType);
-
-  units_errexc[0]  = NULL;               /* Success */
-  units_errexc[1]  = &PyExc_ValueError;  /* Invalid numeric multiplier */
-  units_errexc[2]  = &PyExc_ValueError; /* Dangling binary operator */
-  units_errexc[3]  = &PyExc_ValueError; /* Invalid symbol in INITIAL context */
-  units_errexc[4]  = &PyExc_ValueError; /* Function in invalid context */
-  units_errexc[5]  = &PyExc_ValueError; /* Invalid symbol in EXPON context */
-  units_errexc[6]  = &PyExc_ValueError; /* Unbalanced bracket */
-  units_errexc[7]  = &PyExc_ValueError; /* Unbalanced parenthesis */
-  units_errexc[8]  = &PyExc_ValueError; /* Conservative binary operators */
-  units_errexc[9]  = &PyExc_ValueError; /* Internal parser error */
-  units_errexc[10] = &PyExc_ValueError; /* Non-conformant unit specifications */
-  units_errexc[11] = &PyExc_ValueError; /* Non-conformant functions */
-  units_errexc[12] = &PyExc_ValueError;  /* Potentially unsafe translation */
 
   return 0;
 }

@@ -39,6 +39,9 @@ DAMAGE.
 /* util.h must be imported first */
 #include "pyutil.h"
 
+#include "wcsfix.h"
+#include "wcsunits.h"
+
 /*@null@*/ PyObject*
 PyArrayProxy_New(
     /*@shared@*/ PyObject* self,
@@ -247,7 +250,42 @@ _define_exceptions(
 
 const char*
 wcslib_get_error_message(int status) {
-    return wcsp2s_errmsg[status];
+  return wcs_errmsg[status];
+}
+
+void
+wcslib_to_python_exc(int status) {
+  if (status > 0 && status < WCS_ERRMSG_MAX) {
+    PyErr_SetString(*wcs_errexc[status], wcs_errmsg[status]);
+  } else {
+    PyErr_SetString(
+        PyExc_RuntimeError,
+        "Unknown error occurred.  Something is seriously wrong.");
+  }
+}
+
+void
+wcslib_fix_to_python_exc(int status) {
+  if (status > 0 && status < 11) {
+    PyErr_SetString(PyExc_ValueError, wcsfix_errmsg[status]);
+  } else {
+    PyErr_SetString(
+        PyExc_RuntimeError,
+        "Unknown error occurred.  Something is seriously wrong.");
+  }
+}
+
+void
+wcslib_units_to_python_exc(int status) {
+  if (status > 0 && status < 13) {
+    PyErr_SetString(PyExc_ValueError, wcsunits_errmsg[status]);
+    return -1;
+  } else {
+    PyErr_SetString(
+        PyExc_RuntimeError,
+        "Unknown error occurred.  Something is seriously wrong.");
+    return -1;
+  }
 }
 
 /***************************************************************************

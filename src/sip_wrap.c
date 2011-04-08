@@ -160,14 +160,11 @@ PySip_init(
 
   if (status == 0) {
     return 0;
-  } else if (status > 0 && status < WCS_ERRMSG_MAX) {
-    PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
-    return -1;
   } else if (status == -1) {
+    /* Exception already set */
     return -1;
   } else {
-    PyErr_SetString(PyExc_RuntimeError,
-                    "Unknown error occurred.  Something is seriously wrong.");
+    wcslib_to_python_exc(status);
     return -1;
   }
 }
@@ -211,10 +208,10 @@ PySip_pix2foc(
   foccrd = (PyArrayObject*)PyArray_SimpleNew(2, PyArray_DIMS(pixcrd),
                                              PyArray_DOUBLE);
   if (foccrd == NULL) {
-    status = 2;
     goto exit;
   }
 
+  Py_BEGIN_ALLOW_THREADS
   preoffset_array(pixcrd, origin);
   status = sip_pix2foc(&self->x,
                        (unsigned int)PyArray_DIM(pixcrd, 1),
@@ -223,6 +220,7 @@ PySip_pix2foc(
                        (double*)PyArray_DATA(foccrd));
   unoffset_array(pixcrd, origin);
   unoffset_array(foccrd, origin);
+  Py_END_ALLOW_THREADS
 
  exit:
 
@@ -233,14 +231,10 @@ PySip_pix2foc(
   } else {
     Py_XDECREF(foccrd);
     if (status == -1) {
-      return NULL;
-    } else if (status > 0 && status < WCS_ERRMSG_MAX) {
-      PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
+      /* Exception already set */
       return NULL;
     } else {
-      PyErr_SetString(
-          PyExc_RuntimeError,
-          "Unknown error occurred.  Something is seriously wrong.");
+      wcslib_to_python_exc(status);
       return NULL;
     }
   }
@@ -289,6 +283,7 @@ PySip_foc2pix(
     goto exit;
   }
 
+  Py_BEGIN_ALLOW_THREADS
   preoffset_array(foccrd, origin);
   status = sip_foc2pix(&self->x,
                        (unsigned int)PyArray_DIM(pixcrd, 1),
@@ -297,6 +292,7 @@ PySip_foc2pix(
                        (double*)PyArray_DATA(pixcrd));
   unoffset_array(foccrd, origin);
   unoffset_array(pixcrd, origin);
+  Py_END_ALLOW_THREADS
 
  exit:
   Py_XDECREF(foccrd);
@@ -306,14 +302,10 @@ PySip_foc2pix(
   } else {
     Py_XDECREF(pixcrd);
     if (status == -1) {
-      return NULL;
-    } else if (status > 0 && status < WCS_ERRMSG_MAX) {
-      PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
+      /* Exception already set */
       return NULL;
     } else {
-      PyErr_SetString(
-          PyExc_RuntimeError,
-          "Unknown error occurred.  Something is seriously wrong.");
+      wcslib_to_python_exc(status);
       return NULL;
     }
   }

@@ -379,15 +379,8 @@ PyWcsprm_copy(
     return (PyObject*)copy;
   } else {
     Py_XDECREF(copy);
-    if (status > 0 && status < WCS_ERRMSG_MAX) {
-      PyErr_SetString(*wcs_errexc[status], wcscopy_errmsg[status]);
-      return NULL;
-    } else {
-      PyErr_SetString(
-          PyExc_RuntimeError,
-          "Unknown error occurred.  Something is seriously wrong.");
-      return NULL;
-    }
+    wcslib_to_python_exc(status);
+    return NULL;
   }
 }
 
@@ -540,13 +533,8 @@ PyWcsprm_celfix(
     #else
     return PyInt_FromLong((long)status);
     #endif
-  } else if (status > 0 && status < WCSFIX_ERRMSG_MAX) {
-    PyErr_SetString(PyExc_ValueError, wcsfix_errmsg[status]);
-    return NULL;
   } else {
-    PyErr_SetString(
-        PyExc_RuntimeError,
-        "Unknown error occurred.  Something is seriously wrong.");
+    wcslib_fix_to_python_exc(status);
     return NULL;
   }
 }
@@ -600,13 +588,8 @@ PyWcsprm_cylfix(
     #else
     return PyInt_FromLong((long)status);
     #endif
-  } else if (status > 0 && status < WCSFIX_ERRMSG_MAX) {
-    PyErr_SetString(PyExc_ValueError, wcsfix_errmsg[status]);
-    return NULL;
   } else {
-    PyErr_SetString(
-        PyExc_RuntimeError,
-        "Unknown error occurred.  Something is seriously wrong.");
+    wcslib_fix_to_python_exc(status);
     return NULL;
   }
 }
@@ -627,13 +610,8 @@ PyWcsprm_datfix(
     #else
     return PyInt_FromLong((long)status);
     #endif
-  } else if (status > 0 && status < WCSFIX_ERRMSG_MAX) {
-    PyErr_SetString(PyExc_ValueError, wcsfix_errmsg[status]);
-    return NULL;
   } else {
-    PyErr_SetString(
-        PyExc_RuntimeError,
-        "Unknown error occurred.  Something is seriously wrong.");
+    wcslib_fix_to_python_exc(status);
     return NULL;
   }
 }
@@ -912,21 +890,18 @@ PyWcsprm_mix(
   phi = (PyArrayObject*)PyArray_SimpleNew
     (1, &naxis, PyArray_DOUBLE);
   if (phi == NULL) {
-    status = 2;
     goto exit;
   }
 
   theta = (PyArrayObject*)PyArray_SimpleNew
     (1, &naxis, PyArray_DOUBLE);
   if (theta == NULL) {
-    status = 2;
     goto exit;
   }
 
   imgcrd = (PyArrayObject*)PyArray_SimpleNew
     (1, &naxis, PyArray_DOUBLE);
   if (imgcrd == NULL) {
-    status = 2;
     goto exit;
   }
 
@@ -958,7 +933,7 @@ PyWcsprm_mix(
         PyDict_SetItemString(result, "phi", (PyObject*)phi) ||
         PyDict_SetItemString(result, "theta", (PyObject*)theta) ||
         PyDict_SetItemString(result, "world", (PyObject*)world)) {
-      status = 2;
+      goto exit;
     }
   }
 
@@ -976,13 +951,8 @@ PyWcsprm_mix(
     if (status == -1) {
       /* The error message has already been set */
       return NULL;
-    } else if (status > 0 && status < WCS_ERRMSG_MAX) {
-      PyErr_SetString(*wcs_errexc[status], wcsmix_errmsg[status]);
-      return NULL;
     } else {
-      PyErr_SetString(
-          PyExc_RuntimeError,
-          "Unknown error occurred.  Something is seriously wrong.");
+      wcslib_to_python_exc(status);
       return NULL;
     }
   }
@@ -1035,35 +1005,30 @@ PyWcsprm_p2s(
   imgcrd = (PyArrayObject*)PyArray_SimpleNew(
       2, PyArray_DIMS(pixcrd), PyArray_DOUBLE);
   if (imgcrd == NULL) {
-    status = 2;
     goto exit;
   }
 
   phi = (PyArrayObject*)PyArray_SimpleNew(
       1, PyArray_DIMS(pixcrd), PyArray_DOUBLE);
   if (phi == NULL) {
-    status = 2;
     goto exit;
   }
 
   theta = (PyArrayObject*)PyArray_SimpleNew(
       1, PyArray_DIMS(pixcrd), PyArray_DOUBLE);
   if (theta == NULL) {
-    status = 2;
     goto exit;
   }
 
   world = (PyArrayObject*)PyArray_SimpleNew(
       2, PyArray_DIMS(pixcrd), PyArray_DOUBLE);
   if (world == NULL) {
-    status = 2;
     goto exit;
   }
 
   stat = (PyArrayObject*)PyArray_SimpleNew(
       1, PyArray_DIMS(pixcrd), PyArray_INT);
   if (stat == NULL) {
-    status = 2;
     goto exit;
   }
 
@@ -1095,7 +1060,7 @@ PyWcsprm_p2s(
         PyDict_SetItemString(result, "theta", (PyObject*)theta) ||
         PyDict_SetItemString(result, "world", (PyObject*)world) ||
         PyDict_SetItemString(result, "stat", (PyObject*)stat)) {
-      status = 2;
+      goto exit;
     }
   }
 
@@ -1111,15 +1076,11 @@ PyWcsprm_p2s(
     return result;
   } else {
     Py_XDECREF(result);
-    if (status > 0 && status < WCS_ERRMSG_MAX) {
-      PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
-      return NULL;
-    } else if (status == -1) {
+    if (status == -1) {
+      /* Exception already set */
       return NULL;
     } else {
-      PyErr_SetString(
-          PyExc_RuntimeError,
-          "Unknown error occurred.  Something is seriously wrong.");
+      wcslib_to_python_exc(status);
       return NULL;
     }
   }
@@ -1141,7 +1102,7 @@ PyWcsprm_s2p(
   PyArrayObject* pixcrd    = NULL;
   PyArrayObject* stat      = NULL;
   PyObject*      result    = NULL;
-  int            status    = 0;
+  int            status    = -1;
   const char*    keywords[] = {
     "world", "origin", NULL };
 
@@ -1173,35 +1134,30 @@ PyWcsprm_s2p(
   phi = (PyArrayObject*)PyArray_SimpleNew(
       1, PyArray_DIMS(world), PyArray_DOUBLE);
   if (phi == NULL) {
-    status = 2;
     goto exit;
   }
 
   theta = (PyArrayObject*)PyArray_SimpleNew(
       1, PyArray_DIMS(world), PyArray_DOUBLE);
   if (phi == NULL) {
-    status = 2;
     goto exit;
   }
 
   imgcrd = (PyArrayObject*)PyArray_SimpleNew(
       2, PyArray_DIMS(world), PyArray_DOUBLE);
   if (theta == NULL) {
-    status = 2;
     goto exit;
   }
 
   pixcrd = (PyArrayObject*)PyArray_SimpleNew(
       2, PyArray_DIMS(world), PyArray_DOUBLE);
   if (pixcrd == NULL) {
-    status = 2;
     goto exit;
   }
 
   stat = (PyArrayObject*)PyArray_SimpleNew(
       1, PyArray_DIMS(world), PyArray_INT);
   if (stat == NULL) {
-    status = 2;
     goto exit;
   }
 
@@ -1233,7 +1189,7 @@ PyWcsprm_s2p(
         PyDict_SetItemString(result, "imgcrd", (PyObject*)imgcrd) ||
         PyDict_SetItemString(result, "pixcrd", (PyObject*)pixcrd) ||
         PyDict_SetItemString(result, "stat", (PyObject*)stat)) {
-      status = 2;
+      goto exit;
     }
   }
 
@@ -1249,13 +1205,11 @@ PyWcsprm_s2p(
     return result;
   } else {
     Py_XDECREF(result);
-    if (status > 0 && status < WCS_ERRMSG_MAX) {
-      PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
+    if (status == -1) {
+      /* Exception already set */
       return NULL;
     } else {
-      PyErr_SetString(
-          PyExc_RuntimeError,
-          "Unknown error occurred.  Something is seriously wrong.");
+      wcslib_to_python_exc(status);
       return NULL;
     }
   }
@@ -1273,14 +1227,9 @@ PyWcsprm_cset(
 
   if (status == 0) {
     return 0;
-  } else if (status > 0 && status < WCS_ERRMSG_MAX) {
-    PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
-    return -1;
   } else {
-    PyErr_SetString(
-        PyExc_RuntimeError,
-        "Unknown error occurred.  Something is seriously wrong.");
-    return -1;
+    wcslib_to_python_exc(status);
+    return 1;
   }
 }
 
@@ -1379,13 +1328,8 @@ PyWcsprm_spcfix(
     #else
     return PyInt_FromLong((long)status);
     #endif
-  } else if (status > 0 && status < WCSFIX_ERRMSG_MAX) {
-    PyErr_SetString(PyExc_ValueError, wcsfix_errmsg[status]);
-    return NULL;
   } else {
-    PyErr_SetString(
-        PyExc_RuntimeError,
-        "Unknown error occurred.  Something is seriously wrong.");
+    wcslib_fix_to_python_exc(status);
     return NULL;
   }
 }
@@ -1423,13 +1367,8 @@ PyWcsprm_sptr(
   if (status == 0) {
     Py_INCREF(Py_None);
     return Py_None;
-  } else if (status > 0 && status < WCS_ERRMSG_MAX) {
-    PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
-    return NULL;
   } else {
-    PyErr_SetString(
-        PyExc_RuntimeError,
-        "Unknown error occurred.  Something is seriously wrong.");
+    wcslib_to_python_exc(status);
     return NULL;
   }
 }
@@ -1619,15 +1558,11 @@ PyWcsprm_sub(
 
   if (status == 0) {
     return (PyObject*)py_dest_wcs;
-  } else if (status > 0 && status < WCS_ERRMSG_MAX) {
-    PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
-    return NULL;
-  } else if (status < 0) {
+  } else if (status == -1) {
+    /* Exception already set */
     return NULL;
   } else {
-    PyErr_SetString(
-        PyExc_RuntimeError,
-        "Unknown error occurred.  Something is seriously wrong.");
+    wcslib_to_python_exc(status);
     return NULL;
   }
 }
@@ -1642,7 +1577,7 @@ PyWcsprm_to_header(
   int       relax        = 0;
   int       nkeyrec      = 0;
   char*     header       = NULL;
-  int       status       = 0;
+  int       status       = -1;
   PyObject* result       = NULL;
   const char* keywords[] = {"relax", NULL};
 
@@ -1725,13 +1660,8 @@ PyWcsprm_unitfix(
     #else
     return PyInt_FromLong((long)status);
     #endif
-  } else if (status > 0 && status < WCSFIX_ERRMSG_MAX) {
-    PyErr_SetString(PyExc_ValueError, wcsfix_errmsg[status]);
-    return NULL;
   } else {
-    PyErr_SetString(
-        PyExc_RuntimeError,
-        "Unknown error occurred.  Something is seriously wrong.");
+    wcslib_fix_to_python_exc(status);
     return NULL;
   }
 }
@@ -2245,11 +2175,12 @@ unit_verify(char* val) {
   double scale, units[WCSUNITS_NTYPE];
 
   status = wcsulex(val, &func, &scale, units);
-  if (status >= 1 && status < 13) {
-    PyErr_SetString(*units_errexc[status], wcsunits_errmsg[status]);
+  if (status == 0) {
+    return 1;
+  } else {
+    wcslib_units_to_python_exc(status);
     return 0;
   }
-  return 1;
 }
 
 /*@null@*/ static PyObject*

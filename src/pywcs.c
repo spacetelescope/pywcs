@@ -293,14 +293,11 @@ PyWcs_all_pix2sky(
     return NULL;
   } else {
     Py_DECREF(world);
-    if (status > 0 && status < WCS_ERRMSG_MAX) {
-      PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
-      return NULL;
-    } else if (status == -1) {
+    if (status == -1) {
+      /* exception already set */
       return NULL;
     } else {
-      PyErr_SetString(PyExc_RuntimeError,
-                      "Unknown error occurred.  Something is seriously wrong.");
+      wcslib_to_python_exc(status);
       return NULL;
     }
   }
@@ -364,14 +361,11 @@ PyWcs_p4_pix2foc(
     return (PyObject*)foccrd;
   } else {
     Py_XDECREF(foccrd);
-    if (status > 0 && status < WCS_ERRMSG_MAX) {
-      PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
-      return NULL;
-    } else if (status == -1) {
+    if (status == -1) {
+      /* Exception already set */
       return NULL;
     } else {
-      PyErr_SetString(PyExc_RuntimeError,
-                      "Unknown error occurred.  Something is seriously wrong.");
+      wcslib_to_python_exc(status);
       return NULL;
     }
   }
@@ -435,14 +429,11 @@ PyWcs_det2im(
     return (PyObject*)imcrd;
   } else {
     Py_XDECREF(imcrd);
-    if (status > 0 && status < WCS_ERRMSG_MAX) {
-      PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
-      return NULL;
-    } else if (status == -1) {
+    if (status == -1) {
+      /* Exception already set */
       return NULL;
     } else {
-      PyErr_SetString(PyExc_RuntimeError,
-                      "Unknown error occurred.  Something is seriously wrong.");
+      wcslib_to_python_exc(status);
       return NULL;
     }
   }
@@ -501,14 +492,11 @@ PyWcs_pix2foc(
     return (PyObject*)foccrd;
   } else {
     Py_XDECREF(foccrd);
-    if (status > 0 && status < WCS_ERRMSG_MAX) {
-      PyErr_SetString(*wcs_errexc[status], wcsp2s_errmsg[status]);
-      return NULL;
-    } else if (status == -1) {
+    if (status == -1) {
+      /* Exception already set */
       return NULL;
     } else {
-      PyErr_SetString(PyExc_RuntimeError,
-                      "Unknown error occurred.  Something is seriously wrong.");
+      wcslib_to_python_exc(status);
       return NULL;
     }
   }
