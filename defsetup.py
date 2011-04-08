@@ -29,7 +29,7 @@ else:
 ######################################################################
 # CONFIGURATION
 # BUILD may be 'debug', 'profile', or 'release'
-BUILD = 'debug'
+BUILD = 'release'
 OPENMP = False
 
 ######################################################################
