@@ -1743,7 +1743,7 @@ PyWcsprm_get_cd(
     PyWcsprm* self,
     /*@unused@*/ void* closure) {
 
-  const npy_intp dims[2] = {2, 2};
+  const npy_intp dims[2] = {self->x.naxis, self->x.naxis};
 
   if (is_null(self->x.cd)) {
     return NULL;
@@ -1763,7 +1763,7 @@ PyWcsprm_set_cd(
     PyObject* value,
     /*@unused@*/ void* closure) {
 
-  const npy_intp dims[2] = {2, 2};
+  const npy_intp dims[2] = {self->x.naxis, self->x.naxis};
 
   if (is_null(self->x.cd)) {
     return -1;
@@ -2299,7 +2299,7 @@ PyWcsprm_get_imgpix_matrix(
     PyWcsprm* self,
     /*@unused@*/ void* closure) {
 
-  const npy_intp dims[2] = {2, 2};
+  const npy_intp dims[2] = {self->x.lin.naxis, self->x.lin.naxis};
 
   if (is_null(self->x.lin.imgpix)) {
     return NULL;
@@ -2543,7 +2543,7 @@ PyWcsprm_get_pc(
     PyWcsprm* self,
     /*@unused@*/ void* closure) {
 
-  const npy_intp dims[2] = {2, 2};
+  const npy_intp dims[2] = {self->x.naxis, self->x.naxis};
 
   if (is_null(self->x.pc)) {
     return NULL;
@@ -2563,7 +2563,7 @@ PyWcsprm_set_pc(
     PyObject* value,
     /*@unused@*/ void* closure) {
 
-  const npy_intp dims[2] = {2, 2};
+  const npy_intp dims[2] = {self->x.naxis, self->x.naxis};
   int i, j, naxis;
   double* pc;
 
@@ -2636,7 +2636,7 @@ PyWcsprm_get_piximg_matrix(
     PyWcsprm* self,
     /*@unused@*/ void* closure) {
 
-  const npy_intp dims[2] = {2, 2};
+  const npy_intp dims[2] = {self->x.lin.naxis, self->x.lin.naxis};
 
   if (is_null(self->x.lin.piximg)) {
     return NULL;

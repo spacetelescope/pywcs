@@ -205,7 +205,7 @@ The order of the polynomial in the `SIP`_ ``BP_i_j`` array
 """
 
 cd = """
-``double array[2][2]``
+``double array[naxis][naxis]``
 
 The ``CDi_ja`` linear transformation matrix.
 
@@ -1185,7 +1185,7 @@ Returns an array of focal plane coordinates.
 """ % __.ORIGIN()
 
 pc = """
-``double array[2][2]``
+``double array[naxis][naxis]``
 
 The ``PCi_ja`` (pixel coordinate) transformation matrix.  The order is::
 

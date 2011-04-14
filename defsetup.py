@@ -303,7 +303,8 @@ setupargs = {
         ( 'pywcs/include', ['src/*.h']),
         ( 'pywcs/include/wcslib', [ WCSLIBC + '/*.h'] ),
         ( 'pywcs/tests/maps', ['lib/tests/maps/*.hdr']),
-        ( 'pywcs/tests/spectra', ['lib/tests/spectra/*.hdr'])
+        ( 'pywcs/tests/spectra', ['lib/tests/spectra/*.hdr']),
+        ( 'pywcs/tests/data', ['lib/tests/data/*.hdr'])
         ],
     'package_dir' : {pkg[0]: 'lib', pkg[1]: 'lib/tests'},
 }

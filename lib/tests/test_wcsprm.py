@@ -552,7 +552,10 @@ def test_zsource():
     del w.zsource
     assert np.isnan(w.zsource)
 
-
+def test_cd_3d():
+    header = open(os.path.join(ROOT_DIR, 'data', '3d_cd.hdr'), 'rb').read()
+    w = _pywcs._Wcsprm(header)
+    assert w.cd.shape == (3, 3)
 
 
 
