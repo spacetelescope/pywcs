@@ -1743,7 +1743,7 @@ PyWcsprm_get_cd(
     PyWcsprm* self,
     /*@unused@*/ void* closure) {
 
-  const npy_intp dims[2] = {self->x.naxis, self->x.naxis};
+  const npy_intp dims[2];
 
   if (is_null(self->x.cd)) {
     return NULL;
@@ -1754,6 +1754,9 @@ PyWcsprm_get_cd(
     return NULL;
   }
 
+  dims[0] = self->x.naxis;
+  dims[1] = self->x.naxis;
+
   return get_double_array("cd", self->x.cd, 2, dims, (PyObject*)self);
 }
 
@@ -1763,7 +1766,7 @@ PyWcsprm_set_cd(
     PyObject* value,
     /*@unused@*/ void* closure) {
 
-  const npy_intp dims[2] = {self->x.naxis, self->x.naxis};
+  const npy_intp dims[2];
 
   if (is_null(self->x.cd)) {
     return -1;
@@ -1775,6 +1778,9 @@ PyWcsprm_set_cd(
     note_change(self);
     return 0;
   }
+
+  dims[0] = self->x.naxis;
+  dims[1] = self->x.naxis;
 
   if (set_double_array("cd", value, 2, dims, self->x.cd)) {
     return -1;
@@ -2299,7 +2305,7 @@ PyWcsprm_get_imgpix_matrix(
     PyWcsprm* self,
     /*@unused@*/ void* closure) {
 
-  const npy_intp dims[2] = {self->x.lin.naxis, self->x.lin.naxis};
+  const npy_intp dims[2];
 
   if (is_null(self->x.lin.imgpix)) {
     return NULL;
@@ -2308,6 +2314,9 @@ PyWcsprm_get_imgpix_matrix(
   if (PyWcsprm_cset(self)) {
     return NULL;
   }
+
+  dims[0] = self->x.naxis;
+  dims[1] = self->x.naxis;
 
   return get_double_array("imgpix_matrix", self->x.lin.imgpix, 2, dims,
                           (PyObject*)self);
@@ -2543,7 +2552,7 @@ PyWcsprm_get_pc(
     PyWcsprm* self,
     /*@unused@*/ void* closure) {
 
-  const npy_intp dims[2] = {self->x.naxis, self->x.naxis};
+  const npy_intp dims[2];
 
   if (is_null(self->x.pc)) {
     return NULL;
@@ -2554,6 +2563,9 @@ PyWcsprm_get_pc(
     return NULL;
   }
 
+  dims[0] = self->x.naxis;
+  dims[1] = self->x.naxis;
+
   return get_double_array("pc", self->x.pc, 2, dims, (PyObject*)self);
 }
 
@@ -2563,7 +2575,7 @@ PyWcsprm_set_pc(
     PyObject* value,
     /*@unused@*/ void* closure) {
 
-  const npy_intp dims[2] = {self->x.naxis, self->x.naxis};
+  const npy_intp dims[2];
   int i, j, naxis;
   double* pc;
 
@@ -2595,6 +2607,9 @@ PyWcsprm_set_pc(
 
     return 0;
   }
+
+  dims[0] = self->x.naxis;
+  dims[1] = self->x.naxis;
 
   if (set_double_array("pc", value, 2, dims, self->x.pc)) {
     return -1;
@@ -2636,7 +2651,7 @@ PyWcsprm_get_piximg_matrix(
     PyWcsprm* self,
     /*@unused@*/ void* closure) {
 
-  const npy_intp dims[2] = {self->x.lin.naxis, self->x.lin.naxis};
+  const npy_intp dims[2];
 
   if (is_null(self->x.lin.piximg)) {
     return NULL;
@@ -2645,6 +2660,9 @@ PyWcsprm_get_piximg_matrix(
   if (PyWcsprm_cset(self)) {
     return NULL;
   }
+
+  dims[0] = self->x.naxis;
+  dims[1] = self->x.naxis;
 
   return get_double_array("piximg_matrix", self->x.lin.piximg, 2, dims,
                           (PyObject*)self);
