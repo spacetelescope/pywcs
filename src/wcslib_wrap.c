@@ -89,7 +89,7 @@ is_valid_alt_key(
  */
 
 static int
-PyWcsprm_cset(PyWcsprm* self);
+PyWcsprm_cset(PyWcsprm* self, const int convert);
 
 static inline void
 note_change(PyWcsprm* self) {
@@ -206,7 +206,7 @@ PyWcsprm_init(
 
     self->x.alt[0] = key[0];
 
-    if (PyWcsprm_cset(self)) {
+    if (PyWcsprm_cset(self, 0)) {
       return -1;
     }
     wcsprm_c2python(&self->x);
@@ -345,7 +345,7 @@ PyWcsprm_init(
     }
 
     note_change(self);
-    if (PyWcsprm_cset(self)) {
+    if (PyWcsprm_cset(self, 0)) {
       return -1;
     }
     wcsprm_c2python(&self->x);
@@ -371,7 +371,7 @@ PyWcsprm_copy(
   wcsprm_c2python(&self->x);
 
   if (status == 0) {
-    if (PyWcsprm_cset(copy)) {
+    if (PyWcsprm_cset(copy, 0)) {
       Py_XDECREF(copy);
       return NULL;
     }
@@ -504,7 +504,7 @@ PyWcsprm_find_all_wcs(
     }
 
     subresult->x.flag = 0;
-    if (PyWcsprm_cset(subresult)) {
+    if (PyWcsprm_cset(subresult, 0)) {
       Py_DECREF(subresult);
       Py_DECREF(result);
       ignored = wcsvfree(&nwcs, &wcs);
@@ -718,6 +718,49 @@ PyWcsprm_fix(
 }
 
 /*@null@*/ static PyObject*
+PyWcsprm_get_cdelt_func(
+    PyWcsprm* self,
+    /*@unused@*/ PyObject* args,
+    /*@unused@*/ PyObject* kwds) {
+
+  Py_ssize_t naxis = 0;
+
+  if (is_null(self->x.cdelt)) {
+    return NULL;
+  }
+
+  if (PyWcsprm_cset(self, 1)) {
+    return NULL;
+  }
+
+  naxis = self->x.naxis;
+
+  return get_double_array_readonly("cdelt", self->x.cdelt, 1, &naxis, (PyObject*)self);
+}
+
+/*@null@*/ static PyObject*
+PyWcsprm_get_pc_func(
+    PyWcsprm* self,
+    /*@unused@*/ PyObject* args,
+    /*@unused@*/ PyObject* kwds) {
+
+  npy_intp dims[2];
+
+  if (is_null(self->x.pc)) {
+    return NULL;
+  }
+
+  if (PyWcsprm_cset(self, 1)) {
+    return NULL;
+  }
+
+  dims[0] = self->x.naxis;
+  dims[1] = self->x.naxis;
+
+  return get_double_array_readonly("pc", self->x.pc, 2, dims, (PyObject*)self);
+}
+
+/*@null@*/ static PyObject*
 PyWcsprm_get_ps(
     PyWcsprm* self,
     /*@unused@*/ PyObject* args,
@@ -786,7 +829,7 @@ static PyObject*
 PyWcsprm_is_unity(
     PyWcsprm* self) {
 
-  if (PyWcsprm_cset(self)) {
+  if (PyWcsprm_cset(self, 1)) {
     return NULL;
   }
 
@@ -1217,13 +1260,14 @@ PyWcsprm_s2p(
 
 static int
 PyWcsprm_cset(
-    PyWcsprm* self) {
+    PyWcsprm* self,
+    const int convert) {
 
   int status = 0;
 
-  wcsprm_python2c(&self->x);
+  if (convert) wcsprm_python2c(&self->x);
   status = wcsset(&self->x);
-  wcsprm_c2python(&self->x);
+  if (convert) wcsprm_c2python(&self->x);
 
   if (status == 0) {
     return 0;
@@ -1237,7 +1281,7 @@ PyWcsprm_cset(
 PyWcsprm_set(
     PyWcsprm* self) {
 
-  if (PyWcsprm_cset(self)) {
+  if (PyWcsprm_cset(self, 1)) {
     return NULL;
   }
 
@@ -1298,11 +1342,11 @@ PyWcsprm_print_contents(
 
   int ignored;
 
-  if (PyWcsprm_cset(self)) {
+  wcsprm_python2c(&self->x);
+  if (PyWcsprm_cset(self, 0)) {
+    wcsprm_c2python(&self->x);
     return NULL;
   }
-
-  wcsprm_python2c(&self->x);
   ignored = wcsprt(&self->x);
   wcsprm_c2python(&self->x);
 
@@ -1377,11 +1421,11 @@ PyWcsprm_sptr(
 PyWcsprm___str__(
     PyWcsprm* self) {
 
-  if (PyWcsprm_cset(self)) {
+  wcsprm_python2c(&self->x);
+  if (PyWcsprm_cset(self, 0)) {
+    wcsprm_c2python(&self->x);
     return NULL;
   }
-
-  wcsprm_python2c(&self->x);
   wcsprt(&self->x);
   wcsprm_c2python(&self->x);
 
@@ -1537,7 +1581,7 @@ PyWcsprm_sub(
   wcsprm_python2c(&self->x);
   status = wcssub(0, &self->x, &nsub, axes, &py_dest_wcs->x);
   wcsprm_c2python(&self->x);
-  if (PyWcsprm_cset(py_dest_wcs)) {
+  if (PyWcsprm_cset(py_dest_wcs, 0)) {
     goto exit;
   }
   wcsprm_c2python(&py_dest_wcs->x);
@@ -1729,7 +1773,7 @@ PyWcsprm_get_axis_types(
     return NULL;
   }
 
-  if (PyWcsprm_cset(self)) {
+  if (PyWcsprm_cset(self, 1)) {
     return NULL;
   }
 
@@ -2311,7 +2355,7 @@ PyWcsprm_get_imgpix_matrix(
     return NULL;
   }
 
-  if (PyWcsprm_cset(self)) {
+  if (PyWcsprm_cset(self, 1)) {
     return NULL;
   }
 
@@ -2327,7 +2371,7 @@ PyWcsprm_get_lat(
     PyWcsprm* self,
     /*@unused@*/ void* closure) {
 
-  if (PyWcsprm_cset(self)) {
+  if (PyWcsprm_cset(self, 1)) {
     return NULL;
   }
 
@@ -2367,7 +2411,7 @@ PyWcsprm_get_lattyp(
     return NULL;
   }
 
-  if (PyWcsprm_cset(self)) {
+  if (PyWcsprm_cset(self, 1)) {
     return NULL;
   }
 
@@ -2379,7 +2423,7 @@ PyWcsprm_get_lng(
     PyWcsprm* self,
     /*@unused@*/ void* closure) {
 
-  if (PyWcsprm_cset(self)) {
+  if (PyWcsprm_cset(self, 1)) {
     return NULL;
   }
 
@@ -2395,7 +2439,7 @@ PyWcsprm_get_lngtyp(
     return NULL;
   }
 
-  if (PyWcsprm_cset(self)) {
+  if (PyWcsprm_cset(self, 1)) {
     return NULL;
   }
 
@@ -2657,7 +2701,7 @@ PyWcsprm_get_piximg_matrix(
     return NULL;
   }
 
-  if (PyWcsprm_cset(self)) {
+  if (PyWcsprm_cset(self, 1)) {
     return NULL;
   }
 
@@ -3056,6 +3100,8 @@ static PyMethodDef PyWcsprm_methods[] = {
   {"datfix", (PyCFunction)PyWcsprm_datfix, METH_NOARGS, doc_datfix},
   {"__deepcopy__", (PyCFunction)PyWcsprm_copy, METH_O, doc_copy},
   {"fix", (PyCFunction)PyWcsprm_fix, METH_VARARGS|METH_KEYWORDS, doc_fix},
+  {"get_cdelt", (PyCFunction)PyWcsprm_get_cdelt_func, METH_NOARGS, doc_get_cdelt},
+  {"get_pc", (PyCFunction)PyWcsprm_get_pc_func, METH_NOARGS, doc_get_pc},
   {"get_ps", (PyCFunction)PyWcsprm_get_ps, METH_NOARGS, doc_get_ps},
   {"get_pv", (PyCFunction)PyWcsprm_get_pv, METH_NOARGS, doc_get_pv},
   {"has_cd", (PyCFunction)PyWcsprm_has_cdi_ja, METH_NOARGS, doc_has_cd},

@@ -77,6 +77,14 @@ PyArrayProxy_New(
     int typenum,
     const void* data);
 
+PyObject*
+PyArrayReadOnlyProxy_New(
+    PyObject* self,
+    int nd,
+    const npy_intp* dims,
+    int typenum,
+    const void* data);
+
 typedef int (*str_verify_fn)(char *);
 
 /*@null@*/ PyObject *
@@ -297,6 +305,17 @@ get_double_array(
     /*@shared@*/ PyObject* owner) {
 
   return PyArrayProxy_New(owner, ndims, dims, PyArray_DOUBLE, value);
+}
+
+/*@null@*/ static inline PyObject*
+get_double_array_readonly(
+    /*@unused@*/ const char* propname,
+    double* value,
+    npy_intp ndims,
+    const npy_intp* dims,
+    /*@shared@*/ PyObject* owner) {
+
+  return PyArrayReadOnlyProxy_New(owner, ndims, dims, PyArray_DOUBLE, value);
 }
 
 int

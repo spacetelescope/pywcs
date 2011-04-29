@@ -1,3 +1,13 @@
+- Added functions get_pc() and get_cdelt().  These provide a way to
+  always get the canonical representation of the linear transformation
+  matrix, whether the header specified it in PC, CD or CROTA form.
+
+- Long-running process will now release the Python GIL to better
+  support Python multithreading.
+
+- The dimensions of the cd and pc matrices were always returned
+  as 2x2.  They now are sized according to naxis.
+
 - Supports Python 3.x
 
 - Builds on Microsoft Windows without severely patching wcslib.

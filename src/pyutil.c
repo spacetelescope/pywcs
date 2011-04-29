@@ -42,13 +42,14 @@ DAMAGE.
 #include "wcsfix.h"
 #include "wcsunits.h"
 
-/*@null@*/ PyObject*
-PyArrayProxy_New(
+/*@null@*/ static inline PyObject*
+_PyArrayProxy_New(
     /*@shared@*/ PyObject* self,
     int nd,
     const npy_intp* dims,
     int typenum,
-    const void* data) {
+    const void* data,
+    const int flags) {
 
   PyArray_Descr* type_descr = NULL;
   PyObject*      result     = NULL;
@@ -64,7 +65,7 @@ PyArrayProxy_New(
       nd, (npy_intp*)dims,
       NULL,
       (void*)data,
-      NPY_C_CONTIGUOUS | NPY_WRITEABLE,
+      NPY_C_CONTIGUOUS | flags,
       NULL);
 
   if (result == NULL) {
@@ -73,6 +74,28 @@ PyArrayProxy_New(
   Py_INCREF(self);
   PyArray_BASE(result) = (PyObject*)self;
   return result;
+}
+
+/*@null@*/ PyObject*
+PyArrayProxy_New(
+    /*@shared@*/ PyObject* self,
+    int nd,
+    const npy_intp* dims,
+    int typenum,
+    const void* data) {
+
+  return _PyArrayProxy_New(self, nd, dims, typenum, data, NPY_WRITEABLE);
+}
+
+/*@null@*/ PyObject*
+PyArrayReadOnlyProxy_New(
+    /*@shared@*/ PyObject* self,
+    int nd,
+    const npy_intp* dims,
+    int typenum,
+    const void* data) {
+
+  return _PyArrayProxy_New(self, nd, dims, typenum, data, 0);
 }
 
 void

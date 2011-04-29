@@ -209,18 +209,16 @@ cd = """
 
 The ``CDi_ja`` linear transformation matrix.
 
-For historical compatibility, two alternate specifications of the
-``CDi_ja`` and ``CROTAia`` keywords are supported.  Although these may
-not formally co-exist with ``PCi_ja``, the approach here is simply to
+For historical compatibility, three alternate specifications of the
+linear transforations are available in wcslib.  The canonical
+``PCi_ja`` with ``CDELTia``, and the deprecated ``CDi_ja`` and
+``CROTAia`` keywords.  Although the deprecated versions may not
+formally co-exist with ``PCi_ja``, the approach here is simply to
 ignore them if given in conjunction with ``PCi_ja``.
 
 `~pywcs.Wcsprm.has_pc`, `~pywcs.Wcsprm.has_cd` and
 `~pywcs.Wcsprm.has_crota` can be used to determine which of these
 alternatives are present in the header.
-
-``CDi_ja`` and ``CROTAia`` keywords, if found, are to be stored in the
-`~pywcs.Wcsprm.cd` and `~pywcs.Wcsprm.crota` arrays which are
-dimensioned similarly to `~pywcs.Wcsprm.pc` and `~pywcs.Wcsprm.cdelt`.
 
 These alternate specifications of the linear transformation matrix are
 translated immediately to ``PCi_ja`` by `~pywcs.Wcsprm.set` and are
@@ -330,9 +328,24 @@ crota = """
 
 ``CROTAia`` keyvalues for each coordinate axis.
 
-``CROTAia`` is an alternate specification of the linear transformation
-matrix, maintained for historical compatibility.  See `cd` for the
-current method.
+For historical compatibility, three alternate specifications of the
+linear transforations are available in wcslib.  The canonical
+``PCi_ja`` with ``CDELTia``, and the deprecated ``CDi_ja`` and
+``CROTAia`` keywords.  Although the deprecated versions may not
+formally co-exist with ``PCi_ja``, the approach here is simply to
+ignore them if given in conjunction with ``PCi_ja``.
+
+`~pywcs.Wcsprm.has_pc`, `~pywcs.Wcsprm.has_cd` and
+`~pywcs.Wcsprm.has_crota` can be used to determine which of these
+alternatives are present in the header.
+
+These alternate specifications of the linear transformation matrix are
+translated immediately to ``PCi_ja`` by `~pywcs.Wcsprm.set` and are
+nowhere visible to the lower-level routines.  In particular,
+`~pywcs.Wcsprm.set` resets `~pywcs.Wcsprm.cdelt` to unity if
+``CDi_ja`` is present (and no ``PCi_ja``).  If no ``CROTAia`` is
+associated with the latitude axis, `set` reverts to a unity ``PCi_ja``
+matrix.
 """
 
 crpix = """
@@ -661,6 +674,30 @@ get_offset = """
 get_offset(*x, y*) -> (*x, y*)
 
 Returns the offset from the distortion table for pixel point (*x, y*).
+"""
+
+get_cdelt = """
+get_cdelt() -> double array[naxis]
+
+Coordinate increments (``CDELTia``) for each coord axis.
+
+Returns the ``CDELT`` offsets in read-only form.  Unlike the
+`~pywcs.Wcsprm.cdelt` property, this works even when the header specifies
+the linear transformation matrix in one of the deprecated ``CDi_ja``
+or ``CROTAia`` forms.  This is useful when you want access to the
+linear transformation matrix, but don't care how it was specified in
+the header.
+"""
+
+get_pc = """
+get_pc() -> double array[naxis][naxis]
+
+Returns the ``PC`` matrix in read-only form.  Unlike the
+`~pywcs.Wcsprm.pc` property, this works even when the header specifies
+the linear transformation matrix in one of the deprecated ``CDi_ja``
+or ``CROTAia`` forms.  This is useful when you want access to the
+linear transformation matrix, but don't care how it was specified in
+the header.
 """
 
 get_ps = """
@@ -1192,12 +1229,24 @@ The ``PCi_ja`` (pixel coordinate) transformation matrix.  The order is::
   [[PC1_1, PC1_2],
    [PC2_1, PC2_2]]
 
-For historical compatibility, two alternate specifications of the
-``CDi_ja`` and ``CROTAia`` keywords are supported.
+For historical compatibility, three alternate specifications of the
+linear transforations are available in wcslib.  The canonical
+``PCi_ja`` with ``CDELTia``, and the deprecated ``CDi_ja`` and
+``CROTAia`` keywords.  Although the deprecated versions may not
+formally co-exist with ``PCi_ja``, the approach here is simply to
+ignore them if given in conjunction with ``PCi_ja``.
 
-`~pywcs.Wcsprm.has_pci_ja`, `~pywcs.Wcsprm.has_cdi_ja` and
-`~pywcs.Wcsprm.has_crotaia` can be used to determine which of these
+`~pywcs.Wcsprm.has_pc`, `~pywcs.Wcsprm.has_cd` and
+`~pywcs.Wcsprm.has_crota` can be used to determine which of these
 alternatives are present in the header.
+
+These alternate specifications of the linear transformation matrix are
+translated immediately to ``PCi_ja`` by `~pywcs.Wcsprm.set` and are
+nowhere visible to the lower-level routines.  In particular,
+`~pywcs.Wcsprm.set` resets `~pywcs.Wcsprm.cdelt` to unity if
+``CDi_ja`` is present (and no ``PCi_ja``).  If no ``CROTAia`` is
+associated with the latitude axis, `set` reverts to a unity ``PCi_ja``
+matrix.
 """
 
 phi0 = """

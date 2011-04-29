@@ -556,6 +556,12 @@ def test_cd_3d():
     header = open(os.path.join(ROOT_DIR, 'data', '3d_cd.hdr'), 'rb').read()
     w = _pywcs._Wcsprm(header)
     assert w.cd.shape == (3, 3)
+    assert w.get_pc().shape == (3, 3)
+    assert w.get_cdelt().shape == (3,)
 
-
+@raises(RuntimeError)
+def test_get_pc():
+    header = open(os.path.join(ROOT_DIR, 'data', '3d_cd.hdr'), 'rb').read()
+    w = _pywcs._Wcsprm(header)
+    w.get_pc()[0,0] = 42
 
