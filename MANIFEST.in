@@ -9,4 +9,7 @@ recursive-include doc/source *.rst
 include src/*.h
 include examples/*.py
 include examples/*.fits
+include lib/tests/data/*.*
+include lib/tests/maps/*.*
+include lib/tests/spectra/*.*
 recursive-include wcslib *
