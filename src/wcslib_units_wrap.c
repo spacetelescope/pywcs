@@ -75,9 +75,25 @@ PyUnits_dealloc(
 }
 
 PyUnits*
-PyUnits_cnew(const double scale, const double offset, const double power) {
+PyUnits_cnew(
+    const char* const have,
+    const char* const want,
+    const double scale,
+    const double offset,
+    const double power) {
+
   PyUnits* self;
   self = (PyUnits*)(&PyUnitsType)->tp_alloc(&PyUnitsType, 0);
+  if (have == NULL) {
+    self->have[0] = 0;
+  } else {
+    strncpy(self->have, have, 80);
+  }
+  if (want == NULL) {
+    self->want[0] = 0;
+  } else {
+    strncpy(self->want, want, 80);
+  }
   self->scale = scale;
   self->offset = offset;
   self->power = power;
@@ -92,6 +108,8 @@ PyUnits_new(
 
   PyUnits* self;
   self = (PyUnits*)type->tp_alloc(type, 0);
+  self->have[0] = 0;
+  self->want[0] = 0;
   self->scale = 1.0;
   self->offset = 0.0;
   self->power = 1.0;
@@ -123,17 +141,23 @@ PyUnits_init(
     }
   }
 
-  status = wcsutrn(ctrl, have);
+  /* Copy the strings since we can't have wcslib monkeying with the
+     data in a Python string */
+  strncpy(self->have, have, 80);
+  strncpy(self->want, want, 80);
+
+  status = wcsutrn(ctrl, self->have);
   if (status != -1 && status != 0) {
     goto exit;
   }
 
-  status = wcsutrn(ctrl, want);
+  status = wcsutrn(ctrl, self->want);
   if (status != -1 && status != 0) {
     goto exit;
   }
 
-  status = wcsunits(have, want, &self->scale, &self->offset, &self->power);
+  status = wcsunits(self->have, self->want,
+                    &self->scale, &self->offset, &self->power);
 
  exit:
 
@@ -175,8 +199,8 @@ PyUnits___str__(
     power[0] = 0;
   }
 
-  snprintf(buffer, 1 << 8, "<pywcs.UnitConverter (x%s%s)%s>",
-           scale, offset, power);
+  snprintf(buffer, 1 << 8, "<pywcs.UnitConverter '%s' to '%s' (x%s%s)%s>",
+           self->have, self->want, scale, offset, power);
 
   #if PY3K
   return PyUnicode_FromString(buffer);
@@ -267,6 +291,30 @@ PyUnits_convert(
  */
 
 /*@null@*/ static PyObject*
+PyUnits_get_have(
+    PyUnits* self,
+    /*@unused@*/ void* closure) {
+
+  #if PY3K
+  return PyUnicode_FromString(self->have);
+  #else
+  return PyString_FromString(self->have);
+  #endif
+}
+
+/*@null@*/ static PyObject*
+PyUnits_get_want(
+    PyUnits* self,
+    /*@unused@*/ void* closure) {
+
+  #if PY3K
+  return PyUnicode_FromString(self->want);
+  #else
+  return PyString_FromString(self->want);
+  #endif
+}
+
+/*@null@*/ static PyObject*
 PyUnits_get_scale(
     PyUnits* self,
     /*@unused@*/ void* closure) {
@@ -295,6 +343,8 @@ PyUnits_get_power(
  */
 
 static PyGetSetDef PyUnits_getset[] = {
+  {"have", (getter)PyUnits_get_have, NULL, (char *)doc_have},
+  {"want", (getter)PyUnits_get_want, NULL, (char *)doc_want},
   {"scale", (getter)PyUnits_get_scale, NULL, (char *)doc_scale},
   {"offset", (getter)PyUnits_get_offset, NULL, (char *)doc_offset},
   {"power", (getter)PyUnits_get_power, NULL, (char *)doc_power},

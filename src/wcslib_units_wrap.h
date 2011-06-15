@@ -44,6 +44,8 @@ extern PyTypeObject PyUnitsType;
 
 typedef struct {
   PyObject_HEAD
+  char have[80];
+  char want[80];
   double scale;
   double offset;
   double power;
@@ -51,6 +53,8 @@ typedef struct {
 
 PyUnits*
 PyUnits_cnew(
+    const char* const have,
+    const char* const want,
     const double scale,
     const double offset,
     const double power);

@@ -428,10 +428,10 @@ the ``CRVALia``, ``CDELTia`` and ``CDi_ja`` keywords.
 
 As ``CUNITia`` is an optional header keyword, `~pywcs.Wcsprm.cunit`
 may be left blank but otherwise is expected to contain a standard
-units specification as defined by WCS Paper I.  Utility function
-`wcsutrn`, (not currently wrapped for Python) is available to
-translate commonly used non-standard units specifications but this
-must be done as a separate step before invoking `~pywcs.Wcsprm.set`.
+units specification as defined by WCS Paper I.
+`~pywcs.Wcsprm.unitfix` is available to translate commonly used
+non-standard units specifications but this must be done as a separate
+step before invoking `~pywcs.Wcsprm.set`.
 
 For celestial axes, if `~pywcs.Wcsprm.cunit` is not blank,
 `~pywcs.Wcsprm.set` uses `wcsunits` to parse it and scale
@@ -815,6 +815,13 @@ has_pci_ja() -> bool
 
 Alias for `~pywcs.Wcsprm.has_pc`.  Maintained for backward
 compatibility.
+"""
+
+have = """
+The name of the unit being converted from.
+
+This value always uses standard unit names, even if the
+`UnitConverter` was initialized with a non-standard unit name.
 """
 
 i = """
@@ -1974,6 +1981,13 @@ An undefined value is represented by NaN.
 .. seealso::
 
    `~pywcs.Wcsprm.specsys`, `~pywcs.Wcsprm.ssysobs`
+"""
+
+want = """
+The name of the unit being converted to.
+
+This value always uses standard unit names, even if the
+`UnitConverter` was initialized with a non-standard unit name.
 """
 
 wcs = """
