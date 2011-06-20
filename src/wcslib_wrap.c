@@ -345,9 +345,6 @@ PyWcsprm_init(
     }
 
     note_change(self);
-    if (PyWcsprm_cset(self, 0)) {
-      return -1;
-    }
     wcsprm_c2python(&self->x);
     ignored_int = wcsvfree(&nwcs, &wcs);
     return 0;
