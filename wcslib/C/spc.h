@@ -668,44 +668,44 @@ extern const char *spc_errmsg[];
 struct spcprm {
   /* Initialization flag (see the prologue above).                          */
   /*------------------------------------------------------------------------*/
-  int   flag;                   /* Set to zero to force initialization.     */
+  int   flag;			/* Set to zero to force initialization.     */
 
   /* Parameters to be provided (see the prologue above).                    */
   /*------------------------------------------------------------------------*/
-  char   type[8];               /* Four-letter spectral variable type.      */
-  char   code[4];               /* Three-letter spectral algorithm code.    */
+  char   type[8];		/* Four-letter spectral variable type.      */
+  char   code[4];		/* Three-letter spectral algorithm code.    */
 
-  double crval;                 /* Reference value (CRVALia), SI units.     */
-  double restfrq;               /* Rest frequency, Hz.                      */
-  double restwav;               /* Rest wavelength, m.                      */
+  double crval;			/* Reference value (CRVALia), SI units.     */
+  double restfrq;		/* Rest frequency, Hz.                      */
+  double restwav;		/* Rest wavelength, m.                      */
 
-  double pv[7];                 /* Grism parameters:                        */
-                                /*   0: G, grating ruling density.          */
-                                /*   1: m, interference order.              */
-                                /*   2: alpha, angle of incidence.          */
-                                /*   3: n_r, refractive index at lambda_r.  */
-                                /*   4: n'_r, dn/dlambda at lambda_r.       */
-                                /*   5: epsilon, grating tilt angle.        */
-                                /*   6: theta, detector tilt angle.         */
+  double pv[7];			/* Grism parameters:                        */
+				/*   0: G, grating ruling density.          */
+				/*   1: m, interference order.              */
+				/*   2: alpha, angle of incidence.          */
+				/*   3: n_r, refractive index at lambda_r.  */
+				/*   4: n'_r, dn/dlambda at lambda_r.       */
+				/*   5: epsilon, grating tilt angle.        */
+				/*   6: theta, detector tilt angle.         */
 
   /* Information derived from the parameters supplied.                      */
   /*------------------------------------------------------------------------*/
-  double w[6];                  /* Intermediate values.                     */
-                                /*   0: Rest frequency or wavelength (SI).  */
-                                /*   1: CRVALX (SI units).                  */
-                                /*   2: CDELTX/CDELTia = dX/dS (SI units).  */
-                                /* The remainder are grism intermediates.   */
+  double w[6];			/* Intermediate values.                     */
+				/*   0: Rest frequency or wavelength (SI).  */
+				/*   1: CRVALX (SI units).                  */
+				/*   2: CDELTX/CDELTia = dX/dS (SI units).  */
+				/* The remainder are grism intermediates.   */
 
-  int isGrism;                  /* Grism coordinates?  1: vacuum, 2: air.   */
-  int padding;                  /* (Dummy inserted for alignment purposes.) */
+  int isGrism;			/* Grism coordinates?  1: vacuum, 2: air.   */
+  int padding;			/* (Dummy inserted for alignment purposes.) */
 
-  int (*spxX2P)(SPX_ARGS);      /* Pointers to the transformation functions */
-  int (*spxP2S)(SPX_ARGS);      /* in the two-step algorithm chain in the   */
-                                /* pixel-to-spectral direction.             */
+  int (*spxX2P)(SPX_ARGS);	/* Pointers to the transformation functions */
+  int (*spxP2S)(SPX_ARGS);	/* in the two-step algorithm chain in the   */
+				/* pixel-to-spectral direction.             */
 
-  int (*spxS2P)(SPX_ARGS);      /* Pointers to the transformation functions */
-  int (*spxP2X)(SPX_ARGS);      /* in the two-step algorithm chain in the   */
-                                /* spectral-to-pixel direction.             */
+  int (*spxS2P)(SPX_ARGS);	/* Pointers to the transformation functions */
+  int (*spxP2X)(SPX_ARGS);	/* in the two-step algorithm chain in the   */
+				/* spectral-to-pixel direction.             */
 };
 
 /* Size of the spcprm struct in int units, used by the Fortran wrappers. */

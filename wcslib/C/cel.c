@@ -243,8 +243,6 @@ struct celprm *cel;
           latp = -90.0;
         }
 
-        u = 0.0;
-        v = 0.0;
       } else {
         slz = slat0/z;
         if (fabs(slz) > 1.0) {

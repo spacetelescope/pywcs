@@ -324,23 +324,23 @@ extern const char *cel_errmsg[];
 struct celprm {
   /* Initialization flag (see the prologue above).                          */
   /*------------------------------------------------------------------------*/
-  int    flag;                  /* Set to zero to force initialization.     */
+  int    flag;			/* Set to zero to force initialization.     */
 
   /* Parameters to be provided (see the prologue above).                    */
   /*------------------------------------------------------------------------*/
-  int    offset;                /* Force (x,y) = (0,0) at (phi_0,theta_0).  */
-  double phi0, theta0;          /* Native coordinates of fiducial point.    */
-  double ref[4];                /* Celestial coordinates of fiducial        */
+  int    offset;		/* Force (x,y) = (0,0) at (phi_0,theta_0).  */
+  double phi0, theta0;		/* Native coordinates of fiducial point.    */
+  double ref[4];		/* Celestial coordinates of fiducial        */
                                 /* point and native coordinates of          */
                                 /* celestial pole.                          */
 
-  struct prjprm prj;            /* Projection parameters (see prj.h).       */
+  struct prjprm prj;		/* Projection parameters (see prj.h).       */
 
   /* Information derived from the parameters supplied.                      */
   /*------------------------------------------------------------------------*/
-  double euler[5];              /* Euler angles and functions thereof.      */
-  int    latpreq;               /* LATPOLEa requirement.                    */
-  int    isolat;                /* True if |latitude| is preserved.         */
+  double euler[5];		/* Euler angles and functions thereof.      */
+  int    latpreq;		/* LATPOLEa requirement.                    */
+  int    isolat;		/* True if |latitude| is preserved.         */
 };
 
 /* Size of the celprm struct in int units, used by the Fortran wrappers. */

@@ -72,262 +72,262 @@ jmp_buf wcsutrn_abort_jmp_env;
 %}
 
 %%
-        char orig[80], subs[80];
-        int bracket = 0;
-        int unsafe  = 0;
-        int status  = -1;
-        YY_BUFFER_STATE inbuff;
-        int yylex_destroy(void);
-
-        *orig = '\0';
-        *subs = '\0';
-
-        inbuff = yy_scan_string(unitstr);
-        *unitstr = '\0';
-
-        /* Return here via longjmp() invoked by yy_fatal_error(). */
-        if (setjmp(wcsutrn_abort_jmp_env)) {
-          return 9;
-        }
-
-        BEGIN(INITIAL);
-
-        #ifdef DEBUG
-        fprintf(stderr, "\n%s ->\n", unitstr);
-        #endif
+	char orig[80], subs[80];
+	int bracket = 0;
+	int unsafe  = 0;
+	int status  = -1;
+	YY_BUFFER_STATE inbuff;
+	int yylex_destroy(void);
+	
+	*orig = '\0';
+	*subs = '\0';
+	
+	inbuff = yy_scan_string(unitstr);
+	*unitstr = '\0';
+	
+	/* Return here via longjmp() invoked by yy_fatal_error(). */
+	if (setjmp(wcsutrn_abort_jmp_env)) {
+	  return 9;
+	}
+	
+	BEGIN(INITIAL);
+	
+	#ifdef DEBUG
+	fprintf(stderr, "\n%s ->\n", unitstr);
+	#endif
 
 ^" "*"[" {
-          /* Looks like a keycomment. */
-          strcat(unitstr, "[");
-          bracket = 1;
-        }
+	  /* Looks like a keycomment. */
+	  strcat(unitstr, "[");
+	  bracket = 1;
+	}
 
-" "+      /* Discard leading whitespace. */
+" "+	  /* Discard leading whitespace. */
 
 [^A-Za-z] {
-          /* Non-alphabetic character. */
-          strcat(unitstr, yytext);
-          if (bracket && *yytext == ']') {
-            BEGIN(FLUSH);
-          }
-        }
+	  /* Non-alphabetic character. */
+	  strcat(unitstr, yytext);
+	  if (bracket && *yytext == ']') {
+	    BEGIN(FLUSH);
+	  }
+	}
 
 angstrom {
-          strcpy(orig, yytext);
-          strcpy(subs, "Angstrom");
-          BEGIN(NEXT);
-        }
+	  strcpy(orig, yytext);
+	  strcpy(subs, "Angstrom");
+	  BEGIN(NEXT);
+	}
 
 arcmins|ARCMINS? {
-          strcpy(orig, yytext);
-          strcpy(subs, "arcmin");
-          BEGIN(NEXT);
-        }
+	  strcpy(orig, yytext);
+	  strcpy(subs, "arcmin");
+	  BEGIN(NEXT);
+	}
 
 arcsecs|ARCSECS? {
-          strcpy(orig, yytext);
-          strcpy(subs, "arcsec");
-          BEGIN(NEXT);
-        }
+	  strcpy(orig, yytext);
+	  strcpy(subs, "arcsec");
+	  BEGIN(NEXT);
+	}
 
-BEAM    {
-          strcpy(orig, yytext);
-          strcpy(subs, "beam");
-          BEGIN(NEXT);
-        }
+BEAM	{
+	  strcpy(orig, yytext);
+	  strcpy(subs, "beam");
+	  BEGIN(NEXT);
+	}
 
-Byte    {
-          strcpy(orig, yytext);
-          strcpy(subs, "byte");
-          BEGIN(NEXT);
-        }
+Byte	{
+	  strcpy(orig, yytext);
+	  strcpy(subs, "byte");
+	  BEGIN(NEXT);
+	}
 
 days?|DAYS? {
-          strcpy(orig, yytext);
-          strcpy(subs, "d");
-          BEGIN(NEXT);
-        }
+	  strcpy(orig, yytext);
+	  strcpy(subs, "d");
+	  BEGIN(NEXT);
+	}
 
-D       {
-          unsafe = 1;
-          strcpy(orig, yytext);
-          strcpy(subs, (ctrl & 4) ? "d" : "D");
-          BEGIN(NEXT);
-        }
+D	{
+	  unsafe = 1;
+	  strcpy(orig, yytext);
+	  strcpy(subs, (ctrl & 4) ? "d" : "D");
+	  BEGIN(NEXT);
+	}
 
 degrees?|DEG|DEGREES? {
-          strcpy(orig, yytext);
-          strcpy(subs, "deg");
-          BEGIN(NEXT);
-        }
+	  strcpy(orig, yytext);
+	  strcpy(subs, "deg");
+	  BEGIN(NEXT);
+	}
 
-GHZ     {
-          strcpy(orig, yytext);
-          strcpy(subs, "GHz");
-          BEGIN(NEXT);
-        }
+GHZ	{
+	  strcpy(orig, yytext);
+	  strcpy(subs, "GHz");
+	  BEGIN(NEXT);
+	}
 
-hr|HR   {
-          strcpy(orig, yytext);
-          strcpy(subs, "h");
-          BEGIN(NEXT);
-        }
+hr|HR	{
+	  strcpy(orig, yytext);
+	  strcpy(subs, "h");
+	  BEGIN(NEXT);
+	}
 
-H       {
-          unsafe = 1;
-          strcpy(orig, yytext);
-          strcpy(subs, (ctrl & 2) ? "h" : "H");
-          BEGIN(NEXT);
-        }
+H	{
+	  unsafe = 1;
+	  strcpy(orig, yytext);
+	  strcpy(subs, (ctrl & 2) ? "h" : "H");
+	  BEGIN(NEXT);
+	}
 
-hz|HZ   {
-          strcpy(orig, yytext);
-          strcpy(subs, "Hz");
-          BEGIN(NEXT);
-        }
+hz|HZ	{
+	  strcpy(orig, yytext);
+	  strcpy(subs, "Hz");
+	  BEGIN(NEXT);
+	}
 
-KHZ     {
-          strcpy(orig, yytext);
-          strcpy(subs, "kHz");
-          BEGIN(NEXT);
-        }
+KHZ	{
+	  strcpy(orig, yytext);
+	  strcpy(subs, "kHz");
+	  BEGIN(NEXT);
+	}
 
-JY      {
-          strcpy(orig, yytext);
-          strcpy(subs, "Jy");
-          BEGIN(NEXT);
-        }
+JY	{
+	  strcpy(orig, yytext);
+	  strcpy(subs, "Jy");
+	  BEGIN(NEXT);
+	}
 
 [kK]elvins?|KELVINS? {
-          strcpy(orig, yytext);
-          strcpy(subs, "K");
-          BEGIN(NEXT);
-        }
+	  strcpy(orig, yytext);
+	  strcpy(subs, "K");
+	  BEGIN(NEXT);
+	}
 
-KM      {
-          strcpy(orig, yytext);
-          strcpy(subs, "km");
-          BEGIN(NEXT);
-        }
+KM	{
+	  strcpy(orig, yytext);
+	  strcpy(subs, "km");
+	  BEGIN(NEXT);
+	}
 
 metres?|meters?|M|METRES?|METERS? {
-          strcpy(orig, yytext);
-          strcpy(subs, "m");
-          BEGIN(NEXT);
-        }
+	  strcpy(orig, yytext);
+	  strcpy(subs, "m");
+	  BEGIN(NEXT);
+	}
 
-MIN     {
-          strcpy(orig, yytext);
-          strcpy(subs, "min");
-          BEGIN(NEXT);
-        }
+MIN	{
+	  strcpy(orig, yytext);
+	  strcpy(subs, "min");
+	  BEGIN(NEXT);
+	}
 
-MHZ     {
-          strcpy(orig, yytext);
-          strcpy(subs, "MHz");
-          BEGIN(NEXT);
-        }
+MHZ	{
+	  strcpy(orig, yytext);
+	  strcpy(subs, "MHz");
+	  BEGIN(NEXT);
+	}
 
-Ohm     {
-          strcpy(orig, yytext);
-          strcpy(subs, "ohm");
-          BEGIN(NEXT);
-        }
+Ohm	{
+	  strcpy(orig, yytext);
+	  strcpy(subs, "ohm");
+	  BEGIN(NEXT);
+	}
 
 [pP]ascals?|PASCALS? {
-          strcpy(orig, yytext);
-          strcpy(subs, "Pa");
-          BEGIN(NEXT);
-        }
+	  strcpy(orig, yytext);
+	  strcpy(subs, "Pa");
+	  BEGIN(NEXT);
+	}
 
 pixels|PIXELS? {
-          strcpy(orig, yytext);
-          strcpy(subs, "pixel");
-          BEGIN(NEXT);
-        }
+	  strcpy(orig, yytext);
+	  strcpy(subs, "pixel");
+	  BEGIN(NEXT);
+	}
 
 radians?|RAD|RADIANS? {
-          strcpy(orig, yytext);
-          strcpy(subs, "rad");
-          BEGIN(NEXT);
-        }
+	  strcpy(orig, yytext);
+	  strcpy(subs, "rad");
+	  BEGIN(NEXT);
+	}
 
 sec|seconds?|SEC|SECONDS? {
-          strcpy(orig, yytext);
-          strcpy(subs, "s");
-          BEGIN(NEXT);
-        }
+	  strcpy(orig, yytext);
+	  strcpy(subs, "s");
+	  BEGIN(NEXT);
+	}
 
-S       {
-          unsafe = 1;
-          strcpy(orig, yytext);
-          strcpy(subs, (ctrl & 1) ? "s" : "S");
-          BEGIN(NEXT);
-        }
+S	{
+	  unsafe = 1;
+	  strcpy(orig, yytext);
+	  strcpy(subs, (ctrl & 1) ? "s" : "S");
+	  BEGIN(NEXT);
+	}
 
 [vV]olts?|VOLTS? {
-          strcpy(orig, yytext);
-          strcpy(subs, "V");
-          BEGIN(NEXT);
-        }
+	  strcpy(orig, yytext);
+	  strcpy(subs, "V");
+	  BEGIN(NEXT);
+	}
 
 years?|YR|YEARS? {
-          strcpy(orig, yytext);
-          strcpy(subs, "yr");
-          BEGIN(NEXT);
-        }
+	  strcpy(orig, yytext);
+	  strcpy(subs, "yr");
+	  BEGIN(NEXT);
+	}
 
 [A-Za-z]+ {
-          /* Not a recognized alias. */
-          strcpy(orig, yytext);
-          strcpy(subs, orig);
-          BEGIN(NEXT);
-        }
+	  /* Not a recognized alias. */
+	  strcpy(orig, yytext);
+	  strcpy(subs, orig);
+	  BEGIN(NEXT);
+	}
 
 <NEXT>[A-Za-z]+ {
-          /* Reject the alias match. */
-          strcat(orig, yytext);
-          strcpy(subs, orig);
-        }
+	  /* Reject the alias match. */
+	  strcat(orig, yytext);
+	  strcpy(subs, orig);
+	}
 
 <NEXT>" "+[^A-Za-z] {
-          /* Discard separating whitespace. */
-          unput(yytext[yyleng-1]);
-        }
+	  /* Discard separating whitespace. */
+	  unput(yytext[yyleng-1]);
+	}
 
 <NEXT>" "+[A-Za-z] {
-          /* Compress separating whitespace. */
-          strcat(unitstr, subs);
-          strcat(unitstr, " ");
-          if (strcmp(orig, subs)) status = 0;
-          unput(yytext[yyleng-1]);
-          *subs = '\0';
-          BEGIN(INITIAL);
-        }
+	  /* Compress separating whitespace. */
+	  strcat(unitstr, subs);
+	  strcat(unitstr, " ");
+	  if (strcmp(orig, subs)) status = 0;
+	  unput(yytext[yyleng-1]);
+	  *subs = '\0';
+	  BEGIN(INITIAL);
+	}
 
-<NEXT>. {
-          /* Copy anything else unchanged. */
-          strcat(unitstr, subs);
-          if (strcmp(orig, subs)) status = 0;
-          unput(*yytext);
-          *subs = '\0';
-          BEGIN(INITIAL);
-        }
+<NEXT>.	{
+	  /* Copy anything else unchanged. */
+	  strcat(unitstr, subs);
+	  if (strcmp(orig, subs)) status = 0;
+	  unput(*yytext);
+	  *subs = '\0';
+	  BEGIN(INITIAL);
+	}
 
 <FLUSH>.* {
-          /* Copy out remaining input. */
-          strcat(unitstr, yytext);
-        }
+	  /* Copy out remaining input. */
+	  strcat(unitstr, yytext);
+	}
 
-<<EOF>> {
-          /* End-of-string. */
-          if (*subs) {
-            strcat(unitstr, subs);
-            if (strcmp(orig, subs)) status = 0;
-          }
-
-          yylex_destroy();
-          return unsafe ? 12 : status;
-        }
+<<EOF>>	{
+	  /* End-of-string. */
+	  if (*subs) {
+	    strcat(unitstr, subs);
+	    if (strcmp(orig, subs)) status = 0;
+	  }
+	
+	  yylex_destroy();
+	  return unsafe ? 12 : status;
+	}
 
 %%

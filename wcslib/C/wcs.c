@@ -440,8 +440,8 @@ int wcsini(int alloc, int naxis, struct wcsprm *wcs)
   wcs->latpole = +90.0;
 
   /* Set defaults for the spectral transformation parameters. */
-  wcs->restfrq =  0.0;
-  wcs->restwav =  0.0;
+  wcs->restfrq = 0.0;
+  wcs->restwav = 0.0;
 
   /* Default parameter values. */
   wcs->npv = 0;
@@ -1351,7 +1351,7 @@ int wcsprt(const struct wcsprm *wcs)
       wcsprintf("       ndim: %d\n", wtbp->ndim);
       wcsprintf("     dimlen: %p\n", (void *)wtbp->dimlen);
       wcsprintf("     arrayp: %p -> %p\n", (void *)wtbp->arrayp,
-                                        (void *)(*(wtbp->arrayp)));
+                                           (void *)(*(wtbp->arrayp)));
     }
   }
 
@@ -1687,8 +1687,8 @@ int wcs_types(struct wcsprm *wcs)
       if (wcs->specsys[0] == '\0') strcpy(wcs->specsys, specsys);
     }
 
-    if (!(strlen(ctypei) == 8 && ctypei[4] == '-') ||
-        (strlen(ctypei) > 8 && ctypei[8] == '-')) {
+    /* Process linear axes. */
+    if (!(strlen(ctypei) == 8 && ctypei[4] == '-')) {
       /* Identify Stokes, celestial and spectral types. */
       if (strcmp(ctypei, "STOKES") == 0) {
         /* STOKES axis. */
@@ -1730,15 +1730,15 @@ int wcs_types(struct wcsprm *wcs)
 
     /* CTYPEia is in "4-3" form; is it a recognized spectral type? */
     if (spctyp(ctypei, 0x0, scode, 0x0, 0x0, 0x0, 0x0, 0x0) == 0) {
-        /* Non-linear spectral axis found. */
+      /* Non-linear spectral axis found. */
       wcs->types[i] = 3300;
 
-        /* Check uniqueness. */
-        if (wcs->spec >= 0) {
-          return 4;
-        }
+      /* Check uniqueness. */
+      if (wcs->spec >= 0) {
+        return 4;
+      }
 
-        wcs->spec = i;
+      wcs->spec = i;
 
       continue;
     }

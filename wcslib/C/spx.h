@@ -408,40 +408,40 @@ extern const char *spx_errmsg[];
 
 
 struct spxprm {
-  double restfrq, restwav;      /* Rest frequency [Hz] and wavelength [m].  */
+  double restfrq, restwav;	/* Rest frequency [Hz] and wavelength [m].  */
 
-  int wavetype, velotype;       /* True if wave/velocity types have been    */
-                                /* computed; types are defined below.       */
+  int wavetype, velotype;	/* True if wave/velocity types have been    */
+				/* computed; types are defined below.       */
 
   /* Spectral variables computed by specx().                                */
   /*------------------------------------------------------------------------*/
-  double freq,                  /* wavetype: Frequency [Hz].                */
-         afrq,                  /* wavetype: Angular frequency [rad/s].     */
-         ener,                  /* wavetype: Photon energy [J].             */
-         wavn,                  /* wavetype: Wave number [/m].              */
-         vrad,                  /* velotype: Radio velocity [m/s].          */
-         wave,                  /* wavetype: Vacuum wavelength [m].         */
-         vopt,                  /* velotype: Optical velocity [m/s].        */
-         zopt,                  /* velotype: Redshift.                      */
-         awav,                  /* wavetype: Air wavelength [m].            */
-         velo,                  /* velotype: Relativistic velocity [m/s].   */
-         beta;                  /* velotype: Relativistic beta.             */
+  double freq,			/* wavetype: Frequency [Hz].                */
+         afrq,			/* wavetype: Angular frequency [rad/s].     */
+         ener,			/* wavetype: Photon energy [J].             */
+         wavn,			/* wavetype: Wave number [/m].              */
+         vrad,			/* velotype: Radio velocity [m/s].          */
+         wave,			/* wavetype: Vacuum wavelength [m].         */
+         vopt,			/* velotype: Optical velocity [m/s].        */
+         zopt,			/* velotype: Redshift.                      */
+         awav,			/* wavetype: Air wavelength [m].            */
+         velo,			/* velotype: Relativistic velocity [m/s].   */
+         beta;			/* velotype: Relativistic beta.             */
 
   /* Derivatives of spectral variables computed by specx().                 */
   /*------------------------------------------------------------------------*/
-  double dfreqafrq, dafrqfreq,  /* Constant, always available.              */
-         dfreqener, denerfreq,  /* Constant, always available.              */
-         dfreqwavn, dwavnfreq,  /* Constant, always available.              */
-         dfreqvrad, dvradfreq,  /* wavetype && velotype.                    */
-         dfreqwave, dwavefreq,  /* wavetype.                                */
-         dfreqawav, dawavfreq,  /* wavetype.                                */
-         dfreqvelo, dvelofreq,  /* wavetype && velotype.                    */
-         dwavevopt, dvoptwave,  /* wavetype && velotype.                    */
-         dwavezopt, dzoptwave,  /* wavetype && velotype.                    */
-         dwaveawav, dawavwave,  /* wavetype.                                */
-         dwavevelo, dvelowave,  /* wavetype && velotype.                    */
-         dawavvelo, dveloawav,  /* wavetype && velotype.                    */
-         dvelobeta, dbetavelo;  /* Constant, always available.              */
+  double dfreqafrq, dafrqfreq,	/* Constant, always available.              */
+         dfreqener, denerfreq,	/* Constant, always available.              */
+         dfreqwavn, dwavnfreq,	/* Constant, always available.              */
+         dfreqvrad, dvradfreq,	/* wavetype && velotype.                    */
+         dfreqwave, dwavefreq,	/* wavetype.                                */
+         dfreqawav, dawavfreq,	/* wavetype.                                */
+         dfreqvelo, dvelofreq,	/* wavetype && velotype.                    */
+         dwavevopt, dvoptwave,	/* wavetype && velotype.                    */
+         dwavezopt, dzoptwave,	/* wavetype && velotype.                    */
+         dwaveawav, dawavwave,	/* wavetype.                                */
+         dwavevelo, dvelowave,	/* wavetype && velotype.                    */
+         dawavvelo, dveloawav,	/* wavetype && velotype.                    */
+         dvelobeta, dbetavelo;	/* Constant, always available.              */
 };
 
 /* Size of the spxprm struct in int units, used by the Fortran wrappers. */

@@ -217,7 +217,7 @@ const struct prjprm *prj;
   wcsprintf("\n");
   wcsprintf("       name: \"%s\"\n", prj->name);
   wcsprintf("   category: %d (%s)\n", prj->category,
-                                   prj_categories[prj->category]);
+                                      prj_categories[prj->category]);
   wcsprintf("    pvrange: %d\n", prj->pvrange);
   wcsprintf("  simplezen: %d\n", prj->simplezen);
   wcsprintf("  equiareal: %d\n", prj->equiareal);
@@ -7581,7 +7581,7 @@ int stat[];
   rowlen = nx*spt;
   for (ix = 0; ix < nx; ix++, rowoff += spt, xp += sxy) {
     s = prj->w[1] * (*xp + prj->x0);
-    /* x_c for K odd or theta > 0. */
+    /* x_c for K odd or theta > 0. */ 
     t = -180.0 + (2.0 * floor((*xp + 180.0) * prj->w[7]) + 1.0) * prj->w[6];
     t = prj->w[1] * (*xp - t);
 
@@ -7721,9 +7721,9 @@ int stat[];
   for (iphi = 0; iphi < nphi; iphi++, rowoff += sxy, phip += spt) {
     xi = prj->w[0] * (*phip) - prj->x0;
 
-    /* phi_c for K odd or theta > 0. */
-    t  = -180.0 + (2.0*floor((*phip+180.0) * prj->w[7]) + 1.0) * prj->w[6];
-    t  = prj->w[0] * (*phip - t);
+    /* phi_c for K odd or theta > 0. */ 
+    t = -180.0 + (2.0*floor((*phip+180.0) * prj->w[7]) + 1.0) * prj->w[6];
+    t = prj->w[0] * (*phip - t);
 
     xp = x + rowoff;
     yp = y + rowoff;

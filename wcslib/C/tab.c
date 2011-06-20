@@ -794,7 +794,7 @@ int tabset(struct tabprm *tab)
 
         *(dmax+m) = *(dmin+m) = dval;
       } else {
-      *(dmax+m) = *(dmin+m) = *dcrd;
+        *(dmax+m) = *(dmin+m) = *dcrd;
       }
     }
 
@@ -992,11 +992,11 @@ int tabx2s(
       tab->delta[m] = upsilon - p1;
 
       if (p1 == 0) {
-       tab->p0[m] += 1;
-       tab->delta[m] -= 1.0;
+        tab->p0[m] += 1;
+        tab->delta[m] -= 1.0;
       } else if (p1 == *Km && *Km > 1) {
-       tab->p0[m] -= 1;
-       tab->delta[m] += 1.0;
+        tab->p0[m] -= 1;
+        tab->delta[m] += 1.0;
       }
     }
 
@@ -1081,10 +1081,8 @@ int tabs2x(
   if (M > 1) {
     nv = 1 << M;
     tabcoord = calloc(nv, sizeof(double *));
-  } else {
-    nv = 0;
-    tabcoord = 0x0;
   }
+
 
   status = 0;
   wp = world;
@@ -1285,7 +1283,7 @@ int tabedge(struct tabprm* tab)
 * treated as zero).  Adjacent rows that delimit a row of "voxels" are formed
 * by incrementing elements other than p0[0] in all binary combinations.  N.B.
 * these are not the same as the voxels (pixels) that are indexed by, and
-* centred on, integral pixel coordinates in FITS.
+* centred on, integral pixel coordinates in FITS. 
 *
 * To see why it is necessary to examine the adjacent rows, consider the 2-D
 * case where the first world coordinate element is constant along each row.
@@ -1385,8 +1383,8 @@ int tabrow(struct tabprm* tab, const double *wp)
 * As in tabrow(), a "voxel" is formed by incrementing the elements of
 * tabprm::p0 in all binary combinations.  Note that these are not the same as
 * the voxels (pixels) that are indexed by, and centred on, integral pixel
-* coordinates in FITS.
-*
+* coordinates in FITS. 
+*  
 * tabvox() calls itself recursively.  When called from outside, level, being
 * the level of recursion, should be given as zero.  tabcoord is an array
 * holding the addresses of the coordinates for each corner of the voxel.
@@ -1397,7 +1395,7 @@ int tabrow(struct tabprm* tab, const double *wp)
 * It is assumed that the image dimensions are no greater than 16.
 ----------------------------------------------------------------------------*/
 
-int tabvox(
+int tabvox( 
   struct tabprm* tab,
   const double *wp,
   int level,

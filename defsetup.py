@@ -6,9 +6,12 @@ CONTACT = "Michael Droettboom"
 EMAIL = "mdroe@stsci.edu"
 
 from distutils.core import setup, Extension
+import glob
 from os.path import join
 import os.path
+import shutil
 import sys
+import patch
 
 def b(s):
     return s.encode('ascii')
@@ -38,16 +41,14 @@ def write_if_different(filename, data):
     data = data.encode('ascii')
 
     if os.path.exists(filename):
-        fd = open(filename, 'rb')
-        original_data = fd.read()
-        fd.close()
+        with open(filename, 'rb') as fd:
+            original_data = fd.read()
     else:
         original_data = None
 
     if original_data != data:
-        fd = open(filename, 'wb')
-        fd.write(data)
-        fd.close()
+        with open(filename, 'wb') as fd:
+            fd.write(data)
 
 ######################################################################
 # NUMPY
@@ -73,7 +74,8 @@ except AttributeError:
 # WCSLIB
 WCSVERSION = "4.7"
 WCSLIB = "wcslib" # Path to wcslib
-WCSLIBC = join(WCSLIB, "C") # Path to wcslib source files
+WCSLIB_PATCHED = "wcslib_patched"
+WCSLIBC = join(WCSLIB_PATCHED, "C") # Path to wcslib source files
 WCSFILES = [ # List of wcslib files to compile
     'flexed/wcsbth.c',
     'flexed/wcspih.c',
@@ -137,6 +139,35 @@ h_file.write("""
 #define WCSLIB_INT64 %s
 """ % (WCSVERSION, determine_64_bit_int()))
 write_if_different(join(srcroot, 'src', 'wcsconfig.h'), h_file.getvalue())
+
+######################################################################
+# WCSLIB PATCHES
+
+# We need to patch wcslib in various places.  The wcslib source tree
+# is copied to wcslib_patched, and then all of the patches in the
+# patches/ directory are applied.  This should only be done once if
+# the patched copy can not be found.  To redo the patching, simply
+# delete wcslib_patched.
+
+if not os.path.exists(WCSLIB_PATCHED):
+    print "Patching wcslib"
+    shutil.copytree(WCSLIB, WCSLIB_PATCHED)
+    # Apply some patches to wcslib
+    cwd = os.getcwd()
+    patchfiles = [os.path.abspath(x) for x in glob.glob('patches/*.patch')]
+    os.chdir(WCSLIB_PATCHED)
+    try:
+        for patchfile in patchfiles:
+            p = patch.fromfile(patchfile)
+            if not p.apply():
+                print("Error applying patch '%s'" % patchfile)
+                sys.exit(1)
+    except:
+        os.chdir(cwd)
+        shutil.rmtree(WCSLIB_PATCHED)
+        raise
+    finally:
+        os.chdir(cwd)
 
 ######################################################################
 # GENERATE DOCSTRINGS IN C

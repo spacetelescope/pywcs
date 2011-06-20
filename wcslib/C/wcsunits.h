@@ -99,10 +99,10 @@
 *
 * Function return value:
 *             int       Status return value:
-*                           0: Success.
-*                         1-9: Status return from wcsulex().
-*                          10: Non-conformant unit specifications.
-*                          11: Non-conformant functions.
+*                          0: Success.
+*                        1-9: Status return from wcsulex().
+*                         10: Non-conformant unit specifications.
+*                         11: Non-conformant functions.
 *
 *                       scale is zeroed on return if an error occurs.
 *
@@ -140,11 +140,11 @@
 *
 * Function return value:
 *             int       Status return value:
-*                         -1: No change was made, other than stripping blanks
-*                             (not an error).
-*                          0: Success.
-*                          9: Internal parser error.
-*                         12: Potentially unsafe translation, whether applied
+*                        -1: No change was made, other than stripping blanks
+*                            (not an error).
+*                         0: Success.
+*                         9: Internal parser error.
+*                        12: Potentially unsafe translation, whether applied
 *                             or not (see notes).
 *
 * Notes:

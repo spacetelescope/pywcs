@@ -149,10 +149,10 @@
 *
 =     eul[0] = lng0;
 =     eul[1] = 90.0 - lat0;
-=     eul[2] = 0.0;
+=     eul[2] =  0.0;
 *
 *   The angular distance and generalized position angle are readily obtained
-*   from the longitude and latitude of the field point in the new system.
+*   from the longitude and latitude of the field point in the new system.  
 *   This applies even if the reference point is at one of the poles, in which
 *   case the "position angle" returned is as would be computed for a reference
 *   point at (lng0,+90-epsilon) or (lng0,-90+epsilon), in the limit as epsilon

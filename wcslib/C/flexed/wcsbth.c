@@ -34,7 +34,7 @@
 #if __STDC_VERSION__ >= 199901L
 
 /* C99 says to define __STDC_LIMIT_MACROS before including stdint.h,
- * if you want the limit (max/min) macros for int types.
+ * if you want the limit (max/min) macros for int types. 
  */
 #ifndef __STDC_LIMIT_MACROS
 #define __STDC_LIMIT_MACROS 1
@@ -51,7 +51,7 @@ typedef uint32_t flex_uint32_t;
 typedef signed char flex_int8_t;
 typedef short int flex_int16_t;
 typedef int flex_int32_t;
-typedef unsigned char flex_uint8_t;
+typedef unsigned char flex_uint8_t; 
 typedef unsigned short int flex_uint16_t;
 typedef unsigned int flex_uint32_t;
 #endif /* ! C99 */
@@ -92,14 +92,14 @@ typedef unsigned int flex_uint32_t;
 /* The "const" storage-class-modifier is valid. */
 #define YY_USE_CONST
 
-#else   /* ! __cplusplus */
+#else	/* ! __cplusplus */
 
 #if __STDC__
 
 #define YY_USE_CONST
 
-#endif  /* __STDC__ */
-#endif  /* ! __cplusplus */
+#endif	/* __STDC__ */
+#endif	/* ! __cplusplus */
 
 #ifdef YY_USE_CONST
 #define yyconst const
@@ -161,20 +161,20 @@ extern FILE *wcsbthin, *wcsbthout;
 #define EOB_ACT_LAST_MATCH 2
 
 #define YY_LESS_LINENO(n)
-
+    
 /* Return all but the first "n" matched characters back to the input stream. */
 #define yyless(n) \
-        do \
-                { \
-                /* Undo effects of setting up wcsbthtext. */ \
+	do \
+		{ \
+		/* Undo effects of setting up wcsbthtext. */ \
         int yyless_macro_arg = (n); \
         YY_LESS_LINENO(yyless_macro_arg);\
-                *yy_cp = (yy_hold_char); \
-                YY_RESTORE_YY_MORE_OFFSET \
-                (yy_c_buf_p) = yy_cp = yy_bp + yyless_macro_arg - YY_MORE_ADJ; \
-                YY_DO_BEFORE_ACTION; /* set up wcsbthtext again */ \
-                } \
-        while ( 0 )
+		*yy_cp = (yy_hold_char); \
+		YY_RESTORE_YY_MORE_OFFSET \
+		(yy_c_buf_p) = yy_cp = yy_bp + yyless_macro_arg - YY_MORE_ADJ; \
+		YY_DO_BEFORE_ACTION; /* set up wcsbthtext again */ \
+		} \
+	while ( 0 )
 
 #define unput(c) yyunput( c, (yytext_ptr)  )
 
@@ -191,66 +191,66 @@ typedef unsigned int yy_size_t;
 #ifndef YY_STRUCT_YY_BUFFER_STATE
 #define YY_STRUCT_YY_BUFFER_STATE
 struct yy_buffer_state
-        {
-        FILE *yy_input_file;
+	{
+	FILE *yy_input_file;
 
-        char *yy_ch_buf;                /* input buffer */
-        char *yy_buf_pos;               /* current position in input buffer */
+	char *yy_ch_buf;		/* input buffer */
+	char *yy_buf_pos;		/* current position in input buffer */
 
-        /* Size of input buffer in bytes, not including room for EOB
-         * characters.
-         */
-        yy_size_t yy_buf_size;
+	/* Size of input buffer in bytes, not including room for EOB
+	 * characters.
+	 */
+	yy_size_t yy_buf_size;
 
-        /* Number of characters read into yy_ch_buf, not including EOB
-         * characters.
-         */
-        int yy_n_chars;
+	/* Number of characters read into yy_ch_buf, not including EOB
+	 * characters.
+	 */
+	int yy_n_chars;
 
-        /* Whether we "own" the buffer - i.e., we know we created it,
-         * and can realloc() it to grow it, and should free() it to
-         * delete it.
-         */
-        int yy_is_our_buffer;
+	/* Whether we "own" the buffer - i.e., we know we created it,
+	 * and can realloc() it to grow it, and should free() it to
+	 * delete it.
+	 */
+	int yy_is_our_buffer;
 
-        /* Whether this is an "interactive" input source; if so, and
-         * if we're using stdio for input, then we want to use getc()
-         * instead of fread(), to make sure we stop fetching input after
-         * each newline.
-         */
-        int yy_is_interactive;
+	/* Whether this is an "interactive" input source; if so, and
+	 * if we're using stdio for input, then we want to use getc()
+	 * instead of fread(), to make sure we stop fetching input after
+	 * each newline.
+	 */
+	int yy_is_interactive;
 
-        /* Whether we're considered to be at the beginning of a line.
-         * If so, '^' rules will be active on the next match, otherwise
-         * not.
-         */
-        int yy_at_bol;
+	/* Whether we're considered to be at the beginning of a line.
+	 * If so, '^' rules will be active on the next match, otherwise
+	 * not.
+	 */
+	int yy_at_bol;
 
     int yy_bs_lineno; /**< The line count. */
     int yy_bs_column; /**< The column count. */
+    
+	/* Whether to try to fill the input buffer when we reach the
+	 * end of it.
+	 */
+	int yy_fill_buffer;
 
-        /* Whether to try to fill the input buffer when we reach the
-         * end of it.
-         */
-        int yy_fill_buffer;
-
-        int yy_buffer_status;
+	int yy_buffer_status;
 
 #define YY_BUFFER_NEW 0
 #define YY_BUFFER_NORMAL 1
-        /* When an EOF's been seen but there's still some text to process
-         * then we mark the buffer as YY_EOF_PENDING, to indicate that we
-         * shouldn't try reading from the input source any more.  We might
-         * still have a bunch of tokens to match, though, because of
-         * possible backing-up.
-         *
-         * When we actually see the EOF, we change the status to "new"
-         * (via wcsbthrestart()), so that the user can continue scanning by
-         * just pointing wcsbthin at a new input file.
-         */
+	/* When an EOF's been seen but there's still some text to process
+	 * then we mark the buffer as YY_EOF_PENDING, to indicate that we
+	 * shouldn't try reading from the input source any more.  We might
+	 * still have a bunch of tokens to match, though, because of
+	 * possible backing-up.
+	 *
+	 * When we actually see the EOF, we change the status to "new"
+	 * (via wcsbthrestart()), so that the user can continue scanning by
+	 * just pointing wcsbthin at a new input file.
+	 */
 #define YY_BUFFER_EOF_PENDING 2
 
-        };
+	};
 #endif /* !YY_STRUCT_YY_BUFFER_STATE */
 
 /* Stack of input buffers. */
@@ -275,13 +275,13 @@ static YY_BUFFER_STATE * yy_buffer_stack = 0; /**< Stack as an array. */
 
 /* yy_hold_char holds the character lost when wcsbthtext is formed. */
 static char yy_hold_char;
-static int yy_n_chars;          /* number of characters read into yy_ch_buf */
+static int yy_n_chars;		/* number of characters read into yy_ch_buf */
 int wcsbthleng;
 
 /* Points to current character in buffer. */
 static char *yy_c_buf_p = (char *) 0;
-static int yy_init = 0;         /* whether we need to initialize */
-static int yy_start = 0;        /* start state number */
+static int yy_init = 0;		/* whether we need to initialize */
+static int yy_start = 0;	/* start state number */
 
 /* Flag which is used to allow wcsbthwrap()'s to do buffer switches
  * instead of setting up a fresh wcsbthin.  A bit of a hack ...
@@ -313,24 +313,24 @@ void wcsbthfree (void *  );
 #define yy_new_buffer wcsbth_create_buffer
 
 #define yy_set_interactive(is_interactive) \
-        { \
-        if ( ! YY_CURRENT_BUFFER ){ \
+	{ \
+	if ( ! YY_CURRENT_BUFFER ){ \
         wcsbthensure_buffer_stack (); \
-                YY_CURRENT_BUFFER_LVALUE =    \
+		YY_CURRENT_BUFFER_LVALUE =    \
             wcsbth_create_buffer(wcsbthin,YY_BUF_SIZE ); \
-        } \
-        YY_CURRENT_BUFFER_LVALUE->yy_is_interactive = is_interactive; \
-        }
+	} \
+	YY_CURRENT_BUFFER_LVALUE->yy_is_interactive = is_interactive; \
+	}
 
 #define yy_set_bol(at_bol) \
-        { \
-        if ( ! YY_CURRENT_BUFFER ){\
+	{ \
+	if ( ! YY_CURRENT_BUFFER ){\
         wcsbthensure_buffer_stack (); \
-                YY_CURRENT_BUFFER_LVALUE =    \
+		YY_CURRENT_BUFFER_LVALUE =    \
             wcsbth_create_buffer(wcsbthin,YY_BUF_SIZE ); \
-        } \
-        YY_CURRENT_BUFFER_LVALUE->yy_at_bol = at_bol; \
-        }
+	} \
+	YY_CURRENT_BUFFER_LVALUE->yy_at_bol = at_bol; \
+	}
 
 #define YY_AT_BOL() (YY_CURRENT_BUFFER_LVALUE->yy_at_bol)
 
@@ -16401,21 +16401,21 @@ static void yy_fatal_error (yyconst char msg[]  );
  * corresponding action - sets up wcsbthtext.
  */
 #define YY_DO_BEFORE_ACTION \
-        (yytext_ptr) = yy_bp; \
-        wcsbthleng = (size_t) (yy_cp - yy_bp); \
-        (yy_hold_char) = *yy_cp; \
-        *yy_cp = '\0'; \
-        (yy_c_buf_p) = yy_cp;
+	(yytext_ptr) = yy_bp; \
+	wcsbthleng = (size_t) (yy_cp - yy_bp); \
+	(yy_hold_char) = *yy_cp; \
+	*yy_cp = '\0'; \
+	(yy_c_buf_p) = yy_cp;
 
 #define YY_NUM_RULES 283
 #define YY_END_OF_BUFFER 284
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
-        {
-        flex_int32_t yy_verify;
-        flex_int32_t yy_nxt;
-        };
+	{
+	flex_int32_t yy_verify;
+	flex_int32_t yy_nxt;
+	};
 static yyconst flex_int16_t yy_accept[927] =
     {   0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -16744,40 +16744,40 @@ char *wcsbthtext;
 #include "wcshdr.h"
 #include "wcsmath.h"
 
-                        /* Codes used for keyvalue data types. */
+			/* Codes used for keyvalue data types. */
 #define INTEGER 0
 #define FLOAT   1
 #define STRING  2
 
-                        /* Bit masks used for keyword types:        */
-#define IMGAUX  0x1     /* Auxiliary image header, e.g. LONPOLEa or */
-                        /* DATE-OBS.                                */
-#define IMGAXIS 0x2     /* Image header with axis number, e.g.      */
-                        /* CTYPEia.                                 */
-#define IMGHEAD 0x3     /* Image header of either type.             */
-#define BIMGARR 0x4     /* Binary table image array with axis       */
-                        /* number, e.g. iCTYna.                     */
-#define PIXLIST 0x8     /* Pixel list, e.g. TCTYna.                 */
-#define BINTAB  0xC     /* Shared binary table image array (without */
-                        /* axis number) or pixel list, e.g. LONPna  */
-                        /* or OBSGXn.                               */
+			/* Bit masks used for keyword types:        */
+#define IMGAUX  0x1	/* Auxiliary image header, e.g. LONPOLEa or */
+			/* DATE-OBS.                                */
+#define IMGAXIS 0x2	/* Image header with axis number, e.g.      */
+			/* CTYPEia.                                 */
+#define IMGHEAD 0x3	/* Image header of either type.             */
+#define BIMGARR 0x4	/* Binary table image array with axis       */
+			/* number, e.g. iCTYna.                     */
+#define PIXLIST 0x8	/* Pixel list, e.g. TCTYna.                 */
+#define BINTAB  0xC	/* Shared binary table image array (without */
+			/* axis number) or pixel list, e.g. LONPna  */
+			/* or OBSGXn.                               */
 
 #define YY_DECL int wcsbth(char *header, int nkeyrec, int relax, int ctrl, \
                            int keysel, int *colsel, int *nreject, int *nwcs, \
-                           struct wcsprm **wcs)
+			   struct wcsprm **wcs)
 
 #define YY_INPUT(inbuff, count, bufsize) \
-        { \
-          if (wcsbth_nkeyrec) { \
-            strncpy(inbuff, wcsbth_hdr, 80); \
-            inbuff[80] = '\n'; \
-            wcsbth_hdr += 80; \
-            wcsbth_nkeyrec--; \
-            count = 81; \
-          } else { \
-            count = YY_NULL; \
-          } \
-        }
+	{ \
+	  if (wcsbth_nkeyrec) { \
+	    strncpy(inbuff, wcsbth_hdr, 80); \
+	    inbuff[80] = '\n'; \
+	    wcsbth_hdr += 80; \
+	    wcsbth_nkeyrec--; \
+	    count = 81; \
+	  } else { \
+	    count = YY_NULL; \
+	  } \
+	}
 
 /* A convenience macro to get around incompatibilities between unput() and
    yyless(): put wcsbthtext followed by a blank back onto the input stream. */
@@ -16885,7 +16885,7 @@ extern int wcsbthwrap (void );
 #endif
 
     static void yyunput (int c,char *buf_ptr  );
-
+    
 #ifndef yytext_ptr
 static void yy_flex_strncpy (char *,yyconst char *,int );
 #endif
@@ -16922,17 +16922,17 @@ static int input (void );
  */
 #ifndef YY_INPUT
 #define YY_INPUT(buf,result,max_size) \
-        errno=0; \
-        while ( (result = read( fileno(wcsbthin), (char *) buf, max_size )) < 0 ) \
-        { \
-                if( errno != EINTR) \
-                { \
-                        YY_FATAL_ERROR( "input in flex scanner failed" ); \
-                        break; \
-                } \
-                errno=0; \
-                clearerr(wcsbthin); \
-        }\
+	errno=0; \
+	while ( (result = read( fileno(wcsbthin), (char *) buf, max_size )) < 0 ) \
+	{ \
+		if( errno != EINTR) \
+		{ \
+			YY_FATAL_ERROR( "input in flex scanner failed" ); \
+			break; \
+		} \
+		errno=0; \
+		clearerr(wcsbthin); \
+	}\
 \
 
 #endif
@@ -16981,234 +16981,234 @@ extern int wcsbthlex (void);
 #endif
 
 #define YY_RULE_SETUP \
-        if ( wcsbthleng > 0 ) \
-                YY_CURRENT_BUFFER_LVALUE->yy_at_bol = \
-                                (wcsbthtext[wcsbthleng - 1] == '\n'); \
-        YY_USER_ACTION
+	if ( wcsbthleng > 0 ) \
+		YY_CURRENT_BUFFER_LVALUE->yy_at_bol = \
+				(wcsbthtext[wcsbthleng - 1] == '\n'); \
+	YY_USER_ACTION
 
 /** The main scanner function which does all the work.
  */
 YY_DECL
 {
-        register yy_state_type yy_current_state;
-        register char *yy_cp, *yy_bp;
-        register int yy_act;
-
+	register yy_state_type yy_current_state;
+	register char *yy_cp, *yy_bp;
+	register int yy_act;
+    
 #line 202 "wcsbth.l"
 
-        /* Keyword indices, as used in the WCS papers, e.g. iVn_ma, TPn_ka. */
-        char a;
-        int  i, j, k, m, n;
-
-        char *cptr, *errmsg, errtxt[80], exclude[1000], *extkey, *hptr, ptype,
-             stmp[16];
-        int  altlin, ialt, icol, incl, ipass, ipx, itmp, ix, jx, keytype,
-             nsel, npass, status, valtype, voff;
-        void   *vptr, *wptr;
-        struct wcsbth_alts alts;
-        struct wcsprm *wcsp, wcstem;
-        int (*special)(void *);
-        int wcsbthlex_destroy(void);
-
-        /* The data structures produced. */
-        *nwcs = 0;
-        *wcs  = 0x0;
-
-        /* Parameters used to implement YY_INPUT. */
-        wcsbth_hdr = header;
-        wcsbth_nkeyrec = nkeyrec;
-
-        /* Our handle on the input stream. */
-        hptr = header;
-        *nreject = 0;
-
-        /* Keyword parameters. */
-        i = j = 0;
-        n = k = 0;
-        m = 0;
-        a = ' ';
-
-        /* Header bookkeeping. */
-        alts.ncol = 0;
-        alts.arridx  = 0x0;
-        alts.pixlist = 0x0;
-        alts.npv = 0x0;
-        alts.nps = 0x0;
-
-        for (ialt = 0; ialt < 27; ialt++) {
-          alts.pixidx[ialt] = 0;
-          alts.pixnpv[ialt] = 0;
-          alts.pixnps[ialt] = 0;
-        }
-
-        /* For decoding the keyvalue. */
-        keytype =  0;
-        valtype = -1;
-        vptr    = 0x0;
-
-        /* For keywords that require special handling. */
-        altlin = 0;
-        ptype  = ' ';
-        special = 0x0;
-
-        /* Selection by column number. */
-        nsel = colsel ? colsel[0] : 0;
-        incl = (nsel > 0);
-        for (icol = 0; icol < 1000; icol++) {
-          exclude[icol] = incl;
-        }
-        for (icol = 1; icol <= abs(nsel); icol++) {
-          itmp = colsel[icol];
-          if (0 < itmp && itmp < 1000) {
-            exclude[itmp] = !incl;
-          }
-        }
-        exclude[0] = 0;
-
-        /* Selection by keyword type. */
-        itmp = keysel;
-        keysel = 0;
-        if (itmp) {
-          if (itmp & WCSHDR_IMGHEAD) keysel |= IMGHEAD;
-          if (itmp & WCSHDR_BIMGARR) keysel |= BIMGARR;
-          if (itmp & WCSHDR_PIXLIST) keysel |= PIXLIST;
-        }
-        if (keysel == 0) {
-          keysel = IMGHEAD | BINTAB;
-        }
-
-        /* Control variables. */
-        ipass = 1;
-        npass = 2;
-
-        /* Return here via longjmp() invoked by yy_fatal_error(). */
-        if (setjmp(wcsbth_abort_jmp_env)) {
-          return 4;
-        }
-
-        BEGIN(INITIAL);
+	/* Keyword indices, as used in the WCS papers, e.g. iVn_ma, TPn_ka. */
+	char a;
+	int  i, j, k, m, n;
+	
+	char *cptr, *errmsg, errtxt[80], exclude[1000], *extkey, *hptr, ptype,
+	     stmp[16];
+	int  altlin, ialt, icol, incl, ipass, ipx, itmp, ix, jx, keytype,
+	     nsel, npass, status, valtype, voff;
+	void   *vptr, *wptr;
+	struct wcsbth_alts alts;
+	struct wcsprm *wcsp, wcstem;
+	int (*special)(void *);
+	int wcsbthlex_destroy(void);
+	
+	/* The data structures produced. */
+	*nwcs = 0;
+	*wcs  = 0x0;
+	
+	/* Parameters used to implement YY_INPUT. */
+	wcsbth_hdr = header;
+	wcsbth_nkeyrec = nkeyrec;
+	
+	/* Our handle on the input stream. */
+	hptr = header;
+	*nreject = 0;
+	
+	/* Keyword parameters. */
+	i = j = 0;
+	n = k = 0;
+	m = 0;
+	a = ' ';
+	
+	/* Header bookkeeping. */
+	alts.ncol = 0;
+	alts.arridx  = 0x0;
+	alts.pixlist = 0x0;
+	alts.npv = 0x0;
+	alts.nps = 0x0;
+	
+	for (ialt = 0; ialt < 27; ialt++) {
+	  alts.pixidx[ialt] = 0;
+	  alts.pixnpv[ialt] = 0;
+	  alts.pixnps[ialt] = 0;
+	}
+	
+	/* For decoding the keyvalue. */
+	keytype =  0;
+	valtype = -1;
+	vptr    = 0x0;
+	
+	/* For keywords that require special handling. */
+	altlin = 0;
+	ptype  = ' ';
+	special = 0x0;
+	
+	/* Selection by column number. */
+	nsel = colsel ? colsel[0] : 0;
+	incl = (nsel > 0);
+	for (icol = 0; icol < 1000; icol++) {
+	  exclude[icol] = incl;
+	}
+	for (icol = 1; icol <= abs(nsel); icol++) {
+	  itmp = colsel[icol];
+	  if (0 < itmp && itmp < 1000) {
+	    exclude[itmp] = !incl;
+	  }
+	}
+	exclude[0] = 0;
+	
+	/* Selection by keyword type. */
+	itmp = keysel;
+	keysel = 0;
+	if (itmp) {
+	  if (itmp & WCSHDR_IMGHEAD) keysel |= IMGHEAD;
+	  if (itmp & WCSHDR_BIMGARR) keysel |= BIMGARR;
+	  if (itmp & WCSHDR_PIXLIST) keysel |= PIXLIST;
+	}
+	if (keysel == 0) {
+	  keysel = IMGHEAD | BINTAB;
+	}
+	
+	/* Control variables. */
+	ipass = 1;
+	npass = 2;
+	
+	/* Return here via longjmp() invoked by yy_fatal_error(). */
+	if (setjmp(wcsbth_abort_jmp_env)) {
+	  return 4;
+	}
+	
+	BEGIN(INITIAL);
 
 
 #line 17093 "wcsbth.c"
 
-        if ( !(yy_init) )
-                {
-                (yy_init) = 1;
+	if ( !(yy_init) )
+		{
+		(yy_init) = 1;
 
 #ifdef YY_USER_INIT
-                YY_USER_INIT;
+		YY_USER_INIT;
 #endif
 
-                if ( ! (yy_start) )
-                        (yy_start) = 1; /* first start state */
+		if ( ! (yy_start) )
+			(yy_start) = 1;	/* first start state */
 
-                if ( ! wcsbthin )
-                        wcsbthin = stdin;
+		if ( ! wcsbthin )
+			wcsbthin = stdin;
 
-                if ( ! wcsbthout )
-                        wcsbthout = stdout;
+		if ( ! wcsbthout )
+			wcsbthout = stdout;
 
-                if ( ! YY_CURRENT_BUFFER ) {
-                        wcsbthensure_buffer_stack ();
-                        YY_CURRENT_BUFFER_LVALUE =
-                                wcsbth_create_buffer(wcsbthin,YY_BUF_SIZE );
-                }
+		if ( ! YY_CURRENT_BUFFER ) {
+			wcsbthensure_buffer_stack ();
+			YY_CURRENT_BUFFER_LVALUE =
+				wcsbth_create_buffer(wcsbthin,YY_BUF_SIZE );
+		}
 
-                wcsbth_load_buffer_state( );
-                }
+		wcsbth_load_buffer_state( );
+		}
 
-        while ( 1 )             /* loops until end-of-file is reached */
-                {
-                yy_cp = (yy_c_buf_p);
+	while ( 1 )		/* loops until end-of-file is reached */
+		{
+		yy_cp = (yy_c_buf_p);
 
-                /* Support of wcsbthtext. */
-                *yy_cp = (yy_hold_char);
+		/* Support of wcsbthtext. */
+		*yy_cp = (yy_hold_char);
 
-                /* yy_bp points to the position in yy_ch_buf of the start of
-                 * the current run.
-                 */
-                yy_bp = yy_cp;
+		/* yy_bp points to the position in yy_ch_buf of the start of
+		 * the current run.
+		 */
+		yy_bp = yy_cp;
 
-                yy_current_state = (yy_start);
-                yy_current_state += YY_AT_BOL();
+		yy_current_state = (yy_start);
+		yy_current_state += YY_AT_BOL();
 yy_match:
-                while ( (yy_current_state = yy_nxt[yy_current_state][ YY_SC_TO_UI(*yy_cp) ]) > 0 )
-                        {
-                        if ( yy_accept[yy_current_state] )
-                                {
-                                (yy_last_accepting_state) = yy_current_state;
-                                (yy_last_accepting_cpos) = yy_cp;
-                                }
+		while ( (yy_current_state = yy_nxt[yy_current_state][ YY_SC_TO_UI(*yy_cp) ]) > 0 )
+			{
+			if ( yy_accept[yy_current_state] )
+				{
+				(yy_last_accepting_state) = yy_current_state;
+				(yy_last_accepting_cpos) = yy_cp;
+				}
 
-                        ++yy_cp;
-                        }
+			++yy_cp;
+			}
 
-                yy_current_state = -yy_current_state;
+		yy_current_state = -yy_current_state;
 
 yy_find_action:
-                yy_act = yy_accept[yy_current_state];
+		yy_act = yy_accept[yy_current_state];
 
-                YY_DO_BEFORE_ACTION;
+		YY_DO_BEFORE_ACTION;
 
-do_action:      /* This label is used only to access EOF actions. */
+do_action:	/* This label is used only to access EOF actions. */
 
-                switch ( yy_act )
-        { /* beginning of action switch */
-                        case 0: /* must back up */
-                        /* undo the effects of YY_DO_BEFORE_ACTION */
-                        *yy_cp = (yy_hold_char);
-                        yy_cp = (yy_last_accepting_cpos) + 1;
-                        yy_current_state = (yy_last_accepting_state);
-                        goto yy_find_action;
+		switch ( yy_act )
+	{ /* beginning of action switch */
+			case 0: /* must back up */
+			/* undo the effects of YY_DO_BEFORE_ACTION */
+			*yy_cp = (yy_hold_char);
+			yy_cp = (yy_last_accepting_cpos) + 1;
+			yy_current_state = (yy_last_accepting_state);
+			goto yy_find_action;
 
 case 1:
 YY_RULE_SETUP
 #line 296 "wcsbth.l"
 {
-          if (ipass == 1) {
-            if (alts.ncol == 0) {
-              sscanf(wcsbthtext, "TFIELDS = %d", &(alts.ncol));
-              BEGIN(FLUSH);
-            } else {
-              errmsg = "Duplicate or out-of-sequence TFIELDS keyword";
-              BEGIN(ERROR);
-            }
-
-          } else {
-            BEGIN(FLUSH);
-          }
-        }
-        YY_BREAK
+	  if (ipass == 1) {
+	    if (alts.ncol == 0) {
+	      sscanf(wcsbthtext, "TFIELDS = %d", &(alts.ncol));
+	      BEGIN(FLUSH);
+	    } else {
+	      errmsg = "Duplicate or out-of-sequence TFIELDS keyword";
+	      BEGIN(ERROR);
+	    }
+	
+	  } else {
+	    BEGIN(FLUSH);
+	  }
+	}
+	YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 311 "wcsbth.l"
 {
-          keytype = IMGAXIS;
-
-          if (!(keytype & keysel)) {
-            /* Ignore this key type. */
-            BEGIN(DISCARD);
-
-          } else {
-            if (relax & WCSHDR_ALLIMG) {
-              if (ipass == 1) {
-                sscanf(wcsbthtext, "WCSAXES%c= %d", &a, &i);
-                wcsbth_pass1(IMGAXIS, i, 0, 0, 0, a, ' ', &alts);
-              }
-
-              BEGIN(FLUSH);
-
-            } else if (relax & WCSHDR_reject) {
-              errmsg = "Image-header keyword WCSAXESa in binary table";
-              BEGIN(ERROR);
-
-            } else {
-              /* Pretend we don't recognize it. */
-              BEGIN(DISCARD);
-            }
-          }
-        }
-        YY_BREAK
+	  keytype = IMGAXIS;
+	
+	  if (!(keytype & keysel)) {
+	    /* Ignore this key type. */
+	    BEGIN(DISCARD);
+	
+	  } else {
+	    if (relax & WCSHDR_ALLIMG) {
+	      if (ipass == 1) {
+	        sscanf(wcsbthtext, "WCSAXES%c= %d", &a, &i);
+	        wcsbth_pass1(IMGAXIS, i, 0, 0, 0, a, ' ', &alts);
+	      }
+	
+	      BEGIN(FLUSH);
+	
+	    } else if (relax & WCSHDR_reject) {
+	      errmsg = "Image-header keyword WCSAXESa in binary table";
+	      BEGIN(ERROR);
+	
+	    } else {
+	      /* Pretend we don't recognize it. */
+	      BEGIN(DISCARD);
+	    }
+	  }
+	}
+	YY_BREAK
 case 3:
 #line 339 "wcsbth.l"
 case 4:
@@ -17217,23 +17217,23 @@ case 5:
 YY_RULE_SETUP
 #line 340 "wcsbth.l"
 {
-          keytype = BIMGARR;
-
-          /* Note that a blank in the sscanf() format string matches zero or
-             more of them in the input. */
-          sscanf(wcsbthtext, "WCAX%d%c = %d", &n, &a, &i);
-
-          if (!(keytype & keysel) || exclude[n]) {
-            /* Ignore this key type or column. */
-            BEGIN(DISCARD);
-          } else {
-            if (ipass == 1) {
-              wcsbth_pass1(BIMGARR, i, 0, n, 0, a, ' ', &alts);
-            }
-            BEGIN(FLUSH);
-          }
-        }
-        YY_BREAK
+	  keytype = BIMGARR;
+	
+	  /* Note that a blank in the sscanf() format string matches zero or
+	     more of them in the input. */
+	  sscanf(wcsbthtext, "WCAX%d%c = %d", &n, &a, &i);
+	
+	  if (!(keytype & keysel) || exclude[n]) {
+	    /* Ignore this key type or column. */
+	    BEGIN(DISCARD);
+	  } else {
+	    if (ipass == 1) {
+	      wcsbth_pass1(BIMGARR, i, 0, n, 0, a, ' ', &alts);
+	    }
+	    BEGIN(FLUSH);
+	  }
+	}
+	YY_BREAK
 case 6:
 /* rule 6 can match eol */
 #line 359 "wcsbth.l"
@@ -17245,12 +17245,12 @@ case 8:
 YY_RULE_SETUP
 #line 360 "wcsbth.l"
 {
-          /* Cross-reference supplier. */
-          keytype = BIMGARR;
-          errmsg = "Cross-references are not currently implemented";
-          BEGIN(ERROR);
-        }
-        YY_BREAK
+	  /* Cross-reference supplier. */
+	  keytype = BIMGARR;
+	  errmsg = "Cross-references are not currently implemented";
+	  BEGIN(ERROR);
+	}
+	YY_BREAK
 case 9:
 /* rule 9 can match eol */
 #line 368 "wcsbth.l"
@@ -17262,405 +17262,405 @@ case 11:
 YY_RULE_SETUP
 #line 369 "wcsbth.l"
 {
-          /* Cross-reference consumer. */
-          keytype = BIMGARR;
-          errmsg = "Cross-references are not currently implemented";
-          BEGIN(ERROR);
-        }
-        YY_BREAK
+	  /* Cross-reference consumer. */
+	  keytype = BIMGARR;
+	  errmsg = "Cross-references are not currently implemented";
+	  BEGIN(ERROR);
+	}
+	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 376 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.crpix);
-
-          extkey = "CRPIXja";
-          BEGIN(CCCCCia);
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.crpix);
+	
+	  extkey = "CRPIXja";
+	  BEGIN(CCCCCia);
+	}
+	YY_BREAK
 case 13:
 #line 385 "wcsbth.l"
 case 14:
 YY_RULE_SETUP
 #line 385 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.crpix);
-
-          sscanf(wcsbthtext, "%d", &i);
-
-          if (wcsbthleng == 4) {
-            BEGIN(iCCCna);
-          } else {
-            extkey = "jCRPXn";
-            BEGIN(iCCCCn);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.crpix);
+	
+	  sscanf(wcsbthtext, "%d", &i);
+	
+	  if (wcsbthleng == 4) {
+	    BEGIN(iCCCna);
+	  } else {
+	    extkey = "jCRPXn";
+	    BEGIN(iCCCCn);
+	  }
+	}
+	YY_BREAK
 case 15:
 #line 400 "wcsbth.l"
 case 16:
 YY_RULE_SETUP
 #line 400 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.crpix);
-
-          if (wcsbthleng == 4) {
-            BEGIN(TCCCna);
-          } else {
-            extkey = "TCRPXn";
-            BEGIN(TCCCCn);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.crpix);
+	
+	  if (wcsbthleng == 4) {
+	    BEGIN(TCCCna);
+	  } else {
+	    extkey = "TCRPXn";
+	    BEGIN(TCCCCn);
+	  }
+	}
+	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 412 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.pc);
-          altlin = 1;
-
-          extkey = "PCi_ja";
-          BEGIN(CCi_ja);
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.pc);
+	  altlin = 1;
+	
+	  extkey = "PCi_ja";
+	  BEGIN(CCi_ja);
+	}
+	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 421 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.pc);
-          altlin = 1;
-
-          sscanf(wcsbthtext, "%1d%1d", &i, &j);
-
-          BEGIN(ijCCna);
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.pc);
+	  altlin = 1;
+	
+	  sscanf(wcsbthtext, "%1d%1d", &i, &j);
+	
+	  BEGIN(ijCCna);
+	}
+	YY_BREAK
 case 19:
 #line 432 "wcsbth.l"
 case 20:
 YY_RULE_SETUP
 #line 432 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.pc);
-          altlin = 1;
-
-          if (wcsbthleng == 2) {
-            BEGIN(TCn_ka);
-          } else {
-            extkey = "TPCn_ka";
-            BEGIN(TCCn_ka);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.pc);
+	  altlin = 1;
+	
+	  if (wcsbthleng == 2) {
+	    BEGIN(TCn_ka);
+	  } else {
+	    extkey = "TPCn_ka";
+	    BEGIN(TCCn_ka);
+	  }
+	}
+	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 445 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.cd);
-          altlin = 2;
-
-          extkey = "CDi_ja";
-          BEGIN(CCi_ja);
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.cd);
+	  altlin = 2;
+	
+	  extkey = "CDi_ja";
+	  BEGIN(CCi_ja);
+	}
+	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 454 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.cd);
-          altlin = 2;
-
-          sscanf(wcsbthtext, "%1d%1d", &i, &j);
-
-          BEGIN(ijCCna);
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.cd);
+	  altlin = 2;
+	
+	  sscanf(wcsbthtext, "%1d%1d", &i, &j);
+	
+	  BEGIN(ijCCna);
+	}
+	YY_BREAK
 case 23:
 #line 465 "wcsbth.l"
 case 24:
 YY_RULE_SETUP
 #line 465 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.cd);
-          altlin = 2;
-
-          if (wcsbthleng == 2) {
-            BEGIN(TCn_ka);
-          } else {
-            extkey = "TCDn_ka";
-            BEGIN(TCCn_ka);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.cd);
+	  altlin = 2;
+	
+	  if (wcsbthleng == 2) {
+	    BEGIN(TCn_ka);
+	  } else {
+	    extkey = "TCDn_ka";
+	    BEGIN(TCCn_ka);
+	  }
+	}
+	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 478 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.cdelt);
-
-          extkey = "CDELTia";
-          BEGIN(CCCCCia);
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.cdelt);
+	
+	  extkey = "CDELTia";
+	  BEGIN(CCCCCia);
+	}
+	YY_BREAK
 case 26:
 #line 487 "wcsbth.l"
 case 27:
 YY_RULE_SETUP
 #line 487 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.cdelt);
-
-          sscanf(wcsbthtext, "%d", &i);
-
-          if (wcsbthleng == 4) {
-            BEGIN(iCCCna);
-          } else {
-            extkey = "iCDLTn";
-            BEGIN(iCCCCn);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.cdelt);
+	
+	  sscanf(wcsbthtext, "%d", &i);
+	
+	  if (wcsbthleng == 4) {
+	    BEGIN(iCCCna);
+	  } else {
+	    extkey = "iCDLTn";
+	    BEGIN(iCCCCn);
+	  }
+	}
+	YY_BREAK
 case 28:
 #line 502 "wcsbth.l"
 case 29:
 YY_RULE_SETUP
 #line 502 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.cdelt);
-
-          if (wcsbthleng == 4) {
-            BEGIN(TCCCna);
-          } else {
-            extkey = "TCDLTn";
-            BEGIN(TCCCCn);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.cdelt);
+	
+	  if (wcsbthleng == 4) {
+	    BEGIN(TCCCna);
+	  } else {
+	    extkey = "TCDLTn";
+	    BEGIN(TCCCCn);
+	  }
+	}
+	YY_BREAK
 case 30:
 YY_RULE_SETUP
 #line 514 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.crota);
-          altlin = 4;
-
-          extkey = "CROTAi";
-          BEGIN(CROTAi);
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.crota);
+	  altlin = 4;
+	
+	  extkey = "CROTAi";
+	  BEGIN(CROTAi);
+	}
+	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 523 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.crota);
-          altlin = 4;
-
-          sscanf(wcsbthtext, "%d", &i);
-
-          extkey = "iCROTn";
-          BEGIN(iCROTn);
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.crota);
+	  altlin = 4;
+	
+	  sscanf(wcsbthtext, "%d", &i);
+	
+	  extkey = "iCROTn";
+	  BEGIN(iCROTn);
+	}
+	YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 534 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.crota);
-          altlin = 4;
-
-          extkey = "TCROTn";
-          BEGIN(TCROTn);
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.crota);
+	  altlin = 4;
+	
+	  extkey = "TCROTn";
+	  BEGIN(TCROTn);
+	}
+	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 543 "wcsbth.l"
 {
-          valtype = STRING;
-          vptr = &(wcstem.cunit);
-
-          extkey = "CUNITia";
-          BEGIN(CCCCCia);
-        }
-        YY_BREAK
+	  valtype = STRING;
+	  vptr = &(wcstem.cunit);
+	
+	  extkey = "CUNITia";
+	  BEGIN(CCCCCia);
+	}
+	YY_BREAK
 case 34:
 #line 552 "wcsbth.l"
 case 35:
 YY_RULE_SETUP
 #line 552 "wcsbth.l"
 {
-          valtype = STRING;
-          vptr = &(wcstem.cunit);
-
-          sscanf(wcsbthtext, "%d", &i);
-
-          if (wcsbthleng == 4) {
-            BEGIN(iCCCna);
-          } else {
-            extkey = "iCUNIn";
-            BEGIN(iCCCCn);
-          }
-        }
-        YY_BREAK
+	  valtype = STRING;
+	  vptr = &(wcstem.cunit);
+	
+	  sscanf(wcsbthtext, "%d", &i);
+	
+	  if (wcsbthleng == 4) {
+	    BEGIN(iCCCna);
+	  } else {
+	    extkey = "iCUNIn";
+	    BEGIN(iCCCCn);
+	  }
+	}
+	YY_BREAK
 case 36:
 #line 567 "wcsbth.l"
 case 37:
 YY_RULE_SETUP
 #line 567 "wcsbth.l"
 {
-          valtype = STRING;
-          vptr = &(wcstem.cunit);
-
-          if (wcsbthleng == 4) {
-            BEGIN(TCCCna);
-          } else {
-            extkey = "TCUNIn";
-            BEGIN(TCCCCn);
-          }
-        }
-        YY_BREAK
+	  valtype = STRING;
+	  vptr = &(wcstem.cunit);
+	
+	  if (wcsbthleng == 4) {
+	    BEGIN(TCCCna);
+	  } else {
+	    extkey = "TCUNIn";
+	    BEGIN(TCCCCn);
+	  }
+	}
+	YY_BREAK
 case 38:
 YY_RULE_SETUP
 #line 579 "wcsbth.l"
 {
-          valtype = STRING;
-          vptr = &(wcstem.ctype);
-
-          extkey = "CTYPEia";
-          BEGIN(CCCCCia);
-        }
-        YY_BREAK
+	  valtype = STRING;
+	  vptr = &(wcstem.ctype);
+	
+	  extkey = "CTYPEia";
+	  BEGIN(CCCCCia);
+	}
+	YY_BREAK
 case 39:
 #line 588 "wcsbth.l"
 case 40:
 YY_RULE_SETUP
 #line 588 "wcsbth.l"
 {
-          valtype = STRING;
-          vptr = &(wcstem.ctype);
-
-          sscanf(wcsbthtext, "%d", &i);
-
-          if (wcsbthleng == 4) {
-            BEGIN(iCCCna);
-          } else {
-            extkey = "iCTYPn";
-            BEGIN(iCCCCn);
-          }
-        }
-        YY_BREAK
+	  valtype = STRING;
+	  vptr = &(wcstem.ctype);
+	
+	  sscanf(wcsbthtext, "%d", &i);
+	
+	  if (wcsbthleng == 4) {
+	    BEGIN(iCCCna);
+	  } else {
+	    extkey = "iCTYPn";
+	    BEGIN(iCCCCn);
+	  }
+	}
+	YY_BREAK
 case 41:
 #line 603 "wcsbth.l"
 case 42:
 YY_RULE_SETUP
 #line 603 "wcsbth.l"
 {
-          valtype = STRING;
-          vptr = &(wcstem.ctype);
-
-          if (wcsbthleng == 4) {
-            BEGIN(TCCCna);
-          } else {
-            extkey = "TCTYPn";
-            BEGIN(TCCCCn);
-          }
-        }
-        YY_BREAK
+	  valtype = STRING;
+	  vptr = &(wcstem.ctype);
+	
+	  if (wcsbthleng == 4) {
+	    BEGIN(TCCCna);
+	  } else {
+	    extkey = "TCTYPn";
+	    BEGIN(TCCCCn);
+	  }
+	}
+	YY_BREAK
 case 43:
 YY_RULE_SETUP
 #line 615 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.crval);
-
-          extkey = "CRVALia";
-          BEGIN(CCCCCia);
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.crval);
+	
+	  extkey = "CRVALia";
+	  BEGIN(CCCCCia);
+	}
+	YY_BREAK
 case 44:
 #line 624 "wcsbth.l"
 case 45:
 YY_RULE_SETUP
 #line 624 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.crval);
-
-          sscanf(wcsbthtext, "%d", &i);
-
-          if (wcsbthleng == 4) {
-            BEGIN(iCCCna);
-          } else {
-            extkey = "iCRVLn";
-            BEGIN(iCCCCn);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.crval);
+	
+	  sscanf(wcsbthtext, "%d", &i);
+	
+	  if (wcsbthleng == 4) {
+	    BEGIN(iCCCna);
+	  } else {
+	    extkey = "iCRVLn";
+	    BEGIN(iCCCCn);
+	  }
+	}
+	YY_BREAK
 case 46:
 #line 639 "wcsbth.l"
 case 47:
 YY_RULE_SETUP
 #line 639 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.crval);
-
-          if (wcsbthleng == 4) {
-            BEGIN(TCCCna);
-          } else {
-            extkey = "TCRVLn";
-            BEGIN(TCCCCn);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.crval);
+	
+	  if (wcsbthleng == 4) {
+	    BEGIN(TCCCna);
+	  } else {
+	    extkey = "TCRVLn";
+	    BEGIN(TCCCCn);
+	  }
+	}
+	YY_BREAK
 case 48:
 #line 652 "wcsbth.l"
 case 49:
 YY_RULE_SETUP
 #line 652 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.lonpole);
-
-          if (wcsbthleng == 7) {
-            extkey = "LONPOLEa";
-            BEGIN(CCCCCCCa);
-          } else {
-            BEGIN(CCCCna);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.lonpole);
+	
+	  if (wcsbthleng == 7) {
+	    extkey = "LONPOLEa";
+	    BEGIN(CCCCCCCa);
+	  } else {
+	    BEGIN(CCCCna);
+	  }
+	}
+	YY_BREAK
 case 50:
 #line 665 "wcsbth.l"
 case 51:
 YY_RULE_SETUP
 #line 665 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.latpole);
-
-          if (wcsbthleng == 7) {
-            extkey = "LATPOLEa";
-            BEGIN(CCCCCCCa);
-          } else {
-            BEGIN(CCCCna);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.latpole);
+	
+	  if (wcsbthleng == 7) {
+	    extkey = "LATPOLEa";
+	    BEGIN(CCCCCCCa);
+	  } else {
+	    BEGIN(CCCCna);
+	  }
+	}
+	YY_BREAK
 case 52:
 #line 678 "wcsbth.l"
 case 53:
@@ -17669,324 +17669,324 @@ case 54:
 YY_RULE_SETUP
 #line 679 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.restfrq);
-
-          if (wcsbthleng == 8) {
-            unput(' ');
-            extkey = "RESTFREQ";
-            BEGIN(CCCCCCCa);
-          } else if (wcsbthleng == 7) {
-            extkey = "RESTFRQa";
-            BEGIN(CCCCCCCa);
-          } else {
-            BEGIN(CCCCna);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.restfrq);
+	
+	  if (wcsbthleng == 8) {
+	    unput(' ');
+	    extkey = "RESTFREQ";
+	    BEGIN(CCCCCCCa);
+	  } else if (wcsbthleng == 7) {
+	    extkey = "RESTFRQa";
+	    BEGIN(CCCCCCCa);
+	  } else {
+	    BEGIN(CCCCna);
+	  }
+	}
+	YY_BREAK
 case 55:
 #line 696 "wcsbth.l"
 case 56:
 YY_RULE_SETUP
 #line 696 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.restwav);
-
-          if (wcsbthleng == 7) {
-            extkey = "RESTWAVa";
-            BEGIN(CCCCCCCa);
-          } else {
-            BEGIN(CCCCna);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.restwav);
+	
+	  if (wcsbthleng == 7) {
+	    extkey = "RESTWAVa";
+	    BEGIN(CCCCCCCa);
+	  } else {
+	    BEGIN(CCCCna);
+	  }
+	}
+	YY_BREAK
 case 57:
 YY_RULE_SETUP
 #line 708 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.pv);
-          ptype = 'v';
-
-          extkey = "PVi_ma";
-          BEGIN(CCi_ma);
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.pv);
+	  ptype = 'v';
+	
+	  extkey = "PVi_ma";
+	  BEGIN(CCi_ma);
+	}
+	YY_BREAK
 case 58:
 #line 718 "wcsbth.l"
 case 59:
 YY_RULE_SETUP
 #line 718 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.pv);
-          ptype = 'v';
-
-          sscanf(wcsbthtext, "%d", &i);
-
-          if (wcsbthleng == 2) {
-            BEGIN(iCn_ma);
-          } else {
-            extkey = "iPVn_ma";
-            BEGIN(iCCn_ma);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.pv);
+	  ptype = 'v';
+	
+	  sscanf(wcsbthtext, "%d", &i);
+	
+	  if (wcsbthleng == 2) {
+	    BEGIN(iCn_ma);
+	  } else {
+	    extkey = "iPVn_ma";
+	    BEGIN(iCCn_ma);
+	  }
+	}
+	YY_BREAK
 case 60:
 #line 734 "wcsbth.l"
 case 61:
 YY_RULE_SETUP
 #line 734 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.pv);
-          ptype = 'v';
-
-          if (wcsbthleng == 2) {
-            BEGIN(TCn_ma);
-          } else {
-            extkey = "TPVn_ma";
-            BEGIN(TCCn_ma);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.pv);
+	  ptype = 'v';
+	
+	  if (wcsbthleng == 2) {
+	    BEGIN(TCn_ma);
+	  } else {
+	    extkey = "TPVn_ma";
+	    BEGIN(TCCn_ma);
+	  }
+	}
+	YY_BREAK
 case 62:
 YY_RULE_SETUP
 #line 747 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.pv);
-          ptype = 'v';
-
-          BEGIN(PROJPm);
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.pv);
+	  ptype = 'v';
+	
+	  BEGIN(PROJPm);
+	}
+	YY_BREAK
 case 63:
 YY_RULE_SETUP
 #line 755 "wcsbth.l"
 {
-          valtype = STRING;
-          vptr = &(wcstem.ps);
-          ptype = 's';
-
-          extkey = "PSi_ma";
-          BEGIN(CCi_ma);
-        }
-        YY_BREAK
+	  valtype = STRING;
+	  vptr = &(wcstem.ps);
+	  ptype = 's';
+	
+	  extkey = "PSi_ma";
+	  BEGIN(CCi_ma);
+	}
+	YY_BREAK
 case 64:
 #line 765 "wcsbth.l"
 case 65:
 YY_RULE_SETUP
 #line 765 "wcsbth.l"
 {
-          valtype = STRING;
-          vptr = &(wcstem.ps);
-          ptype = 's';
-
-          sscanf(wcsbthtext, "%d", &i);
-
-          if (wcsbthleng == 2) {
-            BEGIN(iCn_ma);
-          } else {
-            extkey = "iPSn_ma";
-            BEGIN(iCCn_ma);
-          }
-        }
-        YY_BREAK
+	  valtype = STRING;
+	  vptr = &(wcstem.ps);
+	  ptype = 's';
+	
+	  sscanf(wcsbthtext, "%d", &i);
+	
+	  if (wcsbthleng == 2) {
+	    BEGIN(iCn_ma);
+	  } else {
+	    extkey = "iPSn_ma";
+	    BEGIN(iCCn_ma);
+	  }
+	}
+	YY_BREAK
 case 66:
 #line 781 "wcsbth.l"
 case 67:
 YY_RULE_SETUP
 #line 781 "wcsbth.l"
 {
-          valtype = STRING;
-          vptr = &(wcstem.ps);
-          ptype = 's';
-
-          if (wcsbthleng == 2) {
-            BEGIN(TCn_ma);
-          } else {
-            extkey = "TPSn_ma";
-            BEGIN(TCCn_ma);
-          }
-        }
-        YY_BREAK
+	  valtype = STRING;
+	  vptr = &(wcstem.ps);
+	  ptype = 's';
+	
+	  if (wcsbthleng == 2) {
+	    BEGIN(TCn_ma);
+	  } else {
+	    extkey = "TPSn_ma";
+	    BEGIN(TCCn_ma);
+	  }
+	}
+	YY_BREAK
 case 68:
 YY_RULE_SETUP
 #line 794 "wcsbth.l"
 {
-          valtype = STRING;
-          vptr = &(wcstem.cname);
-
-          extkey = "CNAMEia";
-          BEGIN(CCCCCia);
-        }
-        YY_BREAK
+	  valtype = STRING;
+	  vptr = &(wcstem.cname);
+	
+	  extkey = "CNAMEia";
+	  BEGIN(CCCCCia);
+	}
+	YY_BREAK
 case 69:
 #line 803 "wcsbth.l"
 case 70:
 YY_RULE_SETUP
 #line 803 "wcsbth.l"
 {
-          valtype = STRING;
-          vptr = &(wcstem.cname);
-
-          sscanf(wcsbthtext, "%d", &i);
-
-          if (wcsbthleng == 4) {
-            BEGIN(iCCCna);
-          } else {
-            if (!(relax & WCSHDR_CNAMn)) vptr = 0x0;
-            extkey = "iCNAMn";
-            BEGIN(iCCCCn);
-          }
-        }
-        YY_BREAK
+	  valtype = STRING;
+	  vptr = &(wcstem.cname);
+	
+	  sscanf(wcsbthtext, "%d", &i);
+	
+	  if (wcsbthleng == 4) {
+	    BEGIN(iCCCna);
+	  } else {
+	    if (!(relax & WCSHDR_CNAMn)) vptr = 0x0;
+	    extkey = "iCNAMn";
+	    BEGIN(iCCCCn);
+	  }
+	}
+	YY_BREAK
 case 71:
 #line 819 "wcsbth.l"
 case 72:
 YY_RULE_SETUP
 #line 819 "wcsbth.l"
 {
-          valtype = STRING;
-          vptr = &(wcstem.cname);
-
-          if (wcsbthleng == 4) {
-            BEGIN(TCCCna);
-          } else {
-            if (!(relax & WCSHDR_CNAMn)) vptr = 0x0;
-            extkey = "TCNAMn";
-            BEGIN(TCCCCn);
-          }
-        }
-        YY_BREAK
+	  valtype = STRING;
+	  vptr = &(wcstem.cname);
+	
+	  if (wcsbthleng == 4) {
+	    BEGIN(TCCCna);
+	  } else {
+	    if (!(relax & WCSHDR_CNAMn)) vptr = 0x0;
+	    extkey = "TCNAMn";
+	    BEGIN(TCCCCn);
+	  }
+	}
+	YY_BREAK
 case 73:
 YY_RULE_SETUP
 #line 832 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.crder);
-
-          extkey = "CRDERia";
-          BEGIN(CCCCCia);
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.crder);
+	
+	  extkey = "CRDERia";
+	  BEGIN(CCCCCia);
+	}
+	YY_BREAK
 case 74:
 #line 841 "wcsbth.l"
 case 75:
 YY_RULE_SETUP
 #line 841 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.crder);
-
-          sscanf(wcsbthtext, "%d", &i);
-
-          if (wcsbthleng == 4) {
-            BEGIN(iCCCna);
-          } else {
-            if (!(relax & WCSHDR_CNAMn)) vptr = 0x0;
-            extkey = "iCRDEn";
-            BEGIN(iCCCCn);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.crder);
+	
+	  sscanf(wcsbthtext, "%d", &i);
+	
+	  if (wcsbthleng == 4) {
+	    BEGIN(iCCCna);
+	  } else {
+	    if (!(relax & WCSHDR_CNAMn)) vptr = 0x0;
+	    extkey = "iCRDEn";
+	    BEGIN(iCCCCn);
+	  }
+	}
+	YY_BREAK
 case 76:
 #line 857 "wcsbth.l"
 case 77:
 YY_RULE_SETUP
 #line 857 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.crder);
-
-          if (wcsbthleng == 4) {
-            BEGIN(TCCCna);
-          } else {
-            if (!(relax & WCSHDR_CNAMn)) vptr = 0x0;
-            extkey = "TCRDEn";
-            BEGIN(TCCCCn);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.crder);
+	
+	  if (wcsbthleng == 4) {
+	    BEGIN(TCCCna);
+	  } else {
+	    if (!(relax & WCSHDR_CNAMn)) vptr = 0x0;
+	    extkey = "TCRDEn";
+	    BEGIN(TCCCCn);
+	  }
+	}
+	YY_BREAK
 case 78:
 YY_RULE_SETUP
 #line 870 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.csyer);
-
-          extkey = "CSYERia";
-          BEGIN(CCCCCia);
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.csyer);
+	
+	  extkey = "CSYERia";
+	  BEGIN(CCCCCia);
+	}
+	YY_BREAK
 case 79:
 #line 879 "wcsbth.l"
 case 80:
 YY_RULE_SETUP
 #line 879 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.csyer);
-
-          sscanf(wcsbthtext, "%d", &i);
-
-          if (wcsbthleng == 4) {
-            BEGIN(iCCCna);
-          } else {
-            if (!(relax & WCSHDR_CNAMn)) vptr = 0x0;
-            extkey = "iCSYEn";
-            BEGIN(iCCCCn);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.csyer);
+	
+	  sscanf(wcsbthtext, "%d", &i);
+	
+	  if (wcsbthleng == 4) {
+	    BEGIN(iCCCna);
+	  } else {
+	    if (!(relax & WCSHDR_CNAMn)) vptr = 0x0;
+	    extkey = "iCSYEn";
+	    BEGIN(iCCCCn);
+	  }
+	}
+	YY_BREAK
 case 81:
 #line 895 "wcsbth.l"
 case 82:
 YY_RULE_SETUP
 #line 895 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.csyer);
-
-          if (wcsbthleng == 4) {
-            BEGIN(TCCCna);
-          } else {
-            if (!(relax & WCSHDR_CNAMn)) vptr = 0x0;
-            extkey = "TCSYEn";
-            BEGIN(TCCCCn);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.csyer);
+	
+	  if (wcsbthleng == 4) {
+	    BEGIN(TCCCna);
+	  } else {
+	    if (!(relax & WCSHDR_CNAMn)) vptr = 0x0;
+	    extkey = "TCSYEn";
+	    BEGIN(TCCCCn);
+	  }
+	}
+	YY_BREAK
 case 83:
 #line 909 "wcsbth.l"
 case 84:
 YY_RULE_SETUP
 #line 909 "wcsbth.l"
 {
-          valtype = STRING;
-          vptr = wcstem.dateavg;
-
-          if (wcsbthleng == 8) {
-            extkey = "DATE-AVG";
-            BEGIN(CCCCCCCC);
-          } else {
-            BEGIN(CCCCn);
-          }
-        }
-        YY_BREAK
+	  valtype = STRING;
+	  vptr = wcstem.dateavg;
+	
+	  if (wcsbthleng == 8) {
+	    extkey = "DATE-AVG";
+	    BEGIN(CCCCCCCC);
+	  } else {
+	    BEGIN(CCCCn);
+	  }
+	}
+	YY_BREAK
 case 85:
 YY_RULE_SETUP
 #line 921 "wcsbth.l"
 {
-          valtype = STRING;
-          vptr = wcstem.dateobs;
-
-          extkey = "DATE-OBS";
-          BEGIN(CCCCCCCC);
-        }
-        YY_BREAK
+	  valtype = STRING;
+	  vptr = wcstem.dateobs;
+	
+	  extkey = "DATE-OBS";
+	  BEGIN(CCCCCCCC);
+	}
+	YY_BREAK
 case 86:
 #line 930 "wcsbth.l"
 case 87:
@@ -17995,326 +17995,326 @@ case 88:
 YY_RULE_SETUP
 #line 931 "wcsbth.l"
 {
-          if (relax & WCSHDR_DOBSn) {
-            valtype = STRING;
-            vptr = wcstem.dateobs;
-
-            yyless(4);
-            BEGIN(CCCCn);
-
-          } else {
-            keytype = BINTAB;
-            if (relax & WCSHDR_reject) {
-              errmsg = "DOBSna keyword is non-standard";
-              BEGIN(ERROR);
-            } else {
-              BEGIN(DISCARD);
-            }
-          }
-        }
-        YY_BREAK
+	  if (relax & WCSHDR_DOBSn) {
+	    valtype = STRING;
+	    vptr = wcstem.dateobs;
+	
+	    yyless(4);
+	    BEGIN(CCCCn);
+	
+	  } else {
+	    keytype = BINTAB;
+	    if (relax & WCSHDR_reject) {
+	      errmsg = "DOBSna keyword is non-standard";
+	      BEGIN(ERROR);
+	    } else {
+	      BEGIN(DISCARD);
+	    }
+	  }
+	}
+	YY_BREAK
 case 89:
 YY_RULE_SETUP
 #line 950 "wcsbth.l"
 {
-          sscanf(wcsbthtext, "EPOCH%c", &a);
-
-          if (a == ' ' || (relax & WCSHDR_EPOCHa)) {
-            valtype = FLOAT;
-            vptr = &(wcstem.equinox);
-            special = wcsbth_epoch;
-
-            unput(a);
-            extkey = "EPOCH";
-            BEGIN(CCCCCCCa);
-
-          } else {
-            keytype = IMGAUX;
-            if (relax & WCSHDR_reject) {
-              errmsg = "EPOCH keyword may not have an alternate version code";
-              BEGIN(ERROR);
-            } else {
-              BEGIN(DISCARD);
-            }
-          }
-        }
-        YY_BREAK
+	  sscanf(wcsbthtext, "EPOCH%c", &a);
+	
+	  if (a == ' ' || (relax & WCSHDR_EPOCHa)) {
+	    valtype = FLOAT;
+	    vptr = &(wcstem.equinox);
+	    special = wcsbth_epoch;
+	
+	    unput(a);
+	    extkey = "EPOCH";
+	    BEGIN(CCCCCCCa);
+	
+	  } else {
+	    keytype = IMGAUX;
+	    if (relax & WCSHDR_reject) {
+	      errmsg = "EPOCH keyword may not have an alternate version code";
+	      BEGIN(ERROR);
+	    } else {
+	      BEGIN(DISCARD);
+	    }
+	  }
+	}
+	YY_BREAK
 case 90:
 #line 974 "wcsbth.l"
 case 91:
 YY_RULE_SETUP
 #line 974 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.equinox);
-
-          if (wcsbthleng == 7) {
-            extkey = "EQUINOXa";
-            BEGIN(CCCCCCCa);
-          } else {
-            BEGIN(CCCCna);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.equinox);
+	
+	  if (wcsbthleng == 7) {
+	    extkey = "EQUINOXa";
+	    BEGIN(CCCCCCCa);
+	  } else {
+	    BEGIN(CCCCna);
+	  }
+	}
+	YY_BREAK
 case 92:
 #line 987 "wcsbth.l"
 case 93:
 YY_RULE_SETUP
 #line 987 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.mjdavg);
-
-          if (wcsbthleng == 8) {
-            extkey = "MJD-AVG";
-            BEGIN(CCCCCCCC);
-          } else {
-            BEGIN(CCCCn);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.mjdavg);
+	
+	  if (wcsbthleng == 8) {
+	    extkey = "MJD-AVG";
+	    BEGIN(CCCCCCCC);
+	  } else {
+	    BEGIN(CCCCn);
+	  }
+	}
+	YY_BREAK
 case 94:
 #line 1000 "wcsbth.l"
 case 95:
 YY_RULE_SETUP
 #line 1000 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.mjdobs);
-
-          if (wcsbthleng == 8) {
-            extkey = "MJD-OBS";
-            BEGIN(CCCCCCCC);
-          } else {
-            BEGIN(CCCCCn);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.mjdobs);
+	
+	  if (wcsbthleng == 8) {
+	    extkey = "MJD-OBS";
+	    BEGIN(CCCCCCCC);
+	  } else {
+	    BEGIN(CCCCCn);
+	  }
+	}
+	YY_BREAK
 case 96:
 #line 1013 "wcsbth.l"
 case 97:
 YY_RULE_SETUP
 #line 1013 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = wcstem.obsgeo;
-
-          if (wcsbthleng == 8) {
-            extkey = "OBSGEO-X";
-            BEGIN(CCCCCCCC);
-          } else {
-            BEGIN(CCCCCn);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = wcstem.obsgeo;
+	
+	  if (wcsbthleng == 8) {
+	    extkey = "OBSGEO-X";
+	    BEGIN(CCCCCCCC);
+	  } else {
+	    BEGIN(CCCCCn);
+	  }
+	}
+	YY_BREAK
 case 98:
 #line 1026 "wcsbth.l"
 case 99:
 YY_RULE_SETUP
 #line 1026 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = wcstem.obsgeo + 1;
-
-          if (wcsbthleng == 8) {
-            extkey = "OBSGEO-Y";
-            BEGIN(CCCCCCCC);
-          } else {
-            BEGIN(CCCCCn);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = wcstem.obsgeo + 1;
+	
+	  if (wcsbthleng == 8) {
+	    extkey = "OBSGEO-Y";
+	    BEGIN(CCCCCCCC);
+	  } else {
+	    BEGIN(CCCCCn);
+	  }
+	}
+	YY_BREAK
 case 100:
 #line 1039 "wcsbth.l"
 case 101:
 YY_RULE_SETUP
 #line 1039 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = wcstem.obsgeo + 2;
-
-          if (wcsbthleng == 8) {
-            extkey = "OBSGEO-Z";
-            BEGIN(CCCCCCCC);
-          } else {
-            BEGIN(CCCCCn);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = wcstem.obsgeo + 2;
+	
+	  if (wcsbthleng == 8) {
+	    extkey = "OBSGEO-Z";
+	    BEGIN(CCCCCCCC);
+	  } else {
+	    BEGIN(CCCCCn);
+	  }
+	}
+	YY_BREAK
 case 102:
 #line 1052 "wcsbth.l"
 case 103:
 YY_RULE_SETUP
 #line 1052 "wcsbth.l"
 {
-          valtype = STRING;
-          vptr = wcstem.radesys;
-
-          if (wcsbthleng == 7) {
-            extkey = "RADESYSa";
-            BEGIN(CCCCCCCa);
-          } else {
-            BEGIN(CCCCna);
-          }
-        }
-        YY_BREAK
+	  valtype = STRING;
+	  vptr = wcstem.radesys;
+	
+	  if (wcsbthleng == 7) {
+	    extkey = "RADESYSa";
+	    BEGIN(CCCCCCCa);
+	  } else {
+	    BEGIN(CCCCna);
+	  }
+	}
+	YY_BREAK
 case 104:
 YY_RULE_SETUP
 #line 1064 "wcsbth.l"
 {
-          if (relax & WCSHDR_RADECSYS) {
-            valtype = STRING;
-            vptr = wcstem.radesys;
-
-            unput(' ');
-            extkey = "RADECSYS";
-            BEGIN(CCCCCCCa);
-
-          } else {
-            keytype = IMGAUX;
-            if (relax & WCSHDR_reject) {
-              errmsg = "RADECSYS keyword is non-standard";
-              BEGIN(ERROR);
-            } else {
-              BEGIN(DISCARD);
-            }
-          }
-        }
-        YY_BREAK
+	  if (relax & WCSHDR_RADECSYS) {
+	    valtype = STRING;
+	    vptr = wcstem.radesys;
+	
+	    unput(' ');
+	    extkey = "RADECSYS";
+	    BEGIN(CCCCCCCa);
+	
+	  } else {
+	    keytype = IMGAUX;
+	    if (relax & WCSHDR_reject) {
+	      errmsg = "RADECSYS keyword is non-standard";
+	      BEGIN(ERROR);
+	    } else {
+	      BEGIN(DISCARD);
+	    }
+	  }
+	}
+	YY_BREAK
 case 105:
 #line 1085 "wcsbth.l"
 case 106:
 YY_RULE_SETUP
 #line 1085 "wcsbth.l"
 {
-          valtype = STRING;
-          vptr = wcstem.specsys;
-
-          if (wcsbthleng == 7) {
-            extkey = "SPECSYSa";
-            BEGIN(CCCCCCCa);
-          } else {
-            BEGIN(CCCCna);
-          }
-        }
-        YY_BREAK
+	  valtype = STRING;
+	  vptr = wcstem.specsys;
+	
+	  if (wcsbthleng == 7) {
+	    extkey = "SPECSYSa";
+	    BEGIN(CCCCCCCa);
+	  } else {
+	    BEGIN(CCCCna);
+	  }
+	}
+	YY_BREAK
 case 107:
 #line 1098 "wcsbth.l"
 case 108:
 YY_RULE_SETUP
 #line 1098 "wcsbth.l"
 {
-          valtype = STRING;
-          vptr = wcstem.ssysobs;
-
-          if (wcsbthleng == 7) {
-            extkey = "SSYSOBSa";
-            BEGIN(CCCCCCCa);
-          } else {
-            BEGIN(CCCCna);
-          }
-        }
-        YY_BREAK
+	  valtype = STRING;
+	  vptr = wcstem.ssysobs;
+	
+	  if (wcsbthleng == 7) {
+	    extkey = "SSYSOBSa";
+	    BEGIN(CCCCCCCa);
+	  } else {
+	    BEGIN(CCCCna);
+	  }
+	}
+	YY_BREAK
 case 109:
 #line 1111 "wcsbth.l"
 case 110:
 YY_RULE_SETUP
 #line 1111 "wcsbth.l"
 {
-          valtype = STRING;
-          vptr = wcstem.ssyssrc;
-
-          if (wcsbthleng == 7) {
-            extkey = "SSYSSRCa";
-            BEGIN(CCCCCCCa);
-          } else {
-            BEGIN(CCCCna);
-          }
-        }
-        YY_BREAK
+	  valtype = STRING;
+	  vptr = wcstem.ssyssrc;
+	
+	  if (wcsbthleng == 7) {
+	    extkey = "SSYSSRCa";
+	    BEGIN(CCCCCCCa);
+	  } else {
+	    BEGIN(CCCCna);
+	  }
+	}
+	YY_BREAK
 case 111:
 #line 1124 "wcsbth.l"
 case 112:
 YY_RULE_SETUP
 #line 1124 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.velosys);
-
-          if (wcsbthleng == 7) {
-            extkey = "VELOSYSa";
-            BEGIN(CCCCCCCa);
-          } else {
-            BEGIN(CCCCna);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.velosys);
+	
+	  if (wcsbthleng == 7) {
+	    extkey = "VELOSYSa";
+	    BEGIN(CCCCCCCa);
+	  } else {
+	    BEGIN(CCCCna);
+	  }
+	}
+	YY_BREAK
 case 113:
 #line 1137 "wcsbth.l"
 case 114:
 YY_RULE_SETUP
 #line 1137 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.velangl);
-
-          if (wcsbthleng == 7) {
-            extkey = "VELANGLa";
-            BEGIN(CCCCCCCa);
-          } else {
-            BEGIN(CCCCna);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.velangl);
+	
+	  if (wcsbthleng == 7) {
+	    extkey = "VELANGLa";
+	    BEGIN(CCCCCCCa);
+	  } else {
+	    BEGIN(CCCCna);
+	  }
+	}
+	YY_BREAK
 case 115:
 YY_RULE_SETUP
 #line 1149 "wcsbth.l"
 {
-          sscanf(wcsbthtext, "VELREF%c", &a);
-
-          if (a == ' ' || (relax & WCSHDR_VELREFa)) {
-            valtype = INTEGER;
-            vptr = wcstem.specsys;
-
-            unput(a);
-            extkey = "VELREF";
-            BEGIN(CCCCCCCa);
-
-          } else {
-            keytype = IMGAUX;
-            if (relax & WCSHDR_reject) {
-              errmsg = "VELREF keyword may not have an alternate version code";
-              BEGIN(ERROR);
-            } else {
-              BEGIN(DISCARD);
-            }
-          }
-        }
-        YY_BREAK
+	  sscanf(wcsbthtext, "VELREF%c", &a);
+	
+	  if (a == ' ' || (relax & WCSHDR_VELREFa)) {
+	    valtype = INTEGER;
+	    vptr = wcstem.specsys;
+	
+	    unput(a);
+	    extkey = "VELREF";
+	    BEGIN(CCCCCCCa);
+	
+	  } else {
+	    keytype = IMGAUX;
+	    if (relax & WCSHDR_reject) {
+	      errmsg = "VELREF keyword may not have an alternate version code";
+	      BEGIN(ERROR);
+	    } else {
+	      BEGIN(DISCARD);
+	    }
+	  }
+	}
+	YY_BREAK
 case 116:
 YY_RULE_SETUP
 #line 1171 "wcsbth.l"
 {
-          if (relax & WCSHDR_VSOURCE) {
-            valtype = FLOAT;
-            vptr = &(wcstem.zsource);
-            special = wcsbth_vsource;
-
-            yyless(7);
-            extkey = "VSOURCEa";
-            BEGIN(CCCCCCCa);
-
-          } else {
-            keytype = IMGAUX;
-            if (relax & WCSHDR_reject) {
-              errmsg = "VSOURCEa keyword is deprecated";
-              BEGIN(ERROR);
-            } else {
-              BEGIN(DISCARD);
-            }
-          }
-        }
-        YY_BREAK
+	  if (relax & WCSHDR_VSOURCE) {
+	    valtype = FLOAT;
+	    vptr = &(wcstem.zsource);
+	    special = wcsbth_vsource;
+	
+	    yyless(7);
+	    extkey = "VSOURCEa";
+	    BEGIN(CCCCCCCa);
+	
+	  } else {
+	    keytype = IMGAUX;
+	    if (relax & WCSHDR_reject) {
+	      errmsg = "VSOURCEa keyword is deprecated";
+	      BEGIN(ERROR);
+	    } else {
+	      BEGIN(DISCARD);
+	    }
+	  }
+	}
+	YY_BREAK
 case 117:
 #line 1193 "wcsbth.l"
 case 118:
@@ -18323,26 +18323,26 @@ case 119:
 YY_RULE_SETUP
 #line 1194 "wcsbth.l"
 {
-          if (relax & WCSHDR_VSOURCE) {
-            valtype = FLOAT;
-            vptr = &(wcstem.zsource);
-            special = wcsbth_vsource;
-
-            yyless(4);
-            BEGIN(CCCCna);
-
-          } else {
-            keytype = BINTAB;
-            if (relax & WCSHDR_reject) {
-              errmsg = "VSOUna keyword is deprecated";
-              BEGIN(ERROR);
-            } else {
-              /* Pretend we don't recognize it. */
-              BEGIN(DISCARD);
-            }
-          }
-        }
-        YY_BREAK
+	  if (relax & WCSHDR_VSOURCE) {
+	    valtype = FLOAT;
+	    vptr = &(wcstem.zsource);
+	    special = wcsbth_vsource;
+	
+	    yyless(4);
+	    BEGIN(CCCCna);
+	
+	  } else {
+	    keytype = BINTAB;
+	    if (relax & WCSHDR_reject) {
+	      errmsg = "VSOUna keyword is deprecated";
+	      BEGIN(ERROR);
+	    } else {
+	      /* Pretend we don't recognize it. */
+	      BEGIN(DISCARD);
+	    }
+	  }
+	}
+	YY_BREAK
 case 120:
 #line 1216 "wcsbth.l"
 case 121:
@@ -18351,97 +18351,97 @@ case 122:
 YY_RULE_SETUP
 #line 1217 "wcsbth.l"
 {
-          valtype = STRING;
-          vptr = wcstem.wcsname;
-
-          if (wcsbthleng == 7) {
-            extkey = "WCSNAMEa";
-            BEGIN(CCCCCCCa);
-          } else {
-            BEGIN(CCCCna);
-          }
-        }
-        YY_BREAK
+	  valtype = STRING;
+	  vptr = wcstem.wcsname;
+	
+	  if (wcsbthleng == 7) {
+	    extkey = "WCSNAMEa";
+	    BEGIN(CCCCCCCa);
+	  } else {
+	    BEGIN(CCCCna);
+	  }
+	}
+	YY_BREAK
 case 123:
 #line 1230 "wcsbth.l"
 case 124:
 YY_RULE_SETUP
 #line 1230 "wcsbth.l"
 {
-          valtype = FLOAT;
-          vptr = &(wcstem.zsource);
-
-          if (wcsbthleng == 7) {
-            extkey = "ZSOURCEa";
-            BEGIN(CCCCCCCa);
-          } else {
-            BEGIN(CCCCna);
-          }
-        }
-        YY_BREAK
+	  valtype = FLOAT;
+	  vptr = &(wcstem.zsource);
+	
+	  if (wcsbthleng == 7) {
+	    extkey = "ZSOURCEa";
+	    BEGIN(CCCCCCCa);
+	  } else {
+	    BEGIN(CCCCna);
+	  }
+	}
+	YY_BREAK
 case 125:
 YY_RULE_SETUP
 #line 1242 "wcsbth.l"
 {
-          yyless(0);
-          if (wcsbth_nkeyrec) {
-            wcsbth_nkeyrec = 0;
-            errmsg = "Keyrecords following the END keyrecord were ignored";
-            BEGIN(ERROR);
-          } else {
-            BEGIN(DISCARD);
-          }
-        }
-        YY_BREAK
+	  yyless(0);
+	  if (wcsbth_nkeyrec) {
+	    wcsbth_nkeyrec = 0;
+	    errmsg = "Keyrecords following the END keyrecord were ignored";
+	    BEGIN(ERROR);
+	  } else {
+	    BEGIN(DISCARD);
+	  }
+	}
+	YY_BREAK
 case 126:
 YY_RULE_SETUP
 #line 1253 "wcsbth.l"
 {
-          yyless(0);
-          BEGIN(DISCARD);
-        }
-        YY_BREAK
+	  yyless(0);
+	  BEGIN(DISCARD);
+	}
+	YY_BREAK
 case 127:
 #line 1259 "wcsbth.l"
 case 128:
 YY_RULE_SETUP
 #line 1259 "wcsbth.l"
 {
-          /* Image-header keyword. */
-          keytype = IMGAXIS;
-          if (relax & WCSHDR_ALLIMG) {
-            sscanf(wcsbthtext, "%d%c", &i, &a);
-            BEGIN(VALUE);
-
-          } else if (relax & WCSHDR_reject) {
-            errmsg = errtxt;
-            sprintf(errmsg,
-              "Image-header keyword %s in binary table", extkey);
-            BEGIN(ERROR);
-
-          } else {
-            /* Pretend we don't recognize it. */
-            BEGIN(DISCARD);
-          }
-        }
-        YY_BREAK
+	  /* Image-header keyword. */
+	  keytype = IMGAXIS;
+	  if (relax & WCSHDR_ALLIMG) {
+	    sscanf(wcsbthtext, "%d%c", &i, &a);
+	    BEGIN(VALUE);
+	
+	  } else if (relax & WCSHDR_reject) {
+	    errmsg = errtxt;
+	    sprintf(errmsg,
+	      "Image-header keyword %s in binary table", extkey);
+	    BEGIN(ERROR);
+	
+	  } else {
+	    /* Pretend we don't recognize it. */
+	    BEGIN(DISCARD);
+	  }
+	}
+	YY_BREAK
 case 129:
 YY_RULE_SETUP
 #line 1278 "wcsbth.l"
 {
-          /* Invalid axis number in image-header keyword. */
-          keytype = IMGAXIS;
-          if (relax & WCSHDR_ALLIMG) {
-            /* Will also be flagged by <VALUE> as invalid. */
-            sscanf(wcsbthtext, "%3d", &i);
-            BEGIN(VALUE);
-
-          } else {
-            /* Pretend we don't recognize it. */
-            BEGIN(DISCARD);
-          }
-        }
-        YY_BREAK
+	  /* Invalid axis number in image-header keyword. */
+	  keytype = IMGAXIS;
+	  if (relax & WCSHDR_ALLIMG) {
+	    /* Will also be flagged by <VALUE> as invalid. */
+	    sscanf(wcsbthtext, "%3d", &i);
+	    BEGIN(VALUE);
+	
+	  } else {
+	    /* Pretend we don't recognize it. */
+	    BEGIN(DISCARD);
+	  }
+	}
+	YY_BREAK
 case 130:
 #line 1293 "wcsbth.l"
 case 131:
@@ -18456,21 +18456,21 @@ case 135:
 YY_RULE_SETUP
 #line 1297 "wcsbth.l"
 {
-          if (vptr) {
-            WCSBTH_PUTBACK;
-            BEGIN((YY_START == iCCCCn) ? iCCCna : TCCCna);
-          } else {
-            keytype = (YY_START == iCCCCn) ? BIMGARR : PIXLIST;
-            if (relax & WCSHDR_reject) {
-              errmsg = errtxt;
-              sprintf(errmsg, "%s keyword is non-standard", extkey);
-              BEGIN(ERROR);
-            } else {
-              BEGIN(DISCARD);
-            }
-          }
-        }
-        YY_BREAK
+	  if (vptr) {
+	    WCSBTH_PUTBACK;
+	    BEGIN((YY_START == iCCCCn) ? iCCCna : TCCCna);
+	  } else {
+	    keytype = (YY_START == iCCCCn) ? BIMGARR : PIXLIST;
+	    if (relax & WCSHDR_reject) {
+	      errmsg = errtxt;
+	      sprintf(errmsg, "%s keyword is non-standard", extkey);
+	      BEGIN(ERROR);
+	    } else {
+	      BEGIN(DISCARD);
+	    }
+	  }
+	}
+	YY_BREAK
 case 136:
 #line 1314 "wcsbth.l"
 case 137:
@@ -18481,38 +18481,38 @@ case 139:
 YY_RULE_SETUP
 #line 1316 "wcsbth.l"
 {
-          if (vptr && (relax & WCSHDR_LONGKEY)) {
-            WCSBTH_PUTBACK;
-            BEGIN((YY_START == iCCCCn) ? iCCCna : TCCCna);
-
-          } else {
-            keytype = (YY_START == iCCCna) ? BIMGARR : PIXLIST;
-            if (relax & WCSHDR_reject) {
-              errmsg = errtxt;
-              if (!vptr) {
-                sprintf(errmsg, "%s keyword is non-standard", extkey);
-              } else {
-                sprintf(errmsg,
-                  "%s keyword may not have an alternate version code", extkey);
-              }
-              BEGIN(ERROR);
-
-            } else {
-              /* Pretend we don't recognize it. */
-              BEGIN(DISCARD);
-            }
-          }
-        }
-        YY_BREAK
+	  if (vptr && (relax & WCSHDR_LONGKEY)) {
+	    WCSBTH_PUTBACK;
+	    BEGIN((YY_START == iCCCCn) ? iCCCna : TCCCna);
+	
+	  } else {
+	    keytype = (YY_START == iCCCna) ? BIMGARR : PIXLIST;
+	    if (relax & WCSHDR_reject) {
+	      errmsg = errtxt;
+	      if (!vptr) {
+	        sprintf(errmsg, "%s keyword is non-standard", extkey);
+	      } else {
+	        sprintf(errmsg,
+	          "%s keyword may not have an alternate version code", extkey);
+	      }
+	      BEGIN(ERROR);
+	
+	    } else {
+	      /* Pretend we don't recognize it. */
+	      BEGIN(DISCARD);
+	    }
+	  }
+	}
+	YY_BREAK
 case 140:
 #line 1341 "wcsbth.l"
 case 141:
 YY_RULE_SETUP
 #line 1341 "wcsbth.l"
 {
-          BEGIN(DISCARD);
-        }
-        YY_BREAK
+	  BEGIN(DISCARD);
+	}
+	YY_BREAK
 case 142:
 #line 1346 "wcsbth.l"
 case 143:
@@ -18527,21 +18527,21 @@ case 147:
 YY_RULE_SETUP
 #line 1350 "wcsbth.l"
 {
-          sscanf(wcsbthtext, "%d%c", &n, &a);
-          if (YY_START == TCCCna) i = wcsbth_colax(*wcs, &alts, n, a);
-          keytype = (YY_START == iCCCna) ? BIMGARR : PIXLIST;
-          BEGIN(VALUE);
-        }
-        YY_BREAK
+	  sscanf(wcsbthtext, "%d%c", &n, &a);
+	  if (YY_START == TCCCna) i = wcsbth_colax(*wcs, &alts, n, a);
+	  keytype = (YY_START == iCCCna) ? BIMGARR : PIXLIST;
+	  BEGIN(VALUE);
+	}
+	YY_BREAK
 case 148:
 #line 1358 "wcsbth.l"
 case 149:
 YY_RULE_SETUP
 #line 1358 "wcsbth.l"
 {
-          BEGIN(DISCARD);
-        }
-        YY_BREAK
+	  BEGIN(DISCARD);
+	}
+	YY_BREAK
 case 150:
 #line 1363 "wcsbth.l"
 case 151:
@@ -18552,24 +18552,24 @@ case 153:
 YY_RULE_SETUP
 #line 1365 "wcsbth.l"
 {
-          /* Image-header keyword. */
-          if (relax & WCSHDR_ALLIMG) {
-            sscanf(wcsbthtext, "%d_%d%c", &i, &j, &a);
-            keytype = IMGAXIS;
-            BEGIN(VALUE);
-
-          } else if (relax & WCSHDR_reject) {
-            errmsg = errtxt;
-            sprintf(errmsg,
-              "Image-header keyword %s in binary table", extkey);
-            BEGIN(ERROR);
-
-          } else {
-            /* Pretend we don't recognize it. */
-            BEGIN(DISCARD);
-          }
-        }
-        YY_BREAK
+	  /* Image-header keyword. */
+	  if (relax & WCSHDR_ALLIMG) {
+	    sscanf(wcsbthtext, "%d_%d%c", &i, &j, &a);
+	    keytype = IMGAXIS;
+	    BEGIN(VALUE);
+	
+	  } else if (relax & WCSHDR_reject) {
+	    errmsg = errtxt;
+	    sprintf(errmsg,
+	      "Image-header keyword %s in binary table", extkey);
+	    BEGIN(ERROR);
+	
+	  } else {
+	    /* Pretend we don't recognize it. */
+	    BEGIN(DISCARD);
+	  }
+	}
+	YY_BREAK
 case 154:
 #line 1385 "wcsbth.l"
 case 155:
@@ -18584,50 +18584,50 @@ case 159:
 YY_RULE_SETUP
 #line 1389 "wcsbth.l"
 {
-          /* Invalid axis number in image-header keyword. */
-          if (relax & WCSHDR_ALLIMG) {
-            /* Will be flagged by <VALUE> as invalid. */
-            sscanf(wcsbthtext, "%d_%d", &i, &j);
-            keytype = IMGAXIS;
-            BEGIN(VALUE);
-
-          } else {
-            /* Pretend we don't recognize it. */
-            BEGIN(DISCARD);
-          }
-        }
-        YY_BREAK
+	  /* Invalid axis number in image-header keyword. */
+	  if (relax & WCSHDR_ALLIMG) {
+	    /* Will be flagged by <VALUE> as invalid. */
+	    sscanf(wcsbthtext, "%d_%d", &i, &j);
+	    keytype = IMGAXIS;
+	    BEGIN(VALUE);
+	
+	  } else {
+	    /* Pretend we don't recognize it. */
+	    BEGIN(DISCARD);
+	  }
+	}
+	YY_BREAK
 case 160:
 YY_RULE_SETUP
 #line 1403 "wcsbth.l"
 {
-          /* This covers the defunct forms CD00i00j and PC00i00j. */
-          if (((relax & WCSHDR_PC00i00j) && (altlin == 1)) ||
-              ((relax & WCSHDR_CD00i00j) && (altlin == 2))) {
-            sscanf(wcsbthtext, "%3d%3d", &i, &j);
-            a = ' ';
-            keytype = IMGAXIS;
-            BEGIN(VALUE);
-
-          } else if (relax & WCSHDR_reject) {
-            errmsg = errtxt;
-            sprintf(errmsg, "Defunct form of %si_ja keyword",
-                             (altlin==1) ? "PC" : "CD");
-            BEGIN(ERROR);
-
-          } else {
-            /* Pretend we don't recognize it. */
-            BEGIN(DISCARD);
-          }
-        }
-        YY_BREAK
+	  /* This covers the defunct forms CD00i00j and PC00i00j. */
+	  if (((relax & WCSHDR_PC00i00j) && (altlin == 1)) ||
+	      ((relax & WCSHDR_CD00i00j) && (altlin == 2))) {
+	    sscanf(wcsbthtext, "%3d%3d", &i, &j);
+	    a = ' ';
+	    keytype = IMGAXIS;
+	    BEGIN(VALUE);
+	
+	  } else if (relax & WCSHDR_reject) {
+	    errmsg = errtxt;
+	    sprintf(errmsg, "Defunct form of %si_ja keyword",
+	                     (altlin==1) ? "PC" : "CD");
+	    BEGIN(ERROR);
+	
+	  } else {
+	    /* Pretend we don't recognize it. */
+	    BEGIN(DISCARD);
+	  }
+	}
+	YY_BREAK
 case 161:
 YY_RULE_SETUP
 #line 1424 "wcsbth.l"
 {
-          BEGIN(DISCARD);
-        }
-        YY_BREAK
+	  BEGIN(DISCARD);
+	}
+	YY_BREAK
 case 162:
 #line 1429 "wcsbth.l"
 case 163:
@@ -18636,11 +18636,11 @@ case 164:
 YY_RULE_SETUP
 #line 1430 "wcsbth.l"
 {
-          sscanf(wcsbthtext, "%d%c", &n, &a);
-          keytype = BIMGARR;
-          BEGIN(VALUE);
-        }
-        YY_BREAK
+	  sscanf(wcsbthtext, "%d%c", &n, &a);
+	  keytype = BIMGARR;
+	  BEGIN(VALUE);
+	}
+	YY_BREAK
 case 165:
 #line 1437 "wcsbth.l"
 case 166:
@@ -18655,28 +18655,28 @@ case 170:
 YY_RULE_SETUP
 #line 1441 "wcsbth.l"
 {
-          if (relax & WCSHDR_LONGKEY) {
-            WCSBTH_PUTBACK;
-            BEGIN(TCn_ka);
-
-          } else if (relax & WCSHDR_reject) {
-            errmsg = errtxt;
-            sprintf(errmsg, "%s keyword is non-standard", extkey);
-            BEGIN(ERROR);
-
-          } else {
-            /* Pretend we don't recognize it. */
-            BEGIN(DISCARD);
-          }
-        }
-        YY_BREAK
+	  if (relax & WCSHDR_LONGKEY) {
+	    WCSBTH_PUTBACK;
+	    BEGIN(TCn_ka);
+	
+	  } else if (relax & WCSHDR_reject) {
+	    errmsg = errtxt;
+	    sprintf(errmsg, "%s keyword is non-standard", extkey);
+	    BEGIN(ERROR);
+	
+	  } else {
+	    /* Pretend we don't recognize it. */
+	    BEGIN(DISCARD);
+	  }
+	}
+	YY_BREAK
 case 171:
 YY_RULE_SETUP
 #line 1457 "wcsbth.l"
 {
-          BEGIN(DISCARD);
-        }
-        YY_BREAK
+	  BEGIN(DISCARD);
+	}
+	YY_BREAK
 case 172:
 #line 1462 "wcsbth.l"
 case 173:
@@ -18691,13 +18691,13 @@ case 177:
 YY_RULE_SETUP
 #line 1466 "wcsbth.l"
 {
-          sscanf(wcsbthtext, "%d_%d%c", &n, &k, &a);
-          i = wcsbth_colax(*wcs, &alts, n, a);
-          j = wcsbth_colax(*wcs, &alts, k, a);
-          keytype = PIXLIST;
-          BEGIN(VALUE);
-        }
-        YY_BREAK
+	  sscanf(wcsbthtext, "%d_%d%c", &n, &k, &a);
+	  i = wcsbth_colax(*wcs, &alts, n, a);
+	  j = wcsbth_colax(*wcs, &alts, k, a);
+	  keytype = PIXLIST;
+	  BEGIN(VALUE);
+	}
+	YY_BREAK
 case 178:
 #line 1475 "wcsbth.l"
 case 179:
@@ -18708,58 +18708,58 @@ case 181:
 YY_RULE_SETUP
 #line 1477 "wcsbth.l"
 {
-          sscanf(wcsbthtext, "%d_%d", &n, &k);
-          a = ' ';
-          i = wcsbth_colax(*wcs, &alts, n, a);
-          j = wcsbth_colax(*wcs, &alts, k, a);
-          keytype = PIXLIST;
-          BEGIN(VALUE);
-        }
-        YY_BREAK
+	  sscanf(wcsbthtext, "%d_%d", &n, &k);
+	  a = ' ';
+	  i = wcsbth_colax(*wcs, &alts, n, a);
+	  j = wcsbth_colax(*wcs, &alts, k, a);
+	  keytype = PIXLIST;
+	  BEGIN(VALUE);
+	}
+	YY_BREAK
 case 182:
 YY_RULE_SETUP
 #line 1486 "wcsbth.l"
 {
-          BEGIN(DISCARD);
-        }
-        YY_BREAK
+	  BEGIN(DISCARD);
+	}
+	YY_BREAK
 case 183:
 #line 1491 "wcsbth.l"
 case 184:
 YY_RULE_SETUP
 #line 1491 "wcsbth.l"
 {
-          yyless(0);
-          BEGIN(CCCCCia);
-        }
-        YY_BREAK
+	  yyless(0);
+	  BEGIN(CCCCCia);
+	}
+	YY_BREAK
 case 185:
 #line 1497 "wcsbth.l"
 case 186:
 YY_RULE_SETUP
 #line 1497 "wcsbth.l"
 {
-          if (relax & WCSHDR_CROTAia) {
-            yyless(0);
-            BEGIN(CCCCCia);
-
-          } else if (relax & WCSHDR_reject) {
-            errmsg = "CROTAn keyword may not have an alternate version code";
-            BEGIN(ERROR);
-
-          } else {
-            /* Pretend we don't recognize it. */
-            BEGIN(DISCARD);
-          }
-        }
-        YY_BREAK
+	  if (relax & WCSHDR_CROTAia) {
+	    yyless(0);
+	    BEGIN(CCCCCia);
+	
+	  } else if (relax & WCSHDR_reject) {
+	    errmsg = "CROTAn keyword may not have an alternate version code";
+	    BEGIN(ERROR);
+	
+	  } else {
+	    /* Pretend we don't recognize it. */
+	    BEGIN(DISCARD);
+	  }
+	}
+	YY_BREAK
 case 187:
 YY_RULE_SETUP
 #line 1512 "wcsbth.l"
 {
-          BEGIN(DISCARD);
-        }
-        YY_BREAK
+	  BEGIN(DISCARD);
+	}
+	YY_BREAK
 case 188:
 #line 1517 "wcsbth.l"
 case 189:
@@ -18774,10 +18774,10 @@ case 193:
 YY_RULE_SETUP
 #line 1521 "wcsbth.l"
 {
-          WCSBTH_PUTBACK;
-          BEGIN((YY_START == iCROTn) ? iCCCna : TCCCna);
-        }
-        YY_BREAK
+	  WCSBTH_PUTBACK;
+	  BEGIN((YY_START == iCROTn) ? iCCCna : TCCCna);
+	}
+	YY_BREAK
 case 194:
 #line 1527 "wcsbth.l"
 case 195:
@@ -18788,67 +18788,67 @@ case 197:
 YY_RULE_SETUP
 #line 1529 "wcsbth.l"
 {
-          if (relax & WCSHDR_CROTAia) {
-            WCSBTH_PUTBACK;
-            BEGIN((YY_START == iCROTn) ? iCCCna : TCCCna);
-
-          } else if (relax & WCSHDR_reject) {
-            errmsg = errtxt;
-            sprintf(errmsg,
-              "%s keyword may not have an alternate version code", extkey);
-            BEGIN(ERROR);
-
-          } else {
-            /* Pretend we don't recognize it. */
-            BEGIN(DISCARD);
-          }
-        }
-        YY_BREAK
+	  if (relax & WCSHDR_CROTAia) {
+	    WCSBTH_PUTBACK;
+	    BEGIN((YY_START == iCROTn) ? iCCCna : TCCCna);
+	
+	  } else if (relax & WCSHDR_reject) {
+	    errmsg = errtxt;
+	    sprintf(errmsg,
+	      "%s keyword may not have an alternate version code", extkey);
+	    BEGIN(ERROR);
+	
+	  } else {
+	    /* Pretend we don't recognize it. */
+	    BEGIN(DISCARD);
+	  }
+	}
+	YY_BREAK
 case 198:
 #line 1547 "wcsbth.l"
 case 199:
 YY_RULE_SETUP
 #line 1547 "wcsbth.l"
 {
-          BEGIN(DISCARD);
-        }
-        YY_BREAK
+	  BEGIN(DISCARD);
+	}
+	YY_BREAK
 case 200:
 #line 1552 "wcsbth.l"
 case 201:
 YY_RULE_SETUP
 #line 1552 "wcsbth.l"
 {
-          /* Image-header keyword. */
-          if (relax & (WCSHDR_AUXIMG | WCSHDR_ALLIMG)) {
-            if (YY_START == CCCCCCCa) {
-              sscanf(wcsbthtext, "%c", &a);
-            } else {
-              a = 0;
-              unput(wcsbthtext[0]);
-            }
-            keytype = IMGAUX;
-            BEGIN(VALUE);
-
-          } else if (relax & WCSHDR_reject) {
-            errmsg = errtxt;
-            sprintf(errmsg,
-              "Image-header keyword %s in binary table", extkey);
-            BEGIN(ERROR);
-
-          } else {
-            /* Pretend we don't recognize it. */
-            BEGIN(DISCARD);
-          }
-        }
-        YY_BREAK
+	  /* Image-header keyword. */
+	  if (relax & (WCSHDR_AUXIMG | WCSHDR_ALLIMG)) {
+	    if (YY_START == CCCCCCCa) {
+	      sscanf(wcsbthtext, "%c", &a);
+	    } else {
+	      a = 0;
+	      unput(wcsbthtext[0]);
+	    }
+	    keytype = IMGAUX;
+	    BEGIN(VALUE);
+	
+	  } else if (relax & WCSHDR_reject) {
+	    errmsg = errtxt;
+	    sprintf(errmsg,
+	      "Image-header keyword %s in binary table", extkey);
+	    BEGIN(ERROR);
+	
+	  } else {
+	    /* Pretend we don't recognize it. */
+	    BEGIN(DISCARD);
+	  }
+	}
+	YY_BREAK
 case 202:
 YY_RULE_SETUP
 #line 1576 "wcsbth.l"
 {
-          BEGIN(DISCARD);
-        }
-        YY_BREAK
+	  BEGIN(DISCARD);
+	}
+	YY_BREAK
 case 203:
 #line 1581 "wcsbth.l"
 case 204:
@@ -18861,30 +18861,30 @@ case 207:
 YY_RULE_SETUP
 #line 1584 "wcsbth.l"
 {
-          sscanf(wcsbthtext, "%d%c", &n, &a);
-          keytype = BINTAB;
-          BEGIN(VALUE);
-        }
-        YY_BREAK
+	  sscanf(wcsbthtext, "%d%c", &n, &a);
+	  keytype = BINTAB;
+	  BEGIN(VALUE);
+	}
+	YY_BREAK
 case 208:
 YY_RULE_SETUP
 #line 1590 "wcsbth.l"
 {
-          sscanf(wcsbthtext, "%d", &n);
-          a = ' ';
-          keytype = BINTAB;
-          BEGIN(VALUE);
-        }
-        YY_BREAK
+	  sscanf(wcsbthtext, "%d", &n);
+	  a = ' ';
+	  keytype = BINTAB;
+	  BEGIN(VALUE);
+	}
+	YY_BREAK
 case 209:
 #line 1598 "wcsbth.l"
 case 210:
 YY_RULE_SETUP
 #line 1598 "wcsbth.l"
 {
-          BEGIN(DISCARD);
-        }
-        YY_BREAK
+	  BEGIN(DISCARD);
+	}
+	YY_BREAK
 case 211:
 #line 1603 "wcsbth.l"
 case 212:
@@ -18901,21 +18901,21 @@ case 217:
 YY_RULE_SETUP
 #line 1608 "wcsbth.l"
 {
-          sscanf(wcsbthtext, "%d", &n);
-          a = 0;
-          keytype = BINTAB;
-          BEGIN(VALUE);
-        }
-        YY_BREAK
+	  sscanf(wcsbthtext, "%d", &n);
+	  a = 0;
+	  keytype = BINTAB;
+	  BEGIN(VALUE);
+	}
+	YY_BREAK
 case 218:
 #line 1616 "wcsbth.l"
 case 219:
 YY_RULE_SETUP
 #line 1616 "wcsbth.l"
 {
-          BEGIN(DISCARD);
-        }
-        YY_BREAK
+	  BEGIN(DISCARD);
+	}
+	YY_BREAK
 case 220:
 #line 1621 "wcsbth.l"
 case 221:
@@ -18926,24 +18926,24 @@ case 223:
 YY_RULE_SETUP
 #line 1623 "wcsbth.l"
 {
-          /* Image-header keyword. */
-          if (relax & WCSHDR_ALLIMG) {
-            sscanf(wcsbthtext, "%d_%d%c", &i, &m, &a);
-            keytype = IMGAXIS;
-            BEGIN(VALUE);
-
-          } else if (relax & WCSHDR_reject) {
-            errmsg = errtxt;
-            sprintf(errmsg,
-              "Image-header keyword %s in binary table", extkey);
-            BEGIN(ERROR);
-
-          } else {
-            /* Pretend we don't recognize it. */
-            BEGIN(DISCARD);
-          }
-        }
-        YY_BREAK
+	  /* Image-header keyword. */
+	  if (relax & WCSHDR_ALLIMG) {
+	    sscanf(wcsbthtext, "%d_%d%c", &i, &m, &a);
+	    keytype = IMGAXIS;
+	    BEGIN(VALUE);
+	
+	  } else if (relax & WCSHDR_reject) {
+	    errmsg = errtxt;
+	    sprintf(errmsg,
+	      "Image-header keyword %s in binary table", extkey);
+	    BEGIN(ERROR);
+	
+	  } else {
+	    /* Pretend we don't recognize it. */
+	    BEGIN(DISCARD);
+	  }
+	}
+	YY_BREAK
 case 224:
 #line 1643 "wcsbth.l"
 case 225:
@@ -18958,26 +18958,26 @@ case 229:
 YY_RULE_SETUP
 #line 1647 "wcsbth.l"
 {
-          /* Invalid parameter in image-header keyword. */
-          if (relax & WCSHDR_ALLIMG) {
-            /* Will be flagged by <VALUE> as invalid. */
-            sscanf(wcsbthtext, "%d_%d", &i, &m);
-            keytype = IMGAXIS;
-            BEGIN(VALUE);
-
-          } else {
-            /* Pretend we don't recognize it. */
-            BEGIN(DISCARD);
-          }
-        }
-        YY_BREAK
+	  /* Invalid parameter in image-header keyword. */
+	  if (relax & WCSHDR_ALLIMG) {
+	    /* Will be flagged by <VALUE> as invalid. */
+	    sscanf(wcsbthtext, "%d_%d", &i, &m);
+	    keytype = IMGAXIS;
+	    BEGIN(VALUE);
+	
+	  } else {
+	    /* Pretend we don't recognize it. */
+	    BEGIN(DISCARD);
+	  }
+	}
+	YY_BREAK
 case 230:
 YY_RULE_SETUP
 #line 1661 "wcsbth.l"
 {
-          BEGIN(DISCARD);
-        }
-        YY_BREAK
+	  BEGIN(DISCARD);
+	}
+	YY_BREAK
 case 231:
 #line 1666 "wcsbth.l"
 case 232:
@@ -19004,30 +19004,30 @@ case 242:
 YY_RULE_SETUP
 #line 1676 "wcsbth.l"
 {
-          if (relax & WCSHDR_LONGKEY) {
-            WCSBTH_PUTBACK;
-            BEGIN((YY_START == iCCn_ma) ? iCn_ma : TCn_ma);
-
-          } else if (relax & WCSHDR_reject) {
-            errmsg = errtxt;
-            sprintf(errmsg, "%s keyword is non-standard", extkey);
-            BEGIN(ERROR);
-
-          } else {
-            /* Pretend we don't recognize it. */
-            BEGIN(DISCARD);
-          }
-        }
-        YY_BREAK
+	  if (relax & WCSHDR_LONGKEY) {
+	    WCSBTH_PUTBACK;
+	    BEGIN((YY_START == iCCn_ma) ? iCn_ma : TCn_ma);
+	
+	  } else if (relax & WCSHDR_reject) {
+	    errmsg = errtxt;
+	    sprintf(errmsg, "%s keyword is non-standard", extkey);
+	    BEGIN(ERROR);
+	
+	  } else {
+	    /* Pretend we don't recognize it. */
+	    BEGIN(DISCARD);
+	  }
+	}
+	YY_BREAK
 case 243:
 #line 1693 "wcsbth.l"
 case 244:
 YY_RULE_SETUP
 #line 1693 "wcsbth.l"
 {
-          BEGIN(DISCARD);
-        }
-        YY_BREAK
+	  BEGIN(DISCARD);
+	}
+	YY_BREAK
 case 245:
 #line 1698 "wcsbth.l"
 case 246:
@@ -19054,12 +19054,12 @@ case 256:
 YY_RULE_SETUP
 #line 1708 "wcsbth.l"
 {
-          sscanf(wcsbthtext, "%d_%d%c", &n, &m, &a);
-          if (YY_START == TCn_ma) i = wcsbth_colax(*wcs, &alts, n, a);
-          keytype = (YY_START == iCn_ma) ? BIMGARR : PIXLIST;
-          BEGIN(VALUE);
-        }
-        YY_BREAK
+	  sscanf(wcsbthtext, "%d_%d%c", &n, &m, &a);
+	  if (YY_START == TCn_ma) i = wcsbth_colax(*wcs, &alts, n, a);
+	  keytype = (YY_START == iCn_ma) ? BIMGARR : PIXLIST;
+	  BEGIN(VALUE);
+	}
+	YY_BREAK
 case 257:
 #line 1716 "wcsbth.l"
 case 258:
@@ -19078,363 +19078,363 @@ case 264:
 YY_RULE_SETUP
 #line 1722 "wcsbth.l"
 {
-          /* Invalid combinations will be flagged by <VALUE>. */
-          sscanf(wcsbthtext, "%d_%d", &n, &m);
-          a = ' ';
-          if (YY_START == TCn_ma) i = wcsbth_colax(*wcs, &alts, n, a);
-          keytype = (YY_START == iCn_ma) ? BIMGARR : PIXLIST;
-          BEGIN(VALUE);
-        }
-        YY_BREAK
+	  /* Invalid combinations will be flagged by <VALUE>. */
+	  sscanf(wcsbthtext, "%d_%d", &n, &m);
+	  a = ' ';
+	  if (YY_START == TCn_ma) i = wcsbth_colax(*wcs, &alts, n, a);
+	  keytype = (YY_START == iCn_ma) ? BIMGARR : PIXLIST;
+	  BEGIN(VALUE);
+	}
+	YY_BREAK
 case 265:
 #line 1732 "wcsbth.l"
 case 266:
 YY_RULE_SETUP
 #line 1732 "wcsbth.l"
 {
-          BEGIN(DISCARD);
-        }
-        YY_BREAK
+	  BEGIN(DISCARD);
+	}
+	YY_BREAK
 case 267:
 YY_RULE_SETUP
 #line 1736 "wcsbth.l"
 {
-          if (relax & WCSHDR_PROJPn) {
-            sscanf(wcsbthtext, "%d", &m);
-            i = 0;
-            a = ' ';
-            keytype = IMGAXIS;
-            BEGIN(VALUE);
-
-          } else if (relax & WCSHDR_reject) {
-            errmsg = "PROJPn keyword is defunct";
-            BEGIN(ERROR);
-
-          } else {
-            /* Pretend we don't recognize it. */
-            BEGIN(DISCARD);
-          }
-        }
-        YY_BREAK
+	  if (relax & WCSHDR_PROJPn) {
+	    sscanf(wcsbthtext, "%d", &m);
+	    i = 0;
+	    a = ' ';
+	    keytype = IMGAXIS;
+	    BEGIN(VALUE);
+	
+	  } else if (relax & WCSHDR_reject) {
+	    errmsg = "PROJPn keyword is defunct";
+	    BEGIN(ERROR);
+	
+	  } else {
+	    /* Pretend we don't recognize it. */
+	    BEGIN(DISCARD);
+	  }
+	}
+	YY_BREAK
 case 268:
 YY_RULE_SETUP
 #line 1754 "wcsbth.l"
 {
-          BEGIN(DISCARD);
-        }
-        YY_BREAK
+	  BEGIN(DISCARD);
+	}
+	YY_BREAK
 case 269:
 YY_RULE_SETUP
 #line 1758 "wcsbth.l"
 {
-          /* Do checks on i, j, m, n, k. */
-          if (!(keytype & keysel)) {
-            /* Selection by keyword type. */
-            BEGIN(DISCARD);
-
-          } else if (exclude[n] || exclude[k]) {
-            /* One or other column is not selected. */
-            if (k && (exclude[n] != exclude[k])) {
-              /* For keywords such as TCn_ka, both columns must be excluded.
-                 User error, so return immediately. */
-              wcsbthlex_destroy();
-              return 3;
-
-            } else {
-              BEGIN(DISCARD);
-            }
-
-          } else if (i > 99 || j > 99 || m > 99 || n > 999 || k > 999) {
-            if (relax & WCSHDR_reject) {
-              errmsg = errtxt;
-              if (i > 99 || j > 99) {
-                sprintf(errmsg, "Axis number exceeds 99");
-              } else if (m > 99) {
-                sprintf(errmsg, "Parameter number exceeds 99");
-              } else if (n > 999 || k > 999) {
-                sprintf(errmsg, "Column number exceeds 999");
-              }
-              BEGIN(ERROR);
-
-            } else {
-              /* Pretend we don't recognize it. */
-              BEGIN(DISCARD);
-            }
-
-          } else if (ipass == 2 && npass == 3 && (keytype & BINTAB)) {
-            /* Skip keyvalues that won't be inherited. */
-            BEGIN(FLUSH);
-
-          } else if (ipass == 3 && (keytype & IMGHEAD)) {
-            /* IMGHEAD keytypes are always dealt with on the second pass. */
-            BEGIN(FLUSH);
-
-          } else if (vptr) {
-            alts.icol = 0;
-            alts.ialt = 0;
-            voff = (char *)vptr - (char *)(&wcstem);
-
-            if (valtype == INTEGER) {
-              BEGIN(INTEGER_VAL);
-            } else if (valtype == FLOAT) {
-              BEGIN(FLOAT_VAL);
-            } else if (valtype == STRING) {
-              BEGIN(STRING_VAL);
-            } else {
-              errmsg = errtxt;
-              sprintf(errmsg, "Internal parser ERROR, bad data type: %d",
-                valtype);
-              BEGIN(ERROR);
-            }
-
-          } else {
-            errmsg = "Internal parser ERROR, null pointer";
-            BEGIN(ERROR);
-          }
-        }
-        YY_BREAK
+	  /* Do checks on i, j, m, n, k. */
+	  if (!(keytype & keysel)) {
+	    /* Selection by keyword type. */
+	    BEGIN(DISCARD);
+	
+	  } else if (exclude[n] || exclude[k]) {
+	    /* One or other column is not selected. */
+	    if (k && (exclude[n] != exclude[k])) {
+	      /* For keywords such as TCn_ka, both columns must be excluded.
+	         User error, so return immediately. */
+	      wcsbthlex_destroy();
+	      return 3;
+	
+	    } else {
+	      BEGIN(DISCARD);
+	    }
+	
+	  } else if (i > 99 || j > 99 || m > 99 || n > 999 || k > 999) {
+	    if (relax & WCSHDR_reject) {
+	      errmsg = errtxt;
+	      if (i > 99 || j > 99) {
+	        sprintf(errmsg, "Axis number exceeds 99");
+	      } else if (m > 99) {
+	        sprintf(errmsg, "Parameter number exceeds 99");
+	      } else if (n > 999 || k > 999) {
+	        sprintf(errmsg, "Column number exceeds 999");
+	      }
+	      BEGIN(ERROR);
+	
+	    } else {
+	      /* Pretend we don't recognize it. */
+	      BEGIN(DISCARD);
+	    }
+	
+	  } else if (ipass == 2 && npass == 3 && (keytype & BINTAB)) {
+	    /* Skip keyvalues that won't be inherited. */
+	    BEGIN(FLUSH);
+	
+	  } else if (ipass == 3 && (keytype & IMGHEAD)) {
+	    /* IMGHEAD keytypes are always dealt with on the second pass. */
+	    BEGIN(FLUSH);
+	
+	  } else if (vptr) {
+	    alts.icol = 0;
+	    alts.ialt = 0;
+	    voff = (char *)vptr - (char *)(&wcstem);
+	
+	    if (valtype == INTEGER) {
+	      BEGIN(INTEGER_VAL);
+	    } else if (valtype == FLOAT) {
+	      BEGIN(FLOAT_VAL);
+	    } else if (valtype == STRING) {
+	      BEGIN(STRING_VAL);
+	    } else {
+	      errmsg = errtxt;
+	      sprintf(errmsg, "Internal parser ERROR, bad data type: %d",
+	        valtype);
+	      BEGIN(ERROR);
+	    }
+	
+	  } else {
+	    errmsg = "Internal parser ERROR, null pointer";
+	    BEGIN(ERROR);
+	  }
+	}
+	YY_BREAK
 case 270:
 YY_RULE_SETUP
 #line 1825 "wcsbth.l"
 {
-          errmsg = "Invalid KEYWORD = VALUE syntax";
-          BEGIN(ERROR);
-        }
-        YY_BREAK
+	  errmsg = "Invalid KEYWORD = VALUE syntax";
+	  BEGIN(ERROR);
+	}
+	YY_BREAK
 case 271:
 YY_RULE_SETUP
 #line 1830 "wcsbth.l"
 {
-          if (ipass == 1) {
-            /* Do first-pass bookkeeping. */
-            wcsbth_pass1(keytype, i, j, n, k, a, ptype, &alts);
-            BEGIN(FLUSH);
-
-          } else {
-            /* Update each coordinate representation. */
-            while ((wcsp = wcsbth_idx(*wcs, &alts, keytype, n, a))) {
-              wptr = (void *)((char *)wcsp + voff);
-
-              /* Read the keyvalue. */
-              if (special) {
-                special(wptr);
-              } else {
-                sscanf(wcsbthtext, "%d", (int *)wptr);
-              }
-            }
-
-            BEGIN(COMMENT);
-          }
-        }
-        YY_BREAK
+	  if (ipass == 1) {
+	    /* Do first-pass bookkeeping. */
+	    wcsbth_pass1(keytype, i, j, n, k, a, ptype, &alts);
+	    BEGIN(FLUSH);
+	
+	  } else {
+	    /* Update each coordinate representation. */
+	    while ((wcsp = wcsbth_idx(*wcs, &alts, keytype, n, a))) {
+	      wptr = (void *)((char *)wcsp + voff);
+	
+	      /* Read the keyvalue. */
+	      if (special) {
+	        special(wptr);
+	      } else {
+	        sscanf(wcsbthtext, "%d", (int *)wptr);
+	      }
+	    }
+	
+	    BEGIN(COMMENT);
+	  }
+	}
+	YY_BREAK
 case 272:
 YY_RULE_SETUP
 #line 1853 "wcsbth.l"
 {
-          errmsg = "An integer value was expected";
-          BEGIN(ERROR);
-        }
-        YY_BREAK
+	  errmsg = "An integer value was expected";
+	  BEGIN(ERROR);
+	}
+	YY_BREAK
 case 273:
 YY_RULE_SETUP
 #line 1858 "wcsbth.l"
 {
-          if (ipass == 1) {
-            /* Do first-pass bookkeeping. */
-            wcsbth_pass1(keytype, i, j, n, k, a, ptype, &alts);
-            BEGIN(FLUSH);
-
-          } else {
-            /* Update each coordinate representation. */
-            while ((wcsp = wcsbth_idx(*wcs, &alts, keytype, n, a))) {
-              wptr = (void *)((char *)wcsp + voff);
-
-              /* Apply keyword parameterization. */
-              if (ptype == 'v') {
-                ipx = wcsp->npv++;
-                wcsp->pv[ipx].i = i;
-                wcsp->pv[ipx].m = m;
-                wptr = &(wcsp->pv[ipx].value);
-
-              } else if (j) {
-                /* Is the de-reference necessary? */
-                wptr = *((double **)wptr) + (i - 1)*(wcsp->naxis) + (j - 1);
-
-              } else if (i) {
-                wptr = *((double **)wptr) + (i - 1);
-              }
-
-              /* Read the keyvalue. */
-              if (special) {
-                special(wptr);
-              } else {
-                sscanf(wcsbthtext, "%lf", (double *)wptr);
-              }
-
-              /* Flag the presence of PC, or CD and/or CROTA. */
-              if (altlin) {
-                wcsp->altlin |= altlin;
-                altlin = 0;
-              }
-            }
-
-            BEGIN(COMMENT);
-          }
-        }
-        YY_BREAK
+	  if (ipass == 1) {
+	    /* Do first-pass bookkeeping. */
+	    wcsbth_pass1(keytype, i, j, n, k, a, ptype, &alts);
+	    BEGIN(FLUSH);
+	
+	  } else {
+	    /* Update each coordinate representation. */
+	    while ((wcsp = wcsbth_idx(*wcs, &alts, keytype, n, a))) {
+	      wptr = (void *)((char *)wcsp + voff);
+	
+	      /* Apply keyword parameterization. */
+	      if (ptype == 'v') {
+	        ipx = wcsp->npv++;
+	        wcsp->pv[ipx].i = i;
+	        wcsp->pv[ipx].m = m;
+	        wptr = &(wcsp->pv[ipx].value);
+	
+	      } else if (j) {
+	        /* Is the de-reference necessary? */
+	        wptr = *((double **)wptr) + (i - 1)*(wcsp->naxis) + (j - 1);
+	
+	      } else if (i) {
+	        wptr = *((double **)wptr) + (i - 1);
+	      }
+	
+	      /* Read the keyvalue. */
+	      if (special) {
+	        special(wptr);
+	      } else {
+	        sscanf(wcsbthtext, "%lf", (double *)wptr);
+	      }
+	
+	      /* Flag the presence of PC, or CD and/or CROTA. */
+	      if (altlin) {
+	        wcsp->altlin |= altlin;
+	        altlin = 0;
+	      }
+	    }
+	
+	    BEGIN(COMMENT);
+	  }
+	}
+	YY_BREAK
 case 274:
 YY_RULE_SETUP
 #line 1902 "wcsbth.l"
 {
-          errmsg = "A floating-point value was expected";
-          BEGIN(ERROR);
-        }
-        YY_BREAK
+	  errmsg = "A floating-point value was expected";
+	  BEGIN(ERROR);
+	}
+	YY_BREAK
 case 275:
 /* rule 275 can match eol */
 YY_RULE_SETUP
 #line 1907 "wcsbth.l"
 {
-          if (ipass == 1) {
-            /* Do first-pass bookkeeping. */
-            wcsbth_pass1(keytype, i, j, n, k, a, ptype, &alts);
-            BEGIN(FLUSH);
-
-          } else {
-            /* Update each coordinate representation. */
-            while ((wcsp = wcsbth_idx(*wcs, &alts, keytype, n, a))) {
-              wptr = (void *)((char *)wcsp + voff);
-
-              /* Apply keyword parameterization. */
-              if (ptype == 's') {
-                ipx = wcsp->nps++;
-                wcsp->ps[ipx].i = i;
-                wcsp->ps[ipx].m = m;
-                wptr = wcsp->ps[ipx].value;
-
-              } else if (j) {
-                wptr = *((char (**)[72])wptr) +
-                        (i - 1)*(wcsp->naxis) + (j - 1);
-
-              } else if (i) {
-                wptr = *((char (**)[72])wptr) + (i - 1);
-              }
-
-              /* Read the keyvalue. */
-              cptr = (char *)wptr;
-              strcpy(cptr, wcsbthtext+1);
-
-              /* Squeeze out repeated quotes. */
-              ix = 0;
-              for (jx = 0; jx < 72; jx++) {
-                if (ix < jx) {
-                  cptr[ix] = cptr[jx];
-                }
-
-                if (cptr[jx] == '\0') {
-                  if (ix) cptr[ix-1] = '\0';
-                  break;
-                } else if (cptr[jx] == '\'' && cptr[jx+1] == '\'') {
-                  jx++;
-                }
-
-                ix++;
-              }
-            }
-
-            BEGIN(COMMENT);
-          }
-        }
-        YY_BREAK
+	  if (ipass == 1) {
+	    /* Do first-pass bookkeeping. */
+	    wcsbth_pass1(keytype, i, j, n, k, a, ptype, &alts);
+	    BEGIN(FLUSH);
+	
+	  } else {
+	    /* Update each coordinate representation. */
+	    while ((wcsp = wcsbth_idx(*wcs, &alts, keytype, n, a))) {
+	      wptr = (void *)((char *)wcsp + voff);
+	
+	      /* Apply keyword parameterization. */
+	      if (ptype == 's') {
+	        ipx = wcsp->nps++;
+	        wcsp->ps[ipx].i = i;
+	        wcsp->ps[ipx].m = m;
+	        wptr = wcsp->ps[ipx].value;
+	
+	      } else if (j) {
+	        wptr = *((char (**)[72])wptr) +
+	                (i - 1)*(wcsp->naxis) + (j - 1);
+	
+	      } else if (i) {
+	        wptr = *((char (**)[72])wptr) + (i - 1);
+	      }
+	
+	      /* Read the keyvalue. */
+	      cptr = (char *)wptr;
+	      strcpy(cptr, wcsbthtext+1);
+	
+	      /* Squeeze out repeated quotes. */
+	      ix = 0;
+	      for (jx = 0; jx < 72; jx++) {
+	        if (ix < jx) {
+	          cptr[ix] = cptr[jx];
+	        }
+	
+	        if (cptr[jx] == '\0') {
+	          if (ix) cptr[ix-1] = '\0';
+	          break;
+	        } else if (cptr[jx] == '\'' && cptr[jx+1] == '\'') {
+	          jx++;
+	        }
+	
+	        ix++;
+	      }
+	    }
+	
+	    BEGIN(COMMENT);
+	  }
+	}
+	YY_BREAK
 case 276:
 YY_RULE_SETUP
 #line 1959 "wcsbth.l"
 {
-          errmsg = "A string value was expected";
-          BEGIN(ERROR);
-        }
-        YY_BREAK
+	  errmsg = "A string value was expected";
+	  BEGIN(ERROR);
+	}
+	YY_BREAK
 case 277:
 #line 1965 "wcsbth.l"
 case 278:
 YY_RULE_SETUP
 #line 1965 "wcsbth.l"
 {
-          BEGIN(FLUSH);
-        }
-        YY_BREAK
+	  BEGIN(FLUSH);
+	}
+	YY_BREAK
 case 279:
 YY_RULE_SETUP
 #line 1969 "wcsbth.l"
 {
-          errmsg = "Malformed keycomment";
-          BEGIN(ERROR);
-        }
-        YY_BREAK
+	  errmsg = "Malformed keycomment";
+	  BEGIN(ERROR);
+	}
+	YY_BREAK
 case 280:
 YY_RULE_SETUP
 #line 1974 "wcsbth.l"
 {
-          if (ipass == npass) {
-            if (ctrl < 0) {
-              /* Preserve discards. */
-              if (hptr < wcsbth_hdr-80) {
-                strncpy(hptr, wcsbth_hdr-80, 80);
-              }
-              hptr += 80;
-
-            } else if (ctrl > 2) {
-              fprintf(stderr, "%.80s\n  Discarded.\n", wcsbth_hdr-80);
-            }
-          }
-
-          BEGIN(FLUSH);
-        }
-        YY_BREAK
+	  if (ipass == npass) {
+	    if (ctrl < 0) {
+	      /* Preserve discards. */
+	      if (hptr < wcsbth_hdr-80) {
+	        strncpy(hptr, wcsbth_hdr-80, 80);
+	      }
+	      hptr += 80;
+	
+	    } else if (ctrl > 2) {
+	      fprintf(stderr, "%.80s\n  Discarded.\n", wcsbth_hdr-80);
+	    }
+	  }
+	
+	  BEGIN(FLUSH);
+	}
+	YY_BREAK
 case 281:
 YY_RULE_SETUP
 #line 1991 "wcsbth.l"
 {
-          (*nreject)++;
-          if (ipass == npass) {
-            if (ctrl == -1) {
-              if (hptr < wcsbth_hdr-80) {
-                /* Preserve rejects. */
-                strncpy(hptr, wcsbth_hdr-80, 80);
-              }
-              hptr += 80;
-            }
-
-            if (abs(ctrl) > 1) {
-              fprintf(stderr, "%.80s\n%4d: %s.\n", wcsbth_hdr-80, *nreject,
-                errmsg);
-            }
-          }
-
-          BEGIN(FLUSH);
-        }
-        YY_BREAK
+	  (*nreject)++;
+	  if (ipass == npass) {
+	    if (ctrl == -1) {
+	      if (hptr < wcsbth_hdr-80) {
+	        /* Preserve rejects. */
+	        strncpy(hptr, wcsbth_hdr-80, 80);
+	      }
+	      hptr += 80;
+	    }
+	
+	    if (abs(ctrl) > 1) {
+	      fprintf(stderr, "%.80s\n%4d: %s.\n", wcsbth_hdr-80, *nreject,
+	        errmsg);
+	    }
+	  }
+	
+	  BEGIN(FLUSH);
+	}
+	YY_BREAK
 case 282:
 /* rule 282 can match eol */
 YY_RULE_SETUP
 #line 2011 "wcsbth.l"
 {
-          /* Throw away the rest of the line and reset for the next one. */
-          i = j = 0;
-          n = k = 0;
-          m = 0;
-          a = ' ';
-
-          keytype =  0;
-          valtype = -1;
-          vptr    = 0x0;
-
-          altlin = 0;
-          ptype  = ' ';
-          special = 0x0;
-          BEGIN(INITIAL);
-        }
-        YY_BREAK
+	  /* Throw away the rest of the line and reset for the next one. */
+	  i = j = 0;
+	  n = k = 0;
+	  m = 0;
+	  a = ' ';
+	
+	  keytype =  0;
+	  valtype = -1;
+	  vptr    = 0x0;
+	
+	  altlin = 0;
+	  ptype  = ' ';
+	  special = 0x0;
+	  BEGIN(INITIAL);
+	}
+	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(CCCCCia):
 case YY_STATE_EOF(iCCCna):
@@ -19470,413 +19470,413 @@ case YY_STATE_EOF(ERROR):
 case YY_STATE_EOF(FLUSH):
 #line 2028 "wcsbth.l"
 {
-          /* End-of-input. */
-          if (ipass == 1) {
-            if ((status = wcsbth_init1(&alts, nwcs, wcs)) || *nwcs == 0) {
-              wcsbthlex_destroy();
-              return status;
-            }
+	  /* End-of-input. */
+	  if (ipass == 1) {
+	    if ((status = wcsbth_init1(&alts, nwcs, wcs)) || *nwcs == 0) {
+	      wcsbthlex_destroy();
+	      return status;
+	    }
 
-            if (alts.imgherit) npass = 3;
-
-            if (abs(ctrl) > 2) {
-              if (*nwcs == 1) {
-                fprintf(stderr, "Found one coordinate representation.\n");
-              } else {
-                fprintf(stderr, "Found %d coordinate representations.\n",
-                  *nwcs);
-              }
-            }
-          }
-
-          if (ipass++ < npass) {
-            wcsbth_hdr = header;
-            wcsbth_nkeyrec = nkeyrec;
-            *nreject = 0;
-
-            i = j = 0;
-            k = n = 0;
-            m = 0;
-            a = ' ';
-
-            keytype =  0;
-            valtype = -1;
-            vptr    = 0x0;
-
-            altlin = 0;
-            ptype  = ' ';
-            special = 0x0;
-
-            wcsbthrestart(wcsbthin);
-
-          } else {
-            wcsbthlex_destroy();
-
-            if (ctrl < 0) {
-              *hptr = '\0';
-            } else if (ctrl == 1) {
-              fprintf(stderr, "%d WCS keyrecords were rejected.\n", *nreject);
-            }
-
-            return wcsbth_final(&alts, nwcs, wcs);
-          }
-        }
-        YY_BREAK
+	    if (alts.imgherit) npass = 3;
+	
+	    if (abs(ctrl) > 2) {
+	      if (*nwcs == 1) {
+	        fprintf(stderr, "Found one coordinate representation.\n");
+	      } else {
+	        fprintf(stderr, "Found %d coordinate representations.\n",
+	          *nwcs);
+	      }
+	    }
+	  }
+	
+	  if (ipass++ < npass) {
+	    wcsbth_hdr = header;
+	    wcsbth_nkeyrec = nkeyrec;
+	    *nreject = 0;
+	
+	    i = j = 0;
+	    k = n = 0;
+	    m = 0;
+	    a = ' ';
+	
+	    keytype =  0;
+	    valtype = -1;
+	    vptr    = 0x0;
+	
+	    altlin = 0;
+	    ptype  = ' ';
+	    special = 0x0;
+	
+	    wcsbthrestart(wcsbthin);
+	
+	  } else {
+	    wcsbthlex_destroy();
+	
+	    if (ctrl < 0) {
+	      *hptr = '\0';
+	    } else if (ctrl == 1) {
+	      fprintf(stderr, "%d WCS keyrecords were rejected.\n", *nreject);
+	    }
+	
+	    return wcsbth_final(&alts, nwcs, wcs);
+	  }
+	}
+	YY_BREAK
 case 283:
 YY_RULE_SETUP
 #line 2081 "wcsbth.l"
 ECHO;
-        YY_BREAK
+	YY_BREAK
 #line 19531 "wcsbth.c"
 
-        case YY_END_OF_BUFFER:
-                {
-                /* Amount of text matched not including the EOB char. */
-                int yy_amount_of_matched_text = (int) (yy_cp - (yytext_ptr)) - 1;
+	case YY_END_OF_BUFFER:
+		{
+		/* Amount of text matched not including the EOB char. */
+		int yy_amount_of_matched_text = (int) (yy_cp - (yytext_ptr)) - 1;
 
-                /* Undo the effects of YY_DO_BEFORE_ACTION. */
-                *yy_cp = (yy_hold_char);
-                YY_RESTORE_YY_MORE_OFFSET
+		/* Undo the effects of YY_DO_BEFORE_ACTION. */
+		*yy_cp = (yy_hold_char);
+		YY_RESTORE_YY_MORE_OFFSET
 
-                if ( YY_CURRENT_BUFFER_LVALUE->yy_buffer_status == YY_BUFFER_NEW )
-                        {
-                        /* We're scanning a new file or input source.  It's
-                         * possible that this happened because the user
-                         * just pointed wcsbthin at a new source and called
-                         * wcsbthlex().  If so, then we have to assure
-                         * consistency between YY_CURRENT_BUFFER and our
-                         * globals.  Here is the right place to do so, because
-                         * this is the first action (other than possibly a
-                         * back-up) that will match for the new input source.
-                         */
-                        (yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_n_chars;
-                        YY_CURRENT_BUFFER_LVALUE->yy_input_file = wcsbthin;
-                        YY_CURRENT_BUFFER_LVALUE->yy_buffer_status = YY_BUFFER_NORMAL;
-                        }
+		if ( YY_CURRENT_BUFFER_LVALUE->yy_buffer_status == YY_BUFFER_NEW )
+			{
+			/* We're scanning a new file or input source.  It's
+			 * possible that this happened because the user
+			 * just pointed wcsbthin at a new source and called
+			 * wcsbthlex().  If so, then we have to assure
+			 * consistency between YY_CURRENT_BUFFER and our
+			 * globals.  Here is the right place to do so, because
+			 * this is the first action (other than possibly a
+			 * back-up) that will match for the new input source.
+			 */
+			(yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_n_chars;
+			YY_CURRENT_BUFFER_LVALUE->yy_input_file = wcsbthin;
+			YY_CURRENT_BUFFER_LVALUE->yy_buffer_status = YY_BUFFER_NORMAL;
+			}
 
-                /* Note that here we test for yy_c_buf_p "<=" to the position
-                 * of the first EOB in the buffer, since yy_c_buf_p will
-                 * already have been incremented past the NUL character
-                 * (since all states make transitions on EOB to the
-                 * end-of-buffer state).  Contrast this with the test
-                 * in input().
-                 */
-                if ( (yy_c_buf_p) <= &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)] )
-                        { /* This was really a NUL. */
-                        yy_state_type yy_next_state;
+		/* Note that here we test for yy_c_buf_p "<=" to the position
+		 * of the first EOB in the buffer, since yy_c_buf_p will
+		 * already have been incremented past the NUL character
+		 * (since all states make transitions on EOB to the
+		 * end-of-buffer state).  Contrast this with the test
+		 * in input().
+		 */
+		if ( (yy_c_buf_p) <= &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)] )
+			{ /* This was really a NUL. */
+			yy_state_type yy_next_state;
 
-                        (yy_c_buf_p) = (yytext_ptr) + yy_amount_of_matched_text;
+			(yy_c_buf_p) = (yytext_ptr) + yy_amount_of_matched_text;
 
-                        yy_current_state = yy_get_previous_state(  );
+			yy_current_state = yy_get_previous_state(  );
 
-                        /* Okay, we're now positioned to make the NUL
-                         * transition.  We couldn't have
-                         * yy_get_previous_state() go ahead and do it
-                         * for us because it doesn't know how to deal
-                         * with the possibility of jamming (and we don't
-                         * want to build jamming into it because then it
-                         * will run more slowly).
-                         */
+			/* Okay, we're now positioned to make the NUL
+			 * transition.  We couldn't have
+			 * yy_get_previous_state() go ahead and do it
+			 * for us because it doesn't know how to deal
+			 * with the possibility of jamming (and we don't
+			 * want to build jamming into it because then it
+			 * will run more slowly).
+			 */
 
-                        yy_next_state = yy_try_NUL_trans( yy_current_state );
+			yy_next_state = yy_try_NUL_trans( yy_current_state );
 
-                        yy_bp = (yytext_ptr) + YY_MORE_ADJ;
+			yy_bp = (yytext_ptr) + YY_MORE_ADJ;
 
-                        if ( yy_next_state )
-                                {
-                                /* Consume the NUL. */
-                                yy_cp = ++(yy_c_buf_p);
-                                yy_current_state = yy_next_state;
-                                goto yy_match;
-                                }
+			if ( yy_next_state )
+				{
+				/* Consume the NUL. */
+				yy_cp = ++(yy_c_buf_p);
+				yy_current_state = yy_next_state;
+				goto yy_match;
+				}
 
-                        else
-                                {
-                                yy_cp = (yy_c_buf_p);
-                                goto yy_find_action;
-                                }
-                        }
+			else
+				{
+				yy_cp = (yy_c_buf_p);
+				goto yy_find_action;
+				}
+			}
 
-                else switch ( yy_get_next_buffer(  ) )
-                        {
-                        case EOB_ACT_END_OF_FILE:
-                                {
-                                (yy_did_buffer_switch_on_eof) = 0;
+		else switch ( yy_get_next_buffer(  ) )
+			{
+			case EOB_ACT_END_OF_FILE:
+				{
+				(yy_did_buffer_switch_on_eof) = 0;
 
-                                if ( wcsbthwrap( ) )
-                                        {
-                                        /* Note: because we've taken care in
-                                         * yy_get_next_buffer() to have set up
-                                         * wcsbthtext, we can now set up
-                                         * yy_c_buf_p so that if some total
-                                         * hoser (like flex itself) wants to
-                                         * call the scanner after we return the
-                                         * YY_NULL, it'll still work - another
-                                         * YY_NULL will get returned.
-                                         */
-                                        (yy_c_buf_p) = (yytext_ptr) + YY_MORE_ADJ;
+				if ( wcsbthwrap( ) )
+					{
+					/* Note: because we've taken care in
+					 * yy_get_next_buffer() to have set up
+					 * wcsbthtext, we can now set up
+					 * yy_c_buf_p so that if some total
+					 * hoser (like flex itself) wants to
+					 * call the scanner after we return the
+					 * YY_NULL, it'll still work - another
+					 * YY_NULL will get returned.
+					 */
+					(yy_c_buf_p) = (yytext_ptr) + YY_MORE_ADJ;
 
-                                        yy_act = YY_STATE_EOF(YY_START);
-                                        goto do_action;
-                                        }
+					yy_act = YY_STATE_EOF(YY_START);
+					goto do_action;
+					}
 
-                                else
-                                        {
-                                        if ( ! (yy_did_buffer_switch_on_eof) )
-                                                YY_NEW_FILE;
-                                        }
-                                break;
-                                }
+				else
+					{
+					if ( ! (yy_did_buffer_switch_on_eof) )
+						YY_NEW_FILE;
+					}
+				break;
+				}
 
-                        case EOB_ACT_CONTINUE_SCAN:
-                                (yy_c_buf_p) =
-                                        (yytext_ptr) + yy_amount_of_matched_text;
+			case EOB_ACT_CONTINUE_SCAN:
+				(yy_c_buf_p) =
+					(yytext_ptr) + yy_amount_of_matched_text;
 
-                                yy_current_state = yy_get_previous_state(  );
+				yy_current_state = yy_get_previous_state(  );
 
-                                yy_cp = (yy_c_buf_p);
-                                yy_bp = (yytext_ptr) + YY_MORE_ADJ;
-                                goto yy_match;
+				yy_cp = (yy_c_buf_p);
+				yy_bp = (yytext_ptr) + YY_MORE_ADJ;
+				goto yy_match;
 
-                        case EOB_ACT_LAST_MATCH:
-                                (yy_c_buf_p) =
-                                &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)];
+			case EOB_ACT_LAST_MATCH:
+				(yy_c_buf_p) =
+				&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)];
 
-                                yy_current_state = yy_get_previous_state(  );
+				yy_current_state = yy_get_previous_state(  );
 
-                                yy_cp = (yy_c_buf_p);
-                                yy_bp = (yytext_ptr) + YY_MORE_ADJ;
-                                goto yy_find_action;
-                        }
-                break;
-                }
+				yy_cp = (yy_c_buf_p);
+				yy_bp = (yytext_ptr) + YY_MORE_ADJ;
+				goto yy_find_action;
+			}
+		break;
+		}
 
-        default:
-                YY_FATAL_ERROR(
-                        "fatal flex scanner internal error--no action found" );
-        } /* end of action switch */
-                } /* end of scanning one token */
+	default:
+		YY_FATAL_ERROR(
+			"fatal flex scanner internal error--no action found" );
+	} /* end of action switch */
+		} /* end of scanning one token */
 } /* end of wcsbthlex */
 
 /* yy_get_next_buffer - try to read in a new buffer
  *
  * Returns a code representing an action:
- *      EOB_ACT_LAST_MATCH -
- *      EOB_ACT_CONTINUE_SCAN - continue scanning from current position
- *      EOB_ACT_END_OF_FILE - end of file
+ *	EOB_ACT_LAST_MATCH -
+ *	EOB_ACT_CONTINUE_SCAN - continue scanning from current position
+ *	EOB_ACT_END_OF_FILE - end of file
  */
 static int yy_get_next_buffer (void)
 {
-        register char *dest = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
-        register char *source = (yytext_ptr);
-        register int number_to_move, i;
-        int ret_val;
+    	register char *dest = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
+	register char *source = (yytext_ptr);
+	register int number_to_move, i;
+	int ret_val;
 
-        if ( (yy_c_buf_p) > &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars) + 1] )
-                YY_FATAL_ERROR(
-                "fatal flex scanner internal error--end of buffer missed" );
+	if ( (yy_c_buf_p) > &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars) + 1] )
+		YY_FATAL_ERROR(
+		"fatal flex scanner internal error--end of buffer missed" );
 
-        if ( YY_CURRENT_BUFFER_LVALUE->yy_fill_buffer == 0 )
-                { /* Don't try to fill the buffer, so this is an EOF. */
-                if ( (yy_c_buf_p) - (yytext_ptr) - YY_MORE_ADJ == 1 )
-                        {
-                        /* We matched a single character, the EOB, so
-                         * treat this as a final EOF.
-                         */
-                        return EOB_ACT_END_OF_FILE;
-                        }
+	if ( YY_CURRENT_BUFFER_LVALUE->yy_fill_buffer == 0 )
+		{ /* Don't try to fill the buffer, so this is an EOF. */
+		if ( (yy_c_buf_p) - (yytext_ptr) - YY_MORE_ADJ == 1 )
+			{
+			/* We matched a single character, the EOB, so
+			 * treat this as a final EOF.
+			 */
+			return EOB_ACT_END_OF_FILE;
+			}
 
-                else
-                        {
-                        /* We matched some text prior to the EOB, first
-                         * process it.
-                         */
-                        return EOB_ACT_LAST_MATCH;
-                        }
-                }
+		else
+			{
+			/* We matched some text prior to the EOB, first
+			 * process it.
+			 */
+			return EOB_ACT_LAST_MATCH;
+			}
+		}
 
-        /* Try to read more data. */
+	/* Try to read more data. */
 
-        /* First move last chars to start of buffer. */
-        number_to_move = (int) ((yy_c_buf_p) - (yytext_ptr)) - 1;
+	/* First move last chars to start of buffer. */
+	number_to_move = (int) ((yy_c_buf_p) - (yytext_ptr)) - 1;
 
-        for ( i = 0; i < number_to_move; ++i )
-                *(dest++) = *(source++);
+	for ( i = 0; i < number_to_move; ++i )
+		*(dest++) = *(source++);
 
-        if ( YY_CURRENT_BUFFER_LVALUE->yy_buffer_status == YY_BUFFER_EOF_PENDING )
-                /* don't do the read, it's not guaranteed to return an EOF,
-                 * just force an EOF
-                 */
-                YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars) = 0;
+	if ( YY_CURRENT_BUFFER_LVALUE->yy_buffer_status == YY_BUFFER_EOF_PENDING )
+		/* don't do the read, it's not guaranteed to return an EOF,
+		 * just force an EOF
+		 */
+		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars) = 0;
 
-        else
-                {
-                        int num_to_read =
-                        YY_CURRENT_BUFFER_LVALUE->yy_buf_size - number_to_move - 1;
+	else
+		{
+			int num_to_read =
+			YY_CURRENT_BUFFER_LVALUE->yy_buf_size - number_to_move - 1;
 
-                while ( num_to_read <= 0 )
-                        { /* Not enough room in the buffer - grow it. */
+		while ( num_to_read <= 0 )
+			{ /* Not enough room in the buffer - grow it. */
 
-                        /* just a shorter name for the current buffer */
-                        YY_BUFFER_STATE b = YY_CURRENT_BUFFER;
+			/* just a shorter name for the current buffer */
+			YY_BUFFER_STATE b = YY_CURRENT_BUFFER;
 
-                        int yy_c_buf_p_offset =
-                                (int) ((yy_c_buf_p) - b->yy_ch_buf);
+			int yy_c_buf_p_offset =
+				(int) ((yy_c_buf_p) - b->yy_ch_buf);
 
-                        if ( b->yy_is_our_buffer )
-                                {
-                                int new_size = b->yy_buf_size * 2;
+			if ( b->yy_is_our_buffer )
+				{
+				int new_size = b->yy_buf_size * 2;
 
-                                if ( new_size <= 0 )
-                                        b->yy_buf_size += b->yy_buf_size / 8;
-                                else
-                                        b->yy_buf_size *= 2;
+				if ( new_size <= 0 )
+					b->yy_buf_size += b->yy_buf_size / 8;
+				else
+					b->yy_buf_size *= 2;
 
-                                b->yy_ch_buf = (char *)
-                                        /* Include room in for 2 EOB chars. */
-                                        wcsbthrealloc((void *) b->yy_ch_buf,b->yy_buf_size + 2  );
-                                }
-                        else
-                                /* Can't grow it, we don't own it. */
-                                b->yy_ch_buf = 0;
+				b->yy_ch_buf = (char *)
+					/* Include room in for 2 EOB chars. */
+					wcsbthrealloc((void *) b->yy_ch_buf,b->yy_buf_size + 2  );
+				}
+			else
+				/* Can't grow it, we don't own it. */
+				b->yy_ch_buf = 0;
 
-                        if ( ! b->yy_ch_buf )
-                                YY_FATAL_ERROR(
-                                "fatal error - scanner input buffer overflow" );
+			if ( ! b->yy_ch_buf )
+				YY_FATAL_ERROR(
+				"fatal error - scanner input buffer overflow" );
 
-                        (yy_c_buf_p) = &b->yy_ch_buf[yy_c_buf_p_offset];
+			(yy_c_buf_p) = &b->yy_ch_buf[yy_c_buf_p_offset];
 
-                        num_to_read = YY_CURRENT_BUFFER_LVALUE->yy_buf_size -
-                                                number_to_move - 1;
+			num_to_read = YY_CURRENT_BUFFER_LVALUE->yy_buf_size -
+						number_to_move - 1;
 
-                        }
+			}
 
-                if ( num_to_read > YY_READ_BUF_SIZE )
-                        num_to_read = YY_READ_BUF_SIZE;
+		if ( num_to_read > YY_READ_BUF_SIZE )
+			num_to_read = YY_READ_BUF_SIZE;
 
-                /* Read in more data. */
-                YY_INPUT( (&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move]),
-                        (yy_n_chars), (size_t) num_to_read );
+		/* Read in more data. */
+		YY_INPUT( (&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move]),
+			(yy_n_chars), (size_t) num_to_read );
 
-                YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
-                }
+		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
+		}
 
-        if ( (yy_n_chars) == 0 )
-                {
-                if ( number_to_move == YY_MORE_ADJ )
-                        {
-                        ret_val = EOB_ACT_END_OF_FILE;
-                        wcsbthrestart(wcsbthin  );
-                        }
+	if ( (yy_n_chars) == 0 )
+		{
+		if ( number_to_move == YY_MORE_ADJ )
+			{
+			ret_val = EOB_ACT_END_OF_FILE;
+			wcsbthrestart(wcsbthin  );
+			}
 
-                else
-                        {
-                        ret_val = EOB_ACT_LAST_MATCH;
-                        YY_CURRENT_BUFFER_LVALUE->yy_buffer_status =
-                                YY_BUFFER_EOF_PENDING;
-                        }
-                }
+		else
+			{
+			ret_val = EOB_ACT_LAST_MATCH;
+			YY_CURRENT_BUFFER_LVALUE->yy_buffer_status =
+				YY_BUFFER_EOF_PENDING;
+			}
+		}
 
-        else
-                ret_val = EOB_ACT_CONTINUE_SCAN;
+	else
+		ret_val = EOB_ACT_CONTINUE_SCAN;
 
-        (yy_n_chars) += number_to_move;
-        YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)] = YY_END_OF_BUFFER_CHAR;
-        YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars) + 1] = YY_END_OF_BUFFER_CHAR;
+	(yy_n_chars) += number_to_move;
+	YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)] = YY_END_OF_BUFFER_CHAR;
+	YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars) + 1] = YY_END_OF_BUFFER_CHAR;
 
-        (yytext_ptr) = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[0];
+	(yytext_ptr) = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[0];
 
-        return ret_val;
+	return ret_val;
 }
 
 /* yy_get_previous_state - get the state just before the EOB char was reached */
 
     static yy_state_type yy_get_previous_state (void)
 {
-        register yy_state_type yy_current_state;
-        register char *yy_cp;
+	register yy_state_type yy_current_state;
+	register char *yy_cp;
+    
+	yy_current_state = (yy_start);
+	yy_current_state += YY_AT_BOL();
 
-        yy_current_state = (yy_start);
-        yy_current_state += YY_AT_BOL();
+	for ( yy_cp = (yytext_ptr) + YY_MORE_ADJ; yy_cp < (yy_c_buf_p); ++yy_cp )
+		{
+		if ( *yy_cp )
+			{
+			yy_current_state = yy_nxt[yy_current_state][YY_SC_TO_UI(*yy_cp)];
+			}
+		else
+			yy_current_state = yy_NUL_trans[yy_current_state];
+		if ( yy_accept[yy_current_state] )
+			{
+			(yy_last_accepting_state) = yy_current_state;
+			(yy_last_accepting_cpos) = yy_cp;
+			}
+		}
 
-        for ( yy_cp = (yytext_ptr) + YY_MORE_ADJ; yy_cp < (yy_c_buf_p); ++yy_cp )
-                {
-                if ( *yy_cp )
-                        {
-                        yy_current_state = yy_nxt[yy_current_state][YY_SC_TO_UI(*yy_cp)];
-                        }
-                else
-                        yy_current_state = yy_NUL_trans[yy_current_state];
-                if ( yy_accept[yy_current_state] )
-                        {
-                        (yy_last_accepting_state) = yy_current_state;
-                        (yy_last_accepting_cpos) = yy_cp;
-                        }
-                }
-
-        return yy_current_state;
+	return yy_current_state;
 }
 
 /* yy_try_NUL_trans - try to make a transition on the NUL character
  *
  * synopsis
- *      next_state = yy_try_NUL_trans( current_state );
+ *	next_state = yy_try_NUL_trans( current_state );
  */
     static yy_state_type yy_try_NUL_trans  (yy_state_type yy_current_state )
 {
-        register int yy_is_jam;
-        register char *yy_cp = (yy_c_buf_p);
+	register int yy_is_jam;
+    	register char *yy_cp = (yy_c_buf_p);
 
-        yy_current_state = yy_NUL_trans[yy_current_state];
-        yy_is_jam = (yy_current_state == 0);
+	yy_current_state = yy_NUL_trans[yy_current_state];
+	yy_is_jam = (yy_current_state == 0);
 
-        if ( ! yy_is_jam )
-                {
-                if ( yy_accept[yy_current_state] )
-                        {
-                        (yy_last_accepting_state) = yy_current_state;
-                        (yy_last_accepting_cpos) = yy_cp;
-                        }
-                }
+	if ( ! yy_is_jam )
+		{
+		if ( yy_accept[yy_current_state] )
+			{
+			(yy_last_accepting_state) = yy_current_state;
+			(yy_last_accepting_cpos) = yy_cp;
+			}
+		}
 
-        return yy_is_jam ? 0 : yy_current_state;
+	return yy_is_jam ? 0 : yy_current_state;
 }
 
     static void yyunput (int c, register char * yy_bp )
 {
-        register char *yy_cp;
-
+	register char *yy_cp;
+    
     yy_cp = (yy_c_buf_p);
 
-        /* undo effects of setting up wcsbthtext */
-        *yy_cp = (yy_hold_char);
+	/* undo effects of setting up wcsbthtext */
+	*yy_cp = (yy_hold_char);
 
-        if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
-                { /* need to shift things up to make room */
-                /* +2 for EOB chars. */
-                register int number_to_move = (yy_n_chars) + 2;
-                register char *dest = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[
-                                        YY_CURRENT_BUFFER_LVALUE->yy_buf_size + 2];
-                register char *source =
-                                &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move];
+	if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
+		{ /* need to shift things up to make room */
+		/* +2 for EOB chars. */
+		register int number_to_move = (yy_n_chars) + 2;
+		register char *dest = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[
+					YY_CURRENT_BUFFER_LVALUE->yy_buf_size + 2];
+		register char *source =
+				&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move];
 
-                while ( source > YY_CURRENT_BUFFER_LVALUE->yy_ch_buf )
-                        *--dest = *--source;
+		while ( source > YY_CURRENT_BUFFER_LVALUE->yy_ch_buf )
+			*--dest = *--source;
 
-                yy_cp += (int) (dest - source);
-                yy_bp += (int) (dest - source);
-                YY_CURRENT_BUFFER_LVALUE->yy_n_chars =
-                        (yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_buf_size;
+		yy_cp += (int) (dest - source);
+		yy_bp += (int) (dest - source);
+		YY_CURRENT_BUFFER_LVALUE->yy_n_chars =
+			(yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_buf_size;
 
-                if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
-                        YY_FATAL_ERROR( "flex scanner push-back overflow" );
-                }
+		if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
+			YY_FATAL_ERROR( "flex scanner push-back overflow" );
+		}
 
-        *--yy_cp = (char) c;
+	*--yy_cp = (char) c;
 
-        (yytext_ptr) = yy_bp;
-        (yy_hold_char) = *yy_cp;
-        (yy_c_buf_p) = yy_cp;
+	(yytext_ptr) = yy_bp;
+	(yy_hold_char) = *yy_cp;
+	(yy_c_buf_p) = yy_cp;
 }
 
 #ifndef YY_NO_INPUT
@@ -19887,182 +19887,182 @@ static int yy_get_next_buffer (void)
 #endif
 
 {
-        int c;
+	int c;
+    
+	*(yy_c_buf_p) = (yy_hold_char);
 
-        *(yy_c_buf_p) = (yy_hold_char);
+	if ( *(yy_c_buf_p) == YY_END_OF_BUFFER_CHAR )
+		{
+		/* yy_c_buf_p now points to the character we want to return.
+		 * If this occurs *before* the EOB characters, then it's a
+		 * valid NUL; if not, then we've hit the end of the buffer.
+		 */
+		if ( (yy_c_buf_p) < &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)] )
+			/* This was really a NUL. */
+			*(yy_c_buf_p) = '\0';
 
-        if ( *(yy_c_buf_p) == YY_END_OF_BUFFER_CHAR )
-                {
-                /* yy_c_buf_p now points to the character we want to return.
-                 * If this occurs *before* the EOB characters, then it's a
-                 * valid NUL; if not, then we've hit the end of the buffer.
-                 */
-                if ( (yy_c_buf_p) < &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)] )
-                        /* This was really a NUL. */
-                        *(yy_c_buf_p) = '\0';
+		else
+			{ /* need more input */
+			int offset = (yy_c_buf_p) - (yytext_ptr);
+			++(yy_c_buf_p);
 
-                else
-                        { /* need more input */
-                        int offset = (yy_c_buf_p) - (yytext_ptr);
-                        ++(yy_c_buf_p);
+			switch ( yy_get_next_buffer(  ) )
+				{
+				case EOB_ACT_LAST_MATCH:
+					/* This happens because yy_g_n_b()
+					 * sees that we've accumulated a
+					 * token and flags that we need to
+					 * try matching the token before
+					 * proceeding.  But for input(),
+					 * there's no matching to consider.
+					 * So convert the EOB_ACT_LAST_MATCH
+					 * to EOB_ACT_END_OF_FILE.
+					 */
 
-                        switch ( yy_get_next_buffer(  ) )
-                                {
-                                case EOB_ACT_LAST_MATCH:
-                                        /* This happens because yy_g_n_b()
-                                         * sees that we've accumulated a
-                                         * token and flags that we need to
-                                         * try matching the token before
-                                         * proceeding.  But for input(),
-                                         * there's no matching to consider.
-                                         * So convert the EOB_ACT_LAST_MATCH
-                                         * to EOB_ACT_END_OF_FILE.
-                                         */
+					/* Reset buffer status. */
+					wcsbthrestart(wcsbthin );
 
-                                        /* Reset buffer status. */
-                                        wcsbthrestart(wcsbthin );
+					/*FALLTHROUGH*/
 
-                                        /*FALLTHROUGH*/
+				case EOB_ACT_END_OF_FILE:
+					{
+					if ( wcsbthwrap( ) )
+						return EOF;
 
-                                case EOB_ACT_END_OF_FILE:
-                                        {
-                                        if ( wcsbthwrap( ) )
-                                                return EOF;
-
-                                        if ( ! (yy_did_buffer_switch_on_eof) )
-                                                YY_NEW_FILE;
+					if ( ! (yy_did_buffer_switch_on_eof) )
+						YY_NEW_FILE;
 #ifdef __cplusplus
-                                        return yyinput();
+					return yyinput();
 #else
-                                        return input();
+					return input();
 #endif
-                                        }
+					}
 
-                                case EOB_ACT_CONTINUE_SCAN:
-                                        (yy_c_buf_p) = (yytext_ptr) + offset;
-                                        break;
-                                }
-                        }
-                }
+				case EOB_ACT_CONTINUE_SCAN:
+					(yy_c_buf_p) = (yytext_ptr) + offset;
+					break;
+				}
+			}
+		}
 
-        c = *(unsigned char *) (yy_c_buf_p);    /* cast for 8-bit char's */
-        *(yy_c_buf_p) = '\0';   /* preserve wcsbthtext */
-        (yy_hold_char) = *++(yy_c_buf_p);
+	c = *(unsigned char *) (yy_c_buf_p);	/* cast for 8-bit char's */
+	*(yy_c_buf_p) = '\0';	/* preserve wcsbthtext */
+	(yy_hold_char) = *++(yy_c_buf_p);
 
-        YY_CURRENT_BUFFER_LVALUE->yy_at_bol = (c == '\n');
+	YY_CURRENT_BUFFER_LVALUE->yy_at_bol = (c == '\n');
 
-        return c;
+	return c;
 }
-#endif  /* ifndef YY_NO_INPUT */
+#endif	/* ifndef YY_NO_INPUT */
 
 /** Immediately switch to a different input stream.
  * @param input_file A readable stream.
- *
+ * 
  * @note This function does not reset the start condition to @c INITIAL .
  */
     void wcsbthrestart  (FILE * input_file )
 {
-
-        if ( ! YY_CURRENT_BUFFER ){
+    
+	if ( ! YY_CURRENT_BUFFER ){
         wcsbthensure_buffer_stack ();
-                YY_CURRENT_BUFFER_LVALUE =
+		YY_CURRENT_BUFFER_LVALUE =
             wcsbth_create_buffer(wcsbthin,YY_BUF_SIZE );
-        }
+	}
 
-        wcsbth_init_buffer(YY_CURRENT_BUFFER,input_file );
-        wcsbth_load_buffer_state( );
+	wcsbth_init_buffer(YY_CURRENT_BUFFER,input_file );
+	wcsbth_load_buffer_state( );
 }
 
 /** Switch to a different input buffer.
  * @param new_buffer The new input buffer.
- *
+ * 
  */
     void wcsbth_switch_to_buffer  (YY_BUFFER_STATE  new_buffer )
 {
-
-        /* TODO. We should be able to replace this entire function body
-         * with
-         *              wcsbthpop_buffer_state();
-         *              wcsbthpush_buffer_state(new_buffer);
+    
+	/* TODO. We should be able to replace this entire function body
+	 * with
+	 *		wcsbthpop_buffer_state();
+	 *		wcsbthpush_buffer_state(new_buffer);
      */
-        wcsbthensure_buffer_stack ();
-        if ( YY_CURRENT_BUFFER == new_buffer )
-                return;
+	wcsbthensure_buffer_stack ();
+	if ( YY_CURRENT_BUFFER == new_buffer )
+		return;
 
-        if ( YY_CURRENT_BUFFER )
-                {
-                /* Flush out information for old buffer. */
-                *(yy_c_buf_p) = (yy_hold_char);
-                YY_CURRENT_BUFFER_LVALUE->yy_buf_pos = (yy_c_buf_p);
-                YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
-                }
+	if ( YY_CURRENT_BUFFER )
+		{
+		/* Flush out information for old buffer. */
+		*(yy_c_buf_p) = (yy_hold_char);
+		YY_CURRENT_BUFFER_LVALUE->yy_buf_pos = (yy_c_buf_p);
+		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
+		}
 
-        YY_CURRENT_BUFFER_LVALUE = new_buffer;
-        wcsbth_load_buffer_state( );
+	YY_CURRENT_BUFFER_LVALUE = new_buffer;
+	wcsbth_load_buffer_state( );
 
-        /* We don't actually know whether we did this switch during
-         * EOF (wcsbthwrap()) processing, but the only time this flag
-         * is looked at is after wcsbthwrap() is called, so it's safe
-         * to go ahead and always set it.
-         */
-        (yy_did_buffer_switch_on_eof) = 1;
+	/* We don't actually know whether we did this switch during
+	 * EOF (wcsbthwrap()) processing, but the only time this flag
+	 * is looked at is after wcsbthwrap() is called, so it's safe
+	 * to go ahead and always set it.
+	 */
+	(yy_did_buffer_switch_on_eof) = 1;
 }
 
 static void wcsbth_load_buffer_state  (void)
 {
-        (yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_n_chars;
-        (yytext_ptr) = (yy_c_buf_p) = YY_CURRENT_BUFFER_LVALUE->yy_buf_pos;
-        wcsbthin = YY_CURRENT_BUFFER_LVALUE->yy_input_file;
-        (yy_hold_char) = *(yy_c_buf_p);
+    	(yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_n_chars;
+	(yytext_ptr) = (yy_c_buf_p) = YY_CURRENT_BUFFER_LVALUE->yy_buf_pos;
+	wcsbthin = YY_CURRENT_BUFFER_LVALUE->yy_input_file;
+	(yy_hold_char) = *(yy_c_buf_p);
 }
 
 /** Allocate and initialize an input buffer state.
  * @param file A readable stream.
  * @param size The character buffer size in bytes. When in doubt, use @c YY_BUF_SIZE.
- *
+ * 
  * @return the allocated buffer state.
  */
     YY_BUFFER_STATE wcsbth_create_buffer  (FILE * file, int  size )
 {
-        YY_BUFFER_STATE b;
+	YY_BUFFER_STATE b;
+    
+	b = (YY_BUFFER_STATE) wcsbthalloc(sizeof( struct yy_buffer_state )  );
+	if ( ! b )
+		YY_FATAL_ERROR( "out of dynamic memory in wcsbth_create_buffer()" );
 
-        b = (YY_BUFFER_STATE) wcsbthalloc(sizeof( struct yy_buffer_state )  );
-        if ( ! b )
-                YY_FATAL_ERROR( "out of dynamic memory in wcsbth_create_buffer()" );
+	b->yy_buf_size = size;
 
-        b->yy_buf_size = size;
+	/* yy_ch_buf has to be 2 characters longer than the size given because
+	 * we need to put in 2 end-of-buffer characters.
+	 */
+	b->yy_ch_buf = (char *) wcsbthalloc(b->yy_buf_size + 2  );
+	if ( ! b->yy_ch_buf )
+		YY_FATAL_ERROR( "out of dynamic memory in wcsbth_create_buffer()" );
 
-        /* yy_ch_buf has to be 2 characters longer than the size given because
-         * we need to put in 2 end-of-buffer characters.
-         */
-        b->yy_ch_buf = (char *) wcsbthalloc(b->yy_buf_size + 2  );
-        if ( ! b->yy_ch_buf )
-                YY_FATAL_ERROR( "out of dynamic memory in wcsbth_create_buffer()" );
+	b->yy_is_our_buffer = 1;
 
-        b->yy_is_our_buffer = 1;
+	wcsbth_init_buffer(b,file );
 
-        wcsbth_init_buffer(b,file );
-
-        return b;
+	return b;
 }
 
 /** Destroy the buffer.
  * @param b a buffer created with wcsbth_create_buffer()
- *
+ * 
  */
     void wcsbth_delete_buffer (YY_BUFFER_STATE  b )
 {
+    
+	if ( ! b )
+		return;
 
-        if ( ! b )
-                return;
+	if ( b == YY_CURRENT_BUFFER ) /* Not sure if we should pop here. */
+		YY_CURRENT_BUFFER_LVALUE = (YY_BUFFER_STATE) 0;
 
-        if ( b == YY_CURRENT_BUFFER ) /* Not sure if we should pop here. */
-                YY_CURRENT_BUFFER_LVALUE = (YY_BUFFER_STATE) 0;
+	if ( b->yy_is_our_buffer )
+		wcsbthfree((void *) b->yy_ch_buf  );
 
-        if ( b->yy_is_our_buffer )
-                wcsbthfree((void *) b->yy_ch_buf  );
-
-        wcsbthfree((void *) b  );
+	wcsbthfree((void *) b  );
 }
 
 /* Initializes or reinitializes a buffer.
@@ -20072,12 +20072,12 @@ static void wcsbth_load_buffer_state  (void)
     static void wcsbth_init_buffer  (YY_BUFFER_STATE  b, FILE * file )
 
 {
-        int oerrno = errno;
+	int oerrno = errno;
+    
+	wcsbth_flush_buffer(b );
 
-        wcsbth_flush_buffer(b );
-
-        b->yy_input_file = file;
-        b->yy_fill_buffer = 1;
+	b->yy_input_file = file;
+	b->yy_fill_buffer = 1;
 
     /* If b is the current buffer, then wcsbth_init_buffer was _probably_
      * called from wcsbthrestart() or through yy_get_next_buffer.
@@ -20089,87 +20089,87 @@ static void wcsbth_load_buffer_state  (void)
     }
 
         b->yy_is_interactive = 0;
-
-        errno = oerrno;
+    
+	errno = oerrno;
 }
 
 /** Discard all buffered characters. On the next scan, YY_INPUT will be called.
  * @param b the buffer state to be flushed, usually @c YY_CURRENT_BUFFER.
- *
+ * 
  */
     void wcsbth_flush_buffer (YY_BUFFER_STATE  b )
 {
-        if ( ! b )
-                return;
+    	if ( ! b )
+		return;
 
-        b->yy_n_chars = 0;
+	b->yy_n_chars = 0;
 
-        /* We always need two end-of-buffer characters.  The first causes
-         * a transition to the end-of-buffer state.  The second causes
-         * a jam in that state.
-         */
-        b->yy_ch_buf[0] = YY_END_OF_BUFFER_CHAR;
-        b->yy_ch_buf[1] = YY_END_OF_BUFFER_CHAR;
+	/* We always need two end-of-buffer characters.  The first causes
+	 * a transition to the end-of-buffer state.  The second causes
+	 * a jam in that state.
+	 */
+	b->yy_ch_buf[0] = YY_END_OF_BUFFER_CHAR;
+	b->yy_ch_buf[1] = YY_END_OF_BUFFER_CHAR;
 
-        b->yy_buf_pos = &b->yy_ch_buf[0];
+	b->yy_buf_pos = &b->yy_ch_buf[0];
 
-        b->yy_at_bol = 1;
-        b->yy_buffer_status = YY_BUFFER_NEW;
+	b->yy_at_bol = 1;
+	b->yy_buffer_status = YY_BUFFER_NEW;
 
-        if ( b == YY_CURRENT_BUFFER )
-                wcsbth_load_buffer_state( );
+	if ( b == YY_CURRENT_BUFFER )
+		wcsbth_load_buffer_state( );
 }
 
 /** Pushes the new state onto the stack. The new state becomes
  *  the current state. This function will allocate the stack
  *  if necessary.
  *  @param new_buffer The new state.
- *
+ *  
  */
 void wcsbthpush_buffer_state (YY_BUFFER_STATE new_buffer )
 {
-        if (new_buffer == NULL)
-                return;
+    	if (new_buffer == NULL)
+		return;
 
-        wcsbthensure_buffer_stack();
+	wcsbthensure_buffer_stack();
 
-        /* This block is copied from wcsbth_switch_to_buffer. */
-        if ( YY_CURRENT_BUFFER )
-                {
-                /* Flush out information for old buffer. */
-                *(yy_c_buf_p) = (yy_hold_char);
-                YY_CURRENT_BUFFER_LVALUE->yy_buf_pos = (yy_c_buf_p);
-                YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
-                }
+	/* This block is copied from wcsbth_switch_to_buffer. */
+	if ( YY_CURRENT_BUFFER )
+		{
+		/* Flush out information for old buffer. */
+		*(yy_c_buf_p) = (yy_hold_char);
+		YY_CURRENT_BUFFER_LVALUE->yy_buf_pos = (yy_c_buf_p);
+		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
+		}
 
-        /* Only push if top exists. Otherwise, replace top. */
-        if (YY_CURRENT_BUFFER)
-                (yy_buffer_stack_top)++;
-        YY_CURRENT_BUFFER_LVALUE = new_buffer;
+	/* Only push if top exists. Otherwise, replace top. */
+	if (YY_CURRENT_BUFFER)
+		(yy_buffer_stack_top)++;
+	YY_CURRENT_BUFFER_LVALUE = new_buffer;
 
-        /* copied from wcsbth_switch_to_buffer. */
-        wcsbth_load_buffer_state( );
-        (yy_did_buffer_switch_on_eof) = 1;
+	/* copied from wcsbth_switch_to_buffer. */
+	wcsbth_load_buffer_state( );
+	(yy_did_buffer_switch_on_eof) = 1;
 }
 
 /** Removes and deletes the top of the stack, if present.
  *  The next element becomes the new top.
- *
+ *  
  */
 void wcsbthpop_buffer_state (void)
 {
-        if (!YY_CURRENT_BUFFER)
-                return;
+    	if (!YY_CURRENT_BUFFER)
+		return;
 
-        wcsbth_delete_buffer(YY_CURRENT_BUFFER );
-        YY_CURRENT_BUFFER_LVALUE = NULL;
-        if ((yy_buffer_stack_top) > 0)
-                --(yy_buffer_stack_top);
+	wcsbth_delete_buffer(YY_CURRENT_BUFFER );
+	YY_CURRENT_BUFFER_LVALUE = NULL;
+	if ((yy_buffer_stack_top) > 0)
+		--(yy_buffer_stack_top);
 
-        if (YY_CURRENT_BUFFER) {
-                wcsbth_load_buffer_state( );
-                (yy_did_buffer_switch_on_eof) = 1;
-        }
+	if (YY_CURRENT_BUFFER) {
+		wcsbth_load_buffer_state( );
+		(yy_did_buffer_switch_on_eof) = 1;
+	}
 }
 
 /* Allocates the stack if it does not exist.
@@ -20177,127 +20177,127 @@ void wcsbthpop_buffer_state (void)
  */
 static void wcsbthensure_buffer_stack (void)
 {
-        int num_to_alloc;
+	int num_to_alloc;
+    
+	if (!(yy_buffer_stack)) {
 
-        if (!(yy_buffer_stack)) {
-
-                /* First allocation is just for 2 elements, since we don't know if this
-                 * scanner will even need a stack. We use 2 instead of 1 to avoid an
-                 * immediate realloc on the next call.
+		/* First allocation is just for 2 elements, since we don't know if this
+		 * scanner will even need a stack. We use 2 instead of 1 to avoid an
+		 * immediate realloc on the next call.
          */
-                num_to_alloc = 1;
-                (yy_buffer_stack) = (struct yy_buffer_state**)wcsbthalloc
-                                                                (num_to_alloc * sizeof(struct yy_buffer_state*)
-                                                                );
+		num_to_alloc = 1;
+		(yy_buffer_stack) = (struct yy_buffer_state**)wcsbthalloc
+								(num_to_alloc * sizeof(struct yy_buffer_state*)
+								);
+		
+		memset((yy_buffer_stack), 0, num_to_alloc * sizeof(struct yy_buffer_state*));
+				
+		(yy_buffer_stack_max) = num_to_alloc;
+		(yy_buffer_stack_top) = 0;
+		return;
+	}
 
-                memset((yy_buffer_stack), 0, num_to_alloc * sizeof(struct yy_buffer_state*));
+	if ((yy_buffer_stack_top) >= ((yy_buffer_stack_max)) - 1){
 
-                (yy_buffer_stack_max) = num_to_alloc;
-                (yy_buffer_stack_top) = 0;
-                return;
-        }
+		/* Increase the buffer to prepare for a possible push. */
+		int grow_size = 8 /* arbitrary grow size */;
 
-        if ((yy_buffer_stack_top) >= ((yy_buffer_stack_max)) - 1){
+		num_to_alloc = (yy_buffer_stack_max) + grow_size;
+		(yy_buffer_stack) = (struct yy_buffer_state**)wcsbthrealloc
+								((yy_buffer_stack),
+								num_to_alloc * sizeof(struct yy_buffer_state*)
+								);
 
-                /* Increase the buffer to prepare for a possible push. */
-                int grow_size = 8 /* arbitrary grow size */;
-
-                num_to_alloc = (yy_buffer_stack_max) + grow_size;
-                (yy_buffer_stack) = (struct yy_buffer_state**)wcsbthrealloc
-                                                                ((yy_buffer_stack),
-                                                                num_to_alloc * sizeof(struct yy_buffer_state*)
-                                                                );
-
-                /* zero only the new slots.*/
-                memset((yy_buffer_stack) + (yy_buffer_stack_max), 0, grow_size * sizeof(struct yy_buffer_state*));
-                (yy_buffer_stack_max) = num_to_alloc;
-        }
+		/* zero only the new slots.*/
+		memset((yy_buffer_stack) + (yy_buffer_stack_max), 0, grow_size * sizeof(struct yy_buffer_state*));
+		(yy_buffer_stack_max) = num_to_alloc;
+	}
 }
 
 /** Setup the input buffer state to scan directly from a user-specified character buffer.
  * @param base the character buffer
  * @param size the size in bytes of the character buffer
- *
- * @return the newly allocated buffer state object.
+ * 
+ * @return the newly allocated buffer state object. 
  */
 YY_BUFFER_STATE wcsbth_scan_buffer  (char * base, yy_size_t  size )
 {
-        YY_BUFFER_STATE b;
+	YY_BUFFER_STATE b;
+    
+	if ( size < 2 ||
+	     base[size-2] != YY_END_OF_BUFFER_CHAR ||
+	     base[size-1] != YY_END_OF_BUFFER_CHAR )
+		/* They forgot to leave room for the EOB's. */
+		return 0;
 
-        if ( size < 2 ||
-             base[size-2] != YY_END_OF_BUFFER_CHAR ||
-             base[size-1] != YY_END_OF_BUFFER_CHAR )
-                /* They forgot to leave room for the EOB's. */
-                return 0;
+	b = (YY_BUFFER_STATE) wcsbthalloc(sizeof( struct yy_buffer_state )  );
+	if ( ! b )
+		YY_FATAL_ERROR( "out of dynamic memory in wcsbth_scan_buffer()" );
 
-        b = (YY_BUFFER_STATE) wcsbthalloc(sizeof( struct yy_buffer_state )  );
-        if ( ! b )
-                YY_FATAL_ERROR( "out of dynamic memory in wcsbth_scan_buffer()" );
+	b->yy_buf_size = size - 2;	/* "- 2" to take care of EOB's */
+	b->yy_buf_pos = b->yy_ch_buf = base;
+	b->yy_is_our_buffer = 0;
+	b->yy_input_file = 0;
+	b->yy_n_chars = b->yy_buf_size;
+	b->yy_is_interactive = 0;
+	b->yy_at_bol = 1;
+	b->yy_fill_buffer = 0;
+	b->yy_buffer_status = YY_BUFFER_NEW;
 
-        b->yy_buf_size = size - 2;      /* "- 2" to take care of EOB's */
-        b->yy_buf_pos = b->yy_ch_buf = base;
-        b->yy_is_our_buffer = 0;
-        b->yy_input_file = 0;
-        b->yy_n_chars = b->yy_buf_size;
-        b->yy_is_interactive = 0;
-        b->yy_at_bol = 1;
-        b->yy_fill_buffer = 0;
-        b->yy_buffer_status = YY_BUFFER_NEW;
+	wcsbth_switch_to_buffer(b  );
 
-        wcsbth_switch_to_buffer(b  );
-
-        return b;
+	return b;
 }
 
 /** Setup the input buffer state to scan a string. The next call to wcsbthlex() will
  * scan from a @e copy of @a str.
  * @param yystr a NUL-terminated string to scan
- *
+ * 
  * @return the newly allocated buffer state object.
  * @note If you want to scan bytes that may contain NUL values, then use
  *       wcsbth_scan_bytes() instead.
  */
 YY_BUFFER_STATE wcsbth_scan_string (yyconst char * yystr )
 {
-
-        return wcsbth_scan_bytes(yystr,strlen(yystr) );
+    
+	return wcsbth_scan_bytes(yystr,strlen(yystr) );
 }
 
 /** Setup the input buffer state to scan the given bytes. The next call to wcsbthlex() will
  * scan from a @e copy of @a bytes.
  * @param bytes the byte buffer to scan
  * @param len the number of bytes in the buffer pointed to by @a bytes.
- *
+ * 
  * @return the newly allocated buffer state object.
  */
 YY_BUFFER_STATE wcsbth_scan_bytes  (yyconst char * yybytes, int  _yybytes_len )
 {
-        YY_BUFFER_STATE b;
-        char *buf;
-        yy_size_t n;
-        int i;
+	YY_BUFFER_STATE b;
+	char *buf;
+	yy_size_t n;
+	int i;
+    
+	/* Get memory for full buffer, including space for trailing EOB's. */
+	n = _yybytes_len + 2;
+	buf = (char *) wcsbthalloc(n  );
+	if ( ! buf )
+		YY_FATAL_ERROR( "out of dynamic memory in wcsbth_scan_bytes()" );
 
-        /* Get memory for full buffer, including space for trailing EOB's. */
-        n = _yybytes_len + 2;
-        buf = (char *) wcsbthalloc(n  );
-        if ( ! buf )
-                YY_FATAL_ERROR( "out of dynamic memory in wcsbth_scan_bytes()" );
+	for ( i = 0; i < _yybytes_len; ++i )
+		buf[i] = yybytes[i];
 
-        for ( i = 0; i < _yybytes_len; ++i )
-                buf[i] = yybytes[i];
+	buf[_yybytes_len] = buf[_yybytes_len+1] = YY_END_OF_BUFFER_CHAR;
 
-        buf[_yybytes_len] = buf[_yybytes_len+1] = YY_END_OF_BUFFER_CHAR;
+	b = wcsbth_scan_buffer(buf,n );
+	if ( ! b )
+		YY_FATAL_ERROR( "bad buffer in wcsbth_scan_bytes()" );
 
-        b = wcsbth_scan_buffer(buf,n );
-        if ( ! b )
-                YY_FATAL_ERROR( "bad buffer in wcsbth_scan_bytes()" );
+	/* It's okay to grow etc. this buffer, and we should throw it
+	 * away when we're done.
+	 */
+	b->yy_is_our_buffer = 1;
 
-        /* It's okay to grow etc. this buffer, and we should throw it
-         * away when we're done.
-         */
-        b->yy_is_our_buffer = 1;
-
-        return b;
+	return b;
 }
 
 #ifndef YY_EXIT_FAILURE
@@ -20306,40 +20306,40 @@ YY_BUFFER_STATE wcsbth_scan_bytes  (yyconst char * yybytes, int  _yybytes_len )
 
 static void yy_fatal_error (yyconst char* msg )
 {
-        (void) fprintf( stderr, "%s\n", msg );
-        exit( YY_EXIT_FAILURE );
+    	(void) fprintf( stderr, "%s\n", msg );
+	exit( YY_EXIT_FAILURE );
 }
 
 /* Redefine yyless() so it works in section 3 code. */
 
 #undef yyless
 #define yyless(n) \
-        do \
-                { \
-                /* Undo effects of setting up wcsbthtext. */ \
+	do \
+		{ \
+		/* Undo effects of setting up wcsbthtext. */ \
         int yyless_macro_arg = (n); \
         YY_LESS_LINENO(yyless_macro_arg);\
-                wcsbthtext[wcsbthleng] = (yy_hold_char); \
-                (yy_c_buf_p) = wcsbthtext + yyless_macro_arg; \
-                (yy_hold_char) = *(yy_c_buf_p); \
-                *(yy_c_buf_p) = '\0'; \
-                wcsbthleng = yyless_macro_arg; \
-                } \
-        while ( 0 )
+		wcsbthtext[wcsbthleng] = (yy_hold_char); \
+		(yy_c_buf_p) = wcsbthtext + yyless_macro_arg; \
+		(yy_hold_char) = *(yy_c_buf_p); \
+		*(yy_c_buf_p) = '\0'; \
+		wcsbthleng = yyless_macro_arg; \
+		} \
+	while ( 0 )
 
 /* Accessor  methods (get/set functions) to struct members. */
 
 /** Get the current line number.
- *
+ * 
  */
 int wcsbthget_lineno  (void)
 {
-
+        
     return wcsbthlineno;
 }
 
 /** Get the input stream.
- *
+ * 
  */
 FILE *wcsbthget_in  (void)
 {
@@ -20347,7 +20347,7 @@ FILE *wcsbthget_in  (void)
 }
 
 /** Get the output stream.
- *
+ * 
  */
 FILE *wcsbthget_out  (void)
 {
@@ -20355,7 +20355,7 @@ FILE *wcsbthget_out  (void)
 }
 
 /** Get the length of the current token.
- *
+ * 
  */
 int wcsbthget_leng  (void)
 {
@@ -20363,7 +20363,7 @@ int wcsbthget_leng  (void)
 }
 
 /** Get the current token.
- *
+ * 
  */
 
 char *wcsbthget_text  (void)
@@ -20373,18 +20373,18 @@ char *wcsbthget_text  (void)
 
 /** Set the current line number.
  * @param line_number
- *
+ * 
  */
 void wcsbthset_lineno (int  line_number )
 {
-
+    
     wcsbthlineno = line_number;
 }
 
 /** Set the input stream. This does not discard the current
  * input buffer.
  * @param in_str A readable stream.
- *
+ * 
  * @see wcsbth_switch_to_buffer
  */
 void wcsbthset_in (FILE *  in_str )
@@ -20438,17 +20438,17 @@ static int yy_init_globals (void)
 /* wcsbthlex_destroy is for both reentrant and non-reentrant scanners. */
 int wcsbthlex_destroy  (void)
 {
-
+    
     /* Pop the buffer stack, destroying each element. */
-        while(YY_CURRENT_BUFFER){
-                wcsbth_delete_buffer(YY_CURRENT_BUFFER  );
-                YY_CURRENT_BUFFER_LVALUE = NULL;
-                wcsbthpop_buffer_state();
-        }
+	while(YY_CURRENT_BUFFER){
+		wcsbth_delete_buffer(YY_CURRENT_BUFFER  );
+		YY_CURRENT_BUFFER_LVALUE = NULL;
+		wcsbthpop_buffer_state();
+	}
 
-        /* Destroy the stack itself. */
-        wcsbthfree((yy_buffer_stack) );
-        (yy_buffer_stack) = NULL;
+	/* Destroy the stack itself. */
+	wcsbthfree((yy_buffer_stack) );
+	(yy_buffer_stack) = NULL;
 
     /* Reset the globals. This is important in a non-reentrant scanner so the next time
      * wcsbthlex() is called, initialization will occur. */
@@ -20464,43 +20464,43 @@ int wcsbthlex_destroy  (void)
 #ifndef yytext_ptr
 static void yy_flex_strncpy (char* s1, yyconst char * s2, int n )
 {
-        register int i;
-        for ( i = 0; i < n; ++i )
-                s1[i] = s2[i];
+	register int i;
+	for ( i = 0; i < n; ++i )
+		s1[i] = s2[i];
 }
 #endif
 
 #ifdef YY_NEED_STRLEN
 static int yy_flex_strlen (yyconst char * s )
 {
-        register int n;
-        for ( n = 0; s[n]; ++n )
-                ;
+	register int n;
+	for ( n = 0; s[n]; ++n )
+		;
 
-        return n;
+	return n;
 }
 #endif
 
 void *wcsbthalloc (yy_size_t  size )
 {
-        return (void *) malloc( size );
+	return (void *) malloc( size );
 }
 
 void *wcsbthrealloc  (void * ptr, yy_size_t  size )
 {
-        /* The cast to (char *) in the following accommodates both
-         * implementations that use char* generic pointers, and those
-         * that use void* generic pointers.  It works with the latter
-         * because both ANSI C and C++ allow castless assignment from
-         * any pointer type to void*, and deal with argument conversions
-         * as though doing an assignment.
-         */
-        return (void *) realloc( (char *) ptr, size );
+	/* The cast to (char *) in the following accommodates both
+	 * implementations that use char* generic pointers, and those
+	 * that use void* generic pointers.  It works with the latter
+	 * because both ANSI C and C++ allow castless assignment from
+	 * any pointer type to void*, and deal with argument conversions
+	 * as though doing an assignment.
+	 */
+	return (void *) realloc( (char *) ptr, size );
 }
 
 void wcsbthfree (void * ptr )
 {
-        free( (char *) ptr );   /* see wcsbthrealloc() for (char *) cast */
+	free( (char *) ptr );	/* see wcsbthrealloc() for (char *) cast */
 }
 
 #define YYTABLES_NAME "yytables"

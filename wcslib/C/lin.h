@@ -349,22 +349,22 @@ extern const char *lin_errmsg[];
 struct linprm {
   /* Initialization flag (see the prologue above).                          */
   /*------------------------------------------------------------------------*/
-  int flag;                     /* Set to zero to force initialization.     */
+  int flag;			/* Set to zero to force initialization.     */
 
   /* Parameters to be provided (see the prologue above).                    */
   /*------------------------------------------------------------------------*/
-  int naxis;                    /* The number of axes, given by NAXIS.      */
-  double *crpix;                /* CRPIXja keywords for each pixel axis.    */
-  double *pc;                   /* PCi_ja  linear transformation matrix.    */
-  double *cdelt;                /* CDELTia keywords for each coord axis.    */
+  int naxis;			/* The number of axes, given by NAXIS.      */
+  double *crpix;		/* CRPIXja keywords for each pixel axis.    */
+  double *pc;			/* PCi_ja  linear transformation matrix.    */
+  double *cdelt;		/* CDELTia keywords for each coord axis.    */
 
   /* Information derived from the parameters supplied.                      */
   /*------------------------------------------------------------------------*/
-  double *piximg;               /* Product of CDELTia and PCi_ja matrices.  */
-  double *imgpix;               /* Inverse of the piximg matrix.            */
-  int unity;                    /* True if the PCi_ja matrix is unity.      */
+  double *piximg;		/* Product of CDELTia and PCi_ja matrices.  */
+  double *imgpix;		/* Inverse of the piximg matrix.            */
+  int unity;			/* True if the PCi_ja matrix is unity.      */
 
-  int i_naxis;                  /* The remainder are for memory management. */
+  int i_naxis;			/* The remainder are for memory management. */
   int m_flag, m_naxis;
   double *m_crpix, *m_pc, *m_cdelt;
 };

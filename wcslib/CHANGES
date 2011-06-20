@@ -49,7 +49,7 @@ WCSLIB version 4.7 (2011/02/07)
 
 * Installation
 
-  - Changes prompted by SÃ©bastien Fabbro for the Gentoo Linux package:
+  - Changes prompted by Sébastien Fabbro for the Gentoo Linux package:
       a) autoconf updates,
       b) respect LDFLAGS when building the shared library,
       c) install documentation,

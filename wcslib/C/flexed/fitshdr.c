@@ -34,7 +34,7 @@
 #if __STDC_VERSION__ >= 199901L
 
 /* C99 says to define __STDC_LIMIT_MACROS before including stdint.h,
- * if you want the limit (max/min) macros for int types.
+ * if you want the limit (max/min) macros for int types. 
  */
 #ifndef __STDC_LIMIT_MACROS
 #define __STDC_LIMIT_MACROS 1
@@ -51,7 +51,7 @@ typedef uint32_t flex_uint32_t;
 typedef signed char flex_int8_t;
 typedef short int flex_int16_t;
 typedef int flex_int32_t;
-typedef unsigned char flex_uint8_t;
+typedef unsigned char flex_uint8_t; 
 typedef unsigned short int flex_uint16_t;
 typedef unsigned int flex_uint32_t;
 #endif /* ! C99 */
@@ -92,14 +92,14 @@ typedef unsigned int flex_uint32_t;
 /* The "const" storage-class-modifier is valid. */
 #define YY_USE_CONST
 
-#else   /* ! __cplusplus */
+#else	/* ! __cplusplus */
 
 #if __STDC__
 
 #define YY_USE_CONST
 
-#endif  /* __STDC__ */
-#endif  /* ! __cplusplus */
+#endif	/* __STDC__ */
+#endif	/* ! __cplusplus */
 
 #ifdef YY_USE_CONST
 #define yyconst const
@@ -161,20 +161,20 @@ extern FILE *fitshdrin, *fitshdrout;
 #define EOB_ACT_LAST_MATCH 2
 
 #define YY_LESS_LINENO(n)
-
+    
 /* Return all but the first "n" matched characters back to the input stream. */
 #define yyless(n) \
-        do \
-                { \
-                /* Undo effects of setting up fitshdrtext. */ \
+	do \
+		{ \
+		/* Undo effects of setting up fitshdrtext. */ \
         int yyless_macro_arg = (n); \
         YY_LESS_LINENO(yyless_macro_arg);\
-                *yy_cp = (yy_hold_char); \
-                YY_RESTORE_YY_MORE_OFFSET \
-                (yy_c_buf_p) = yy_cp = yy_bp + yyless_macro_arg - YY_MORE_ADJ; \
-                YY_DO_BEFORE_ACTION; /* set up fitshdrtext again */ \
-                } \
-        while ( 0 )
+		*yy_cp = (yy_hold_char); \
+		YY_RESTORE_YY_MORE_OFFSET \
+		(yy_c_buf_p) = yy_cp = yy_bp + yyless_macro_arg - YY_MORE_ADJ; \
+		YY_DO_BEFORE_ACTION; /* set up fitshdrtext again */ \
+		} \
+	while ( 0 )
 
 #define unput(c) yyunput( c, (yytext_ptr)  )
 
@@ -191,66 +191,66 @@ typedef unsigned int yy_size_t;
 #ifndef YY_STRUCT_YY_BUFFER_STATE
 #define YY_STRUCT_YY_BUFFER_STATE
 struct yy_buffer_state
-        {
-        FILE *yy_input_file;
+	{
+	FILE *yy_input_file;
 
-        char *yy_ch_buf;                /* input buffer */
-        char *yy_buf_pos;               /* current position in input buffer */
+	char *yy_ch_buf;		/* input buffer */
+	char *yy_buf_pos;		/* current position in input buffer */
 
-        /* Size of input buffer in bytes, not including room for EOB
-         * characters.
-         */
-        yy_size_t yy_buf_size;
+	/* Size of input buffer in bytes, not including room for EOB
+	 * characters.
+	 */
+	yy_size_t yy_buf_size;
 
-        /* Number of characters read into yy_ch_buf, not including EOB
-         * characters.
-         */
-        int yy_n_chars;
+	/* Number of characters read into yy_ch_buf, not including EOB
+	 * characters.
+	 */
+	int yy_n_chars;
 
-        /* Whether we "own" the buffer - i.e., we know we created it,
-         * and can realloc() it to grow it, and should free() it to
-         * delete it.
-         */
-        int yy_is_our_buffer;
+	/* Whether we "own" the buffer - i.e., we know we created it,
+	 * and can realloc() it to grow it, and should free() it to
+	 * delete it.
+	 */
+	int yy_is_our_buffer;
 
-        /* Whether this is an "interactive" input source; if so, and
-         * if we're using stdio for input, then we want to use getc()
-         * instead of fread(), to make sure we stop fetching input after
-         * each newline.
-         */
-        int yy_is_interactive;
+	/* Whether this is an "interactive" input source; if so, and
+	 * if we're using stdio for input, then we want to use getc()
+	 * instead of fread(), to make sure we stop fetching input after
+	 * each newline.
+	 */
+	int yy_is_interactive;
 
-        /* Whether we're considered to be at the beginning of a line.
-         * If so, '^' rules will be active on the next match, otherwise
-         * not.
-         */
-        int yy_at_bol;
+	/* Whether we're considered to be at the beginning of a line.
+	 * If so, '^' rules will be active on the next match, otherwise
+	 * not.
+	 */
+	int yy_at_bol;
 
     int yy_bs_lineno; /**< The line count. */
     int yy_bs_column; /**< The column count. */
+    
+	/* Whether to try to fill the input buffer when we reach the
+	 * end of it.
+	 */
+	int yy_fill_buffer;
 
-        /* Whether to try to fill the input buffer when we reach the
-         * end of it.
-         */
-        int yy_fill_buffer;
-
-        int yy_buffer_status;
+	int yy_buffer_status;
 
 #define YY_BUFFER_NEW 0
 #define YY_BUFFER_NORMAL 1
-        /* When an EOF's been seen but there's still some text to process
-         * then we mark the buffer as YY_EOF_PENDING, to indicate that we
-         * shouldn't try reading from the input source any more.  We might
-         * still have a bunch of tokens to match, though, because of
-         * possible backing-up.
-         *
-         * When we actually see the EOF, we change the status to "new"
-         * (via fitshdrrestart()), so that the user can continue scanning by
-         * just pointing fitshdrin at a new input file.
-         */
+	/* When an EOF's been seen but there's still some text to process
+	 * then we mark the buffer as YY_EOF_PENDING, to indicate that we
+	 * shouldn't try reading from the input source any more.  We might
+	 * still have a bunch of tokens to match, though, because of
+	 * possible backing-up.
+	 *
+	 * When we actually see the EOF, we change the status to "new"
+	 * (via fitshdrrestart()), so that the user can continue scanning by
+	 * just pointing fitshdrin at a new input file.
+	 */
 #define YY_BUFFER_EOF_PENDING 2
 
-        };
+	};
 #endif /* !YY_STRUCT_YY_BUFFER_STATE */
 
 /* Stack of input buffers. */
@@ -275,13 +275,13 @@ static YY_BUFFER_STATE * yy_buffer_stack = 0; /**< Stack as an array. */
 
 /* yy_hold_char holds the character lost when fitshdrtext is formed. */
 static char yy_hold_char;
-static int yy_n_chars;          /* number of characters read into yy_ch_buf */
+static int yy_n_chars;		/* number of characters read into yy_ch_buf */
 int fitshdrleng;
 
 /* Points to current character in buffer. */
 static char *yy_c_buf_p = (char *) 0;
-static int yy_init = 0;         /* whether we need to initialize */
-static int yy_start = 0;        /* start state number */
+static int yy_init = 0;		/* whether we need to initialize */
+static int yy_start = 0;	/* start state number */
 
 /* Flag which is used to allow fitshdrwrap()'s to do buffer switches
  * instead of setting up a fresh fitshdrin.  A bit of a hack ...
@@ -313,24 +313,24 @@ void fitshdrfree (void *  );
 #define yy_new_buffer fitshdr_create_buffer
 
 #define yy_set_interactive(is_interactive) \
-        { \
-        if ( ! YY_CURRENT_BUFFER ){ \
+	{ \
+	if ( ! YY_CURRENT_BUFFER ){ \
         fitshdrensure_buffer_stack (); \
-                YY_CURRENT_BUFFER_LVALUE =    \
+		YY_CURRENT_BUFFER_LVALUE =    \
             fitshdr_create_buffer(fitshdrin,YY_BUF_SIZE ); \
-        } \
-        YY_CURRENT_BUFFER_LVALUE->yy_is_interactive = is_interactive; \
-        }
+	} \
+	YY_CURRENT_BUFFER_LVALUE->yy_is_interactive = is_interactive; \
+	}
 
 #define yy_set_bol(at_bol) \
-        { \
-        if ( ! YY_CURRENT_BUFFER ){\
+	{ \
+	if ( ! YY_CURRENT_BUFFER ){\
         fitshdrensure_buffer_stack (); \
-                YY_CURRENT_BUFFER_LVALUE =    \
+		YY_CURRENT_BUFFER_LVALUE =    \
             fitshdr_create_buffer(fitshdrin,YY_BUF_SIZE ); \
-        } \
-        YY_CURRENT_BUFFER_LVALUE->yy_at_bol = at_bol; \
-        }
+	} \
+	YY_CURRENT_BUFFER_LVALUE->yy_at_bol = at_bol; \
+	}
 
 #define YY_AT_BOL() (YY_CURRENT_BUFFER_LVALUE->yy_at_bol)
 
@@ -9896,22 +9896,22 @@ static void yy_fatal_error (yyconst char msg[]  );
  * corresponding action - sets up fitshdrtext.
  */
 #define YY_DO_BEFORE_ACTION \
-        (yytext_ptr) = yy_bp; \
-        (yytext_ptr) -= (yy_more_len); \
-        fitshdrleng = (size_t) (yy_cp - (yytext_ptr)); \
-        (yy_hold_char) = *yy_cp; \
-        *yy_cp = '\0'; \
-        (yy_c_buf_p) = yy_cp;
+	(yytext_ptr) = yy_bp; \
+	(yytext_ptr) -= (yy_more_len); \
+	fitshdrleng = (size_t) (yy_cp - (yytext_ptr)); \
+	(yy_hold_char) = *yy_cp; \
+	*yy_cp = '\0'; \
+	(yy_c_buf_p) = yy_cp;
 
 #define YY_NUM_RULES 31
 #define YY_END_OF_BUFFER 32
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
-        {
-        flex_int32_t yy_verify;
-        flex_int32_t yy_nxt;
-        };
+	{
+	flex_int32_t yy_verify;
+	flex_int32_t yy_nxt;
+	};
 static yyconst flex_int16_t yy_accept[551] =
     {   0,
         0,    0,    0,    0,    0,    0,    0,    0,   28,   28,
@@ -10119,17 +10119,17 @@ char *fitshdrtext;
                             struct fitskey **keys)
 
 #define YY_INPUT(inbuff, count, bufsize) \
-        { \
-          if (fitshdr_nkeyrec) { \
-            strncpy(inbuff, fitshdr_hdr, 80); \
-            inbuff[80] = '\n'; \
-            fitshdr_hdr += 80; \
-            fitshdr_nkeyrec--; \
-            count = 81; \
-          } else { \
-            count = YY_NULL; \
-          } \
-        }
+	{ \
+	  if (fitshdr_nkeyrec) { \
+	    strncpy(inbuff, fitshdr_hdr, 80); \
+	    inbuff[80] = '\n'; \
+	    fitshdr_hdr += 80; \
+	    fitshdr_nkeyrec--; \
+	    count = 81; \
+	  } else { \
+	    count = YY_NULL; \
+	  } \
+	}
 
 /* These global variables are required by YY_INPUT. */
 const char *fitshdr_hdr;
@@ -10218,17 +10218,17 @@ static int input (void );
  */
 #ifndef YY_INPUT
 #define YY_INPUT(buf,result,max_size) \
-        errno=0; \
-        while ( (result = read( fileno(fitshdrin), (char *) buf, max_size )) < 0 ) \
-        { \
-                if( errno != EINTR) \
-                { \
-                        YY_FATAL_ERROR( "input in flex scanner failed" ); \
-                        break; \
-                } \
-                errno=0; \
-                clearerr(fitshdrin); \
-        }\
+	errno=0; \
+	while ( (result = read( fileno(fitshdrin), (char *) buf, max_size )) < 0 ) \
+	{ \
+		if( errno != EINTR) \
+		{ \
+			YY_FATAL_ERROR( "input in flex scanner failed" ); \
+			break; \
+		} \
+		errno=0; \
+		clearerr(fitshdrin); \
+	}\
 \
 
 #endif
@@ -10277,249 +10277,249 @@ extern int fitshdrlex (void);
 #endif
 
 #define YY_RULE_SETUP \
-        if ( fitshdrleng > 0 ) \
-                YY_CURRENT_BUFFER_LVALUE->yy_at_bol = \
-                                (fitshdrtext[fitshdrleng - 1] == '\n'); \
-        YY_USER_ACTION
+	if ( fitshdrleng > 0 ) \
+		YY_CURRENT_BUFFER_LVALUE->yy_at_bol = \
+				(fitshdrtext[fitshdrleng - 1] == '\n'); \
+	YY_USER_ACTION
 
 /** The main scanner function which does all the work.
  */
 YY_DECL
 {
-        register yy_state_type yy_current_state;
-        register char *yy_cp, *yy_bp;
-        register int yy_act;
-
+	register yy_state_type yy_current_state;
+	register char *yy_cp, *yy_bp;
+	register int yy_act;
+    
 #line 124 "fitshdr.l"
 
-        char *cptr, ctmp[72];
-        int  blank, continuation, end, j, k, keyno;
-        double dtmp;
-        struct fitskey *kptr;
-        struct fitskeyid *iptr;
-        void nullfill(char cptr[], int len);
-        int  fitshdrlex_destroy(void);
-
-        fitshdr_hdr = header;
-        fitshdr_nkeyrec = nkeyrec;
-
-        *nreject = 0;
-        keyno = 0;
-
-        if (keys == 0x0) {
-          return 1;
-        }
-
-        /* Allocate memory for the required number of fitskey structs. */
-        /* Recall that calloc() initializes allocated memory to zero.  */
-        if (!(kptr = *keys = calloc(nkeyrec, sizeof(struct fitskey)))) {
-          return 2;
-        }
-
-        /* Initialize keyids[]. */
-        iptr = keyids;
-        for (j = 0; j < nkeyids; j++, iptr++) {
-          iptr->count  = 0;
-          iptr->idx[0] = -1;
-          iptr->idx[1] = -1;
-        }
-
-        blank = 0;
-        continuation = 0;
-        end = 0;
-
-        /* Return here via longjmp() invoked by yy_fatal_error(). */
-        if (setjmp(fitshdr_abort_jmp_env)) {
-          return 3;
-        }
-
-        BEGIN(INITIAL);
+	char *cptr, ctmp[72];
+	int  blank, continuation, end, j, k, keyno;
+	double dtmp;
+	struct fitskey *kptr;
+	struct fitskeyid *iptr;
+	void nullfill(char cptr[], int len);
+	int  fitshdrlex_destroy(void);
+	
+	fitshdr_hdr = header;
+	fitshdr_nkeyrec = nkeyrec;
+	
+	*nreject = 0;
+	keyno = 0;
+	
+	if (keys == 0x0) {
+	  return 1;
+	}
+	
+	/* Allocate memory for the required number of fitskey structs. */
+	/* Recall that calloc() initializes allocated memory to zero.  */
+	if (!(kptr = *keys = calloc(nkeyrec, sizeof(struct fitskey)))) {
+	  return 2;
+	}
+	
+	/* Initialize keyids[]. */
+	iptr = keyids;
+	for (j = 0; j < nkeyids; j++, iptr++) {
+	  iptr->count  = 0;
+	  iptr->idx[0] = -1;
+	  iptr->idx[1] = -1;
+	}
+	
+	blank = 0;
+	continuation = 0;
+	end = 0;
+	
+	/* Return here via longjmp() invoked by yy_fatal_error(). */
+	if (setjmp(fitshdr_abort_jmp_env)) {
+	  return 3;
+	}
+	
+	BEGIN(INITIAL);
 
 #line 10339 "fitshdr.c"
 
-        if ( !(yy_init) )
-                {
-                (yy_init) = 1;
+	if ( !(yy_init) )
+		{
+		(yy_init) = 1;
 
 #ifdef YY_USER_INIT
-                YY_USER_INIT;
+		YY_USER_INIT;
 #endif
 
-                if ( ! (yy_start) )
-                        (yy_start) = 1; /* first start state */
+		if ( ! (yy_start) )
+			(yy_start) = 1;	/* first start state */
 
-                if ( ! fitshdrin )
-                        fitshdrin = stdin;
+		if ( ! fitshdrin )
+			fitshdrin = stdin;
 
-                if ( ! fitshdrout )
-                        fitshdrout = stdout;
+		if ( ! fitshdrout )
+			fitshdrout = stdout;
 
-                if ( ! YY_CURRENT_BUFFER ) {
-                        fitshdrensure_buffer_stack ();
-                        YY_CURRENT_BUFFER_LVALUE =
-                                fitshdr_create_buffer(fitshdrin,YY_BUF_SIZE );
-                }
+		if ( ! YY_CURRENT_BUFFER ) {
+			fitshdrensure_buffer_stack ();
+			YY_CURRENT_BUFFER_LVALUE =
+				fitshdr_create_buffer(fitshdrin,YY_BUF_SIZE );
+		}
 
-                fitshdr_load_buffer_state( );
-                }
+		fitshdr_load_buffer_state( );
+		}
 
-        while ( 1 )             /* loops until end-of-file is reached */
-                {
-                (yy_more_len) = 0;
-                if ( (yy_more_flag) )
-                        {
-                        (yy_more_len) = (yy_c_buf_p) - (yytext_ptr);
-                        (yy_more_flag) = 0;
-                        }
-                yy_cp = (yy_c_buf_p);
+	while ( 1 )		/* loops until end-of-file is reached */
+		{
+		(yy_more_len) = 0;
+		if ( (yy_more_flag) )
+			{
+			(yy_more_len) = (yy_c_buf_p) - (yytext_ptr);
+			(yy_more_flag) = 0;
+			}
+		yy_cp = (yy_c_buf_p);
 
-                /* Support of fitshdrtext. */
-                *yy_cp = (yy_hold_char);
+		/* Support of fitshdrtext. */
+		*yy_cp = (yy_hold_char);
 
-                /* yy_bp points to the position in yy_ch_buf of the start of
-                 * the current run.
-                 */
-                yy_bp = yy_cp;
+		/* yy_bp points to the position in yy_ch_buf of the start of
+		 * the current run.
+		 */
+		yy_bp = yy_cp;
 
-                yy_current_state = (yy_start);
-                yy_current_state += YY_AT_BOL();
+		yy_current_state = (yy_start);
+		yy_current_state += YY_AT_BOL();
 yy_match:
-                while ( (yy_current_state = yy_nxt[yy_current_state][ YY_SC_TO_UI(*yy_cp) ]) > 0 )
-                        {
-                        if ( yy_accept[yy_current_state] )
-                                {
-                                (yy_last_accepting_state) = yy_current_state;
-                                (yy_last_accepting_cpos) = yy_cp;
-                                }
+		while ( (yy_current_state = yy_nxt[yy_current_state][ YY_SC_TO_UI(*yy_cp) ]) > 0 )
+			{
+			if ( yy_accept[yy_current_state] )
+				{
+				(yy_last_accepting_state) = yy_current_state;
+				(yy_last_accepting_cpos) = yy_cp;
+				}
 
-                        ++yy_cp;
-                        }
+			++yy_cp;
+			}
 
-                yy_current_state = -yy_current_state;
+		yy_current_state = -yy_current_state;
 
 yy_find_action:
-                yy_act = yy_accept[yy_current_state];
+		yy_act = yy_accept[yy_current_state];
 
-                YY_DO_BEFORE_ACTION;
+		YY_DO_BEFORE_ACTION;
 
-do_action:      /* This label is used only to access EOF actions. */
+do_action:	/* This label is used only to access EOF actions. */
 
-                switch ( yy_act )
-        { /* beginning of action switch */
-                        case 0: /* must back up */
-                        /* undo the effects of YY_DO_BEFORE_ACTION */
-                        *yy_cp = (yy_hold_char);
-                        yy_cp = (yy_last_accepting_cpos) + 1;
-                        yy_current_state = (yy_last_accepting_state);
-                        goto yy_find_action;
+		switch ( yy_act )
+	{ /* beginning of action switch */
+			case 0: /* must back up */
+			/* undo the effects of YY_DO_BEFORE_ACTION */
+			*yy_cp = (yy_hold_char);
+			yy_cp = (yy_last_accepting_cpos) + 1;
+			yy_current_state = (yy_last_accepting_state);
+			goto yy_find_action;
 
 case 1:
 YY_RULE_SETUP
 #line 168 "fitshdr.l"
 {
-          /* A completely blank keyrecord. */
-          strncpy(kptr->keyword, fitshdrtext, 8);
-          yyless(0);
-          blank = 1;
-          BEGIN(COMMENT);
-        }
-        YY_BREAK
+	  /* A completely blank keyrecord. */
+	  strncpy(kptr->keyword, fitshdrtext, 8);
+	  yyless(0);
+	  blank = 1;
+	  BEGIN(COMMENT);
+	}
+	YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 176 "fitshdr.l"
 {
-          strncpy(kptr->keyword, fitshdrtext, 8);
-          BEGIN(COMMENT);
-        }
-        YY_BREAK
+	  strncpy(kptr->keyword, fitshdrtext, 8);
+	  BEGIN(COMMENT);
+	}
+	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 181 "fitshdr.l"
 {
-          strncpy(kptr->keyword, fitshdrtext, 8);
-          end = 1;
-          BEGIN(FLUSH);
-        }
-        YY_BREAK
+	  strncpy(kptr->keyword, fitshdrtext, 8);
+	  end = 1;
+	  BEGIN(FLUSH);
+	}
+	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 187 "fitshdr.l"
 {
-          /* Illegal END keyrecord. */
-          strncpy(kptr->keyword, fitshdrtext, 8);
-          kptr->status |= FITSHDR_KEYREC;
-          BEGIN(VALUE);
-        }
-        YY_BREAK
+	  /* Illegal END keyrecord. */
+	  strncpy(kptr->keyword, fitshdrtext, 8);
+	  kptr->status |= FITSHDR_KEYREC;
+	  BEGIN(VALUE);
+	}
+	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 194 "fitshdr.l"
 {
-          /* Illegal END keyrecord. */
-          strncpy(kptr->keyword, fitshdrtext, 8);
-          kptr->status |= FITSHDR_KEYREC;
-          BEGIN(COMMENT);
-        }
-        YY_BREAK
+	  /* Illegal END keyrecord. */
+	  strncpy(kptr->keyword, fitshdrtext, 8);
+	  kptr->status |= FITSHDR_KEYREC;
+	  BEGIN(COMMENT);
+	}
+	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 201 "fitshdr.l"
 {
-          strncpy(kptr->keyword, fitshdrtext, 8);
-          BEGIN(VALUE);
-        }
-        YY_BREAK
+	  strncpy(kptr->keyword, fitshdrtext, 8);
+	  BEGIN(VALUE);
+	}
+	YY_BREAK
 case 7:
 /* rule 7 can match eol */
 YY_RULE_SETUP
 #line 206 "fitshdr.l"
 {
-          /* Continued string keyvalue. */
-          strncpy(kptr->keyword, fitshdrtext, 8);
-
-          if (keyno > 0 && (kptr-1)->type%10 == 8) {
-            /* Put back the string keyvalue. */
-            for (k = 10; fitshdrtext[k] != '\''; k++);
-            yyless(k);
-            continuation = 1;
-            BEGIN(VALUE);
-
-          } else {
-            /* Not a valid continuation. */
-            yyless(8);
-            BEGIN(COMMENT);
-          }
-        }
-        YY_BREAK
+	  /* Continued string keyvalue. */
+	  strncpy(kptr->keyword, fitshdrtext, 8);
+	
+	  if (keyno > 0 && (kptr-1)->type%10 == 8) {
+	    /* Put back the string keyvalue. */
+	    for (k = 10; fitshdrtext[k] != '\''; k++);
+	    yyless(k);
+	    continuation = 1;
+	    BEGIN(VALUE);
+	
+	  } else {
+	    /* Not a valid continuation. */
+	    yyless(8);
+	    BEGIN(COMMENT);
+	  }
+	}
+	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 224 "fitshdr.l"
 {
-          /* Keyword without value. */
-          strncpy(kptr->keyword, fitshdrtext, 8);
-          BEGIN(COMMENT);
-        }
-        YY_BREAK
+	  /* Keyword without value. */
+	  strncpy(kptr->keyword, fitshdrtext, 8);
+	  BEGIN(COMMENT);
+	}
+	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 230 "fitshdr.l"
 {
-          /* Illegal keyword, carry on regardless. */
-          strncpy(kptr->keyword, fitshdrtext, 8);
-          kptr->status |= FITSHDR_KEYWORD;
-          BEGIN(VALUE);
-        }
-        YY_BREAK
+	  /* Illegal keyword, carry on regardless. */
+	  strncpy(kptr->keyword, fitshdrtext, 8);
+	  kptr->status |= FITSHDR_KEYWORD;
+	  BEGIN(VALUE);
+	}
+	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 237 "fitshdr.l"
 {
-          /* Illegal keyword, carry on regardless. */
-          strncpy(kptr->keyword, fitshdrtext, 8);
-          kptr->status |= FITSHDR_KEYWORD;
-          BEGIN(COMMENT);
-        }
-        YY_BREAK
+	  /* Illegal keyword, carry on regardless. */
+	  strncpy(kptr->keyword, fitshdrtext, 8);
+	  kptr->status |= FITSHDR_KEYWORD;
+	  BEGIN(COMMENT);
+	}
+	YY_BREAK
 case 11:
 *yy_cp = (yy_hold_char); /* undo effects of setting up fitshdrtext */
 (yy_c_buf_p) = yy_cp -= 1;
@@ -10527,211 +10527,211 @@ YY_DO_BEFORE_ACTION; /* set up fitshdrtext again */
 YY_RULE_SETUP
 #line 244 "fitshdr.l"
 {
-          /* Null keyvalue. */
-          BEGIN(INLINE);
-        }
-        YY_BREAK
+	  /* Null keyvalue. */
+	  BEGIN(INLINE);
+	}
+	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 249 "fitshdr.l"
 {
-          /* Logical keyvalue. */
-          kptr->type = 1;
-          kptr->keyvalue.i = (*fitshdrtext == 'T');
-          BEGIN(INLINE);
-        }
-        YY_BREAK
+	  /* Logical keyvalue. */
+	  kptr->type = 1;
+	  kptr->keyvalue.i = (*fitshdrtext == 'T');
+	  BEGIN(INLINE);
+	}
+	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 256 "fitshdr.l"
 {
-          /* 32-bit signed integer keyvalue. */
-          kptr->type = 2;
-          if (sscanf(fitshdrtext, "%d", &(kptr->keyvalue.i)) < 1) {
-            kptr->status |= FITSHDR_KEYVALUE;
-            BEGIN(ERROR);
-          }
-
-          BEGIN(INLINE);
-        }
-        YY_BREAK
+	  /* 32-bit signed integer keyvalue. */
+	  kptr->type = 2;
+	  if (sscanf(fitshdrtext, "%d", &(kptr->keyvalue.i)) < 1) {
+	    kptr->status |= FITSHDR_KEYVALUE;
+	    BEGIN(ERROR);
+	  }
+	
+	  BEGIN(INLINE);
+	}
+	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 267 "fitshdr.l"
 {
-          /* 64-bit signed integer keyvalue (up to 18 digits). */
-          if (sscanf(fitshdrtext, "%lf", &dtmp) < 1) {
-            kptr->status |= FITSHDR_KEYVALUE;
-            BEGIN(ERROR);
-
-          } else if (INT_MIN <= dtmp && dtmp <= INT_MAX) {
-            /* Can be accomodated as a 32-bit signed integer. */
-            kptr->type = 2;
-            if (sscanf(fitshdrtext, "%d", &(kptr->keyvalue.i)) < 1) {
-              kptr->status |= FITSHDR_KEYVALUE;
-              BEGIN(ERROR);
-            }
-
-          } else {
-            /* 64-bit signed integer. */
-            kptr->type = 3;
+	  /* 64-bit signed integer keyvalue (up to 18 digits). */
+	  if (sscanf(fitshdrtext, "%lf", &dtmp) < 1) {
+	    kptr->status |= FITSHDR_KEYVALUE;
+	    BEGIN(ERROR);
+	
+	  } else if (INT_MIN <= dtmp && dtmp <= INT_MAX) {
+	    /* Can be accomodated as a 32-bit signed integer. */
+	    kptr->type = 2;
+	    if (sscanf(fitshdrtext, "%d", &(kptr->keyvalue.i)) < 1) {
+	      kptr->status |= FITSHDR_KEYVALUE;
+	      BEGIN(ERROR);
+	    }
+	
+	  } else {
+	    /* 64-bit signed integer. */
+	    kptr->type = 3;
 #ifdef WCSLIB_INT64
-              /* Native 64-bit integer is available. */
-              if (sscanf(fitshdrtext, "%lld", &(kptr->keyvalue.k)) < 1) {
-                kptr->status |= FITSHDR_KEYVALUE;
-                BEGIN(ERROR);
-              }
+	      /* Native 64-bit integer is available. */
+	      if (sscanf(fitshdrtext, "%lld", &(kptr->keyvalue.k)) < 1) {
+	        kptr->status |= FITSHDR_KEYVALUE;
+	        BEGIN(ERROR);
+	      }
 #else
-              /* 64-bit integer (up to 18 digits) implemented as int[3]. */
-              kptr->keyvalue.k[2] = 0;
-
-              sprintf(ctmp, "%%%dd%%9d", fitshdrleng-9);
-              if (sscanf(fitshdrtext, ctmp, kptr->keyvalue.k+1,
-                         kptr->keyvalue.k) < 1) {
-                kptr->status |= FITSHDR_KEYVALUE;
-                BEGIN(ERROR);
-              } else if (*fitshdrtext == '-') {
-                kptr->keyvalue.k[0] *= -1;
-              }
+	      /* 64-bit integer (up to 18 digits) implemented as int[3]. */
+	      kptr->keyvalue.k[2] = 0;
+	
+	      sprintf(ctmp, "%%%dd%%9d", fitshdrleng-9);
+	      if (sscanf(fitshdrtext, ctmp, kptr->keyvalue.k+1,
+	                 kptr->keyvalue.k) < 1) {
+	        kptr->status |= FITSHDR_KEYVALUE;
+	        BEGIN(ERROR);
+	      } else if (*fitshdrtext == '-') {
+	        kptr->keyvalue.k[0] *= -1;
+	      }
 #endif
-          }
-
-          BEGIN(INLINE);
-        }
-        YY_BREAK
+	  }
+	
+	  BEGIN(INLINE);
+	}
+	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 308 "fitshdr.l"
 {
-          /* Very long integer keyvalue (and 19-digit int64). */
-          kptr->type = 4;
-          strcpy(ctmp, fitshdrtext);
-          k = fitshdrleng;
-          for (j = 0; j < 8; j++) {
-            /* Read it backwards. */
-            k -= 9;
-            if (k < 0) k = 0;
-            if (sscanf(ctmp+k, "%d", kptr->keyvalue.l+j) < 1) {
-              kptr->status |= FITSHDR_KEYVALUE;
-              BEGIN(ERROR);
-            }
-            if (*fitshdrtext == '-') {
-              kptr->keyvalue.l[j] = -abs(kptr->keyvalue.l[j]);
-            }
-
-            if (k == 0) break;
-            ctmp[k] = '\0';
-          }
-
-          /* Can it be accomodated as a 64-bit signed integer? */
-          if (j == 2 && abs(kptr->keyvalue.l[2]) <=  9 &&
-                        abs(kptr->keyvalue.l[1]) <=  223372036 &&
-                            kptr->keyvalue.l[0]  <=  854775807 &&
-                            kptr->keyvalue.l[0]  >= -854775808) {
-            kptr->type = 3;
-
+	  /* Very long integer keyvalue (and 19-digit int64). */
+	  kptr->type = 4;
+	  strcpy(ctmp, fitshdrtext);
+	  k = fitshdrleng;
+	  for (j = 0; j < 8; j++) {
+	    /* Read it backwards. */
+	    k -= 9;
+	    if (k < 0) k = 0;
+	    if (sscanf(ctmp+k, "%d", kptr->keyvalue.l+j) < 1) {
+	      kptr->status |= FITSHDR_KEYVALUE;
+	      BEGIN(ERROR);
+	    }
+	    if (*fitshdrtext == '-') {
+	      kptr->keyvalue.l[j] = -abs(kptr->keyvalue.l[j]);
+	    }
+	
+	    if (k == 0) break;
+	    ctmp[k] = '\0';
+	  }
+	
+	  /* Can it be accomodated as a 64-bit signed integer? */
+	  if (j == 2 && abs(kptr->keyvalue.l[2]) <=  9 &&
+	                abs(kptr->keyvalue.l[1]) <=  223372036 &&
+	                    kptr->keyvalue.l[0]  <=  854775807 &&
+	                    kptr->keyvalue.l[0]  >= -854775808) {
+	    kptr->type = 3;
+	
 #ifdef WCSLIB_INT64
-              /* Native 64-bit integer is available. */
-              kptr->keyvalue.l[2] = 0;
-              if (sscanf(fitshdrtext, "%lld", &(kptr->keyvalue.k)) < 1) {
-                kptr->status |= FITSHDR_KEYVALUE;
-                BEGIN(ERROR);
-              }
+	      /* Native 64-bit integer is available. */
+	      kptr->keyvalue.l[2] = 0;
+	      if (sscanf(fitshdrtext, "%lld", &(kptr->keyvalue.k)) < 1) {
+	        kptr->status |= FITSHDR_KEYVALUE;
+	        BEGIN(ERROR);
+	      }
 #endif
-          }
-
-          BEGIN(INLINE);
-        }
-        YY_BREAK
+	  }
+	
+	  BEGIN(INLINE);
+	}
+	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 349 "fitshdr.l"
 {
-          /* Float keyvalue. */
-          kptr->type = 5;
-          if (sscanf(fitshdrtext, "%lf", &(kptr->keyvalue.f)) < 1) {
-            kptr->status |= FITSHDR_KEYVALUE;
-            BEGIN(ERROR);
-          }
-
-          BEGIN(INLINE);
-        }
-        YY_BREAK
+	  /* Float keyvalue. */
+	  kptr->type = 5;
+	  if (sscanf(fitshdrtext, "%lf", &(kptr->keyvalue.f)) < 1) {
+	    kptr->status |= FITSHDR_KEYVALUE;
+	    BEGIN(ERROR);
+	  }
+	
+	  BEGIN(INLINE);
+	}
+	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 360 "fitshdr.l"
 {
-          /* Integer complex keyvalue. */
-          kptr->type = 6;
-          if (sscanf(fitshdrtext, "(%lf,%lf)", kptr->keyvalue.c,
-              kptr->keyvalue.c+1) < 2) {
-            kptr->status |= FITSHDR_KEYVALUE;
-            BEGIN(ERROR);
-          }
-
-          BEGIN(INLINE);
-        }
-        YY_BREAK
+	  /* Integer complex keyvalue. */
+	  kptr->type = 6;
+	  if (sscanf(fitshdrtext, "(%lf,%lf)", kptr->keyvalue.c,
+	      kptr->keyvalue.c+1) < 2) {
+	    kptr->status |= FITSHDR_KEYVALUE;
+	    BEGIN(ERROR);
+	  }
+	
+	  BEGIN(INLINE);
+	}
+	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 372 "fitshdr.l"
 {
-          /* Floating point complex keyvalue. */
-          kptr->type = 7;
-          if (sscanf(fitshdrtext, "(%lf,%lf)", kptr->keyvalue.c,
-              kptr->keyvalue.c+1) < 2) {
-            kptr->status |= FITSHDR_KEYVALUE;
-            BEGIN(ERROR);
-          }
-
-          BEGIN(INLINE);
-        }
-        YY_BREAK
+	  /* Floating point complex keyvalue. */
+	  kptr->type = 7;
+	  if (sscanf(fitshdrtext, "(%lf,%lf)", kptr->keyvalue.c,
+	      kptr->keyvalue.c+1) < 2) {
+	    kptr->status |= FITSHDR_KEYVALUE;
+	    BEGIN(ERROR);
+	  }
+	
+	  BEGIN(INLINE);
+	}
+	YY_BREAK
 case 19:
 /* rule 19 can match eol */
 YY_RULE_SETUP
 #line 384 "fitshdr.l"
 {
-          /* String keyvalue. */
-          kptr->type = 8;
-          cptr = kptr->keyvalue.s;
-          strcpy(cptr, fitshdrtext+1);
-
-          /* Squeeze out repeated quotes. */
-          k = 0;
-          for (j = 0; j < 72; j++) {
-            if (k < j) {
-              cptr[k] = cptr[j];
-            }
-
-            if (cptr[j] == '\0') {
-              if (k) cptr[k-1] = '\0';
-              break;
-            } else if (cptr[j] == '\'' && cptr[j+1] == '\'') {
-              j++;
-            }
-
-            k++;
-          }
-
-          if (*cptr) {
-            /* Retain the initial blank in all-blank strings. */
-            nullfill(cptr+1, 71);
-          } else {
-            nullfill(cptr, 72);
-          }
-
-          BEGIN(INLINE);
-        }
-        YY_BREAK
+	  /* String keyvalue. */
+	  kptr->type = 8;
+	  cptr = kptr->keyvalue.s;
+	  strcpy(cptr, fitshdrtext+1);
+	
+	  /* Squeeze out repeated quotes. */
+	  k = 0;
+	  for (j = 0; j < 72; j++) {
+	    if (k < j) {
+	      cptr[k] = cptr[j];
+	    }
+	
+	    if (cptr[j] == '\0') {
+	      if (k) cptr[k-1] = '\0';
+	      break;
+	    } else if (cptr[j] == '\'' && cptr[j+1] == '\'') {
+	      j++;
+	    }
+	
+	    k++;
+	  }
+	
+	  if (*cptr) {
+	    /* Retain the initial blank in all-blank strings. */
+	    nullfill(cptr+1, 71);
+	  } else {
+	    nullfill(cptr, 72);
+	  }
+	
+	  BEGIN(INLINE);
+	}
+	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 417 "fitshdr.l"
 {
-          kptr->status |= FITSHDR_KEYVALUE;
-          BEGIN(ERROR);
-        }
-        YY_BREAK
+	  kptr->status |= FITSHDR_KEYVALUE;
+	  BEGIN(ERROR);
+	}
+	YY_BREAK
 case 21:
 *yy_cp = (yy_hold_char); /* undo effects of setting up fitshdrtext */
 (yy_c_buf_p) = yy_cp -= 1;
@@ -10739,9 +10739,9 @@ YY_DO_BEFORE_ACTION; /* set up fitshdrtext again */
 YY_RULE_SETUP
 #line 422 "fitshdr.l"
 {
-          BEGIN(FLUSH);
-        }
-        YY_BREAK
+	  BEGIN(FLUSH);
+	}
+	YY_BREAK
 case 22:
 *yy_cp = (yy_hold_char); /* undo effects of setting up fitshdrtext */
 (yy_c_buf_p) = yy_cp -= 1;
@@ -10749,133 +10749,133 @@ YY_DO_BEFORE_ACTION; /* set up fitshdrtext again */
 YY_RULE_SETUP
 #line 426 "fitshdr.l"
 {
-          BEGIN(FLUSH);
-        }
-        YY_BREAK
+	  BEGIN(FLUSH);
+	}
+	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 430 "fitshdr.l"
 {
-          BEGIN(UNITS);
-        }
-        YY_BREAK
+	  BEGIN(UNITS);
+	}
+	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 434 "fitshdr.l"
 {
-          kptr->status |= FITSHDR_COMMENT;
-          BEGIN(ERROR);
-        }
-        YY_BREAK
+	  kptr->status |= FITSHDR_COMMENT;
+	  BEGIN(ERROR);
+	}
+	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 439 "fitshdr.l"
 {
-          /* Keyvalue parsing must now also be suspect. */
-          kptr->status |= FITSHDR_COMMENT;
-          kptr->type = 0;
-          BEGIN(ERROR);
-        }
-        YY_BREAK
+	  /* Keyvalue parsing must now also be suspect. */
+	  kptr->status |= FITSHDR_COMMENT;
+	  kptr->type = 0;
+	  BEGIN(ERROR);
+	}
+	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 446 "fitshdr.l"
 {
-          kptr->ulen = fitshdrleng;
-          yymore();
-          BEGIN(COMMENT);
-        }
-        YY_BREAK
+	  kptr->ulen = fitshdrleng;
+	  yymore();
+	  BEGIN(COMMENT);
+	}
+	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 452 "fitshdr.l"
 {
-          yymore();
-          BEGIN(COMMENT);
-        }
-        YY_BREAK
+	  yymore();
+	  BEGIN(COMMENT);
+	}
+	YY_BREAK
 case 28:
 YY_RULE_SETUP
 #line 457 "fitshdr.l"
 {
-          strcpy(kptr->comment, fitshdrtext);
-          nullfill(kptr->comment, 84);
-          BEGIN(FLUSH);
-        }
-        YY_BREAK
+	  strcpy(kptr->comment, fitshdrtext);
+	  nullfill(kptr->comment, 84);
+	  BEGIN(FLUSH);
+	}
+	YY_BREAK
 case 29:
 YY_RULE_SETUP
 #line 463 "fitshdr.l"
 {
-          if (!continuation) kptr->type = -abs(kptr->type);
-
-          sprintf(kptr->comment, "%.80s", fitshdr_hdr-80);
-          kptr->comment[80] = '\0';
-          nullfill(kptr->comment+80, 4);
-
-          BEGIN(FLUSH);
-        }
-        YY_BREAK
+	  if (!continuation) kptr->type = -abs(kptr->type);
+	
+	  sprintf(kptr->comment, "%.80s", fitshdr_hdr-80);
+	  kptr->comment[80] = '\0';
+	  nullfill(kptr->comment+80, 4);
+	
+	  BEGIN(FLUSH);
+	}
+	YY_BREAK
 case 30:
 /* rule 30 can match eol */
 YY_RULE_SETUP
 #line 473 "fitshdr.l"
 {
-          /* Discard the rest of the input line. */
-          kptr->keyno = ++keyno;
-
-          /* Null-fill the keyword. */
-          kptr->keyword[8] = '\0';
-          nullfill(kptr->keyword, 12);
-
-          /* Do indexing. */
-          iptr = keyids;
-          kptr->keyid = -1;
-          for (j = 0; j < nkeyids; j++, iptr++) {
-            cptr = iptr->name;
-            cptr[8] = '\0';
-            nullfill(cptr, 12);
-            for (k = 0; k < 8; k++, cptr++) {
-              if (*cptr != '.' && *cptr != kptr->keyword[k]) break;
-            }
-
-            if (k == 8) {
-              /* Found a match. */
-              iptr->count++;
-              if (iptr->idx[0] == -1) {
-                iptr->idx[0] = keyno-1;
-              } else {
-                iptr->idx[1] = keyno-1;
-              }
-
-              kptr->keyno = -abs(kptr->keyno);
-              if (kptr->keyid < 0) kptr->keyid = j;
-            }
-          }
-
-          /* Deal with continued strings. */
-          if (continuation) {
-            /* Tidy up the previous string keyvalue. */
-            if ((kptr-1)->type == 8) (kptr-1)->type += 10;
-            cptr = (kptr-1)->keyvalue.s;
-            if (cptr[strlen(cptr)-1] == '&') cptr[strlen(cptr)-1] = '\0';
-
-            kptr->type = (kptr-1)->type + 10;
-          }
-
-          /* Check for keyrecords following the END keyrecord. */
-          if (end && (end++ > 1) && !blank) {
-            kptr->status |= FITSHDR_TRAILER;
-          }
-          if (kptr->status) (*nreject)++;
-
-          kptr++;
-          blank = 0;
-          continuation = 0;
-
-          BEGIN(INITIAL);
-        }
-        YY_BREAK
+	  /* Discard the rest of the input line. */
+	  kptr->keyno = ++keyno;
+	
+	  /* Null-fill the keyword. */
+	  kptr->keyword[8] = '\0';
+	  nullfill(kptr->keyword, 12);
+	
+	  /* Do indexing. */
+	  iptr = keyids;
+	  kptr->keyid = -1;
+	  for (j = 0; j < nkeyids; j++, iptr++) {
+	    cptr = iptr->name;
+	    cptr[8] = '\0';
+	    nullfill(cptr, 12);
+	    for (k = 0; k < 8; k++, cptr++) {
+	      if (*cptr != '.' && *cptr != kptr->keyword[k]) break;
+	    }
+	
+	    if (k == 8) {
+	      /* Found a match. */
+	      iptr->count++;
+	      if (iptr->idx[0] == -1) {
+	        iptr->idx[0] = keyno-1;
+	      } else {
+	        iptr->idx[1] = keyno-1;
+	      }
+	
+	      kptr->keyno = -abs(kptr->keyno);
+	      if (kptr->keyid < 0) kptr->keyid = j;
+	    }
+	  }
+	
+	  /* Deal with continued strings. */
+	  if (continuation) {
+	    /* Tidy up the previous string keyvalue. */
+	    if ((kptr-1)->type == 8) (kptr-1)->type += 10;
+	    cptr = (kptr-1)->keyvalue.s;
+	    if (cptr[strlen(cptr)-1] == '&') cptr[strlen(cptr)-1] = '\0';
+	
+	    kptr->type = (kptr-1)->type + 10;
+	  }
+	
+	  /* Check for keyrecords following the END keyrecord. */
+	  if (end && (end++ > 1) && !blank) {
+	    kptr->status |= FITSHDR_TRAILER;
+	  }
+	  if (kptr->status) (*nreject)++;
+	
+	  kptr++;
+	  blank = 0;
+	  continuation = 0;
+	
+	  BEGIN(INITIAL);
+	}
+	YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(VALUE):
 case YY_STATE_EOF(INLINE):
@@ -10885,329 +10885,329 @@ case YY_STATE_EOF(ERROR):
 case YY_STATE_EOF(FLUSH):
 #line 529 "fitshdr.l"
 {
-          /* End-of-input. */
-          fitshdrlex_destroy();
-          return 0;
-        }
-        YY_BREAK
+	  /* End-of-input. */
+	  fitshdrlex_destroy();
+	  return 0;
+	}
+	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 535 "fitshdr.l"
 ECHO;
-        YY_BREAK
+	YY_BREAK
 #line 10899 "fitshdr.c"
 
-        case YY_END_OF_BUFFER:
-                {
-                /* Amount of text matched not including the EOB char. */
-                int yy_amount_of_matched_text = (int) (yy_cp - (yytext_ptr)) - 1;
+	case YY_END_OF_BUFFER:
+		{
+		/* Amount of text matched not including the EOB char. */
+		int yy_amount_of_matched_text = (int) (yy_cp - (yytext_ptr)) - 1;
 
-                /* Undo the effects of YY_DO_BEFORE_ACTION. */
-                *yy_cp = (yy_hold_char);
-                YY_RESTORE_YY_MORE_OFFSET
+		/* Undo the effects of YY_DO_BEFORE_ACTION. */
+		*yy_cp = (yy_hold_char);
+		YY_RESTORE_YY_MORE_OFFSET
 
-                if ( YY_CURRENT_BUFFER_LVALUE->yy_buffer_status == YY_BUFFER_NEW )
-                        {
-                        /* We're scanning a new file or input source.  It's
-                         * possible that this happened because the user
-                         * just pointed fitshdrin at a new source and called
-                         * fitshdrlex().  If so, then we have to assure
-                         * consistency between YY_CURRENT_BUFFER and our
-                         * globals.  Here is the right place to do so, because
-                         * this is the first action (other than possibly a
-                         * back-up) that will match for the new input source.
-                         */
-                        (yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_n_chars;
-                        YY_CURRENT_BUFFER_LVALUE->yy_input_file = fitshdrin;
-                        YY_CURRENT_BUFFER_LVALUE->yy_buffer_status = YY_BUFFER_NORMAL;
-                        }
+		if ( YY_CURRENT_BUFFER_LVALUE->yy_buffer_status == YY_BUFFER_NEW )
+			{
+			/* We're scanning a new file or input source.  It's
+			 * possible that this happened because the user
+			 * just pointed fitshdrin at a new source and called
+			 * fitshdrlex().  If so, then we have to assure
+			 * consistency between YY_CURRENT_BUFFER and our
+			 * globals.  Here is the right place to do so, because
+			 * this is the first action (other than possibly a
+			 * back-up) that will match for the new input source.
+			 */
+			(yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_n_chars;
+			YY_CURRENT_BUFFER_LVALUE->yy_input_file = fitshdrin;
+			YY_CURRENT_BUFFER_LVALUE->yy_buffer_status = YY_BUFFER_NORMAL;
+			}
 
-                /* Note that here we test for yy_c_buf_p "<=" to the position
-                 * of the first EOB in the buffer, since yy_c_buf_p will
-                 * already have been incremented past the NUL character
-                 * (since all states make transitions on EOB to the
-                 * end-of-buffer state).  Contrast this with the test
-                 * in input().
-                 */
-                if ( (yy_c_buf_p) <= &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)] )
-                        { /* This was really a NUL. */
-                        yy_state_type yy_next_state;
+		/* Note that here we test for yy_c_buf_p "<=" to the position
+		 * of the first EOB in the buffer, since yy_c_buf_p will
+		 * already have been incremented past the NUL character
+		 * (since all states make transitions on EOB to the
+		 * end-of-buffer state).  Contrast this with the test
+		 * in input().
+		 */
+		if ( (yy_c_buf_p) <= &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)] )
+			{ /* This was really a NUL. */
+			yy_state_type yy_next_state;
 
-                        (yy_c_buf_p) = (yytext_ptr) + yy_amount_of_matched_text;
+			(yy_c_buf_p) = (yytext_ptr) + yy_amount_of_matched_text;
 
-                        yy_current_state = yy_get_previous_state(  );
+			yy_current_state = yy_get_previous_state(  );
 
-                        /* Okay, we're now positioned to make the NUL
-                         * transition.  We couldn't have
-                         * yy_get_previous_state() go ahead and do it
-                         * for us because it doesn't know how to deal
-                         * with the possibility of jamming (and we don't
-                         * want to build jamming into it because then it
-                         * will run more slowly).
-                         */
+			/* Okay, we're now positioned to make the NUL
+			 * transition.  We couldn't have
+			 * yy_get_previous_state() go ahead and do it
+			 * for us because it doesn't know how to deal
+			 * with the possibility of jamming (and we don't
+			 * want to build jamming into it because then it
+			 * will run more slowly).
+			 */
 
-                        yy_next_state = yy_try_NUL_trans( yy_current_state );
+			yy_next_state = yy_try_NUL_trans( yy_current_state );
 
-                        yy_bp = (yytext_ptr) + YY_MORE_ADJ;
+			yy_bp = (yytext_ptr) + YY_MORE_ADJ;
 
-                        if ( yy_next_state )
-                                {
-                                /* Consume the NUL. */
-                                yy_cp = ++(yy_c_buf_p);
-                                yy_current_state = yy_next_state;
-                                goto yy_match;
-                                }
+			if ( yy_next_state )
+				{
+				/* Consume the NUL. */
+				yy_cp = ++(yy_c_buf_p);
+				yy_current_state = yy_next_state;
+				goto yy_match;
+				}
 
-                        else
-                                {
-                                yy_cp = (yy_c_buf_p);
-                                goto yy_find_action;
-                                }
-                        }
+			else
+				{
+				yy_cp = (yy_c_buf_p);
+				goto yy_find_action;
+				}
+			}
 
-                else switch ( yy_get_next_buffer(  ) )
-                        {
-                        case EOB_ACT_END_OF_FILE:
-                                {
-                                (yy_did_buffer_switch_on_eof) = 0;
+		else switch ( yy_get_next_buffer(  ) )
+			{
+			case EOB_ACT_END_OF_FILE:
+				{
+				(yy_did_buffer_switch_on_eof) = 0;
 
-                                if ( fitshdrwrap( ) )
-                                        {
-                                        /* Note: because we've taken care in
-                                         * yy_get_next_buffer() to have set up
-                                         * fitshdrtext, we can now set up
-                                         * yy_c_buf_p so that if some total
-                                         * hoser (like flex itself) wants to
-                                         * call the scanner after we return the
-                                         * YY_NULL, it'll still work - another
-                                         * YY_NULL will get returned.
-                                         */
-                                        (yy_c_buf_p) = (yytext_ptr) + YY_MORE_ADJ;
+				if ( fitshdrwrap( ) )
+					{
+					/* Note: because we've taken care in
+					 * yy_get_next_buffer() to have set up
+					 * fitshdrtext, we can now set up
+					 * yy_c_buf_p so that if some total
+					 * hoser (like flex itself) wants to
+					 * call the scanner after we return the
+					 * YY_NULL, it'll still work - another
+					 * YY_NULL will get returned.
+					 */
+					(yy_c_buf_p) = (yytext_ptr) + YY_MORE_ADJ;
 
-                                        yy_act = YY_STATE_EOF(YY_START);
-                                        goto do_action;
-                                        }
+					yy_act = YY_STATE_EOF(YY_START);
+					goto do_action;
+					}
 
-                                else
-                                        {
-                                        if ( ! (yy_did_buffer_switch_on_eof) )
-                                                YY_NEW_FILE;
-                                        }
-                                break;
-                                }
+				else
+					{
+					if ( ! (yy_did_buffer_switch_on_eof) )
+						YY_NEW_FILE;
+					}
+				break;
+				}
 
-                        case EOB_ACT_CONTINUE_SCAN:
-                                (yy_c_buf_p) =
-                                        (yytext_ptr) + yy_amount_of_matched_text;
+			case EOB_ACT_CONTINUE_SCAN:
+				(yy_c_buf_p) =
+					(yytext_ptr) + yy_amount_of_matched_text;
 
-                                yy_current_state = yy_get_previous_state(  );
+				yy_current_state = yy_get_previous_state(  );
 
-                                yy_cp = (yy_c_buf_p);
-                                yy_bp = (yytext_ptr) + YY_MORE_ADJ;
-                                goto yy_match;
+				yy_cp = (yy_c_buf_p);
+				yy_bp = (yytext_ptr) + YY_MORE_ADJ;
+				goto yy_match;
 
-                        case EOB_ACT_LAST_MATCH:
-                                (yy_c_buf_p) =
-                                &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)];
+			case EOB_ACT_LAST_MATCH:
+				(yy_c_buf_p) =
+				&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)];
 
-                                yy_current_state = yy_get_previous_state(  );
+				yy_current_state = yy_get_previous_state(  );
 
-                                yy_cp = (yy_c_buf_p);
-                                yy_bp = (yytext_ptr) + YY_MORE_ADJ;
-                                goto yy_find_action;
-                        }
-                break;
-                }
+				yy_cp = (yy_c_buf_p);
+				yy_bp = (yytext_ptr) + YY_MORE_ADJ;
+				goto yy_find_action;
+			}
+		break;
+		}
 
-        default:
-                YY_FATAL_ERROR(
-                        "fatal flex scanner internal error--no action found" );
-        } /* end of action switch */
-                } /* end of scanning one token */
+	default:
+		YY_FATAL_ERROR(
+			"fatal flex scanner internal error--no action found" );
+	} /* end of action switch */
+		} /* end of scanning one token */
 } /* end of fitshdrlex */
 
 /* yy_get_next_buffer - try to read in a new buffer
  *
  * Returns a code representing an action:
- *      EOB_ACT_LAST_MATCH -
- *      EOB_ACT_CONTINUE_SCAN - continue scanning from current position
- *      EOB_ACT_END_OF_FILE - end of file
+ *	EOB_ACT_LAST_MATCH -
+ *	EOB_ACT_CONTINUE_SCAN - continue scanning from current position
+ *	EOB_ACT_END_OF_FILE - end of file
  */
 static int yy_get_next_buffer (void)
 {
-        register char *dest = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
-        register char *source = (yytext_ptr);
-        register int number_to_move, i;
-        int ret_val;
+    	register char *dest = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
+	register char *source = (yytext_ptr);
+	register int number_to_move, i;
+	int ret_val;
 
-        if ( (yy_c_buf_p) > &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars) + 1] )
-                YY_FATAL_ERROR(
-                "fatal flex scanner internal error--end of buffer missed" );
+	if ( (yy_c_buf_p) > &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars) + 1] )
+		YY_FATAL_ERROR(
+		"fatal flex scanner internal error--end of buffer missed" );
 
-        if ( YY_CURRENT_BUFFER_LVALUE->yy_fill_buffer == 0 )
-                { /* Don't try to fill the buffer, so this is an EOF. */
-                if ( (yy_c_buf_p) - (yytext_ptr) - YY_MORE_ADJ == 1 )
-                        {
-                        /* We matched a single character, the EOB, so
-                         * treat this as a final EOF.
-                         */
-                        return EOB_ACT_END_OF_FILE;
-                        }
+	if ( YY_CURRENT_BUFFER_LVALUE->yy_fill_buffer == 0 )
+		{ /* Don't try to fill the buffer, so this is an EOF. */
+		if ( (yy_c_buf_p) - (yytext_ptr) - YY_MORE_ADJ == 1 )
+			{
+			/* We matched a single character, the EOB, so
+			 * treat this as a final EOF.
+			 */
+			return EOB_ACT_END_OF_FILE;
+			}
 
-                else
-                        {
-                        /* We matched some text prior to the EOB, first
-                         * process it.
-                         */
-                        return EOB_ACT_LAST_MATCH;
-                        }
-                }
+		else
+			{
+			/* We matched some text prior to the EOB, first
+			 * process it.
+			 */
+			return EOB_ACT_LAST_MATCH;
+			}
+		}
 
-        /* Try to read more data. */
+	/* Try to read more data. */
 
-        /* First move last chars to start of buffer. */
-        number_to_move = (int) ((yy_c_buf_p) - (yytext_ptr)) - 1;
+	/* First move last chars to start of buffer. */
+	number_to_move = (int) ((yy_c_buf_p) - (yytext_ptr)) - 1;
 
-        for ( i = 0; i < number_to_move; ++i )
-                *(dest++) = *(source++);
+	for ( i = 0; i < number_to_move; ++i )
+		*(dest++) = *(source++);
 
-        if ( YY_CURRENT_BUFFER_LVALUE->yy_buffer_status == YY_BUFFER_EOF_PENDING )
-                /* don't do the read, it's not guaranteed to return an EOF,
-                 * just force an EOF
-                 */
-                YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars) = 0;
+	if ( YY_CURRENT_BUFFER_LVALUE->yy_buffer_status == YY_BUFFER_EOF_PENDING )
+		/* don't do the read, it's not guaranteed to return an EOF,
+		 * just force an EOF
+		 */
+		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars) = 0;
 
-        else
-                {
-                        int num_to_read =
-                        YY_CURRENT_BUFFER_LVALUE->yy_buf_size - number_to_move - 1;
+	else
+		{
+			int num_to_read =
+			YY_CURRENT_BUFFER_LVALUE->yy_buf_size - number_to_move - 1;
 
-                while ( num_to_read <= 0 )
-                        { /* Not enough room in the buffer - grow it. */
+		while ( num_to_read <= 0 )
+			{ /* Not enough room in the buffer - grow it. */
 
-                        /* just a shorter name for the current buffer */
-                        YY_BUFFER_STATE b = YY_CURRENT_BUFFER;
+			/* just a shorter name for the current buffer */
+			YY_BUFFER_STATE b = YY_CURRENT_BUFFER;
 
-                        int yy_c_buf_p_offset =
-                                (int) ((yy_c_buf_p) - b->yy_ch_buf);
+			int yy_c_buf_p_offset =
+				(int) ((yy_c_buf_p) - b->yy_ch_buf);
 
-                        if ( b->yy_is_our_buffer )
-                                {
-                                int new_size = b->yy_buf_size * 2;
+			if ( b->yy_is_our_buffer )
+				{
+				int new_size = b->yy_buf_size * 2;
 
-                                if ( new_size <= 0 )
-                                        b->yy_buf_size += b->yy_buf_size / 8;
-                                else
-                                        b->yy_buf_size *= 2;
+				if ( new_size <= 0 )
+					b->yy_buf_size += b->yy_buf_size / 8;
+				else
+					b->yy_buf_size *= 2;
 
-                                b->yy_ch_buf = (char *)
-                                        /* Include room in for 2 EOB chars. */
-                                        fitshdrrealloc((void *) b->yy_ch_buf,b->yy_buf_size + 2  );
-                                }
-                        else
-                                /* Can't grow it, we don't own it. */
-                                b->yy_ch_buf = 0;
+				b->yy_ch_buf = (char *)
+					/* Include room in for 2 EOB chars. */
+					fitshdrrealloc((void *) b->yy_ch_buf,b->yy_buf_size + 2  );
+				}
+			else
+				/* Can't grow it, we don't own it. */
+				b->yy_ch_buf = 0;
 
-                        if ( ! b->yy_ch_buf )
-                                YY_FATAL_ERROR(
-                                "fatal error - scanner input buffer overflow" );
+			if ( ! b->yy_ch_buf )
+				YY_FATAL_ERROR(
+				"fatal error - scanner input buffer overflow" );
 
-                        (yy_c_buf_p) = &b->yy_ch_buf[yy_c_buf_p_offset];
+			(yy_c_buf_p) = &b->yy_ch_buf[yy_c_buf_p_offset];
 
-                        num_to_read = YY_CURRENT_BUFFER_LVALUE->yy_buf_size -
-                                                number_to_move - 1;
+			num_to_read = YY_CURRENT_BUFFER_LVALUE->yy_buf_size -
+						number_to_move - 1;
 
-                        }
+			}
 
-                if ( num_to_read > YY_READ_BUF_SIZE )
-                        num_to_read = YY_READ_BUF_SIZE;
+		if ( num_to_read > YY_READ_BUF_SIZE )
+			num_to_read = YY_READ_BUF_SIZE;
 
-                /* Read in more data. */
-                YY_INPUT( (&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move]),
-                        (yy_n_chars), (size_t) num_to_read );
+		/* Read in more data. */
+		YY_INPUT( (&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move]),
+			(yy_n_chars), (size_t) num_to_read );
 
-                YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
-                }
+		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
+		}
 
-        if ( (yy_n_chars) == 0 )
-                {
-                if ( number_to_move == YY_MORE_ADJ )
-                        {
-                        ret_val = EOB_ACT_END_OF_FILE;
-                        fitshdrrestart(fitshdrin  );
-                        }
+	if ( (yy_n_chars) == 0 )
+		{
+		if ( number_to_move == YY_MORE_ADJ )
+			{
+			ret_val = EOB_ACT_END_OF_FILE;
+			fitshdrrestart(fitshdrin  );
+			}
 
-                else
-                        {
-                        ret_val = EOB_ACT_LAST_MATCH;
-                        YY_CURRENT_BUFFER_LVALUE->yy_buffer_status =
-                                YY_BUFFER_EOF_PENDING;
-                        }
-                }
+		else
+			{
+			ret_val = EOB_ACT_LAST_MATCH;
+			YY_CURRENT_BUFFER_LVALUE->yy_buffer_status =
+				YY_BUFFER_EOF_PENDING;
+			}
+		}
 
-        else
-                ret_val = EOB_ACT_CONTINUE_SCAN;
+	else
+		ret_val = EOB_ACT_CONTINUE_SCAN;
 
-        (yy_n_chars) += number_to_move;
-        YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)] = YY_END_OF_BUFFER_CHAR;
-        YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars) + 1] = YY_END_OF_BUFFER_CHAR;
+	(yy_n_chars) += number_to_move;
+	YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)] = YY_END_OF_BUFFER_CHAR;
+	YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars) + 1] = YY_END_OF_BUFFER_CHAR;
 
-        (yytext_ptr) = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[0];
+	(yytext_ptr) = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[0];
 
-        return ret_val;
+	return ret_val;
 }
 
 /* yy_get_previous_state - get the state just before the EOB char was reached */
 
     static yy_state_type yy_get_previous_state (void)
 {
-        register yy_state_type yy_current_state;
-        register char *yy_cp;
+	register yy_state_type yy_current_state;
+	register char *yy_cp;
+    
+	yy_current_state = (yy_start);
+	yy_current_state += YY_AT_BOL();
 
-        yy_current_state = (yy_start);
-        yy_current_state += YY_AT_BOL();
+	for ( yy_cp = (yytext_ptr) + YY_MORE_ADJ; yy_cp < (yy_c_buf_p); ++yy_cp )
+		{
+		if ( *yy_cp )
+			{
+			yy_current_state = yy_nxt[yy_current_state][YY_SC_TO_UI(*yy_cp)];
+			}
+		else
+			yy_current_state = yy_NUL_trans[yy_current_state];
+		if ( yy_accept[yy_current_state] )
+			{
+			(yy_last_accepting_state) = yy_current_state;
+			(yy_last_accepting_cpos) = yy_cp;
+			}
+		}
 
-        for ( yy_cp = (yytext_ptr) + YY_MORE_ADJ; yy_cp < (yy_c_buf_p); ++yy_cp )
-                {
-                if ( *yy_cp )
-                        {
-                        yy_current_state = yy_nxt[yy_current_state][YY_SC_TO_UI(*yy_cp)];
-                        }
-                else
-                        yy_current_state = yy_NUL_trans[yy_current_state];
-                if ( yy_accept[yy_current_state] )
-                        {
-                        (yy_last_accepting_state) = yy_current_state;
-                        (yy_last_accepting_cpos) = yy_cp;
-                        }
-                }
-
-        return yy_current_state;
+	return yy_current_state;
 }
 
 /* yy_try_NUL_trans - try to make a transition on the NUL character
  *
  * synopsis
- *      next_state = yy_try_NUL_trans( current_state );
+ *	next_state = yy_try_NUL_trans( current_state );
  */
     static yy_state_type yy_try_NUL_trans  (yy_state_type yy_current_state )
 {
-        register int yy_is_jam;
-        register char *yy_cp = (yy_c_buf_p);
+	register int yy_is_jam;
+    	register char *yy_cp = (yy_c_buf_p);
 
-        yy_current_state = yy_NUL_trans[yy_current_state];
-        yy_is_jam = (yy_current_state == 0);
+	yy_current_state = yy_NUL_trans[yy_current_state];
+	yy_is_jam = (yy_current_state == 0);
 
-        if ( ! yy_is_jam )
-                {
-                if ( yy_accept[yy_current_state] )
-                        {
-                        (yy_last_accepting_state) = yy_current_state;
-                        (yy_last_accepting_cpos) = yy_cp;
-                        }
-                }
+	if ( ! yy_is_jam )
+		{
+		if ( yy_accept[yy_current_state] )
+			{
+			(yy_last_accepting_state) = yy_current_state;
+			(yy_last_accepting_cpos) = yy_cp;
+			}
+		}
 
-        return yy_is_jam ? 0 : yy_current_state;
+	return yy_is_jam ? 0 : yy_current_state;
 }
 
 #ifndef YY_NO_INPUT
@@ -11218,182 +11218,182 @@ static int yy_get_next_buffer (void)
 #endif
 
 {
-        int c;
+	int c;
+    
+	*(yy_c_buf_p) = (yy_hold_char);
 
-        *(yy_c_buf_p) = (yy_hold_char);
+	if ( *(yy_c_buf_p) == YY_END_OF_BUFFER_CHAR )
+		{
+		/* yy_c_buf_p now points to the character we want to return.
+		 * If this occurs *before* the EOB characters, then it's a
+		 * valid NUL; if not, then we've hit the end of the buffer.
+		 */
+		if ( (yy_c_buf_p) < &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)] )
+			/* This was really a NUL. */
+			*(yy_c_buf_p) = '\0';
 
-        if ( *(yy_c_buf_p) == YY_END_OF_BUFFER_CHAR )
-                {
-                /* yy_c_buf_p now points to the character we want to return.
-                 * If this occurs *before* the EOB characters, then it's a
-                 * valid NUL; if not, then we've hit the end of the buffer.
-                 */
-                if ( (yy_c_buf_p) < &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars)] )
-                        /* This was really a NUL. */
-                        *(yy_c_buf_p) = '\0';
+		else
+			{ /* need more input */
+			int offset = (yy_c_buf_p) - (yytext_ptr);
+			++(yy_c_buf_p);
 
-                else
-                        { /* need more input */
-                        int offset = (yy_c_buf_p) - (yytext_ptr);
-                        ++(yy_c_buf_p);
+			switch ( yy_get_next_buffer(  ) )
+				{
+				case EOB_ACT_LAST_MATCH:
+					/* This happens because yy_g_n_b()
+					 * sees that we've accumulated a
+					 * token and flags that we need to
+					 * try matching the token before
+					 * proceeding.  But for input(),
+					 * there's no matching to consider.
+					 * So convert the EOB_ACT_LAST_MATCH
+					 * to EOB_ACT_END_OF_FILE.
+					 */
 
-                        switch ( yy_get_next_buffer(  ) )
-                                {
-                                case EOB_ACT_LAST_MATCH:
-                                        /* This happens because yy_g_n_b()
-                                         * sees that we've accumulated a
-                                         * token and flags that we need to
-                                         * try matching the token before
-                                         * proceeding.  But for input(),
-                                         * there's no matching to consider.
-                                         * So convert the EOB_ACT_LAST_MATCH
-                                         * to EOB_ACT_END_OF_FILE.
-                                         */
+					/* Reset buffer status. */
+					fitshdrrestart(fitshdrin );
 
-                                        /* Reset buffer status. */
-                                        fitshdrrestart(fitshdrin );
+					/*FALLTHROUGH*/
 
-                                        /*FALLTHROUGH*/
+				case EOB_ACT_END_OF_FILE:
+					{
+					if ( fitshdrwrap( ) )
+						return EOF;
 
-                                case EOB_ACT_END_OF_FILE:
-                                        {
-                                        if ( fitshdrwrap( ) )
-                                                return EOF;
-
-                                        if ( ! (yy_did_buffer_switch_on_eof) )
-                                                YY_NEW_FILE;
+					if ( ! (yy_did_buffer_switch_on_eof) )
+						YY_NEW_FILE;
 #ifdef __cplusplus
-                                        return yyinput();
+					return yyinput();
 #else
-                                        return input();
+					return input();
 #endif
-                                        }
+					}
 
-                                case EOB_ACT_CONTINUE_SCAN:
-                                        (yy_c_buf_p) = (yytext_ptr) + offset;
-                                        break;
-                                }
-                        }
-                }
+				case EOB_ACT_CONTINUE_SCAN:
+					(yy_c_buf_p) = (yytext_ptr) + offset;
+					break;
+				}
+			}
+		}
 
-        c = *(unsigned char *) (yy_c_buf_p);    /* cast for 8-bit char's */
-        *(yy_c_buf_p) = '\0';   /* preserve fitshdrtext */
-        (yy_hold_char) = *++(yy_c_buf_p);
+	c = *(unsigned char *) (yy_c_buf_p);	/* cast for 8-bit char's */
+	*(yy_c_buf_p) = '\0';	/* preserve fitshdrtext */
+	(yy_hold_char) = *++(yy_c_buf_p);
 
-        YY_CURRENT_BUFFER_LVALUE->yy_at_bol = (c == '\n');
+	YY_CURRENT_BUFFER_LVALUE->yy_at_bol = (c == '\n');
 
-        return c;
+	return c;
 }
-#endif  /* ifndef YY_NO_INPUT */
+#endif	/* ifndef YY_NO_INPUT */
 
 /** Immediately switch to a different input stream.
  * @param input_file A readable stream.
- *
+ * 
  * @note This function does not reset the start condition to @c INITIAL .
  */
     void fitshdrrestart  (FILE * input_file )
 {
-
-        if ( ! YY_CURRENT_BUFFER ){
+    
+	if ( ! YY_CURRENT_BUFFER ){
         fitshdrensure_buffer_stack ();
-                YY_CURRENT_BUFFER_LVALUE =
+		YY_CURRENT_BUFFER_LVALUE =
             fitshdr_create_buffer(fitshdrin,YY_BUF_SIZE );
-        }
+	}
 
-        fitshdr_init_buffer(YY_CURRENT_BUFFER,input_file );
-        fitshdr_load_buffer_state( );
+	fitshdr_init_buffer(YY_CURRENT_BUFFER,input_file );
+	fitshdr_load_buffer_state( );
 }
 
 /** Switch to a different input buffer.
  * @param new_buffer The new input buffer.
- *
+ * 
  */
     void fitshdr_switch_to_buffer  (YY_BUFFER_STATE  new_buffer )
 {
-
-        /* TODO. We should be able to replace this entire function body
-         * with
-         *              fitshdrpop_buffer_state();
-         *              fitshdrpush_buffer_state(new_buffer);
+    
+	/* TODO. We should be able to replace this entire function body
+	 * with
+	 *		fitshdrpop_buffer_state();
+	 *		fitshdrpush_buffer_state(new_buffer);
      */
-        fitshdrensure_buffer_stack ();
-        if ( YY_CURRENT_BUFFER == new_buffer )
-                return;
+	fitshdrensure_buffer_stack ();
+	if ( YY_CURRENT_BUFFER == new_buffer )
+		return;
 
-        if ( YY_CURRENT_BUFFER )
-                {
-                /* Flush out information for old buffer. */
-                *(yy_c_buf_p) = (yy_hold_char);
-                YY_CURRENT_BUFFER_LVALUE->yy_buf_pos = (yy_c_buf_p);
-                YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
-                }
+	if ( YY_CURRENT_BUFFER )
+		{
+		/* Flush out information for old buffer. */
+		*(yy_c_buf_p) = (yy_hold_char);
+		YY_CURRENT_BUFFER_LVALUE->yy_buf_pos = (yy_c_buf_p);
+		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
+		}
 
-        YY_CURRENT_BUFFER_LVALUE = new_buffer;
-        fitshdr_load_buffer_state( );
+	YY_CURRENT_BUFFER_LVALUE = new_buffer;
+	fitshdr_load_buffer_state( );
 
-        /* We don't actually know whether we did this switch during
-         * EOF (fitshdrwrap()) processing, but the only time this flag
-         * is looked at is after fitshdrwrap() is called, so it's safe
-         * to go ahead and always set it.
-         */
-        (yy_did_buffer_switch_on_eof) = 1;
+	/* We don't actually know whether we did this switch during
+	 * EOF (fitshdrwrap()) processing, but the only time this flag
+	 * is looked at is after fitshdrwrap() is called, so it's safe
+	 * to go ahead and always set it.
+	 */
+	(yy_did_buffer_switch_on_eof) = 1;
 }
 
 static void fitshdr_load_buffer_state  (void)
 {
-        (yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_n_chars;
-        (yytext_ptr) = (yy_c_buf_p) = YY_CURRENT_BUFFER_LVALUE->yy_buf_pos;
-        fitshdrin = YY_CURRENT_BUFFER_LVALUE->yy_input_file;
-        (yy_hold_char) = *(yy_c_buf_p);
+    	(yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_n_chars;
+	(yytext_ptr) = (yy_c_buf_p) = YY_CURRENT_BUFFER_LVALUE->yy_buf_pos;
+	fitshdrin = YY_CURRENT_BUFFER_LVALUE->yy_input_file;
+	(yy_hold_char) = *(yy_c_buf_p);
 }
 
 /** Allocate and initialize an input buffer state.
  * @param file A readable stream.
  * @param size The character buffer size in bytes. When in doubt, use @c YY_BUF_SIZE.
- *
+ * 
  * @return the allocated buffer state.
  */
     YY_BUFFER_STATE fitshdr_create_buffer  (FILE * file, int  size )
 {
-        YY_BUFFER_STATE b;
+	YY_BUFFER_STATE b;
+    
+	b = (YY_BUFFER_STATE) fitshdralloc(sizeof( struct yy_buffer_state )  );
+	if ( ! b )
+		YY_FATAL_ERROR( "out of dynamic memory in fitshdr_create_buffer()" );
 
-        b = (YY_BUFFER_STATE) fitshdralloc(sizeof( struct yy_buffer_state )  );
-        if ( ! b )
-                YY_FATAL_ERROR( "out of dynamic memory in fitshdr_create_buffer()" );
+	b->yy_buf_size = size;
 
-        b->yy_buf_size = size;
+	/* yy_ch_buf has to be 2 characters longer than the size given because
+	 * we need to put in 2 end-of-buffer characters.
+	 */
+	b->yy_ch_buf = (char *) fitshdralloc(b->yy_buf_size + 2  );
+	if ( ! b->yy_ch_buf )
+		YY_FATAL_ERROR( "out of dynamic memory in fitshdr_create_buffer()" );
 
-        /* yy_ch_buf has to be 2 characters longer than the size given because
-         * we need to put in 2 end-of-buffer characters.
-         */
-        b->yy_ch_buf = (char *) fitshdralloc(b->yy_buf_size + 2  );
-        if ( ! b->yy_ch_buf )
-                YY_FATAL_ERROR( "out of dynamic memory in fitshdr_create_buffer()" );
+	b->yy_is_our_buffer = 1;
 
-        b->yy_is_our_buffer = 1;
+	fitshdr_init_buffer(b,file );
 
-        fitshdr_init_buffer(b,file );
-
-        return b;
+	return b;
 }
 
 /** Destroy the buffer.
  * @param b a buffer created with fitshdr_create_buffer()
- *
+ * 
  */
     void fitshdr_delete_buffer (YY_BUFFER_STATE  b )
 {
+    
+	if ( ! b )
+		return;
 
-        if ( ! b )
-                return;
+	if ( b == YY_CURRENT_BUFFER ) /* Not sure if we should pop here. */
+		YY_CURRENT_BUFFER_LVALUE = (YY_BUFFER_STATE) 0;
 
-        if ( b == YY_CURRENT_BUFFER ) /* Not sure if we should pop here. */
-                YY_CURRENT_BUFFER_LVALUE = (YY_BUFFER_STATE) 0;
+	if ( b->yy_is_our_buffer )
+		fitshdrfree((void *) b->yy_ch_buf  );
 
-        if ( b->yy_is_our_buffer )
-                fitshdrfree((void *) b->yy_ch_buf  );
-
-        fitshdrfree((void *) b  );
+	fitshdrfree((void *) b  );
 }
 
 /* Initializes or reinitializes a buffer.
@@ -11403,12 +11403,12 @@ static void fitshdr_load_buffer_state  (void)
     static void fitshdr_init_buffer  (YY_BUFFER_STATE  b, FILE * file )
 
 {
-        int oerrno = errno;
+	int oerrno = errno;
+    
+	fitshdr_flush_buffer(b );
 
-        fitshdr_flush_buffer(b );
-
-        b->yy_input_file = file;
-        b->yy_fill_buffer = 1;
+	b->yy_input_file = file;
+	b->yy_fill_buffer = 1;
 
     /* If b is the current buffer, then fitshdr_init_buffer was _probably_
      * called from fitshdrrestart() or through yy_get_next_buffer.
@@ -11420,87 +11420,87 @@ static void fitshdr_load_buffer_state  (void)
     }
 
         b->yy_is_interactive = 0;
-
-        errno = oerrno;
+    
+	errno = oerrno;
 }
 
 /** Discard all buffered characters. On the next scan, YY_INPUT will be called.
  * @param b the buffer state to be flushed, usually @c YY_CURRENT_BUFFER.
- *
+ * 
  */
     void fitshdr_flush_buffer (YY_BUFFER_STATE  b )
 {
-        if ( ! b )
-                return;
+    	if ( ! b )
+		return;
 
-        b->yy_n_chars = 0;
+	b->yy_n_chars = 0;
 
-        /* We always need two end-of-buffer characters.  The first causes
-         * a transition to the end-of-buffer state.  The second causes
-         * a jam in that state.
-         */
-        b->yy_ch_buf[0] = YY_END_OF_BUFFER_CHAR;
-        b->yy_ch_buf[1] = YY_END_OF_BUFFER_CHAR;
+	/* We always need two end-of-buffer characters.  The first causes
+	 * a transition to the end-of-buffer state.  The second causes
+	 * a jam in that state.
+	 */
+	b->yy_ch_buf[0] = YY_END_OF_BUFFER_CHAR;
+	b->yy_ch_buf[1] = YY_END_OF_BUFFER_CHAR;
 
-        b->yy_buf_pos = &b->yy_ch_buf[0];
+	b->yy_buf_pos = &b->yy_ch_buf[0];
 
-        b->yy_at_bol = 1;
-        b->yy_buffer_status = YY_BUFFER_NEW;
+	b->yy_at_bol = 1;
+	b->yy_buffer_status = YY_BUFFER_NEW;
 
-        if ( b == YY_CURRENT_BUFFER )
-                fitshdr_load_buffer_state( );
+	if ( b == YY_CURRENT_BUFFER )
+		fitshdr_load_buffer_state( );
 }
 
 /** Pushes the new state onto the stack. The new state becomes
  *  the current state. This function will allocate the stack
  *  if necessary.
  *  @param new_buffer The new state.
- *
+ *  
  */
 void fitshdrpush_buffer_state (YY_BUFFER_STATE new_buffer )
 {
-        if (new_buffer == NULL)
-                return;
+    	if (new_buffer == NULL)
+		return;
 
-        fitshdrensure_buffer_stack();
+	fitshdrensure_buffer_stack();
 
-        /* This block is copied from fitshdr_switch_to_buffer. */
-        if ( YY_CURRENT_BUFFER )
-                {
-                /* Flush out information for old buffer. */
-                *(yy_c_buf_p) = (yy_hold_char);
-                YY_CURRENT_BUFFER_LVALUE->yy_buf_pos = (yy_c_buf_p);
-                YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
-                }
+	/* This block is copied from fitshdr_switch_to_buffer. */
+	if ( YY_CURRENT_BUFFER )
+		{
+		/* Flush out information for old buffer. */
+		*(yy_c_buf_p) = (yy_hold_char);
+		YY_CURRENT_BUFFER_LVALUE->yy_buf_pos = (yy_c_buf_p);
+		YY_CURRENT_BUFFER_LVALUE->yy_n_chars = (yy_n_chars);
+		}
 
-        /* Only push if top exists. Otherwise, replace top. */
-        if (YY_CURRENT_BUFFER)
-                (yy_buffer_stack_top)++;
-        YY_CURRENT_BUFFER_LVALUE = new_buffer;
+	/* Only push if top exists. Otherwise, replace top. */
+	if (YY_CURRENT_BUFFER)
+		(yy_buffer_stack_top)++;
+	YY_CURRENT_BUFFER_LVALUE = new_buffer;
 
-        /* copied from fitshdr_switch_to_buffer. */
-        fitshdr_load_buffer_state( );
-        (yy_did_buffer_switch_on_eof) = 1;
+	/* copied from fitshdr_switch_to_buffer. */
+	fitshdr_load_buffer_state( );
+	(yy_did_buffer_switch_on_eof) = 1;
 }
 
 /** Removes and deletes the top of the stack, if present.
  *  The next element becomes the new top.
- *
+ *  
  */
 void fitshdrpop_buffer_state (void)
 {
-        if (!YY_CURRENT_BUFFER)
-                return;
+    	if (!YY_CURRENT_BUFFER)
+		return;
 
-        fitshdr_delete_buffer(YY_CURRENT_BUFFER );
-        YY_CURRENT_BUFFER_LVALUE = NULL;
-        if ((yy_buffer_stack_top) > 0)
-                --(yy_buffer_stack_top);
+	fitshdr_delete_buffer(YY_CURRENT_BUFFER );
+	YY_CURRENT_BUFFER_LVALUE = NULL;
+	if ((yy_buffer_stack_top) > 0)
+		--(yy_buffer_stack_top);
 
-        if (YY_CURRENT_BUFFER) {
-                fitshdr_load_buffer_state( );
-                (yy_did_buffer_switch_on_eof) = 1;
-        }
+	if (YY_CURRENT_BUFFER) {
+		fitshdr_load_buffer_state( );
+		(yy_did_buffer_switch_on_eof) = 1;
+	}
 }
 
 /* Allocates the stack if it does not exist.
@@ -11508,127 +11508,127 @@ void fitshdrpop_buffer_state (void)
  */
 static void fitshdrensure_buffer_stack (void)
 {
-        int num_to_alloc;
+	int num_to_alloc;
+    
+	if (!(yy_buffer_stack)) {
 
-        if (!(yy_buffer_stack)) {
-
-                /* First allocation is just for 2 elements, since we don't know if this
-                 * scanner will even need a stack. We use 2 instead of 1 to avoid an
-                 * immediate realloc on the next call.
+		/* First allocation is just for 2 elements, since we don't know if this
+		 * scanner will even need a stack. We use 2 instead of 1 to avoid an
+		 * immediate realloc on the next call.
          */
-                num_to_alloc = 1;
-                (yy_buffer_stack) = (struct yy_buffer_state**)fitshdralloc
-                                                                (num_to_alloc * sizeof(struct yy_buffer_state*)
-                                                                );
+		num_to_alloc = 1;
+		(yy_buffer_stack) = (struct yy_buffer_state**)fitshdralloc
+								(num_to_alloc * sizeof(struct yy_buffer_state*)
+								);
+		
+		memset((yy_buffer_stack), 0, num_to_alloc * sizeof(struct yy_buffer_state*));
+				
+		(yy_buffer_stack_max) = num_to_alloc;
+		(yy_buffer_stack_top) = 0;
+		return;
+	}
 
-                memset((yy_buffer_stack), 0, num_to_alloc * sizeof(struct yy_buffer_state*));
+	if ((yy_buffer_stack_top) >= ((yy_buffer_stack_max)) - 1){
 
-                (yy_buffer_stack_max) = num_to_alloc;
-                (yy_buffer_stack_top) = 0;
-                return;
-        }
+		/* Increase the buffer to prepare for a possible push. */
+		int grow_size = 8 /* arbitrary grow size */;
 
-        if ((yy_buffer_stack_top) >= ((yy_buffer_stack_max)) - 1){
+		num_to_alloc = (yy_buffer_stack_max) + grow_size;
+		(yy_buffer_stack) = (struct yy_buffer_state**)fitshdrrealloc
+								((yy_buffer_stack),
+								num_to_alloc * sizeof(struct yy_buffer_state*)
+								);
 
-                /* Increase the buffer to prepare for a possible push. */
-                int grow_size = 8 /* arbitrary grow size */;
-
-                num_to_alloc = (yy_buffer_stack_max) + grow_size;
-                (yy_buffer_stack) = (struct yy_buffer_state**)fitshdrrealloc
-                                                                ((yy_buffer_stack),
-                                                                num_to_alloc * sizeof(struct yy_buffer_state*)
-                                                                );
-
-                /* zero only the new slots.*/
-                memset((yy_buffer_stack) + (yy_buffer_stack_max), 0, grow_size * sizeof(struct yy_buffer_state*));
-                (yy_buffer_stack_max) = num_to_alloc;
-        }
+		/* zero only the new slots.*/
+		memset((yy_buffer_stack) + (yy_buffer_stack_max), 0, grow_size * sizeof(struct yy_buffer_state*));
+		(yy_buffer_stack_max) = num_to_alloc;
+	}
 }
 
 /** Setup the input buffer state to scan directly from a user-specified character buffer.
  * @param base the character buffer
  * @param size the size in bytes of the character buffer
- *
- * @return the newly allocated buffer state object.
+ * 
+ * @return the newly allocated buffer state object. 
  */
 YY_BUFFER_STATE fitshdr_scan_buffer  (char * base, yy_size_t  size )
 {
-        YY_BUFFER_STATE b;
+	YY_BUFFER_STATE b;
+    
+	if ( size < 2 ||
+	     base[size-2] != YY_END_OF_BUFFER_CHAR ||
+	     base[size-1] != YY_END_OF_BUFFER_CHAR )
+		/* They forgot to leave room for the EOB's. */
+		return 0;
 
-        if ( size < 2 ||
-             base[size-2] != YY_END_OF_BUFFER_CHAR ||
-             base[size-1] != YY_END_OF_BUFFER_CHAR )
-                /* They forgot to leave room for the EOB's. */
-                return 0;
+	b = (YY_BUFFER_STATE) fitshdralloc(sizeof( struct yy_buffer_state )  );
+	if ( ! b )
+		YY_FATAL_ERROR( "out of dynamic memory in fitshdr_scan_buffer()" );
 
-        b = (YY_BUFFER_STATE) fitshdralloc(sizeof( struct yy_buffer_state )  );
-        if ( ! b )
-                YY_FATAL_ERROR( "out of dynamic memory in fitshdr_scan_buffer()" );
+	b->yy_buf_size = size - 2;	/* "- 2" to take care of EOB's */
+	b->yy_buf_pos = b->yy_ch_buf = base;
+	b->yy_is_our_buffer = 0;
+	b->yy_input_file = 0;
+	b->yy_n_chars = b->yy_buf_size;
+	b->yy_is_interactive = 0;
+	b->yy_at_bol = 1;
+	b->yy_fill_buffer = 0;
+	b->yy_buffer_status = YY_BUFFER_NEW;
 
-        b->yy_buf_size = size - 2;      /* "- 2" to take care of EOB's */
-        b->yy_buf_pos = b->yy_ch_buf = base;
-        b->yy_is_our_buffer = 0;
-        b->yy_input_file = 0;
-        b->yy_n_chars = b->yy_buf_size;
-        b->yy_is_interactive = 0;
-        b->yy_at_bol = 1;
-        b->yy_fill_buffer = 0;
-        b->yy_buffer_status = YY_BUFFER_NEW;
+	fitshdr_switch_to_buffer(b  );
 
-        fitshdr_switch_to_buffer(b  );
-
-        return b;
+	return b;
 }
 
 /** Setup the input buffer state to scan a string. The next call to fitshdrlex() will
  * scan from a @e copy of @a str.
  * @param yystr a NUL-terminated string to scan
- *
+ * 
  * @return the newly allocated buffer state object.
  * @note If you want to scan bytes that may contain NUL values, then use
  *       fitshdr_scan_bytes() instead.
  */
 YY_BUFFER_STATE fitshdr_scan_string (yyconst char * yystr )
 {
-
-        return fitshdr_scan_bytes(yystr,strlen(yystr) );
+    
+	return fitshdr_scan_bytes(yystr,strlen(yystr) );
 }
 
 /** Setup the input buffer state to scan the given bytes. The next call to fitshdrlex() will
  * scan from a @e copy of @a bytes.
  * @param bytes the byte buffer to scan
  * @param len the number of bytes in the buffer pointed to by @a bytes.
- *
+ * 
  * @return the newly allocated buffer state object.
  */
 YY_BUFFER_STATE fitshdr_scan_bytes  (yyconst char * yybytes, int  _yybytes_len )
 {
-        YY_BUFFER_STATE b;
-        char *buf;
-        yy_size_t n;
-        int i;
+	YY_BUFFER_STATE b;
+	char *buf;
+	yy_size_t n;
+	int i;
+    
+	/* Get memory for full buffer, including space for trailing EOB's. */
+	n = _yybytes_len + 2;
+	buf = (char *) fitshdralloc(n  );
+	if ( ! buf )
+		YY_FATAL_ERROR( "out of dynamic memory in fitshdr_scan_bytes()" );
 
-        /* Get memory for full buffer, including space for trailing EOB's. */
-        n = _yybytes_len + 2;
-        buf = (char *) fitshdralloc(n  );
-        if ( ! buf )
-                YY_FATAL_ERROR( "out of dynamic memory in fitshdr_scan_bytes()" );
+	for ( i = 0; i < _yybytes_len; ++i )
+		buf[i] = yybytes[i];
 
-        for ( i = 0; i < _yybytes_len; ++i )
-                buf[i] = yybytes[i];
+	buf[_yybytes_len] = buf[_yybytes_len+1] = YY_END_OF_BUFFER_CHAR;
 
-        buf[_yybytes_len] = buf[_yybytes_len+1] = YY_END_OF_BUFFER_CHAR;
+	b = fitshdr_scan_buffer(buf,n );
+	if ( ! b )
+		YY_FATAL_ERROR( "bad buffer in fitshdr_scan_bytes()" );
 
-        b = fitshdr_scan_buffer(buf,n );
-        if ( ! b )
-                YY_FATAL_ERROR( "bad buffer in fitshdr_scan_bytes()" );
+	/* It's okay to grow etc. this buffer, and we should throw it
+	 * away when we're done.
+	 */
+	b->yy_is_our_buffer = 1;
 
-        /* It's okay to grow etc. this buffer, and we should throw it
-         * away when we're done.
-         */
-        b->yy_is_our_buffer = 1;
-
-        return b;
+	return b;
 }
 
 #ifndef YY_EXIT_FAILURE
@@ -11637,40 +11637,40 @@ YY_BUFFER_STATE fitshdr_scan_bytes  (yyconst char * yybytes, int  _yybytes_len )
 
 static void yy_fatal_error (yyconst char* msg )
 {
-        (void) fprintf( stderr, "%s\n", msg );
-        exit( YY_EXIT_FAILURE );
+    	(void) fprintf( stderr, "%s\n", msg );
+	exit( YY_EXIT_FAILURE );
 }
 
 /* Redefine yyless() so it works in section 3 code. */
 
 #undef yyless
 #define yyless(n) \
-        do \
-                { \
-                /* Undo effects of setting up fitshdrtext. */ \
+	do \
+		{ \
+		/* Undo effects of setting up fitshdrtext. */ \
         int yyless_macro_arg = (n); \
         YY_LESS_LINENO(yyless_macro_arg);\
-                fitshdrtext[fitshdrleng] = (yy_hold_char); \
-                (yy_c_buf_p) = fitshdrtext + yyless_macro_arg; \
-                (yy_hold_char) = *(yy_c_buf_p); \
-                *(yy_c_buf_p) = '\0'; \
-                fitshdrleng = yyless_macro_arg; \
-                } \
-        while ( 0 )
+		fitshdrtext[fitshdrleng] = (yy_hold_char); \
+		(yy_c_buf_p) = fitshdrtext + yyless_macro_arg; \
+		(yy_hold_char) = *(yy_c_buf_p); \
+		*(yy_c_buf_p) = '\0'; \
+		fitshdrleng = yyless_macro_arg; \
+		} \
+	while ( 0 )
 
 /* Accessor  methods (get/set functions) to struct members. */
 
 /** Get the current line number.
- *
+ * 
  */
 int fitshdrget_lineno  (void)
 {
-
+        
     return fitshdrlineno;
 }
 
 /** Get the input stream.
- *
+ * 
  */
 FILE *fitshdrget_in  (void)
 {
@@ -11678,7 +11678,7 @@ FILE *fitshdrget_in  (void)
 }
 
 /** Get the output stream.
- *
+ * 
  */
 FILE *fitshdrget_out  (void)
 {
@@ -11686,7 +11686,7 @@ FILE *fitshdrget_out  (void)
 }
 
 /** Get the length of the current token.
- *
+ * 
  */
 int fitshdrget_leng  (void)
 {
@@ -11694,7 +11694,7 @@ int fitshdrget_leng  (void)
 }
 
 /** Get the current token.
- *
+ * 
  */
 
 char *fitshdrget_text  (void)
@@ -11704,18 +11704,18 @@ char *fitshdrget_text  (void)
 
 /** Set the current line number.
  * @param line_number
- *
+ * 
  */
 void fitshdrset_lineno (int  line_number )
 {
-
+    
     fitshdrlineno = line_number;
 }
 
 /** Set the input stream. This does not discard the current
  * input buffer.
  * @param in_str A readable stream.
- *
+ * 
  * @see fitshdr_switch_to_buffer
  */
 void fitshdrset_in (FILE *  in_str )
@@ -11769,17 +11769,17 @@ static int yy_init_globals (void)
 /* fitshdrlex_destroy is for both reentrant and non-reentrant scanners. */
 int fitshdrlex_destroy  (void)
 {
-
+    
     /* Pop the buffer stack, destroying each element. */
-        while(YY_CURRENT_BUFFER){
-                fitshdr_delete_buffer(YY_CURRENT_BUFFER  );
-                YY_CURRENT_BUFFER_LVALUE = NULL;
-                fitshdrpop_buffer_state();
-        }
+	while(YY_CURRENT_BUFFER){
+		fitshdr_delete_buffer(YY_CURRENT_BUFFER  );
+		YY_CURRENT_BUFFER_LVALUE = NULL;
+		fitshdrpop_buffer_state();
+	}
 
-        /* Destroy the stack itself. */
-        fitshdrfree((yy_buffer_stack) );
-        (yy_buffer_stack) = NULL;
+	/* Destroy the stack itself. */
+	fitshdrfree((yy_buffer_stack) );
+	(yy_buffer_stack) = NULL;
 
     /* Reset the globals. This is important in a non-reentrant scanner so the next time
      * fitshdrlex() is called, initialization will occur. */
@@ -11795,43 +11795,43 @@ int fitshdrlex_destroy  (void)
 #ifndef yytext_ptr
 static void yy_flex_strncpy (char* s1, yyconst char * s2, int n )
 {
-        register int i;
-        for ( i = 0; i < n; ++i )
-                s1[i] = s2[i];
+	register int i;
+	for ( i = 0; i < n; ++i )
+		s1[i] = s2[i];
 }
 #endif
 
 #ifdef YY_NEED_STRLEN
 static int yy_flex_strlen (yyconst char * s )
 {
-        register int n;
-        for ( n = 0; s[n]; ++n )
-                ;
+	register int n;
+	for ( n = 0; s[n]; ++n )
+		;
 
-        return n;
+	return n;
 }
 #endif
 
 void *fitshdralloc (yy_size_t  size )
 {
-        return (void *) malloc( size );
+	return (void *) malloc( size );
 }
 
 void *fitshdrrealloc  (void * ptr, yy_size_t  size )
 {
-        /* The cast to (char *) in the following accommodates both
-         * implementations that use char* generic pointers, and those
-         * that use void* generic pointers.  It works with the latter
-         * because both ANSI C and C++ allow castless assignment from
-         * any pointer type to void*, and deal with argument conversions
-         * as though doing an assignment.
-         */
-        return (void *) realloc( (char *) ptr, size );
+	/* The cast to (char *) in the following accommodates both
+	 * implementations that use char* generic pointers, and those
+	 * that use void* generic pointers.  It works with the latter
+	 * because both ANSI C and C++ allow castless assignment from
+	 * any pointer type to void*, and deal with argument conversions
+	 * as though doing an assignment.
+	 */
+	return (void *) realloc( (char *) ptr, size );
 }
 
 void fitshdrfree (void * ptr )
 {
-        free( (char *) ptr );   /* see fitshdrrealloc() for (char *) cast */
+	free( (char *) ptr );	/* see fitshdrrealloc() for (char *) cast */
 }
 
 #define YYTABLES_NAME "yytables"

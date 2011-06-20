@@ -258,11 +258,11 @@
 *
 * Function return value:
 *             int       Status return value:
-*                          0: Success.
-*                          1: Null wcsprm pointer passed.
-*                          2: Memory allocation failed.
-*                         12: Invalid subimage specification.
-*                         13: Non-separable subimage coordinate system.
+*                         0: Success.
+*                         1: Null wcsprm pointer passed.
+*                         2: Memory allocation failed.
+*                        12: Invalid subimage specification.
+*                        13: Non-separable subimage coordinate system.
 *
 * Notes:
 *   Combinations of subimage axes of particular types may be extracted in the
@@ -558,18 +558,18 @@
 *
 * Function return value:
 *             int       Status return value:
-*                          0: Success.
-*                          1: Null wcsprm pointer passed.
-*                          2: Memory allocation failed.
-*                          3: Linear transformation matrix is singular.
-*                          4: Inconsistent or unrecognized coordinate axis
-*                             types.
-*                          5: Invalid parameter value.
-*                          6: Invalid coordinate transformation parameters.
-*                          7: Ill-conditioned coordinate transformation
-*                             parameters.
-*                         10: Invalid world coordinate.
-*                         11: No solution found in the specified interval.
+*                         0: Success.
+*                         1: Null wcsprm pointer passed.
+*                         2: Memory allocation failed.
+*                         3: Linear transformation matrix is singular.
+*                         4: Inconsistent or unrecognized coordinate axis
+*                            types.
+*                         5: Invalid parameter value.
+*                         6: Invalid coordinate transformation parameters.
+*                         7: Ill-conditioned coordinate transformation
+*                            parameters.
+*                        10: Invalid world coordinate.
+*                        11: No solution found in the specified interval.
 *
 * Notes:
 *   Initially the specified solution interval is checked to see if it's a
@@ -619,18 +619,18 @@
 *
 * Function return value:
 *             int       Status return value:
-*                          0: Success.
-*                          1: Null wcsprm pointer passed.
-*                          2: Memory allocation failed.
-*                          3: Linear transformation matrix is singular.
-*                          4: Inconsistent or unrecognized coordinate axis
-*                             types.
-*                          5: Invalid parameter value.
-*                          6: Invalid coordinate transformation parameters.
-*                          7: Ill-conditioned coordinate transformation
-*                             parameters.
-*                         12: Invalid subimage specification (no spectral
-*                             axis).
+*                         0: Success.
+*                         1: Null wcsprm pointer passed.
+*                         2: Memory allocation failed.
+*                         3: Linear transformation matrix is singular.
+*                         4: Inconsistent or unrecognized coordinate axis
+*                            types.
+*                         5: Invalid parameter value.
+*                         6: Invalid coordinate transformation parameters.
+*                         7: Ill-conditioned coordinate transformation
+*                            parameters.
+*                        12: Invalid subimage specification (no spectral
+*                            axis).
 *
 *
 * wcsprm struct - Coordinate transformation parameters
@@ -1248,77 +1248,77 @@ extern const char *wcs_errmsg[];
 
 /* Struct used for storing PVi_ma keywords. */
 struct pvcard {
-  int i;                        /* Axis number, as in PVi_ma (1-relative).  */
-  int m;                        /* Parameter number, ditto  (0-relative).   */
-  double value;                 /* Parameter value.                         */
+  int i;			/* Axis number, as in PVi_ma (1-relative).  */
+  int m;			/* Parameter number, ditto  (0-relative).   */
+  double value;			/* Parameter value.                         */
 };
 
 /* Struct used for storing PSi_ma keywords. */
 struct pscard {
-  int i;                        /* Axis number, as in PSi_ma (1-relative).  */
-  int m;                        /* Parameter number, ditto  (0-relative).   */
-  char value[72];               /* Parameter value.                         */
+  int i;			/* Axis number, as in PSi_ma (1-relative).  */
+  int m;			/* Parameter number, ditto  (0-relative).   */
+  char value[72];		/* Parameter value.                         */
 };
 
-                                /* For extracting wcstab arrays.            */
+				/* For extracting wcstab arrays.            */
 #ifdef __cplusplus
-#define wtbarr wtbarr_s         /* See prologue above.                      */
+#define wtbarr wtbarr_s		/* See prologue above.                      */
 #endif
 struct wtbarr {
-  int  i;                       /* Image axis number.                       */
-  int  m;                       /* Array axis number for index vectors.     */
-  int  kind;                    /* wcstab array type.                       */
-  char extnam[72];              /* EXTNAME of binary table extension.       */
-  int  extver;                  /* EXTVER  of binary table extension.       */
-  int  extlev;                  /* EXTLEV  of binary table extension.       */
-  char ttype[72];               /* TTYPEn of column containing the array.   */
-  long row;                     /* Table row number.                        */
-  int  ndim;                    /* Expected wcstab array dimensionality.    */
-  int  *dimlen;                 /* Where to write the array axis lengths.   */
-  double **arrayp;              /* Where to write the address of the array  */
-                                /* allocated to store the wcstab array.     */
+  int  i;			/* Image axis number.                       */
+  int  m;			/* Array axis number for index vectors.     */
+  int  kind;			/* wcstab array type.                       */
+  char extnam[72];		/* EXTNAME of binary table extension.       */
+  int  extver;			/* EXTVER  of binary table extension.       */
+  int  extlev;			/* EXTLEV  of binary table extension.       */
+  char ttype[72];		/* TTYPEn of column containing the array.   */
+  long row;			/* Table row number.                        */
+  int  ndim;			/* Expected wcstab array dimensionality.    */
+  int  *dimlen;			/* Where to write the array axis lengths.   */
+  double **arrayp;		/* Where to write the address of the array  */
+				/* allocated to store the wcstab array.     */
 };
 
 
 struct wcsprm {
   /* Initialization flag (see the prologue above).                          */
   /*------------------------------------------------------------------------*/
-  int    flag;                  /* Set to zero to force initialization.     */
+  int    flag;			/* Set to zero to force initialization.     */
 
   /* FITS header keyvalues to be provided (see the prologue above).         */
   /*------------------------------------------------------------------------*/
-  int    naxis;                 /* Number of axes (pixel and coordinate).   */
-  double *crpix;                /* CRPIXja keyvalues for each pixel axis.   */
-  double *pc;                   /* PCi_ja  linear transformation matrix.    */
-  double *cdelt;                /* CDELTia keyvalues for each coord axis.   */
-  double *crval;                /* CRVALia keyvalues for each coord axis.   */
+  int    naxis;			/* Number of axes (pixel and coordinate).   */
+  double *crpix;		/* CRPIXja keyvalues for each pixel axis.   */
+  double *pc;			/* PCi_ja  linear transformation matrix.    */
+  double *cdelt;		/* CDELTia keyvalues for each coord axis.   */
+  double *crval;		/* CRVALia keyvalues for each coord axis.   */
 
-  char   (*cunit)[72];          /* CUNITia keyvalues for each coord axis.   */
-  char   (*ctype)[72];          /* CTYPEia keyvalues for each coord axis.   */
+  char   (*cunit)[72];		/* CUNITia keyvalues for each coord axis.   */
+  char   (*ctype)[72];		/* CTYPEia keyvalues for each coord axis.   */
 
-  double lonpole;               /* LONPOLEa keyvalue.                       */
-  double latpole;               /* LATPOLEa keyvalue.                       */
+  double lonpole;		/* LONPOLEa keyvalue.                       */
+  double latpole;		/* LATPOLEa keyvalue.                       */
 
-  double restfrq;               /* RESTFRQa keyvalue.                       */
-  double restwav;               /* RESTWAVa keyvalue.                       */
+  double restfrq;		/* RESTFRQa keyvalue.                       */
+  double restwav;		/* RESTWAVa keyvalue.                       */
 
-  int    npv;                   /* Number of PVi_ma keywords, and the       */
-  int    npvmax;                /* number for which space was allocated.    */
-  struct pvcard *pv;            /* PVi_ma keywords for each i and m.        */
+  int    npv;			/* Number of PVi_ma keywords, and the       */
+  int    npvmax;		/* number for which space was allocated.    */
+  struct pvcard *pv;		/* PVi_ma keywords for each i and m.        */
 
-  int    nps;                   /* Number of PSi_ma keywords, and the       */
-  int    npsmax;                /* number for which space was allocated.    */
-  struct pscard *ps;            /* PSi_ma keywords for each i and m.        */
+  int    nps;			/* Number of PSi_ma keywords, and the       */
+  int    npsmax;		/* number for which space was allocated.    */
+  struct pscard *ps;		/* PSi_ma keywords for each i and m.        */
 
   /* Alternative header keyvalues (see the prologue above).                 */
   /*------------------------------------------------------------------------*/
-  double *cd;                   /* CDi_ja linear transformation matrix.     */
-  double *crota;                /* CROTAia keyvalues for each coord axis.   */
-  int    altlin;                /* Alternative representations              */
-                                /*   Bit 0: PCi_ja  is present,             */
-                                /*   Bit 1: CDi_ja  is present,             */
-                                /*   Bit 2: CROTAia is present.             */
-  int    velref;                /* AIPS velocity code, VELREF.              */
+  double *cd;			/* CDi_ja linear transformation matrix.     */
+  double *crota;		/* CROTAia keyvalues for each coord axis.   */
+  int    altlin;		/* Alternative representations              */
+				/*   Bit 0: PCi_ja  is present,             */
+				/*   Bit 1: CDi_ja  is present,             */
+				/*   Bit 2: CROTAia is present.             */
+  int    velref;		/* AIPS velocity code, VELREF.              */
 
   /* Auxiliary coordinate system information, not used by WCSLIB.           */
   char   alt[4];
@@ -1345,25 +1345,25 @@ struct wcsprm {
 
   /* Coordinate lookup tables (see the prologue above).                     */
   /*------------------------------------------------------------------------*/
-  int    ntab;                  /* Number of separate tables.               */
-  int    nwtb;                  /* Number of wtbarr structs.                */
-  struct tabprm *tab;           /* Tabular transformation parameters.       */
-  struct wtbarr *wtb;           /* Array of wtbarr structs.                 */
-  int    *padding;              /* (Dummy inserted for alignment purposes.) */
+  int    ntab;			/* Number of separate tables.               */
+  int    nwtb;			/* Number of wtbarr structs.                */
+  struct tabprm *tab;		/* Tabular transformation parameters.       */
+  struct wtbarr *wtb;		/* Array of wtbarr structs.                 */
+  int    *padding;		/* (Dummy inserted for alignment purposes.) */
 
   /* Information derived from the FITS header keyvalues by wcsset().        */
   /*------------------------------------------------------------------------*/
-  int    *types;                /* Coordinate type codes for each axis.     */
-  char   lngtyp[8], lattyp[8];  /* Celestial axis types, e.g. RA, DEC.      */
-  int    lng, lat, spec;        /* Longitude, latitude and spectral axis    */
-                                /* indices (0-relative).                    */
-  int    cubeface;              /* True if there is a CUBEFACE axis.        */
+  int    *types;		/* Coordinate type codes for each axis.     */
+  char   lngtyp[8], lattyp[8];	/* Celestial axis types, e.g. RA, DEC.      */
+  int    lng, lat, spec;	/* Longitude, latitude and spectral axis    */
+				/* indices (0-relative).                    */
+  int    cubeface;		/* True if there is a CUBEFACE axis.        */
 
-  struct linprm lin;            /* Linear    transformation parameters.     */
-  struct celprm cel;            /* Celestial transformation parameters.     */
-  struct spcprm spc;            /* Spectral  transformation parameters.     */
+  struct linprm lin;		/* Linear    transformation parameters.     */
+  struct celprm cel;		/* Celestial transformation parameters.     */
+  struct spcprm spc;		/* Spectral  transformation parameters.     */
 
-  int    m_flag, m_naxis;       /* The remainder are for memory management. */
+  int    m_flag, m_naxis;	/* The remainder are for memory management. */
   double *m_crpix, *m_pc, *m_cdelt, *m_crval;
   char  (*m_cunit)[72], (*m_ctype)[72];
   struct pvcard *m_pv;

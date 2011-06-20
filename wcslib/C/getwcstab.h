@@ -170,18 +170,18 @@ extern "C" {
 #include <fitsio.h>
 
 typedef struct {
-  int  i;                       /* Image axis number.                       */
-  int  m;                       /* Array axis number for index vectors.     */
-  int  kind;                    /* Array type, 'c' (coord) or 'i' (index).  */
-  char extnam[72];              /* EXTNAME of binary table extension.       */
-  int  extver;                  /* EXTVER  of binary table extension.       */
-  int  extlev;                  /* EXTLEV  of binary table extension.       */
-  char ttype[72];               /* TTYPEn of column containing the array.   */
-  long row;                     /* Table row number.                        */
-  int  ndim;                    /* Expected array dimensionality.           */
-  int  *dimlen;                 /* Where to write the array axis lengths.   */
-  double **arrayp;              /* Where to write the address of the array  */
-                                /* allocated to store the array.            */
+  int  i;			/* Image axis number.                       */
+  int  m;			/* Array axis number for index vectors.     */
+  int  kind;			/* Array type, 'c' (coord) or 'i' (index).  */
+  char extnam[72];		/* EXTNAME of binary table extension.       */
+  int  extver;			/* EXTVER  of binary table extension.       */
+  int  extlev;			/* EXTLEV  of binary table extension.       */
+  char ttype[72];		/* TTYPEn of column containing the array.   */
+  long row;			/* Table row number.                        */
+  int  ndim;			/* Expected array dimensionality.           */
+  int  *dimlen;			/* Where to write the array axis lengths.   */
+  double **arrayp;		/* Where to write the address of the array  */
+				/* allocated to store the array.            */
 } wtbarr;
 
 

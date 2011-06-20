@@ -160,9 +160,9 @@
 *
 * Function return value:
 *             int       Status return value:
-*                         -1: No change required (not an error).
-*                          0: Success.
-*                          1: Null wcsprm pointer passed.
+*                        -1: No change required (not an error).
+*                         0: Success.
+*                         1: Null wcsprm pointer passed.
 *
 *
 * datfix() - Translate DATE-OBS and derive MJD-OBS or vice versa
@@ -180,10 +180,10 @@
 *
 * Function return value:
 *             int       Status return value:
-*                         -1: No change required (not an error).
-*                          0: Success.
-*                          1: Null wcsprm pointer passed.
-*                          5: Invalid parameter value.
+*                        -1: No change required (not an error).
+*                         0: Success.
+*                         1: Null wcsprm pointer passed.
+*                         5: Invalid parameter value.
 *
 * Notes:
 *   The MJD algorithms used by datfix() are from D.A. Hatcher, 1984, QJRAS,
@@ -206,9 +206,9 @@
 *
 * Function return value:
 *             int       Status return value:
-*                         -1: No change required (not an error).
-*                          0: Success.
-*                          1: Null wcsprm pointer passed.
+*                        -1: No change required (not an error).
+*                         0: Success.
+*                         1: Null wcsprm pointer passed.
 *
 *
 * celfix() - Translate AIPS-convention celestial projection types
@@ -228,17 +228,17 @@
 *
 * Function return value:
 *             int       Status return value:
-*                         -1: No change required (not an error).
-*                          0: Success.
-*                          1: Null wcsprm pointer passed.
-*                          2: Memory allocation failed.
-*                          3: Linear transformation matrix is singular.
-*                          4: Inconsistent or unrecognized coordinate axis
-*                             types.
-*                          5: Invalid parameter value.
-*                          6: Invalid coordinate transformation parameters.
-*                          7: Ill-conditioned coordinate transformation
-*                             parameters.
+*                        -1: No change required (not an error).
+*                         0: Success.
+*                         1: Null wcsprm pointer passed.
+*                         2: Memory allocation failed.
+*                         3: Linear transformation matrix is singular.
+*                         4: Inconsistent or unrecognized coordinate axis
+*                            types.
+*                         5: Invalid parameter value.
+*                         6: Invalid coordinate transformation parameters.
+*                         7: Ill-conditioned coordinate transformation
+*                            parameters.
 *
 *
 * spcfix() - Translate AIPS-convention spectral types
@@ -253,18 +253,18 @@
 *                       and/or wcsprm::specsys may be changed.
 *
 * Function return value:
-*             int      Status return value:
-*                         -1: No change required (not an error).
-*                          0: Success.
-*                          1: Null wcsprm pointer passed.
-*                          2: Memory allocation failed.
-*                          3: Linear transformation matrix is singular.
-*                          4: Inconsistent or unrecognized coordinate axis
-*                             types.
-*                          5: Invalid parameter value.
-*                          6: Invalid coordinate transformation parameters.
-*                          7: Ill-conditioned coordinate transformation
-*                             parameters.
+*             int       Status return value:
+*                        -1: No change required (not an error).
+*                         0: Success.
+*                         1: Null wcsprm pointer passed.
+*                         2: Memory allocation failed.
+*                         3: Linear transformation matrix is singular.
+*                         4: Inconsistent or unrecognized coordinate axis
+*                            types.
+*                         5: Invalid parameter value.
+*                         6: Invalid coordinate transformation parameters.
+*                         7: Ill-conditioned coordinate transformation
+*                            parameters.
 *
 *
 * cylfix() - Fix malformed cylindrical projections
@@ -281,7 +281,7 @@
 *                       Coordinate transformation parameters.
 *
 * Function return value:
-*             int      Status return value:
+*             int       Status return value:
 *                        -1: No change required (not an error).
 *                         0: Success.
 *                         1: Null wcsprm pointer passed.

@@ -399,7 +399,7 @@
 *     whose elements indicate whether the corresponding indexing vector is
 *     monotonic increasing (+1), or decreasing (-1).
 *
-*   double *p0
+*   int *p0
 *     (Returned) Pointer to the first element of a vector of length tabprm::M
 *     of interpolated indices into the coordinate array such that Upsilon_m,
 *     as defined in Paper III, is equal to (p0[m] + 1) + tabprm::delta[m].
@@ -462,40 +462,40 @@ extern const char *tab_errmsg[];
 struct tabprm {
   /* Initialization flag (see the prologue above).                          */
   /*------------------------------------------------------------------------*/
-  int    flag;                  /* Set to zero to force initialization.     */
+  int    flag;			/* Set to zero to force initialization.     */
 
   /* Parameters to be provided (see the prologue above).                    */
   /*------------------------------------------------------------------------*/
-  int    M;                     /* Number of tabular coordinate axes.       */
-  int    *K;                    /* Vector of length M whose elements        */
-                                /* (K_1, K_2,... K_M) record the lengths of */
-                                /* the axes of the coordinate array and of  */
-                                /* each indexing vector.                    */
-  int    *map;                  /* Vector of length M usually such that     */
-                                /* map[m-1] == i-1 for coordinate array     */
-                                /* axis m and image axis i (see above).     */
-  double *crval;                /* Vector of length M containing the index  */
-                                /* value for the reference pixel for each   */
-                                /* of the tabular coordinate axes.          */
-  double **index;               /* Vector of pointers to M indexing vectors */
-                                /* of lengths (K_1, K_2,... K_M).           */
-  double *coord;                /* (1+M)-dimensional tabular coordinate     */
-                                /* array (see above).                       */
+  int    M;			/* Number of tabular coordinate axes.       */
+  int    *K;			/* Vector of length M whose elements        */
+				/* (K_1, K_2,... K_M) record the lengths of */
+				/* the axes of the coordinate array and of  */
+				/* each indexing vector.                    */
+  int    *map;			/* Vector of length M usually such that     */
+				/* map[m-1] == i-1 for coordinate array     */
+				/* axis m and image axis i (see above).     */
+  double *crval;		/* Vector of length M containing the index  */
+				/* value for the reference pixel for each   */
+				/* of the tabular coordinate axes.          */
+  double **index;		/* Vector of pointers to M indexing vectors */
+				/* of lengths (K_1, K_2,... K_M).           */
+  double *coord;		/* (1+M)-dimensional tabular coordinate     */
+				/* array (see above).                       */
 
   /* Information derived from the parameters supplied.                      */
   /*------------------------------------------------------------------------*/
-  int    nc;                    /* Number of coordinate vectors (of length  */
-                                /* M) in the coordinate array.              */
-  int    padding;               /* (Dummy inserted for alignment purposes.) */
-  int    *sense;                /* Vector of M flags that indicate whether  */
-                                /* the Mth indexing vector is monotonic     */
-                                /* increasing, or else decreasing.          */
-  int    *p0;                   /* Vector of M indices.                     */
-  double *delta;                /* Vector of M increments.                  */
-  double *extrema;              /* (1+M)-dimensional array of coordinate    */
-                                /* extrema.                                 */
+  int    nc;			/* Number of coordinate vectors (of length  */
+				/* M) in the coordinate array.              */
+  int    padding;		/* (Dummy inserted for alignment purposes.) */
+  int    *sense;		/* Vector of M flags that indicate whether  */
+				/* the Mth indexing vector is monotonic     */
+				/* increasing, or else decreasing.          */
+  int    *p0;			/* Vector of M indices.                     */
+  double *delta;		/* Vector of M increments.                  */
+  double *extrema;		/* (1+M)-dimensional array of coordinate    */
+				/* extrema.                                 */
 
-  int    m_flag, m_M, m_N;      /* The remainder are for memory management. */
+  int    m_flag, m_M, m_N;	/* The remainder are for memory management. */
   int    set_M;
   int    *m_K, *m_map;
   double *m_crval, **m_index, **m_indxs, *m_coord;

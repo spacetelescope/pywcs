@@ -43,25 +43,25 @@
 #include "spx.h"
 
 /* Spectral algorithm codes. */
-#define F2S 100;                /* Axis linear in frequency.          */
-#define W2S 200;                /* Axis linear in vacuum wavelengths. */
-#define A2S 300;                /* Axis linear in air wavelengths.    */
-#define V2S 400;                /* Axis linear in velocity.           */
-#define GRI 500;                /* Grism in vacuum.                   */
-#define GRA 600;                /* Grism in air.                      */
+#define F2S 100;		/* Axis linear in frequency.          */
+#define W2S 200;		/* Axis linear in vacuum wavelengths. */
+#define A2S 300;		/* Axis linear in air wavelengths.    */
+#define V2S 400;		/* Axis linear in velocity.           */
+#define GRI 500;		/* Grism in vacuum.                   */
+#define GRA 600;		/* Grism in air.                      */
 
 /* S-type spectral variables. */
-#define FREQ  0;                /* Frequency-like.                    */
-#define AFRQ  1;                /* Frequency-like.                    */
-#define ENER  2;                /* Frequency-like.                    */
-#define WAVN  3;                /* Frequency-like.                    */
-#define VRAD  4;                /* Frequency-like.                    */
-#define WAVE 10;                /* Vacuum wavelength-like.            */
-#define VOPT 11;                /* Vacuum wavelength-like.            */
-#define ZOPT 12;                /* Vacuum wavelength-like.            */
-#define AWAV 20;                /* Air wavelength-like.               */
-#define VELO 30;                /* Velocity-like.                     */
-#define BETA 31;                /* Velocity-like.                     */
+#define FREQ  0;		/* Frequency-like.                    */
+#define AFRQ  1;		/* Frequency-like.                    */
+#define ENER  2;		/* Frequency-like.                    */
+#define WAVN  3;		/* Frequency-like.                    */
+#define VRAD  4;		/* Frequency-like.                    */
+#define WAVE 10;		/* Vacuum wavelength-like.            */
+#define VOPT 11;		/* Vacuum wavelength-like.            */
+#define ZOPT 12;		/* Vacuum wavelength-like.            */
+#define AWAV 20;		/* Air wavelength-like.               */
+#define VELO 30;		/* Velocity-like.                     */
+#define BETA 31;		/* Velocity-like.                     */
 
 
 /* Map status return value to message. */

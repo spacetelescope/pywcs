@@ -528,33 +528,33 @@ const double phi[], const double theta[], double x[], double y[], int stat[]
 struct prjprm {
   /* Initialization flag (see the prologue above).                          */
   /*------------------------------------------------------------------------*/
-  int   flag;                   /* Set to zero to force initialization.     */
+  int    flag;			/* Set to zero to force initialization.     */
 
   /* Parameters to be provided (see the prologue above).                    */
   /*------------------------------------------------------------------------*/
-  char   code[4];               /* Three-letter projection code.            */
-  double r0;                    /* Radius of the generating sphere.         */
-  double pv[PVN];               /* Projection parameters.                   */
-  double phi0, theta0;          /* Fiducial native coordinates.             */
-  int   bounds;                 /* Enable strict bounds checking.           */
+  char   code[4];		/* Three-letter projection code.            */
+  double r0;			/* Radius of the generating sphere.         */
+  double pv[PVN];		/* Projection parameters.                   */
+  double phi0, theta0;		/* Fiducial native coordinates.             */
+  int    bounds;		/* Enable strict bounds checking.           */
 
   /* Information derived from the parameters supplied.                      */
   /*------------------------------------------------------------------------*/
-  char   name[40];              /* Projection name.                         */
-  int   category;               /* Projection category.                     */
-  int   pvrange;                /* Range of projection parameter indices.   */
-  int   simplezen;              /* Is it a simple zenithal projection?      */
-  int   equiareal;              /* Is it an equal area projection?          */
-  int   conformal;              /* Is it a conformal projection?            */
-  int   global;                 /* Can it map the whole sphere?             */
-  int   divergent;              /* Does the projection diverge in latitude? */
-  double x0, y0;                /* Fiducial offsets.                        */
+  char   name[40];		/* Projection name.                         */
+  int    category;		/* Projection category.                     */
+  int    pvrange;		/* Range of projection parameter indices.   */
+  int    simplezen;		/* Is it a simple zenithal projection?      */
+  int    equiareal;		/* Is it an equal area projection?          */
+  int    conformal;		/* Is it a conformal projection?            */
+  int    global;		/* Can it map the whole sphere?             */
+  int    divergent;		/* Does the projection diverge in latitude? */
+  double x0, y0;		/* Fiducial offsets.                        */
 
-  double w[10];                 /* Intermediate values.                     */
-  int    m, n;                  /* Intermediate values.                     */
+  double w[10];			/* Intermediate values.                     */
+  int    m, n;			/* Intermediate values.                     */
 
-  int (*prjx2s)(PRJX2S_ARGS);   /* Pointers to the spherical projection and */
-  int (*prjs2x)(PRJS2X_ARGS);   /* deprojection functions.                  */
+  int (*prjx2s)(PRJX2S_ARGS);	/* Pointers to the spherical projection and */
+  int (*prjs2x)(PRJS2X_ARGS);	/* deprojection functions.                  */
 };
 
 /* Size of the prjprm struct in int units, used by the Fortran wrappers. */
