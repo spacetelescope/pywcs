@@ -11,7 +11,9 @@ from os.path import join
 import os.path
 import shutil
 import sys
-import patch
+
+sys.path.append(join('.', srcroot, "lib"))
+sys.path.append('.')
 
 def b(s):
     return s.encode('ascii')
@@ -150,6 +152,8 @@ write_if_different(join(srcroot, 'src', 'wcsconfig.h'), h_file.getvalue())
 # delete wcslib_patched.
 
 if not os.path.exists(WCSLIB_PATCHED):
+    import patch
+
     print "Patching wcslib"
     shutil.copytree(WCSLIB, WCSLIB_PATCHED)
     # Apply some patches to wcslib
@@ -171,7 +175,6 @@ if not os.path.exists(WCSLIB_PATCHED):
 
 ######################################################################
 # GENERATE DOCSTRINGS IN C
-sys.path.append(join('.', srcroot, "lib"))
 docstrings = {}
 with open(join(srcroot, 'doc', 'docstrings.py'), 'rb') as fd:
     docstrings_content = fd.read()
