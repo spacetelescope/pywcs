@@ -1,4 +1,4 @@
-include LICENSE MANIFEST.in stsci_distutils_hack.py defsetup.py CHANGELOG README
+include LICENSE MANIFEST.in stsci_distutils_hack.py defsetup.py CHANGELOG README patch.py
 include doc/docstrings.py
 include doc/Makefile
 include doc/make.bat
