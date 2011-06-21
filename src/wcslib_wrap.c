@@ -907,7 +907,7 @@ PyWcsprm_mix(
     goto exit;
   }
 
-  if (mixpix < 1 || mixpix > 2) {
+  if (mixpix < 1 || mixpix > self->x.naxis) {
     PyErr_SetString(
         PyExc_ValueError,
         "Argument 1 (mixpix) must specify a pixel coordinate "
