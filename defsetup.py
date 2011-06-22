@@ -12,6 +12,10 @@ import os.path
 import shutil
 import sys
 
+if os.path.exists("pywcs"):
+    srcroot = 'pywcs'
+else:
+    srcroot = '.'
 sys.path.append(join('.', srcroot, "lib"))
 sys.path.append('.')
 
@@ -128,10 +132,6 @@ def determine_64_bit_int():
     except ValueError:
         return "long long int"
 
-if os.path.exists("pywcs"):
-    srcroot = 'pywcs'
-else:
-    srcroot = '.'
 h_file = StringIO()
 h_file.write("""
 /* WCSLIB library version number. */
