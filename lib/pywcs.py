@@ -955,8 +955,11 @@ naxis kwarg.
         cards = pyfits.CardList()
         for i in range(0, len(header_string), 80):
             card_string = header_string[i:i+80]
-            card = pyfits.Card()
-            card.fromstring(card_string)
+            if pyfits.__version__[0] >= '3':
+                card = pyfits.Card.fromstring(card_string)
+            else:
+                card = pyfits.Card()
+                card.fromstring(card_string)
             cards.append(card)
         return pyfits.Header(cards)
 
