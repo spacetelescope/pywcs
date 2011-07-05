@@ -158,13 +158,13 @@ def _generate_c_docstrings(config):
         if clean_path:
             sys.path.remove(pywcs_path)
 
-    for key, val in docstrings.items():
-        if not (isinstance(key, basestring) and not key.startswith('__')):
+    for key, val in list(docstrings.items()):
+        if not (isinstance(key, str) and not key.startswith('__')):
             del docstrings[key]
     for key, val in docstrings.items():
         docstrings[key] = val.encode('utf8').lstrip()
 
-    docstrings = sorted(docstrings.iteritems())
+    docstrings = sorted(docstrings.items())
 
     docstrings_h = StringIO()
     docstrings_h.write(textwrap.dedent("""
