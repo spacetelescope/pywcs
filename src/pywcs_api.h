@@ -110,24 +110,29 @@ import_pywcs(void) {
   PyObject *c_api        = NULL;
   int       status       = -1;
 
-  pywcs_module = PyImport_ImportModule("pywcs._pywcs");
-  if (pywcs_module == NULL) goto exit;
+  #if PY_VERSION_HEX >= 0x03020000
+    PyWcs_API = (void **)PyCapsule_Import("pywcs._pywcs._WCS_API", 0);
+    if (PyWcs_API == NULL) goto exit;
+  #else
+    pywcs_module = PyImport_ImportModule("pywcs._pywcs");
+    if (pywcs_module == NULL) goto exit;
 
-  c_api = PyObject_GetAttrString(pywcs_module, "_PYWCS_API");
-  if (c_api == NULL) goto exit;
+    c_api = PyObject_GetAttrString(pywcs_module, "_PYWCS_API");
+    if (c_api == NULL) goto exit;
 
-  if (PyCObject_Check(c_api)) {
-    PyWcs_API = (void **)PyCObject_AsVoidPtr(c_api);
-  } else {
-    goto exit;
-  }
-
+    if (PyCObject_Check(c_api)) {
+      PyWcs_API = (void **)PyCObject_AsVoidPtr(c_api);
+    } else {
+      goto exit;
+    }
+  #endif
+    
   /* Perform runtime check of C API version */
   if (REVISION != PyWcs_GetCVersion()) {
     PyErr_Format(
-      PyExc_ImportError, "module compiled against " \
-      "ABI version '%x' but this version of pywcs is '%x'", \
-      (int)REVISION, (int)PyWcs_GetCVersion());
+                 PyExc_ImportError, "module compiled against "        \
+                 "ABI version '%x' but this version of pywcs is '%x'", \
+                 (int)REVISION, (int)PyWcs_GetCVersion());
     return -1;
   }
 

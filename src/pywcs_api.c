@@ -76,7 +76,11 @@ void* PyWcs_API[] = {
 int _setup_api(PyObject *m) {
   PyObject* c_api;
 
-  c_api = PyCObject_FromVoidPtr((void *)PyWcs_API, NULL);
+  #if PY_VERSION_HEX >= 0x03020000
+    c_api = PyCapsule_New((void *)PyWcs_API, "_pywcs._PYWCS_API", NULL);
+  #else
+    c_api = PyCObject_FromVoidPtr((void *)PyWcs_API, NULL);
+  #endif
   PyModule_AddObject(m, "_PYWCS_API", c_api);
 
   return 0;
