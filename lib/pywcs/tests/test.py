@@ -158,7 +158,7 @@ def test_all_units():
             u = pywcs.UnitConverter(x, x)
         except ValueError:
             e = sys.exc_info()[1]
-            if str(e) == "Potentially unsafe translation" and \
+            if str(e).startswith("ERROR 12 in wcsutrne") and \
                     x in ("S", "H", "D"):
                 return
             else:

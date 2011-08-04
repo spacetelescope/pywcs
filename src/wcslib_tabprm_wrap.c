@@ -173,11 +173,15 @@ PyTabprm_print_contents(
     PyTabprm* self) {
 
   int ignored;
-
+  
   if (PyTabprm_cset(self)) {
     return NULL;
   }
 
+  /* This is not thread-safe, but since we're holding onto the GIL,
+     we can assume we won't have thread conflicts */
+  wcsprintf_set(NULL);
+  
   ignored = tabprt(self->x);
 
   printf(wcsprintf_buf());
@@ -196,6 +200,10 @@ PyTabprm___str__(
     return NULL;
   }
 
+  /* This is not thread-safe, but since we're holding onto the GIL,
+     we can assume we won't have thread conflicts */
+  wcsprintf_set(NULL);
+  
   ignored = tabprt(self->x);
 
   #if PY3K

@@ -21,7 +21,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: pgcrvl.f,v 4.7 2011/02/07 07:03:43 cal103 Exp $
+* $Id: pgcrvl.f,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
 *=======================================================================
       SUBROUTINE PGCRVL (AXEN, IDENTS, OPT, LABCTL, LABDEN, CI, GCODE,
      :   TIKLEN, NG1, GRID1, NG2, GRID2, DOEQ, NLFUNC, NLC, NLI, NLD,

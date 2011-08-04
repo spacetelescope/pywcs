@@ -205,13 +205,16 @@ const char*
 wcslib_get_error_message(int stat);
 
 void
-wcslib_to_python_exc(int status);
+wcserr_to_python_exc(const struct wcserr *err);
 
 void
-wcslib_fix_to_python_exc(int status);
+wcs_to_python_exc(const struct wcsprm *wcs);
 
 void
-wcslib_units_to_python_exc(int status);
+wcserr_fix_to_python_exc(const struct wcserr *err);
+
+void
+wcserr_units_to_python_exc(const struct wcserr *err);
 
 /***************************************************************************
   Property helpers

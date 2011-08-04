@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: cel.h,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: cel.h,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
 *=============================================================================
 *
 * WCSLIB 4.7 - C routines that implement the FITS World Coordinate System
@@ -86,8 +86,8 @@
 *
 * celprt() - Print routine for the celprm struct
 * ----------------------------------------------
-* celprt() prints the contents of a celprm struct.  Mainly intended for
-* diagnostic purposes.
+* celprt() prints the contents of a celprm struct using wcsprintf().  Mainly
+* intended for diagnostic purposes.
 *
 * Given:
 *   cel       const struct celprm*
@@ -121,6 +121,9 @@
 *                         4: Ill-conditioned coordinate transformation
 *                            parameters.
 *
+*                       For returns > 1, a detailed error message is set in
+*                       celprm::err.
+*
 *
 * celx2s() - Pixel-to-world celestial transformation
 * --------------------------------------------------
@@ -133,15 +136,19 @@
 *
 * Given:
 *   nx,ny     int       Vector lengths.
+*
 *   sxy,sll   int       Vector strides.
+*
 *   x,y       const double[]
 *                       Projected coordinates in pseudo "degrees".
 *
 * Returned:
 *   phi,theta double[]  Longitude and latitude (phi,theta) in the native
 *                       coordinate system of the projection [deg].
+*
 *   lng,lat   double[]  Celestial longitude and latitude (lng,lat) of the
 *                       projected point [deg].
+*
 *   stat      int[]     Status return value for each vector element:
 *                         0: Success.
 *                         1: Invalid value of (x,y).
@@ -157,6 +164,9 @@
 *                         5: One or more of the (x,y) coordinates were
 *                            invalid, as indicated by the stat vector.
 *
+*                       For returns > 1, a detailed error message is set in
+*                       celprm::err.
+*
 *
 * cels2x() - World-to-pixel celestial transformation
 * --------------------------------------------------
@@ -169,7 +179,9 @@
 *
 * Given:
 *   nlng,nlat int       Vector lengths.
+*
 *   sll,sxy   int       Vector strides.
+*
 *   lng,lat   const double[]
 *                       Celestial longitude and latitude (lng,lat) of the
 *                       projected point [deg].
@@ -177,7 +189,9 @@
 * Returned:
 *   phi,theta double[]  Longitude and latitude (phi,theta) in the native
 *                       coordinate system of the projection [deg].
+*
 *   x,y       double[]  Projected coordinates in pseudo "degrees".
+*
 *   stat      int[]     Status return value for each vector element:
 *                         0: Success.
 *                         1: Invalid value of (lng,lat).
@@ -192,6 +206,9 @@
 *                            parameters.
 *                         6: One or more of the (lng,lat) coordinates were
 *                            invalid, as indicated by the stat vector.
+*
+*                       For returns > 1, a detailed error message is set in
+*                       celprm::err.
 *
 *
 * celprm struct - Celestial transformation parameters
@@ -301,6 +318,10 @@
 *     intermediate calculations common to all elements in a vector
 *     computation.
 *
+*   struct wcserr *err
+*     (Returned) When an error status is returned, this struct contains
+*     detailed information about the error.
+*
 *
 * Global variable: const char *cel_errmsg[] - Status return messages
 * ------------------------------------------------------------------
@@ -312,6 +333,7 @@
 #define WCSLIB_CEL
 
 #include "prj.h"
+#include "wcserr.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -320,6 +342,19 @@ extern "C" {
 
 extern const char *cel_errmsg[];
 
+enum cel_errmsg_enum {
+  CELERR_SUCCESS         = 0,	/* Success. */
+  CELERR_NULL_POINTER    = 1,	/* Null celprm pointer passed. */
+  CELERR_BAD_PARAM       = 2,	/* Invalid projection parameters. */
+  CELERR_BAD_COORD_TRANS = 3,	/* Invalid coordinate transformation
+				   parameters. */
+  CELERR_ILL_COORD_TRANS = 4,	/* Ill-conditioned coordinated transformation
+				   parameters. */
+  CELERR_BAD_PIX         = 5,	/* One or more of the (x,y) coordinates were
+				   invalid. */
+  CELERR_BAD_WORLD       = 6 	/* One or more of the (lng,lat) coordinates
+				   were invalid. */
+};
 
 struct celprm {
   /* Initialization flag (see the prologue above).                          */
@@ -341,6 +376,10 @@ struct celprm {
   double euler[5];		/* Euler angles and functions thereof.      */
   int    latpreq;		/* LATPOLEa requirement.                    */
   int    isolat;		/* True if |latitude| is preserved.         */
+
+  /* Error handling                                                         */
+  /*------------------------------------------------------------------------*/
+  struct wcserr *err;
 };
 
 /* Size of the celprm struct in int units, used by the Fortran wrappers. */

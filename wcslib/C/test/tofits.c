@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: tofits.c,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: tofits.c,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
 *=============================================================================
 *
 * tofits turns a list of FITS header keyrecords, one per line, into a proper

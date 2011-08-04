@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: wcshdr.inc,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+* $Id: wcshdr.inc,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
 *=======================================================================
 
 *     Functions.
@@ -67,6 +67,17 @@
       PARAMETER (WCSHDR_IMGHEAD  = 2**16)
       PARAMETER (WCSHDR_BIMGARR  = 2**17)
       PARAMETER (WCSHDR_PIXLIST  = 2**18)
+
+*     Error codes and messages.
+      INTEGER   WCSHDRERR_BAD_TABULAR_PARAMS, WCSHDRERR_MEMORY,
+     :          WCSHDRERR_NULL_POINTER, WCSHDRERR_PARSER,
+     :          WCSHDRERR_SUCCESS
+
+      PARAMETER (WCSHDRERR_SUCCESS            = 0)
+      PARAMETER (WCSHDRERR_NULL_POINTER       = 1)
+      PARAMETER (WCSHDRERR_MEMORY             = 2)
+      PARAMETER (WCSHDRERR_BAD_TABULAR_PARAMS = 3)
+      PARAMETER (WCSHDRERR_PARSER             = 4)
 
       CHARACTER WCSHDR_ERRMSG(0:3)*80
       COMMON /WCSHDR_DATA/ WCSHDR_ERRMSG

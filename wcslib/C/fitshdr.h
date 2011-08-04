@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: fitshdr.h,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: fitshdr.h,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp $
 *=============================================================================
 *
 * The Flexible Image Transport System (FITS), a data format widely used in
@@ -70,6 +70,7 @@
 *                       keyrecords are NOT null-terminated.
 *
 *   nkeyrec   int       Number of keyrecords in header[].
+*
 *   nkeyids   int       Number of entries in keyids[].
 *
 * Given and returned:
@@ -85,6 +86,7 @@
 * Returned:
 *   nreject   int*      Number of header keyrecords rejected for syntax
 *                       errors.
+*
 *   keys      struct fitskey**
 *                       Pointer to an array of nkeyrec fitskey structs
 *                       containing all keywords and keyvalues extracted from

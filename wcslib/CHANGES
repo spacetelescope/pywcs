@@ -1,3 +1,41 @@
+WCSLIB version 4.8 (2011/07/??)
+-------------------------------
+
+* C library
+
+  - Most functions that return a numeric status (error) code now also
+    fill in a detailed error message to a wcserr struct attached to
+    the passed-in *prm struct.  See wcserr.h for more information.
+
+    Functions that didn't have a *prm struct as an argument have no
+    direct way to return an error message.  Therefore, these functions
+    now have duplicate versions with the suffix "e" that take an
+    additional "struct wcserr *" parameter.  These functions are:
+
+        spcspx()    ->  spcspxe()
+        spctrn()    ->  spctrne()
+        spctyp()    ->  spctype()
+        spcxps()    ->  spcxpse()
+        wcsulex()   ->  wcsulexe()
+        wcsunits()  ->  wcsunitse()
+        wcsutrn()   ->  wcsutrne()
+
+    A new function wcsfixi() was added which is identical to wcsfix()
+    but in addition stores all of the detailed textual messages about
+    the fixes that were performed.
+
+  - In wcssub(), ensure that wcstab->m_tab has been initialized
+    before trying to free it on status return 12 or 13 (reported by
+    Hans Terlow).
+
+* Installation
+
+  - configure now prefers gfortran over g77 if available.
+
+  - Don't rely on "." being in the PATH if config.status needs to be
+    run in the pgsbox and utils makefile (reported by Peter Teuben).
+
+
 WCSLIB version 4.7 (2011/02/07)
 -------------------------------
 
@@ -1701,4 +1739,4 @@ WCSLIB version 1.0 (1995/01/31)
   Initial release.
 
 ------------------------------------------------------------------------
-$Id: CHANGES,v 4.7 2011/02/07 07:03:43 cal103 Exp $
+$Id: CHANGES,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $

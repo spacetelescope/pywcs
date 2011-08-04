@@ -8,12 +8,12 @@
 #
 # Author: Mark Calabretta, Australia Telescope National Facility
 # http://www.atnf.csiro.au/~mcalabre/index.html
-# $Id: configure.ac,v 4.7 2011/02/07 07:03:43 cal103 Exp $
+# $Id: configure.ac,v 4.7.1.2 2011/02/09 02:01:01 cal103 Exp cal103 $
 #-----------------------------------------------------------------------------
 
 AC_INIT([WCSLIB], [4.7], [mcalabre@atnf.csiro.au], [wcslib-4.7])
 AC_PREREQ([2.53])
-AC_REVISION([$Revision: 4.7 $])
+AC_REVISION([$Revision: 4.7.1.2 $])
 AC_SUBST([PACKAGE_VERSION])
 AC_DEFINE_UNQUOTED([WCSLIB_VERSION], [$PACKAGE_VERSION], [Define wcslib version])
 
@@ -176,7 +176,7 @@ if test "x$F77" = xno ; then
 else
   if test "x$F77" = x ; then
     # Look for a Fortran compiler.
-    AC_PROG_F77([g77 f77 gfortran ifort xlf frt pgf77 fl32 af77 fort77 f90 \
+    AC_PROG_F77([gfortran g77 f77 ifort xlf frt pgf77 fl32 af77 fort77 f90 \
                  xlf90 pgf90 epcf90 f95 fort xlf95 lf95 g95])
   fi
 
@@ -192,8 +192,8 @@ else
 
   else
     if test "x$ac_cv_f77_compiler_gnu" = xyes ; then
-      # Beware of gfortran!
       if test "x$F77" = xg77 -o "x$F77" = xf77 ; then
+        # Not recognized by gfortran.
         FFLAGS="$FFLAGS -Wno-globals"
       fi
     fi

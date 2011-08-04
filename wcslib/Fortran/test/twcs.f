@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: twcs.f,v 4.7 2011/02/07 07:03:43 cal103 Exp $
+* $Id: twcs.f,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
 *=======================================================================
 
       PROGRAM TWCS
@@ -39,14 +39,32 @@
 * coordinate axes.
 *
 *-----------------------------------------------------------------------
+      INCLUDE 'cel.inc'
+      INCLUDE 'prj.inc'
+      INCLUDE 'wcs.inc'
+      INCLUDE 'wcsmath.inc'
+
       DOUBLE PRECISION TOL
       PARAMETER (TOL = 1D-10)
+
+      INTEGER   NELEM
+      PARAMETER (NELEM = 9)
+
+      INTEGER   ETEST, I, J, K, LAT, LATIDX, LNG, LNGIDX, SPCIDX,
+     :          STAT(0:360), STATUS, WCS(WCSLEN)
+      DOUBLE PRECISION DUMMY, FREQ, IMG(NELEM,0:360), LAT1, LNG1,
+     :          PHI(0:360), PIXEL1(NELEM,0:360), PIXEL2(NELEM,0:360), R,
+     :          RESID, RESMAX, THETA(0:360), TIME, WORLD1(NELEM,0:360),
+     :          WORLD2(NELEM,0:360)
+
+      EQUIVALENCE (WCS,DUMMY)
 
 *     Number of axes.
       INTEGER   N
       PARAMETER (N = 4)
 
-      INTEGER   I, J, K, NAXIS, NPV, PVI(3), PVM(3)
+*     WCS header parameters.
+      INTEGER   NAXIS, NPV, PVI(3), PVM(3)
       DOUBLE PRECISION CDELT(N), CRPIX(N), CRVAL(N), LATPOLE, LONPOLE,
      :          PC(N,N), PV(3), RESTFRQ, RESTWAV
       CHARACTER CTYPE(N)*72
@@ -87,21 +105,10 @@
       DATA PVI(3), PVM(3), PV(3)
      :             /2, 1, -30D0/
 
-      INTEGER   NELEM
-      PARAMETER (NELEM = 9)
 
-      INTEGER   LAT, LATIDX, LNG, LNGIDX, SPCIDX, STAT(0:360), STATUS
-      DOUBLE PRECISION FREQ, IMG(NELEM,0:360), LAT1, LNG1, PHI(0:360),
-     :          PIXEL1(NELEM,0:360), PIXEL2(NELEM,0:360), R, RESID,
-     :          RESMAX, THETA(0:360), TIME, WORLD1(NELEM,0:360),
-     :          WORLD2(NELEM,0:360)
-
-      INCLUDE 'wcs.inc'
-      INCLUDE 'cel.inc'
-      INCLUDE 'prj.inc'
-      INTEGER   WCS(WCSLEN)
-      DOUBLE PRECISION DUMMY
-      EQUIVALENCE (WCS,DUMMY)
+*     For the wcserr tests.
+      COMMON /ERRTST/ ETEST
+      DATA ETEST /0/
 *-----------------------------------------------------------------------
       WRITE (*, 10)
  10   FORMAT ('Testing closure of WCSLIB world coordinate ',
@@ -205,6 +212,20 @@
       WRITE (*, 120) RESMAX
  120  FORMAT ('Maximum closure residual:',1P,G11.3,' pixel.')
 
+
+*     Test WCSERR.
+      WRITE (*, 130)
+ 130  FORMAT (//,'IGNORE messages marked with ''OK'', they test ',
+     :           'WCSERR: ')
+      CALL TEST_ERRORS
+
+      STATUS = WCSPUT (WCS, WCS_PV, UNDEFINED, PVI(3), PVM(3))
+      STATUS = WCSSET (WCS)
+      CALL CHECK_ERROR (WCS, STATUS, WCSERR_BAD_PARAM,
+     :  'Invalid parameter value')
+
+
+*     Clean up.
       STATUS = WCSFREE(WCS)
 
       END
@@ -266,5 +287,101 @@
  40      FORMAT ('WCSSET ERROR',I3)
       END IF
 
-      RETURN
+      END
+
+*-----------------------------------------------------------------------
+      SUBROUTINE TEST_ERRORS
+*-----------------------------------------------------------------------
+      INCLUDE 'wcs.inc'
+
+      INTEGER   ETEST, STATUS, WCS(WCSLEN)
+
+      COMMON /ERRTST/ ETEST
+*-----------------------------------------------------------------------
+      STATUS = WCSPUT (WCS, WCS_FLAG, -1, 0, 0)
+
+      STATUS = WCSINI (-32, WCS)
+      CALL CHECK_ERROR (WCS, STATUS, WCSERR_MEMORY,
+     :  'naxis must be positive (got -32)')
+
+      STATUS = WCSPUT (WCS, WCS_FLAG, 0, 0, 0)
+      status = WCSINI (1000000000, WCS)
+      CALL CHECK_ERROR (WCS, STATUS, WCSERR_MEMORY,
+     :  'Memory allocation failed')
+
+      STATUS = WCSPUT (WCS, WCS_FLAG, 0, 0, 0)
+      STATUS = WCSINI (2, WCS)
+      CALL CHECK_ERROR (WCS, STATUS, WCSERR_SUCCESS, ' ')
+
+      STATUS = WCSPUT (WCS, WCS_CTYPE, 'CUBEFACE', 1, 0)
+      STATUS = WCSPUT (WCS, WCS_CTYPE, 'CUBEFACE', 2, 0)
+      STATUS = WCSSET (WCS)
+      CALL CHECK_ERROR (WCS, STATUS, WCSERR_BAD_CTYPE,
+     :  'Multiple CUBEFACE axes (in CTYPE0 and CTYPE1)')
+
+      STATUS = WCSPUT (WCS, WCS_FLAG, 0, 0, 0)
+      STATUS = WCSINI (2, WCS)
+      STATUS = WCSPUT (WCS, WCS_CTYPE, 'RA---FOO', 1, 0)
+      STATUS = WCSPUT (WCS, WCS_CTYPE, 'DEC--BAR', 2, 0)
+      STATUS = WCSSET (WCS)
+      CALL CHECK_ERROR (WCS, STATUS, WCSERR_BAD_CTYPE,
+     :  'Unrecognized projection code (FOO in CTYPE0)')
+
+      STATUS = WCSPUT (WCS, WCS_FLAG, 0, 0, 0)
+      STATUS = WCSINI (2, WCS)
+      STATUS = WCSPUT (WCS, WCS_CTYPE, 'RA---TAN', 1, 0)
+      STATUS = WCSPUT (WCS, WCS_CTYPE, 'FREQ-LOG', 2, 0)
+      STATUS = WCSSET (WCS)
+      CALL CHECK_ERROR (WCS, STATUS, WCSERR_BAD_CTYPE,
+     :  'Unmatched celestial axes')
+
+      STATUS = WCSFREE(WCS)
+
+      END
+
+*-----------------------------------------------------------------------
+      SUBROUTINE CHECK_ERROR(WCS, STATUS, EXSTATUS, EXMSG)
+*-----------------------------------------------------------------------
+      INCLUDE 'wcs.inc'
+      INCLUDE 'wcserr.inc'
+
+      INTEGER   EXSTATUS, ILEN, ISTAT, ETEST, STATUS, WCS(WCSLEN),
+     :          WCSERR(ERRLEN)
+      CHARACTER ERRMSG*(WCSERR_MSG_LENGTH), EXMSG*(*)
+
+      COMMON /ERRTST/ ETEST
+*-----------------------------------------------------------------------
+      IF (STATUS.NE.0) THEN
+        ISTAT = WCSGET (WCS, WCS_ERR, WCSERR)
+        ISTAT = WCSERR_GET (WCSERR, WCSERR_MSG, ERRMSG)
+      ELSE
+        ERRMSG = ' '
+      END IF
+
+      ETEST = ETEST + 1
+      WRITE (*, 10) ETEST
+ 10   FORMAT (/,'Test ',I2,'...')
+
+      IF (STATUS.EQ.EXSTATUS .AND. ERRMSG.EQ.EXMSG) THEN
+        ISTAT = WCSPERR (WCS, 'OK: '//CHAR(0))
+        WRITE (*, *) '...succeeded.'
+      ELSE
+        WRITE (*, 20) EXSTATUS, EXMSG(:ILEN(EXMSG))
+ 20     FORMAT ('Expected error ',I2,': ''',A,''', got')
+        ISTAT = WCSPERR (WCS, CHAR(0))
+        WRITE (*, *) '...failed.'
+      END IF
+
+      END
+
+*-----------------------------------------------------------------------
+      INTEGER FUNCTION ILEN(STRING)
+*-----------------------------------------------------------------------
+      CHARACTER STRING*(*)
+*-----------------------------------------------------------------------
+      DO 10 ILEN = LEN(STRING), 1, -1
+        IF (STRING(ILEN:ILEN).NE. ' ') RETURN
+ 10   CONTINUE
+
+      ILEN = 0
       END

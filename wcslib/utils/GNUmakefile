@@ -17,7 +17,7 @@
 #
 # Author: Mark Calabretta, Australia Telescope National Facility
 # http://www.atnf.csiro.au/~mcalabre/index.html
-# $Id: GNUmakefile,v 4.7 2011/02/07 07:03:43 cal103 Exp $
+# $Id: GNUmakefile,v 4.7.1.2 2011/06/03 00:25:23 cal103 Exp cal103 $
 #-----------------------------------------------------------------------------
 # Get configure settings.
 include ../makedefs
@@ -112,7 +112,7 @@ GNUmakefile : ../makedefs ;
 ../makedefs ../wcsconfig.h ../wcsconfig_utils.h : makedefs.in wcsconfig.h.in \
     wcsconfig_utils.h.in ../config.status
 	-@ $(RM) ../wcsconfig.h ../wcsconfig_utils.h
-	   cd .. && config.status
+	   cd .. && ./config.status
 
 fitshdr : wcsconfig.h wcsconfig_utils.h
 wcsware : getwcstab.h wcs.h wcsfix.h wcshdr.h

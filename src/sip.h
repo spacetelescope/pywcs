@@ -50,6 +50,7 @@ typedef struct {
   /*@null@*/ /*@shared@*/ double* bp;
   double                          crpix[2];
   /*@null@*/ double*              scratch;
+  struct wcserr*                  err;
 } sip_t;
 
 /**

@@ -200,7 +200,7 @@ PyWcsprm_init(
     if (status != 0) {
       PyErr_SetString(
           PyExc_MemoryError,
-          "Could not initialize wcsprm object");
+          self->x.err->msg);
       return -1;
     }
 
@@ -340,7 +340,7 @@ PyWcsprm_init(
       ignored_int = wcsvfree(&nwcs, &wcs);
       PyErr_SetString(
           PyExc_MemoryError,
-          "Could not initialize wcsprm object");
+          self->x.err->msg);
       return -1;
     }
 
@@ -376,7 +376,7 @@ PyWcsprm_copy(
     return (PyObject*)copy;
   } else {
     Py_XDECREF(copy);
-    wcslib_to_python_exc(status);
+    wcs_to_python_exc(&(self->x));
     return NULL;
   }
 }
@@ -531,7 +531,7 @@ PyWcsprm_celfix(
     return PyInt_FromLong((long)status);
     #endif
   } else {
-    wcslib_fix_to_python_exc(status);
+    wcserr_fix_to_python_exc(self->x.err);
     return NULL;
   }
 }
@@ -586,7 +586,7 @@ PyWcsprm_cylfix(
     return PyInt_FromLong((long)status);
     #endif
   } else {
-    wcslib_fix_to_python_exc(status);
+    wcserr_fix_to_python_exc(self->x.err);
     return NULL;
   }
 }
@@ -608,7 +608,7 @@ PyWcsprm_datfix(
     return PyInt_FromLong((long)status);
     #endif
   } else {
-    wcslib_fix_to_python_exc(status);
+    wcserr_fix_to_python_exc(self->x.err);
     return NULL;
   }
 }
@@ -677,6 +677,7 @@ PyWcsprm_fix(
     naxis = (int*)PyArray_DATA(naxis_array);
   }
 
+  /* TODO: Use wcsfixi */
   wcsprm_python2c(&self->x);
   status = wcsfix(ctrl, naxis, &self->x, stat);
   wcsprm_c2python(&self->x);
@@ -992,7 +993,7 @@ PyWcsprm_mix(
       /* The error message has already been set */
       return NULL;
     } else {
-      wcslib_to_python_exc(status);
+      wcs_to_python_exc(&(self->x));
       return NULL;
     }
   }
@@ -1120,7 +1121,7 @@ PyWcsprm_p2s(
       /* Exception already set */
       return NULL;
     } else {
-      wcslib_to_python_exc(status);
+      wcs_to_python_exc(&(self->x));
       return NULL;
     }
   }
@@ -1249,7 +1250,7 @@ PyWcsprm_s2p(
       /* Exception already set */
       return NULL;
     } else {
-      wcslib_to_python_exc(status);
+      wcs_to_python_exc(&(self->x));
       return NULL;
     }
   }
@@ -1269,7 +1270,7 @@ PyWcsprm_cset(
   if (status == 0) {
     return 0;
   } else {
-    wcslib_to_python_exc(status);
+    wcs_to_python_exc(&(self->x));
     return 1;
   }
 }
@@ -1339,6 +1340,10 @@ PyWcsprm_print_contents(
 
   int ignored;
 
+  /* This is not thread-safe, but since we're holding onto the GIL,
+     we can assume we won't have thread conflicts */
+  wcsprintf_set(NULL);
+  
   wcsprm_python2c(&self->x);
   if (PyWcsprm_cset(self, 0)) {
     wcsprm_c2python(&self->x);
@@ -1347,7 +1352,7 @@ PyWcsprm_print_contents(
   ignored = wcsprt(&self->x);
   wcsprm_c2python(&self->x);
 
-  printf(wcsprintf_buf());
+  printf("%s", wcsprintf_buf());
 
   Py_INCREF(Py_None);
   return Py_None;
@@ -1370,7 +1375,7 @@ PyWcsprm_spcfix(
     return PyInt_FromLong((long)status);
     #endif
   } else {
-    wcslib_fix_to_python_exc(status);
+    wcserr_fix_to_python_exc(self->x.err);
     return NULL;
   }
 }
@@ -1409,7 +1414,7 @@ PyWcsprm_sptr(
     Py_INCREF(Py_None);
     return Py_None;
   } else {
-    wcslib_to_python_exc(status);
+    wcs_to_python_exc(&(self->x));
     return NULL;
   }
 }
@@ -1418,6 +1423,10 @@ PyWcsprm_sptr(
 PyWcsprm___str__(
     PyWcsprm* self) {
 
+  /* This is not thread-safe, but since we're holding onto the GIL,
+     we can assume we won't have thread conflicts */
+  wcsprintf_set(NULL);
+  
   wcsprm_python2c(&self->x);
   if (PyWcsprm_cset(self, 0)) {
     wcsprm_c2python(&self->x);
@@ -1587,23 +1596,22 @@ PyWcsprm_sub(
     goto exit;
   }
 
-  Py_INCREF(py_dest_wcs);
-
  exit:
   free(axes);
   Py_XDECREF(element);
   #if PY3K
   Py_XDECREF(element_utf8);
   #endif
-  Py_XDECREF(py_dest_wcs);
 
   if (status == 0) {
     return (PyObject*)py_dest_wcs;
   } else if (status == -1) {
+    Py_XDECREF(py_dest_wcs);
     /* Exception already set */
     return NULL;
   } else {
-    wcslib_to_python_exc(status);
+    wcs_to_python_exc(&(py_dest_wcs->x));
+    Py_XDECREF(py_dest_wcs);
     return NULL;
   }
 }
@@ -1702,7 +1710,7 @@ PyWcsprm_unitfix(
     return PyInt_FromLong((long)status);
     #endif
   } else {
-    wcslib_fix_to_python_exc(status);
+    wcserr_fix_to_python_exc(self->x.err);
     return NULL;
   }
 }
@@ -2220,12 +2228,14 @@ unit_verify(char* val) {
 
   int status, func;
   double scale, units[WCSUNITS_NTYPE];
-
-  status = wcsulex(val, &func, &scale, units);
+  struct wcserr *err = NULL;
+  
+  status = wcsulexe(val, &func, &scale, units, &err);
   if (status == 0) {
     return 1;
   } else {
-    wcslib_units_to_python_exc(status);
+    wcserr_units_to_python_exc(err);
+    free(err);
     return 0;
   }
 }

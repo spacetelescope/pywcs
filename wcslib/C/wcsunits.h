@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcsunits.h,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: wcsunits.h,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
 *=============================================================================
 *
 * WCSLIB 4.7 - C routines that implement the FITS World Coordinate System
@@ -54,20 +54,23 @@
 * --------------------------------
 * Routines in this suite deal with units specifications and conversions:
 *
-*   - wcsunits(): given two unit specifications, derive the conversion from
+*   - wcsunitse(): given two unit specifications, derive the conversion from
 *     one to the other.
 *
-*   - wcsutrn(): translates certain commonly used but non-standard unit
-*     strings.  It is intended to be called before wcsulex() which only
+*   - wcsutrne(): translates certain commonly used but non-standard unit
+*     strings.  It is intended to be called before wcsulexe() which only
 *     handles standard FITS units specifications.
 *
-*   - wcsulex(): parses a standard FITS units specification of arbitrary
+*   - wcsulexe(): parses a standard FITS units specification of arbitrary
 *     complexity, deriving the conversion to canonical units.
 *
 *
-* wcsunits() - FITS units specification conversion
-* ------------------------------------------------
-* wcsunits() derives the conversion from one system of units to another.
+* wcsunitse() - FITS units specification conversion
+* -------------------------------------------------
+* wcsunitse() derives the conversion from one system of units to another.
+*
+* A deprecated form of this function, wcsunits(), lacks the wcserr**
+* parameter.
 *
 * Given:
 *   have      const char []
@@ -88,7 +91,7 @@
 *   power     double*   Convert units using
 *
 =                         pow(scale*value + offset, power);
-
+*
 *                       Normally offset is zero except for log() or ln()
 *                       conversions, e.g. "log(MHz)" to "ln(Hz)".  Likewise,
 *                       power is normally unity except for exp() conversions,
@@ -97,22 +100,29 @@
 *
 =                         value *= scale;
 *
+*   err       struct wcserr **
+*                       For function return values > 1, this struct will
+*                       contain a detailed error message.  May be NULL if an
+*                       error message is not desired.
+*
 * Function return value:
 *             int       Status return value:
 *                          0: Success.
-*                        1-9: Status return from wcsulex().
+*                        1-9: Status return from wcsulexe().
 *                         10: Non-conformant unit specifications.
 *                         11: Non-conformant functions.
 *
 *                       scale is zeroed on return if an error occurs.
 *
 *
-* wcsutrn() - Translation of non-standard unit specifications
-* -----------------------------------------------------------
-* wcsutrn() translates certain commonly used but non-standard unit strings,
-* e.g. "DEG", "MHZ", "KELVIN", that are not recognized by wcsulex(), refer to
+* wcsutrne() - Translation of non-standard unit specifications
+* ------------------------------------------------------------
+* wcsutrne() translates certain commonly used but non-standard unit strings,
+* e.g. "DEG", "MHZ", "KELVIN", that are not recognized by wcsulexe(), refer to
 * the notes below for a full list.  Compounds are also recognized, e.g.
 * "JY/BEAM" and "KM/SEC/SEC".  Extraneous embedded blanks are removed.
+*
+* A deprecated form of this function, wcsutrn(), lacks the wcserr** parameter.
 *
 * Given:
 *   ctrl      int       Although "S" is commonly used to represent seconds,
@@ -137,6 +147,11 @@
 *                       delimited by its matching ']'.  Blanks preceding '['
 *                       will be stripped off, but text following the closing
 *                       bracket will be preserved without modification.
+*
+*   err       struct wcserr **
+*                       When the return value >= 2, this structure will
+*                       contain a detailed error message.  May be NULL if an
+*                       error message is not desired.
 *
 * Function return value:
 *             int       Status return value:
@@ -182,16 +197,18 @@
 =     yr         year, years, YR, YEAR, YEARS
 *
 *   The aliases "angstrom", "ohm", and "Byte" for (Angstrom, Ohm, and byte)
-*   are recognized by wcsulex() itself as an unofficial extension of the
+*   are recognized by wcsulexe() itself as an unofficial extension of the
 *   standard, but they are converted to the standard form here.
 *
 *
-* wcsulex() - FITS units specification parser
-* -------------------------------------------
-* wcsulex() parses a standard FITS units specification of arbitrary
+* wcsulexe() - FITS units specification parser
+* --------------------------------------------
+* wcsulexe() parses a standard FITS units specification of arbitrary
 * complexity, deriving the scale factor required to convert to canonical
 * units - basically SI with degrees and "dimensionless" additions such as
 * byte, pixel and count.
+*
+* A deprecated form of this function, wcsulex(), lacks the wcserr** parameter.
 *
 * Given:
 *   unitstr   const char []
@@ -223,6 +240,11 @@
 *                       wcsunits_units[], are predefined to describe each
 *                       quantity and its canonical units.
 *
+*   err       struct wcserr **
+*                       When the return value >= 2, this structure will
+*                       contain a detailed error message.  May be NULL if an
+*                       error message is not desired.
+*
 * Function return value:
 *             int       Status return value:
 *                         0: Success.
@@ -240,7 +262,7 @@
 *                       occurs.
 *
 * Notes:
-*   1: wcsulex() is permissive in accepting whitespace in all contexts in a
+*   1: wcsulexe() is permissive in accepting whitespace in all contexts in a
 *      units specification where it does not create ambiguity (e.g. not
 *      between a metric prefix and a basic unit string), including in strings
 *      like "log (m ** 2)" which is formally disallowed.
@@ -276,7 +298,7 @@
 * Global variable: const char *wcsunits_types[] - Names of physical quantities
 * ----------------------------------------------------------------------------
 * Names for physical quantities to match the units vector returned by
-* wcsulex():
+* wcsulexe():
 *   -  0: plane angle
 *   -  1: solid angle
 *   -  2: charge
@@ -298,7 +320,7 @@
 *
 * Global variable: const char *wcsunits_units[] - Names of units
 * --------------------------------------------------------------
-* Names for the units (SI) to match the units vector returned by wcsulex():
+* Names for the units (SI) to match the units vector returned by wcsulexe():
 *   -  0: degree
 *   -  1: steradian
 *   -  2: Coulomb
@@ -315,12 +337,32 @@
 #ifndef WCSLIB_WCSUNITS
 #define WCSLIB_WCSUNITS
 
+#include "wcserr.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 
 extern const char *wcsunits_errmsg[];
+
+enum wcsunits_errmsg_enum {
+  UNITSERR_SUCCESS            =  0,	/* Success. */
+  UNITSERR_BAD_NUM_MULTIPLIER =  1,	/* Invalid numeric multiplier. */
+  UNITSERR_DANGLING_BINOP     =  2,	/* Dangling binary operator. */
+  UNITSERR_BAD_INITIAL_SYMBOL =  3,	/* Invalid symbol in INITIAL
+					   context. */
+  UNITSERR_FUNCTION_CONTEXT   =  4,	/* Function in invalid context. */
+  UNITSERR_BAD_EXPON_SYMBOL   =  5,	/* Invalid symbol in EXPON context. */
+  UNITSERR_UNBAL_BRACKET      =  6,	/* Unbalanced bracket. */
+  UNITSERR_UNBAL_PAREN        =  7,	/* Unbalanced parenthesis. */
+  UNITSERR_CONSEC_BINOPS      =  8,	/* Consecutive binary operators. */
+  UNITSERR_PARSER_ERROR       =  9,	/* Internal parser error. */
+  UNITSERR_BAD_UNIT_SPEC      = 10,	/* Non-conformant unit
+					   specifications. */
+  UNITSERR_BAD_FUNCS          = 11,	/* Non-conformant functions. */
+  UNITSERR_UNSAFE_TRANS       = 12	/* Potentially unsafe translation. */
+};
 
 extern const char *wcsunits_types[];
 extern const char *wcsunits_units[];
@@ -346,13 +388,19 @@ extern const char *wcsunits_units[];
 #define WCSUNITS_NTYPE      17
 
 
+int wcsunitse(const char have[], const char want[], double *scale,
+              double *offset, double *power, struct wcserr **err);
+
+int wcsutrne(int ctrl, char unitstr[], struct wcserr **err);
+
+int wcsulexe(const char unitstr[], int *func, double *scale, double units[],
+             struct wcserr **err);
+
+/* Deprecated. */
 int wcsunits(const char have[], const char want[], double *scale,
              double *offset, double *power);
-
 int wcsutrn(int ctrl, char unitstr[]);
-
 int wcsulex(const char unitstr[], int *func, double *scale, double units[]);
-
 
 #ifdef __cplusplus
 }

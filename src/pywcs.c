@@ -297,7 +297,7 @@ PyWcs_all_pix2sky(
       /* exception already set */
       return NULL;
     } else {
-      wcslib_to_python_exc(status);
+      wcserr_to_python_exc(self->x.err);
       return NULL;
     }
   }
@@ -365,7 +365,7 @@ PyWcs_p4_pix2foc(
       /* Exception already set */
       return NULL;
     } else {
-      wcslib_to_python_exc(status);
+      PyErr_SetString(PyExc_MemoryError, "NULL pointer passed");
       return NULL;
     }
   }
@@ -433,7 +433,7 @@ PyWcs_det2im(
       /* Exception already set */
       return NULL;
     } else {
-      wcslib_to_python_exc(status);
+      PyErr_SetString(PyExc_MemoryError, "NULL pointer passed");
       return NULL;
     }
   }
@@ -496,7 +496,7 @@ PyWcs_pix2foc(
       /* Exception already set */
       return NULL;
     } else {
-      wcslib_to_python_exc(status);
+      wcserr_to_python_exc(self->x.err);
       return NULL;
     }
   }

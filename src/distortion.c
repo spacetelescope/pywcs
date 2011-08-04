@@ -57,7 +57,7 @@ distortion_lookup_t_init(
   }
 
   lookup->data = NULL;
-
+  
   return 0;
 }
 

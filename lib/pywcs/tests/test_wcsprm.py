@@ -565,3 +565,9 @@ def test_get_pc():
     w = _pywcs._Wcsprm(header)
     w.get_pc()[0,0] = 42
 
+@raises(_pywcs.SingularMatrixError)
+def test_detailed_err():
+    w = _pywcs._Wcsprm()
+    w.pc = [[0,0],[0,0]]
+    w.set()
+    

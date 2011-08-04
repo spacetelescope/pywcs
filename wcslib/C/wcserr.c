@@ -27,79 +27,106 @@
                     AUSTRALIA
 
   Author: Mark Calabretta, Australia Telescope National Facility
+  Module author: Michael Droettboom
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: sph_f.c,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+  $Id$
 *===========================================================================*/
 
-#include <sph.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-/* Fortran name mangling. */
-#include <wcsconfig_f77.h>
-#define sphx2s_ F77_FUNC(sphx2s, SPHX2S)
-#define sphs2x_ F77_FUNC(sphs2x, SPHS2X)
-#define sphdpa_ F77_FUNC(sphdpa, SPHDPA)
-#define sphpad_ F77_FUNC(sphpad, SPHPAD)
+#include "wcserr.h"
+#include "wcsprintf.h"
 
 /*--------------------------------------------------------------------------*/
 
-int sphx2s_(
-  const double eul[5],
-  const int *nphi,
-  const int *ntheta,
-  const int *spt,
-  const int *sll,
-  const double phi[],
-  const double theta[],
-  double lng[],
-  double lat[])
+int wcserr_ini(
+  struct wcserr *err)
 
 {
-  return sphx2s(eul, *nphi, *ntheta, *spt, *sll, phi, theta, lng, lat);
+  if (err == 0x0) {
+    return 1;
+  }
+
+  memset(err, 0, sizeof(struct wcserr));
+
+  return 0;
 }
 
 /*--------------------------------------------------------------------------*/
 
-int sphs2x_(
-  const double eul[5],
-  const int *nlng,
-  const int *nlat,
-  const int *sll,
-  const int *spt,
-  const double lng[],
-  const double lat[],
-  double phi[],
-  double theta[])
+int wcserr_set(
+  struct wcserr **err,
+  int status,
+  const char *function,
+  const char *file,
+  int line_no,
+  const char *format,
+  ...)
 
 {
-  return sphs2x(eul, *nlng, *nlat, *sll, *spt, lng, lat, phi, theta);
+  va_list argp;
+
+  if (err == 0x0) {
+    return status;
+  }
+
+  if (*err == 0x0) {
+    *err = calloc(1, sizeof(struct wcserr));
+  }
+
+  (*err)->status   = status;
+  (*err)->function = function;
+  (*err)->file     = file;
+  (*err)->line_no  = line_no;
+
+  va_start(argp, format);
+  vsnprintf((*err)->msg, WCSERR_MSG_LENGTH, format, argp);
+  va_end(argp);
+
+  return status;
 }
 
 /*--------------------------------------------------------------------------*/
 
-int sphdpa_(
-  const int *nfield,
-  const double *lng0,
-  const double *lat0,
-  const double lng[],
-  const double lat[],
-  double dist[],
-  double pa[])
+int wcserr_copy(
+  const struct wcserr *src,
+  struct wcserr **dst)
 
 {
-  return sphdpa(*nfield, *lng0, *lat0, lng, lat, dist, pa);
+  if (src == 0x0) {
+    return 1;
+  }
+
+  if (dst == 0x0) {
+    return src->status;
+  }
+
+  if (*dst == 0x0) {
+    *dst = calloc(1, sizeof(struct wcserr));
+  }
+
+  memcpy(*dst, src, sizeof(struct wcserr));
+  return (*dst)->status;
 }
 
 /*--------------------------------------------------------------------------*/
 
-int sphpad_(
-  const int *nfield,
-  const double *lng0,
-  const double *lat0,
-  const double dist[],
-  const double pa[],
-  double lng[],
-  double lat[])
+int wcserr_prt(
+  const struct wcserr *err,
+  const char *prefix)
 
 {
-  return sphpad(*nfield, *lng0, *lat0, dist, pa, lng, lat);
+  if (err == 0x0) {
+    return 0;
+  }
+
+  if (prefix == 0x0) prefix = "";
+
+  wcsprintf("%sERROR %d in %s() at line %d of file %s:\n%s  %s.\n", prefix,
+    err->status, err->function, err->line_no, err->file, prefix, err->msg);
+
+  return 0;
 }

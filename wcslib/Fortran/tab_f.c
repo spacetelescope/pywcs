@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: tab_f.c,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: tab_f.c,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
 *===========================================================================*/
 
 #include <tab.h>
@@ -64,6 +64,7 @@
 #define TAB_P0       202
 #define TAB_DELTA    203
 #define TAB_EXTREMA  204
+#define TAB_ERR      205
 
 /*--------------------------------------------------------------------------*/
 
@@ -238,6 +239,9 @@ int tabget_(const int *tab, const int *what, void *value)
     for (i = 0; i < n; i++) {
       *(dvalp++) = tabp->extrema[i];
     }
+    break;
+  case TAB_ERR:
+    *(void **)value = tabp->err;
     break;
   default:
     return 1;

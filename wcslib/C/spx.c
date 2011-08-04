@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: spx.c,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: spx.c,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
 *===========================================================================*/
 
 #include <math.h>
@@ -47,6 +47,8 @@ const char *spx_errmsg[] = {
   "Invalid spectral variable",
   "One or more of the inspec coordinates were invalid"};
 
+/* Convenience macro for invoking wcserr_set(). */
+#define SPX_ERRMSG(status) WCSERR_SET(status), spx_errmsg[status]
 
 #define C 2.99792458e8
 #define h 6.6260755e-34
@@ -64,11 +66,15 @@ double spec, restfrq, restwav;
 struct spxprm *spx;
 
 {
+  static const char *function = "specx";
+
   register int k;
   int haverest;
   double beta, dwaveawav, gamma, n, s, t, u;
+  struct wcserr **err;
 
-  if (spx == 0x0) return 1;
+  if (spx == 0x0) return SPXERR_NULL_POINTER;
+  err = &(spx->err);
 
   haverest = 1;
   if (restfrq == 0.0) {
@@ -88,26 +94,40 @@ struct spxprm *spx;
     spx->restwav = C/restfrq;
   }
 
+  spx->err = 0x0;
+
   /* Convert to frequency. */
   spx->wavetype = 0;
   spx->velotype = 0;
   if (strcmp(type, "FREQ") == 0) {
-    if (spec == 0.0) return 3;
+    if (spec == 0.0) {
+      return wcserr_set(WCSERR_SET(SPXERR_BAD_SPEC_VAR),
+        "Invalid spectral variable: frequency == 0");
+    }
     spx->freq = spec;
     spx->wavetype = 1;
 
   } else if (strcmp(type, "AFRQ") == 0) {
-    if (spec == 0.0) return 3;
+    if (spec == 0.0) {
+      return wcserr_set(WCSERR_SET(SPXERR_BAD_SPEC_VAR),
+        "Invalid spectral variable: frequency == 0");
+    }
     spx->freq = spec/(2.0*PI);
     spx->wavetype = 1;
 
   } else if (strcmp(type, "ENER") == 0) {
-    if (spec == 0.0) return 3;
+    if (spec == 0.0) {
+      return wcserr_set(WCSERR_SET(SPXERR_BAD_SPEC_VAR),
+        "Invalid spectral variable: frequency == 0");
+    }
     spx->freq = spec/h;
     spx->wavetype = 1;
 
   } else if (strcmp(type, "WAVN") == 0) {
-    if (spec == 0.0) return 3;
+    if (spec == 0.0) {
+      return wcserr_set(WCSERR_SET(SPXERR_BAD_SPEC_VAR),
+        "Invalid spectral variable: frequency == 0");
+    }
     spx->freq = spec*C;
     spx->wavetype = 1;
 
@@ -116,24 +136,36 @@ struct spxprm *spx;
     spx->velotype = 1;
 
   } else if (strcmp(type, "WAVE") == 0) {
-    if (spec == 0.0) return 3;
+    if (spec == 0.0) {
+      return wcserr_set(WCSERR_SET(SPXERR_BAD_SPEC_VAR),
+        "Invalid spectral variable: frequency == 0");
+    }
     spx->freq = C/spec;
     spx->wavetype = 1;
 
   } else if (strcmp(type, "VOPT") == 0) {
     s = 1.0 + spec/C;
-    if (s == 0.0) return 3;
+    if (s == 0.0) {
+      return wcserr_set(WCSERR_SET(SPXERR_BAD_SPEC_VAR),
+        "Invalid spectral variable");
+    }
     spx->freq = spx->restfrq/s;
     spx->velotype = 1;
 
   } else if (strcmp(type, "ZOPT") == 0) {
     s = 1.0 + spec;
-    if (s == 0.0) return 3;
+    if (s == 0.0) {
+      return wcserr_set(WCSERR_SET(SPXERR_BAD_SPEC_VAR),
+        "Invalid spectral variable");
+    }
     spx->freq = spx->restfrq/s;
     spx->velotype = 1;
 
   } else if (strcmp(type, "AWAV") == 0) {
-    if (spec == 0.0) return 3;
+    if (spec == 0.0) {
+      return wcserr_set(WCSERR_SET(SPXERR_BAD_SPEC_VAR),
+        "Invalid spectral variable");
+    }
     s = 1.0/spec;
     s *= s;
     n  =   2.554e8 / (0.41e14 - s);
@@ -144,18 +176,25 @@ struct spxprm *spx;
 
   } else if (strcmp(type, "VELO") == 0) {
     beta = spec/C;
-    if (fabs(beta) == 1.0) return 3;
+    if (fabs(beta) == 1.0) {
+      return wcserr_set(WCSERR_SET(SPXERR_BAD_SPEC_VAR),
+        "Invalid spectral variable");
+    }
     spx->freq = spx->restfrq*(1.0 - beta)/sqrt(1.0 - beta*beta);
     spx->velotype = 1;
 
   } else if (strcmp(type, "BETA") == 0) {
-    if (fabs(spec) == 1.0) return 3;
+    if (fabs(spec) == 1.0) {
+      return wcserr_set(WCSERR_SET(SPXERR_BAD_SPEC_VAR),
+        "Invalid spectral variable");
+    }
     spx->freq = spx->restfrq*(1.0 - spec)/sqrt(1.0 - spec*spec);
     spx->velotype = 1;
 
   } else {
     /* Unrecognized type. */
-    return 2;
+    return wcserr_set(WCSERR_SET(SPXERR_BAD_SPEC_PARAMS),
+      "Unrecognized spectral type '%s'", type);
   }
 
 
@@ -313,7 +352,7 @@ int stat[];
       *(statp++) = 0;
     } else {
       *(statp++) = 1;
-      status = 4;
+      status = SPXERR_BAD_INSPEC_COORD;
     }
 
     freqp += sfreq;
@@ -348,7 +387,7 @@ int stat[];
       *(statp++) = 0;
     } else {
       *(statp++) = 1;
-      status = 4;
+      status = SPXERR_BAD_INSPEC_COORD;
     }
 
     wavep += swave;
@@ -462,7 +501,7 @@ int stat[];
       *(statp++) = 0;
     } else {
       *(statp++) = 1;
-      status = 4;
+      status = SPXERR_BAD_INSPEC_COORD;
     }
 
     velop += svelo;
@@ -509,7 +548,7 @@ int stat[];
       *(statp++) = 0;
     } else {
       *(statp++) = 1;
-      status = 4;
+      status = SPXERR_BAD_INSPEC_COORD;
     }
 
     wavep += swave;
@@ -550,7 +589,7 @@ int stat[];
       *(statp++) = 0;
     } else {
       *(statp++) = 1;
-      status = 4;
+      status = SPXERR_BAD_INSPEC_COORD;
     }
 
     awavp += sawav;
@@ -622,7 +661,7 @@ int stat[];
       *(statp++) = 0;
     } else {
       *(statp++) = 1;
-      status = 4;
+      status = SPXERR_BAD_INSPEC_COORD;
     }
 
     velop += svelo;
@@ -873,7 +912,7 @@ int stat[];
   register double *vradp;
 
   if (restfrq == 0.0) {
-    return 2;
+    return SPXERR_BAD_SPEC_PARAMS;
   }
   r = C/restfrq;
 
@@ -941,7 +980,7 @@ int stat[];
   register double *voptp;
 
   if (restwav == 0.0) {
-    return 2;
+    return SPXERR_BAD_SPEC_PARAMS;
   }
   r = C/restwav;
 
@@ -1008,7 +1047,7 @@ int stat[];
   register double *zoptp;
 
   if (restwav == 0.0) {
-    return 2;
+    return SPXERR_BAD_SPEC_PARAMS;
   }
   r = 1.0/restwav;
 

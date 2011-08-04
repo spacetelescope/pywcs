@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: fitshdr.l,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: fitshdr.l,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp $
 *=============================================================================
 *
 * fitshdr.l is a Flex description file containing a lexical scanner

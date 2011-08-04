@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcsprintf.h,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: wcsprintf.h,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
 *=============================================================================
 *
 * WCSLIB 4.7 - C routines that implement the FITS World Coordinate System
@@ -37,19 +37,20 @@
 * Summary of the wcsprintf routines
 * ------------------------------
 * These routines allow diagnostic output from celprt(), linprt(), prjprt(),
-* spcprt(), tabprt(), and wcsprt() to be redirected to a file or captured in
-* a string buffer.  These routines use wcsprintf() for output.
+* spcprt(), tabprt(), wcsprt(), and wcserr_prt() to be redirected to a file or
+* captured in a string buffer.  These routines use wcsprintf() for output.
 *
 *
 * wcsprintf() - Print function used by WCSLIB diagnostic routines
 * ---------------------------------------------------------------
 * wcsprintf() is used by the celprt(), linprt(), prjprt(), spcprt(), tabprt(),
-* and wcsprt() routines.  Its output may be redirected to a file or string
-* buffer via wcsprintf_set().
+* wcsprt(), wcserr_prt() routines.  Its output may be redirected to a file or
+* string buffer via wcsprintf_set().
 *
 * Given:
 *   format    char*     Format string, passed to one of the printf(3) family
 *                       of stdio library functions.
+*
 *   ...       mixed     Argument list matching format, as per printf(3).
 *
 * Function return value:
@@ -59,7 +60,8 @@
 * wcsprintf_set() - Set output disposition for wcsprintf()
 * --------------------------------------------------------
 * wcsprintf_set() sets the output disposition for wcsprintf() which is used by
-* the celprt(), linprt(), prjprt(), spcprt(), tabprt(), and wcsprt() routines.
+* the celprt(), linprt(), prjprt(), spcprt(), tabprt(), wcsprt(), wcserr_prt()
+* routines.
 *
 * Given:
 *   wcsout    FILE*     Pointer to an output stream that has been opened for

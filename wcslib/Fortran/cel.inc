@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: cel.inc,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+* $Id: cel.inc,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
 *=======================================================================
 
 *     Functions.
@@ -38,9 +38,9 @@
      :          CELPTD, CELPTI, CELPUT, CELS2X, CELSET, CELX2S
 
 *     Length of the CELPRM data structure (INTEGER array) on 64-bit
-*     machines.  Only needs to be 140 on 32-bit machines.
+*     machines.  Only needs to be 142 on 32-bit machines.
       INTEGER   CELLEN
-      PARAMETER (CELLEN = 142)
+      PARAMETER (CELLEN = 146)
 
 *     Codes for CEL data structure elements used by CELPUT and CELGET.
       INTEGER   CEL_FLAG, CEL_OFFSET, CEL_PHI0, CEL_PRJ, CEL_REF,
@@ -54,11 +54,26 @@
       PARAMETER (CEL_PRJ    = 105)
 
 *     Codes for CEL data structure elements used by CELGET (only).
-      INTEGER   CEL_EULER, CEL_ISOLAT, CEL_LATPRQ
+      INTEGER   CEL_ERR, CEL_EULER, CEL_ISOLAT, CEL_LATPRQ
 
       PARAMETER (CEL_EULER  = 200)
       PARAMETER (CEL_LATPRQ = 201)
       PARAMETER (CEL_ISOLAT = 202)
+      PARAMETER (CEL_ERR    = 203)
+
+*     Error codes and messages.
+      INTEGER   CELERR_BAD_COORD_TRANS, CELERR_BAD_PARAM,
+     :          CELERR_BAD_PIX, CELERR_BAD_WORLD,
+     :          CELERR_ILL_COORD_TRANS, CELERR_NULL_POINTER,
+     :          CELERR_SUCCESS
+
+      PARAMETER (CELERR_SUCCESS         = 0)
+      PARAMETER (CELERR_NULL_POINTER    = 1)
+      PARAMETER (CELERR_BAD_PARAM       = 2)
+      PARAMETER (CELERR_BAD_COORD_TRANS = 3)
+      PARAMETER (CELERR_ILL_COORD_TRANS = 4)
+      PARAMETER (CELERR_BAD_PIX         = 5)
+      PARAMETER (CELERR_BAD_WORLD       = 6)
 
       CHARACTER CEL_ERRMSG(0:6)*80
       COMMON /CEL_DATA/ CEL_ERRMSG

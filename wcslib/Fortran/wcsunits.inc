@@ -28,10 +28,14 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: wcsunits.inc,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+* $Id: wcsunits.inc,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
 *=======================================================================
 
 *     Functions.
+      EXTERNAL  WCSULEXE, WCSUNITSE, WCSUTRNE
+      INTEGER   WCSULEXE, WCSUNITSE, WCSUTRNE
+
+*     Deprecated functions.
       EXTERNAL  WCSULEX, WCSUNITS, WCSUTRN
       INTEGER   WCSULEX, WCSUNITS, WCSUTRN
 
@@ -66,6 +70,29 @@
       CHARACTER WCSUNITS_ERRMSG(0:12)*40,
      :          WCSUNITS_TYPES(WCSUNITS_NTYPE)*18,
      :          WCSUNITS_UNITS(WCSUNITS_NTYPE)*9
+
+*     Error codes and messages.
+      INTEGER   UNITSERR_BAD_EXPON_SYMBOL, UNITSERR_BAD_FUNCS,
+     :          UNITSERR_BAD_INITIAL_SYMBOL,
+     :          UNITSERR_BAD_NUM_MULTIPLIER, UNITSERR_BAD_UNIT_SPEC,
+     :          UNITSERR_CONSEC_BINOPS, UNITSERR_DANGLING_BINOP,
+     :          UNITSERR_FUNCTION_CONTEXT, UNITSERR_PARSER_ERROR,
+     :          UNITSERR_SUCCESS, UNITSERR_UNBAL_BRACKET,
+     :          UNITSERR_UNBAL_PAREN, UNITSERR_UNSAFE_TRANS
+
+      PARAMETER (UNITSERR_SUCCESS            =  0)
+      PARAMETER (UNITSERR_BAD_NUM_MULTIPLIER =  1)
+      PARAMETER (UNITSERR_DANGLING_BINOP     =  2)
+      PARAMETER (UNITSERR_BAD_INITIAL_SYMBOL =  3)
+      PARAMETER (UNITSERR_FUNCTION_CONTEXT   =  4)
+      PARAMETER (UNITSERR_BAD_EXPON_SYMBOL   =  5)
+      PARAMETER (UNITSERR_UNBAL_BRACKET      =  6)
+      PARAMETER (UNITSERR_UNBAL_PAREN        =  7)
+      PARAMETER (UNITSERR_CONSEC_BINOPS      =  8)
+      PARAMETER (UNITSERR_PARSER_ERROR       =  9)
+      PARAMETER (UNITSERR_BAD_UNIT_SPEC      = 10)
+      PARAMETER (UNITSERR_BAD_FUNCS          = 11)
+      PARAMETER (UNITSERR_UNSAFE_TRANS       = 12)
 
       COMMON /WCSUNITS_DATA/ WCSUNITS_ERRMSG, WCSUNITS_TYPES,
      :                       WCSUNITS_UNITS

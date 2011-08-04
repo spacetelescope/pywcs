@@ -27,7 +27,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: tbth1.c,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: tbth1.c,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
 *=============================================================================
 *
 * tbth1 tests wcsbth(), the WCS FITS parser for binary table headers, and

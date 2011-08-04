@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: tab.h,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: tab.h,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
 *=============================================================================
 *
 * WCSLIB 4.7 - C routines that implement tabular coordinate systems as
@@ -97,6 +97,7 @@
 *                       saves having to initalize these pointers to zero.)
 *
 *   M         int       The number of tabular coordinate axes.
+*
 *   K         const int[]
 *                       Vector of length M whose elements (K_1, K_2,... K_M)
 *                       record the lengths of the axes of the coordinate array
@@ -128,6 +129,9 @@
 *                         2: Memory allocation failed.
 *                         3: Invalid tabular parameters.
 *
+*                       For returns > 1, a detailed error message is set in
+*                       tabprm::err.
+*
 *
 * tabmem() - Acquire tabular memory
 * ---------------------------------
@@ -142,6 +146,10 @@
 *             int       Status return value:
 *                         0: Success.
 *                         1: Null tabprm pointer passed.
+*                         2: Memory allocation failed.
+*
+*                       For returns > 1, a detailed error message is set in
+*                       tabprm::err.
 *
 *
 * tabcpy() - Copy routine for the tabprm struct
@@ -176,6 +184,9 @@
 *                         1: Null tabprm pointer passed.
 *                         2: Memory allocation failed.
 *
+*                       For returns > 1, a detailed error message is set in
+*                       tabprm::err (associated with tabdst).
+*
 *
 * tabfree() - Destructor for the tabprm struct
 * --------------------------------------------
@@ -198,7 +209,8 @@
 *
 * tabprt() - Print routine for the tabprm struct
 * ----------------------------------------------
-* tabprt() prints the contents of a tabprm struct.
+* tabprt() prints the contents of a tabprm struct using wcsprintf().  Mainly
+* intended for diagnostic purposes.
 *
 * Given:
 *   tab       const struct tabprm*
@@ -229,6 +241,9 @@
 *                         1: Null tabprm pointer passed.
 *                         3: Invalid tabular parameters.
 *
+*                       For returns > 1, a detailed error message is set in
+*                       tabprm::err.
+*
 *
 * tabx2s() - Pixel-to-world transformation
 * ----------------------------------------
@@ -243,12 +258,14 @@
 *   ncoord,
 *   nelem     int       The number of coordinates, each of vector length
 *                       nelem.
+*
 *   x         const double[ncoord][nelem]
 *                       Array of intermediate world coordinates, SI units.
 *
 * Returned:
 *   world     double[ncoord][nelem]
 *                       Array of world coordinates, in SI units.
+*
 *   stat      int[ncoord]
 *                       Status return value status for each coordinate:
 *                         0: Success.
@@ -261,6 +278,9 @@
 *                         3: Invalid tabular parameters.
 *                         4: One or more of the x coordinates were invalid,
 *                            as indicated by the stat vector.
+*
+*                       For returns > 1, a detailed error message is set in
+*                       tabprm::err.
 *
 *
 * tabs2x() - World-to-pixel transformation
@@ -293,6 +313,9 @@
 *                         3: Invalid tabular parameters.
 *                         5: One or more of the world coordinates were
 *                            invalid, as indicated by the stat vector.
+*
+*                       For returns > 1, a detailed error message is set in
+*                       tabprm::err.
 *
 *
 * tabprm struct - Tabular transformation parameters
@@ -420,6 +443,10 @@
 *     compressed K_1 dimension, then the maximum.  This array is used by the
 *     inverse table lookup function, tabs2x(), to speed up table searches.
 *
+*   struct wcserr *err
+*     (Returned) When an error status is returned, this struct contains
+*     detailed information about the error.
+*
 *   int m_flag
 *     (For internal use only.)
 *   int m_M
@@ -451,6 +478,8 @@
 #ifndef WCSLIB_TAB
 #define WCSLIB_TAB
 
+#include "wcserr.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -458,6 +487,16 @@ extern "C" {
 
 extern const char *tab_errmsg[];
 
+enum tab_errmsg_enum {
+  TABERR_SUCCESS      = 0,	/* Success. */
+  TABERR_NULL_POINTER = 1,	/* Null tabprm pointer passed. */
+  TABERR_MEMORY       = 2,	/* Memory allocation failed. */
+  TABERR_BAD_PARAMS   = 3,	/* Invalid tabular parameters. */
+  TABERR_BAD_X        = 4,	/* One or more of the x coordinates were
+				   invalid. */
+  TABERR_BAD_WORLD    = 5	/* One or more of the world coordinates were
+				   invalid. */
+};
 
 struct tabprm {
   /* Initialization flag (see the prologue above).                          */
@@ -495,7 +534,13 @@ struct tabprm {
   double *extrema;		/* (1+M)-dimensional array of coordinate    */
 				/* extrema.                                 */
 
-  int    m_flag, m_M, m_N;	/* The remainder are for memory management. */
+  /* Error handling                                                         */
+  /*------------------------------------------------------------------------*/
+  struct wcserr *err;
+
+  /* Private - the remainder are for memory management.                     */
+  /*------------------------------------------------------------------------*/
+  int    m_flag, m_M, m_N;
   int    set_M;
   int    *m_K, *m_map;
   double *m_crval, **m_index, **m_indxs, *m_coord;

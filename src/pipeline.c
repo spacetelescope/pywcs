@@ -39,6 +39,8 @@ DAMAGE.
 #include <stdlib.h>
 #include <string.h>
 
+#define PIP_ERRMSG(status) WCSERR_SET(status)
+
 void
 pipeline_clear(
     pipeline_t* pipeline) {
@@ -49,6 +51,7 @@ pipeline_clear(
   pipeline->cpdis[0] = NULL;
   pipeline->cpdis[1] = NULL;
   pipeline->wcs = NULL;
+  pipeline->err = NULL;
 }
 
 void
@@ -65,30 +68,36 @@ pipeline_init(
   pipeline->cpdis[0] = cpdis[0];
   pipeline->cpdis[1] = cpdis[1];
   pipeline->wcs = wcs;
+  pipeline->err = NULL;
 }
 
 void
 pipeline_free(
     pipeline_t* pipeline) {
 
+  free(pipeline->err);
+  pipeline->err = NULL;
 }
 
 int
 pipeline_all_pixel2world(
-    const pipeline_t* pipeline,
+    pipeline_t* pipeline,
     const unsigned int ncoord,
     const unsigned int nelem,
     const double* const pixcrd /* [ncoord][nelem] */,
     double* world /* [ncoord][nelem] */) {
 
-  const double* wcs_input  = NULL;
-  double*       wcs_output = NULL;
-  int           has_det2im;
-  int           has_sip;
-  int           has_p4;
-  int           has_wcs;
-  int           status     = 1;
+  static const char* function = "pipeline_all_pixel2world";
 
+  const double*   wcs_input  = NULL;
+  double*         wcs_output = NULL;
+  int             has_det2im;
+  int             has_sip;
+  int             has_p4;
+  int             has_wcs;
+  int             status     = 1;
+  struct wcserr **err;
+  
   /* Temporary buffer for performing WCS calculations */
   unsigned char*     buffer = NULL;
   unsigned char*     mem = NULL;
@@ -99,9 +108,11 @@ pipeline_all_pixel2world(
   /*@null@*/ int*    stat;
 
   if (pipeline == NULL || pixcrd == NULL || world == NULL) {
-    return 1;
+    return WCSERR_NULL_POINTER;
   }
 
+  err = &(pipeline->err);
+  
   has_det2im = pipeline->det2im[0] != NULL || pipeline->det2im[1] != NULL;
   has_sip    = pipeline->sip != NULL;
   has_p4     = pipeline->cpdis[0] != NULL || pipeline->cpdis[1] != NULL;
@@ -109,7 +120,9 @@ pipeline_all_pixel2world(
 
   if (has_det2im || has_sip || has_p4) {
     if (nelem != 2) {
-      status = -1;
+      status = wcserr_set(
+        PIP_ERRMSG(WCSERR_BAD_COORD_TRANS),
+        "Data must be 2-dimensional when Paper IV lookup table or SIP transform is present.");
       goto exit;
     }
   }
@@ -124,7 +137,8 @@ pipeline_all_pixel2world(
         );
 
     if (buffer == NULL) {
-      status = 2;
+      status = wcserr_set(
+        PIP_ERRMSG(WCSERR_MEMORY), "Memory allocation failed");
       goto exit;
     }
 
@@ -156,8 +170,10 @@ pipeline_all_pixel2world(
       wcs_output = world;
     }
 
-    status = wcsp2s(pipeline->wcs, (int)ncoord, (int)nelem, wcs_input, imgcrd,
-                    phi, theta, wcs_output, stat);
+    if ((status = wcsp2s(pipeline->wcs, (int)ncoord, (int)nelem, wcs_input, imgcrd,
+                         phi, theta, wcs_output, stat))) {
+      wcserr_copy(pipeline->wcs->err, &(pipeline->err));
+    }
   } else {
     if (has_det2im || has_sip || has_p4) {
       status = pipeline_pix2foc(pipeline, ncoord, nelem, pixcrd, world);
@@ -171,26 +187,31 @@ pipeline_all_pixel2world(
 }
 
 int pipeline_pix2foc(
-    const pipeline_t* pipeline,
+    pipeline_t* pipeline,
     const unsigned int ncoord,
     const unsigned int nelem,
     const double* const pixcrd /* [ncoord][nelem] */,
     double* foc /* [ncoord][nelem] */) {
 
-  int            has_det2im;
-  int            has_sip;
-  int            has_p4;
-  const double * input  = NULL;
-  double *       tmp    = NULL;
-  int            status = 1;
-
+  static const char* function = "pipeline_pix2foc";
+  
+  int              has_det2im;
+  int              has_sip;
+  int              has_p4;
+  const double *   input  = NULL;
+  double *         tmp    = NULL;
+  int              status = 1;
+  struct wcserr  **err;
+  
   assert(nelem == 2);
   assert(pixcrd != foc);
 
   if (pipeline == NULL || pixcrd == NULL || foc == NULL) {
-    return 1;
+    return WCSERR_NULL_POINTER;
   }
 
+  err = &(pipeline->err);
+  
   has_det2im = pipeline->det2im[0] != NULL || pipeline->det2im[1] != NULL;
   has_sip    = pipeline->sip != NULL;
   has_p4     = pipeline->cpdis[0] != NULL || pipeline->cpdis[1] != NULL;
@@ -199,6 +220,8 @@ int pipeline_pix2foc(
     if (has_sip || has_p4) {
       tmp = malloc(ncoord * nelem * sizeof(double));
       if (tmp == NULL) {
+        status = wcserr_set(
+          PIP_ERRMSG(WCSERR_MEMORY), "Memory allocation failed");
         goto exit;
       }
 
@@ -206,6 +229,7 @@ int pipeline_pix2foc(
 
       status = p4_pix2deltas(2, (void*)pipeline->det2im, ncoord, pixcrd, tmp);
       if (status) {
+        wcserr_set(PIP_ERRMSG(WCSERR_NULL_POINTER), "NULL pointer passed");
         goto exit;
       }
 
@@ -216,6 +240,7 @@ int pipeline_pix2foc(
 
       status = p4_pix2deltas(2, (void*)pipeline->det2im, ncoord, pixcrd, foc);
       if (status) {
+        wcserr_set(PIP_ERRMSG(WCSERR_NULL_POINTER), "NULL pointer passed");
         goto exit;
       }
     }
@@ -229,6 +254,7 @@ int pipeline_pix2foc(
   if (has_sip) {
     status = sip_pix2deltas(pipeline->sip, 2, ncoord, input, foc);
     if (status) {
+      wcserr_copy(pipeline->sip->err, &pipeline->err);
       goto exit;
     }
   }
@@ -236,6 +262,7 @@ int pipeline_pix2foc(
   if (has_p4) {
     status = p4_pix2deltas(2, (void*)pipeline->cpdis, ncoord, input, foc);
     if (status) {
+      wcserr_set(PIP_ERRMSG(WCSERR_NULL_POINTER), "NULL pointer passed");
       goto exit;
     }
   }
@@ -245,7 +272,6 @@ int pipeline_pix2foc(
  exit:
   free(tmp);
 
-  /* We don't have any cleanup at the moment */
   return status;
 }
 

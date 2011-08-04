@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: spx_f.c,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: spx_f.c,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
 *===========================================================================*/
 
 #include <string.h>
@@ -37,7 +37,39 @@
 
 /* Fortran name mangling. */
 #include <wcsconfig_f77.h>
-#define specx_ F77_FUNC(specx, SPECX)
+#define spxget_ F77_FUNC(spxget, SPXGET)
+#define specx_  F77_FUNC(specx,  SPECX)
+
+#define SPX_ERR     200
+
+/*--------------------------------------------------------------------------*/
+
+int spxget_(const int *spx, const int *what, void *value)
+
+{
+  int m;
+  int  *ivalp;
+  const struct spxprm *spxp;
+
+  /* Cast pointers. */
+  spxp  = (const struct spxprm *)spx;
+  ivalp = (int *)value;
+
+  switch (*what) {
+  case SPX_ERR:
+    *(void **)value = spxp->err;
+    break;
+  default:
+    return 1;
+  }
+
+  return 0;
+}
+
+int spxgti_(const int *spx, const int *what, int *value)
+{
+  return spxget_(spx, what, value);
+}
 
 /*--------------------------------------------------------------------------*/
 

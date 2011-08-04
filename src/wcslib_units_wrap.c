@@ -122,12 +122,13 @@ PyUnits_init(
     PyObject* args,
     PyObject* kwds) {
 
-  int       status          = -1;
-  char*     have;
-  char*     want;
-  char*     ctrl_str        = NULL;
-  int       ctrl            = 0;
+  int            status     = -1;
+  char*          have;
+  char*          want;
+  char*          ctrl_str   = NULL;
+  int            ctrl       = 0;
   const char*    keywords[] = {"have", "want", "translate_units", NULL};
+  struct wcserr* err        = NULL;
 
   if (!PyArg_ParseTupleAndKeywords(args, kwds, "ss|s:UnitConverter.__init__",
                                    (char **)keywords, &have, &want,
@@ -146,18 +147,18 @@ PyUnits_init(
   strncpy(self->have, have, 80);
   strncpy(self->want, want, 80);
 
-  status = wcsutrn(ctrl, self->have);
+  status = wcsutrne(ctrl, self->have, &err);
   if (status != -1 && status != 0) {
     goto exit;
   }
 
-  status = wcsutrn(ctrl, self->want);
+  status = wcsutrne(ctrl, self->want, &err);
   if (status != -1 && status != 0) {
     goto exit;
   }
 
-  status = wcsunits(self->have, self->want,
-                    &self->scale, &self->offset, &self->power);
+  status = wcsunitse(self->have, self->want,
+                     &self->scale, &self->offset, &self->power, &err);
 
  exit:
 
@@ -166,7 +167,8 @@ PyUnits_init(
   } else if (status == 0) {
     return 0;
   } else {
-    wcslib_units_to_python_exc(status);
+    wcserr_units_to_python_exc(err);
+    free(err);
     return -1;
   }
 }

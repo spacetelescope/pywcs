@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcsfix.c,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: wcsfix.c,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
 *===========================================================================*/
 
 #include <math.h>
@@ -61,6 +61,9 @@ const char *wcsfix_errmsg[] = {
   "All of the corner pixel coordinates are invalid",
   "Could not determine reference pixel coordinate",
   "Could not determine reference pixel value"};
+
+/* Convenience macro for invoking wcserr_set(). */
+#define WCSFIX_ERRMSG(status) WCSERR_SET(status), wcsfix_errmsg[status]
 
 /*--------------------------------------------------------------------------*/
 
@@ -102,21 +105,88 @@ int wcsfix(int ctrl, const int naxis[], struct wcsprm *wcs, int stat[])
 
 /*--------------------------------------------------------------------------*/
 
+int wcsfixi(int ctrl, const int naxis[], struct wcsprm *wcs, int stat[],
+            struct wcserr info[])
+
+{
+  int status = 0;
+  struct wcserr *err;
+
+  err = info + CDFIX;
+  if ((stat[CDFIX] = cdfix(wcs)) > 0) {
+    wcserr_copy(wcs->err, &err);
+    status = 1;
+  } else {
+    wcserr_ini(err);
+  }
+
+  err = info + DATFIX;
+  if ((stat[DATFIX] = datfix(wcs)) > 0) {
+    wcserr_copy(wcs->err, &err);
+    status = 1;
+  } else {
+    wcserr_ini(err);
+  }
+
+  err = info + UNITFIX;
+  if ((stat[UNITFIX] = unitfix(ctrl, wcs)) > 0) {
+    wcserr_copy(wcs->err, &err);
+    status = 1;
+  } else {
+    wcserr_ini(err);
+  }
+
+  err = info + CELFIX;
+  if ((stat[CELFIX] = celfix(wcs)) > 0) {
+    wcserr_copy(wcs->err, &err);
+    status = 1;
+  } else {
+    wcserr_ini(err);
+  }
+
+  err = info + SPCFIX;
+  if ((stat[SPCFIX] = spcfix(wcs)) > 0) {
+    wcserr_copy(wcs->err, &err);
+    status = 1;
+  } else {
+    wcserr_ini(err);
+  }
+
+  err = info + CYLFIX;
+  wcserr_ini(err);
+  if (naxis) {
+    if ((stat[CYLFIX] = cylfix(naxis, wcs)) > 0) {
+      err = info + CYLFIX;
+      wcserr_copy(wcs->err, &err);
+      status = 1;
+    }
+  } else {
+    stat[CYLFIX] = -2;
+  }
+
+  if (wcs->err) free(wcs->err);
+  wcs->err = 0x0;
+
+  return status;
+}
+
+/*--------------------------------------------------------------------------*/
+
 int cdfix(struct wcsprm *wcs)
 
 {
-  int  i, k, naxis, status = -1;
+  int  i, k, naxis, status = FIXERR_NO_CHANGE;
   double *cd;
 
-  if (wcs == 0x0) return 1;
+  if (wcs == 0x0) return FIXERR_NULL_POINTER;
 
   if ((wcs->altlin & 1) || !(wcs->altlin & 2)) {
     /* Either we have PCi_ja or there are no CDi_ja. */
-    return -1;
+    return FIXERR_NO_CHANGE;
   }
 
   naxis = wcs->naxis;
-  status = -1;
+  status = FIXERR_NO_CHANGE;
   for (i = 0; i < naxis; i++) {
     /* Row of zeros? */
     cd = wcs->cd + i * naxis;
@@ -132,7 +202,7 @@ int cdfix(struct wcsprm *wcs)
 
     cd = wcs->cd + i * (naxis + 1);
     *cd = 1.0;
-    status = 0;
+    status = FIXERR_SUCCESS;
 
 next: ;
   }
@@ -145,17 +215,21 @@ next: ;
 int datfix(struct wcsprm *wcs)
 
 {
+  static const char *function = "datfix";
+
   char *dateobs;
   int  day, dd, hour = 0, jd, minute = 0, month, msec, n4, year;
   double mjdobs, sec = 0.0, t;
+  struct wcserr **err;
 
-  if (wcs == 0x0) return 1;
+  if (wcs == 0x0) return FIXERR_NULL_POINTER;
+  err = &(wcs->err);
 
   dateobs = wcs->dateobs;
   if (dateobs[0] == '\0') {
     if (undefined(wcs->mjdobs)) {
      /* No date information was provided. */
-      return -1;
+      return FIXERR_NO_CHANGE;
 
     } else {
       /* Calendar date from MJD. */
@@ -191,25 +265,28 @@ int datfix(struct wcsprm *wcs)
         }
       }
 
-      return 0;
+      return FIXERR_SUCCESS;
     }
 
   } else {
     if (strlen(dateobs) < 8) {
       /* Can't be a valid date. */
-      return 5;
+      return wcserr_set(WCSERR_SET(FIXERR_BAD_PARAM),
+        "Invalid parameter value: date string too short '%s'", dateobs);
     }
 
     /* Identify the date format. */
     if (dateobs[4] == '-' && dateobs[7] == '-') {
       /* Standard year-2000 form: CCYY-MM-DD[Thh:mm:ss[.sss...]] */
       if (sscanf(dateobs, "%4d-%2d-%2d", &year, &month, &day) < 3) {
-        return 5;
+        return wcserr_set(WCSERR_SET(FIXERR_BAD_PARAM),
+          "Invalid parameter value: invalid date '%s'", dateobs);
       }
 
       if (dateobs[10] == 'T') {
         if (sscanf(dateobs+11, "%2d:%2d:%lf", &hour, &minute, &sec) < 3) {
-          return 5;
+          return wcserr_set(WCSERR_SET(FIXERR_BAD_PARAM),
+            "Invalid parameter value: invalid time '%s'", dateobs+11);
         }
       } else if (dateobs[10] == ' ') {
         if (sscanf(dateobs+11, "%2d:%2d:%lf", &hour, &minute, &sec) == 3) {
@@ -224,12 +301,14 @@ int datfix(struct wcsprm *wcs)
     } else if (dateobs[4] == '/' && dateobs[7] == '/') {
       /* Also allow CCYY/MM/DD[Thh:mm:ss[.sss...]] */
       if (sscanf(dateobs, "%4d/%2d/%2d", &year, &month, &day) < 3) {
-        return 5;
+        return wcserr_set(WCSERR_SET(FIXERR_BAD_PARAM),
+          "Invalid parameter value: invalid date '%s'", dateobs);
       }
 
       if (dateobs[10] == 'T') {
         if (sscanf(dateobs+11, "%2d:%2d:%lf", &hour, &minute, &sec) < 3) {
-          return 5;
+          return wcserr_set(WCSERR_SET(FIXERR_BAD_PARAM),
+            "Invalid parameter value: invalid time '%s'", dateobs+11);
         }
       } else if (dateobs[10] == ' ') {
         if (sscanf(dateobs+11, "%2d:%2d:%lf", &hour, &minute, &sec) == 3) {
@@ -249,18 +328,21 @@ int datfix(struct wcsprm *wcs)
       if (dateobs[2] == '/' && dateobs[5] == '/') {
         /* Old format date: DD/MM/YY, also allowing DD/MM/CCYY. */
         if (sscanf(dateobs, "%2d/%2d/%4d", &day, &month, &year) < 3) {
-          return 5;
+          return wcserr_set(WCSERR_SET(FIXERR_BAD_PARAM),
+            "Invalid parameter value: invalid date '%s'", dateobs);
         }
 
       } else if (dateobs[2] == '-' && dateobs[5] == '-') {
         /* Also recognize DD-MM-YY and DD-MM-CCYY */
         if (sscanf(dateobs, "%2d-%2d-%4d", &day, &month, &year) < 3) {
-          return 5;
+          return wcserr_set(WCSERR_SET(FIXERR_BAD_PARAM),
+            "Invalid parameter value: invalid date '%s'", dateobs);
         }
 
       } else {
         /* Not a valid date format. */
-        return 5;
+        return wcserr_set(WCSERR_SET(FIXERR_BAD_PARAM),
+          "Invalid parameter value: invalid date '%s'", dateobs);
       }
 
       if (year < 100) year += 1900;
@@ -281,12 +363,13 @@ int datfix(struct wcsprm *wcs)
     } else {
       /* Check for consistency. */
       if (fabs(mjdobs - wcs->mjdobs) > 0.5) {
-        return 5;
+        return wcserr_set(WCSERR_SET(FIXERR_BAD_PARAM),
+          "Invalid parameter value: inconsistent date '%s'", dateobs);
       }
     }
   }
 
-  return 0;
+  return FIXERR_SUCCESS;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -296,10 +379,12 @@ int unitfix(int ctrl, struct wcsprm *wcs)
 {
   int  i, status = -1;
 
-  if (wcs == 0x0) return 1;
+  if (wcs == 0x0) return FIXERR_NULL_POINTER;
 
   for (i = 0; i < wcs->naxis; i++) {
-    if (wcsutrn(ctrl, wcs->cunit[i]) == 0) status = 0;
+    if (wcsutrne(ctrl, wcs->cunit[i], &(wcs->err)) == 0) {
+      status = FIXERR_SUCCESS;
+    }
   }
 
   return status;
@@ -310,14 +395,19 @@ int unitfix(int ctrl, struct wcsprm *wcs)
 int celfix(struct wcsprm *wcs)
 
 {
-  int k, status;
+  static const char *function = "celfix";
+
+  int k;
   struct celprm *wcscel = &(wcs->cel);
   struct prjprm *wcsprj = &(wcscel->prj);
+  struct wcserr **err;
+
+  if (wcs == 0x0) return FIXERR_NULL_POINTER;
+  err = &(wcs->err);
 
   /* Initialize if required. */
-  if (wcs == 0x0) return 1;
   if (wcs->flag != WCSSET) {
-    if ((status = wcsset(wcs))) return status;
+    if (wcsset(wcs)) return (wcs->err)->status;
   }
 
   /* Was an NCP or GLS projection code translated? */
@@ -332,7 +422,7 @@ int celfix(struct wcsprm *wcs)
         if (wcs->m_flag == WCSSET && wcs->pv == wcs->m_pv) {
           if (!(wcs->pv = calloc(wcs->npv+2, sizeof(struct pvcard)))) {
             wcs->pv = wcs->m_pv;
-            return 2;
+            return wcserr_set(WCSFIX_ERRMSG(FIXERR_MEMORY));
           }
 
           wcs->npvmax = wcs->npv + 2;
@@ -346,7 +436,7 @@ int celfix(struct wcsprm *wcs)
           wcs->m_pv = wcs->pv;
 
         } else {
-          return 2;
+          return wcserr_set(WCSFIX_ERRMSG(FIXERR_MEMORY));
         }
       }
 
@@ -360,7 +450,7 @@ int celfix(struct wcsprm *wcs)
       wcs->pv[wcs->npv].value = wcsprj->pv[2];
       (wcs->npv)++;
 
-      return 0;
+      return FIXERR_SUCCESS;
 
     } else if (strcmp(wcs->ctype[wcs->lat]+5, "GLS") == 0) {
       strcpy(wcs->ctype[wcs->lng]+5, "SFL");
@@ -380,7 +470,7 @@ int celfix(struct wcsprm *wcs)
           if (wcs->m_flag == WCSSET && wcs->pv == wcs->m_pv) {
             if (!(wcs->pv = calloc(wcs->npv+3, sizeof(struct pvcard)))) {
               wcs->pv = wcs->m_pv;
-              return 2;
+              return wcserr_set(WCSFIX_ERRMSG(FIXERR_MEMORY));
             }
 
             wcs->npvmax = wcs->npv + 3;
@@ -394,7 +484,7 @@ int celfix(struct wcsprm *wcs)
             wcs->m_pv = wcs->pv;
 
           } else {
-            return 2;
+            return wcserr_set(WCSFIX_ERRMSG(FIXERR_MEMORY));
           }
         }
 
@@ -415,11 +505,11 @@ int celfix(struct wcsprm *wcs)
         (wcs->npv)++;
       }
 
-      return 0;
+      return FIXERR_SUCCESS;
     }
   }
 
-  return -1;
+  return FIXERR_NO_CHANGE;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -431,9 +521,9 @@ int spcfix(struct wcsprm *wcs)
   int  i, status;
 
   /* Initialize if required. */
-  if (wcs == 0x0) return 1;
+  if (wcs == 0x0) return FIXERR_NULL_POINTER;
   if (wcs->flag != WCSSET) {
-    if ((status = wcsset(wcs))) return status;
+    if (wcsset(wcs)) return (wcs->err)->status;
   }
 
   if ((i = wcs->spec) < 0) {
@@ -446,7 +536,7 @@ int spcfix(struct wcsprm *wcs)
 
     if (i >= wcs->naxis) {
       /* No spectral axis. */
-      return -1;
+      return FIXERR_NO_CHANGE;
     }
   }
 
@@ -470,19 +560,19 @@ int cylfix(const int naxis[], struct wcsprm *wcs)
 
 {
   unsigned short icnr, indx[NMAX], ncnr;
-  int    j, k, stat[4], status;
+  int    j, k, stat[4];
   double img[4][NMAX], lat, lng, phi[4], phi0, phimax, phimin, pix[4][NMAX],
          *pixj, theta[4], theta0, world[4][NMAX], x, y;
 
   /* Initialize if required. */
-  if (wcs == 0x0) return 1;
+  if (wcs == 0x0) return FIXERR_NULL_POINTER;
   if (wcs->flag != WCSSET) {
-    if ((status = wcsset(wcs))) return status;
+    if (wcsset(wcs)) return (wcs->err)->status;
   }
 
   /* Check that we have a cylindrical projection. */
-  if (wcs->cel.prj.category != CYLINDRICAL) return -1;
-  if (wcs->naxis < 2) return -1;
+  if (wcs->cel.prj.category != CYLINDRICAL) return FIXERR_NO_CHANGE;
+  if (wcs->naxis < 2) return FIXERR_NO_CHANGE;
 
 
   /* Compute the native longitude in each corner of the image. */
@@ -492,7 +582,6 @@ int cylfix(const int naxis[], struct wcsprm *wcs)
     indx[k] = 1 << k;
   }
 
-  status = 0;
   phimin =  1.0e99;
   phimax = -1.0e99;
   for (icnr = 0; icnr < ncnr;) {
@@ -509,8 +598,7 @@ int cylfix(const int naxis[], struct wcsprm *wcs)
       }
     }
 
-    if (!(status = wcsp2s(wcs, 4, NMAX, pix[0], img[0], phi, theta, world[0],
-                          stat))) {
+    if (!wcsp2s(wcs, 4, NMAX, pix[0], img[0], phi, theta, world[0], stat)) {
       for (j = 0; j < 4; j++) {
         if (phi[j] < phimin) phimin = phi[j];
         if (phi[j] > phimax) phimax = phi[j];
@@ -518,19 +606,24 @@ int cylfix(const int naxis[], struct wcsprm *wcs)
     }
   }
 
-  if (phimin > phimax) return status;
+  if (phimin > phimax) return (wcs->err)->status;
 
   /* Any changes needed? */
-  if (phimin >= -180.0 && phimax <= 180.0) return -1;
+  if (phimin >= -180.0 && phimax <= 180.0) return FIXERR_NO_CHANGE;
 
 
   /* Compute the new reference pixel coordinates. */
   phi0 = (phimin + phimax) / 2.0;
   theta0 = 0.0;
 
-  if ((status = prjs2x(&(wcs->cel.prj), 1, 1, 1, 1, &phi0, &theta0, &x, &y,
-                       stat))) {
-    return (status == 2) ? 5 : 9;
+  if (prjs2x(&(wcs->cel.prj), 1, 1, 1, 1, &phi0, &theta0, &x, &y, stat)) {
+    wcserr_copy(((wcs->cel).prj).err, &(wcs->err));
+    if ((wcs->err)->status == PRJERR_BAD_PARAM) {
+      (wcs->err)->status = FIXERR_BAD_PARAM;
+    } else {
+      (wcs->err)->status = FIXERR_NO_REF_PIX_COORD;
+    }
+    return (wcs->err)->status;
   }
 
   for (k = 0; k < wcs->naxis; k++) {
@@ -539,15 +632,17 @@ int cylfix(const int naxis[], struct wcsprm *wcs)
   img[0][wcs->lng] = x;
   img[0][wcs->lat] = y;
 
-  if ((status = linx2p(&(wcs->lin), 1, 0, img[0], pix[0]))) {
-    return status;
+  if (linx2p(&(wcs->lin), 1, 0, img[0], pix[0])) {
+    return wcserr_copy((wcs->lin).err, &(wcs->err));
   }
 
 
   /* Compute celestial coordinates at the new reference pixel. */
-  if ((status = wcsp2s(wcs, 1, 0, pix[0], img[0], phi, theta, world[0],
-                       stat))) {
-    return status == 8 ? 10 : status;
+  if (wcsp2s(wcs, 1, 0, pix[0], img[0], phi, theta, world[0], stat)) {
+    if ((wcs->err)->status == WCSERR_BAD_PIX) {
+      (wcs->err)->status = FIXERR_NO_REF_PIX_COORD;
+    }
+    return (wcs->err)->status;
   }
 
   /* Compute native coordinates of the celestial pole. */

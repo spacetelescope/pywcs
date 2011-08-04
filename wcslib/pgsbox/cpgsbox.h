@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: cpgsbox.h,v 4.7 2011/02/07 07:03:43 cal103 Exp $
+  $Id: cpgsbox.h,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
 *=============================================================================
 *
 * cpgsbox() and cpglbox() are C wrappers for PGSBOX and PGLBOX.  Refer to the

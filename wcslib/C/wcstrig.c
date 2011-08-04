@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcstrig.c,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: wcstrig.c,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp $
 *===========================================================================*/
 
 #include <math.h>
@@ -114,7 +114,7 @@ void sincosd(double angle, double *s, double *c)
       return;
     }
   }
-  
+
 #ifdef HAVE_SINCOS
   sincos(angle*D2R, s, c);
 #else

@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: spc.h,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: spc.h,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
 *=============================================================================
 *
 * WCSLIB 4.7 - C routines that implement the spectral coordinate systems
@@ -71,16 +71,16 @@
 * A number of routines are provided to aid in analysing or synthesising sets
 * of FITS spectral axis keywords:
 *
-*   - spctyp() checks a spectral CTYPEia keyword for validity and returns
+*   - spctype() checks a spectral CTYPEia keyword for validity and returns
 *     information derived from it.
 *
-*   - Spectral keyword analysis routine spcspx() computes the values of the
+*   - Spectral keyword analysis routine spcspxe() computes the values of the
 *     X-type spectral variables for the S-type variables supplied.
 *
-*   - Spectral keyword synthesis routine, spcxps(), computes the S-type
+*   - Spectral keyword synthesis routine, spcxpse(), computes the S-type
 *     variables for the X-types supplied.
 *
-*   - Given a set of spectral keywords, a translation routine, spctrn(),
+*   - Given a set of spectral keywords, a translation routine, spctrne(),
 *     produces the corresponding set for the specified spectral CTYPEia.
 *
 *   - spcaips() translates AIPS-convention spectral keywords, CTYPEn and
@@ -193,7 +193,8 @@
 *
 * spcprt() - Print routine for the spcprm struct
 * ----------------------------------------------
-* spcprt() prints the contents of a spcprm struct.
+* spcprt() prints the contents of a spcprm struct using wcsprintf().  Mainly
+* intended for diagnostic purposes.
 *
 * Given:
 *   spc       const struct spcprm*
@@ -224,6 +225,9 @@
 *                         1: Null spcprm pointer passed.
 *                         2: Invalid spectral parameters.
 *
+*                       For returns > 1, a detailed error message is set in
+*                       spcprm::err.
+*
 *
 * spcx2s() - Transform to spectral coordinates
 * --------------------------------------------
@@ -235,13 +239,17 @@
 *
 * Given:
 *   nx        int       Vector length.
+*
 *   sx        int       Vector stride.
+*
 *   sspec     int       Vector stride.
+*
 *   x         const double[]
 *                       Intermediate world coordinates, in SI units.
 *
 * Returned:
 *   spec      double[]  Spectral coordinates, in SI units.
+*
 *   stat      int[]     Status return value status for each vector element:
 *                         0: Success.
 *                         1: Invalid value of x.
@@ -253,6 +261,9 @@
 *                         2: Invalid spectral parameters.
 *                         3: One or more of the x coordinates were invalid,
 *                            as indicated by the stat vector.
+*
+*                       For returns > 1, a detailed error message is set in
+*                       spcprm::err.
 *
 *
 * spcs2x() - Transform spectral coordinates
@@ -266,13 +277,17 @@
 *
 * Given:
 *   nspec     int       Vector length.
+*
 *   sspec     int       Vector stride.
+*
 *   sx        int       Vector stride.
+*
 *   spec      const double[]
 *                       Spectral coordinates, in SI units.
 *
 * Returned:
 *   x         double[]  Intermediate world coordinates, in SI units.
+*
 *   stat      int[]     Status return value status for each vector element:
 *                         0: Success.
 *                         1: Invalid value of spec.
@@ -285,16 +300,21 @@
 *                         4: One or more of the spec coordinates were
 *                            invalid, as indicated by the stat vector.
 *
+*                       For returns > 1, a detailed error message is set in
+*                       spcprm::err.
 *
-* spctyp() - Spectral CTYPEia keyword analysis
-* --------------------------------------------
-* spctyp() checks whether a CTYPEia keyvalue is a valid spectral axis type and
-* if so returns information derived from it relating to the associated S-, P-,
-* and X-type spectral variables (see explanation above).
+*
+* spctype() - Spectral CTYPEia keyword analysis
+* ---------------------------------------------
+* spctype() checks whether a CTYPEia keyvalue is a valid spectral axis type
+* and if so returns information derived from it relating to the associated S-,
+* P-, and X-type spectral variables (see explanation above).
 *
 * The return arguments are guaranteed not be modified if CTYPEia is not a
 * valid spectral type; zero-pointers may be specified for any that are not of
 * interest.
+*
+* A deprecated form of this function, spctyp(), lacks the wcserr** parameter.
 *
 * Given:
 *   ctype     const char[9]
@@ -306,24 +326,30 @@
 *                       copied or translated from ctype.  If a non-zero
 *                       pointer is given, the array must accomodate a null-
 *                       terminated string of length 5.
+*
 *   scode     char[]    The three-letter spectral algorithm code copied or
 *                       translated from ctype.  Logarithmic ('LOG') and
 *                       tabular ('TAB') codes are also recognized.  If a
 *                       non-zero pointer is given, the array must accomodate a
 *                       null-terminated string of length 4.
+*
 *   sname     char[]    Descriptive name of the S-type spectral variable.
 *                       If a non-zero pointer is given, the array must
 *                       accomodate a null-terminated string of length 22.
+*
 *   units     char[]    SI units of the S-type spectral variable.  If a
 *                       non-zero pointer is given, the array must accomodate a
 *                       null-terminated string of length 8.
+*
 *   ptype     char*     Character code for the P-type spectral variable
 *                       derived from ctype, one of 'F', 'W', 'A', or 'V'.
+*
 *   xtype     char*     Character code for the X-type spectral variable
 *                       derived from ctype, one of 'F', 'W', 'A', or 'V'.
 *                       Also, 'w' and 'a' are synonymous to 'W' and 'A' for
 *                       grisms in vacuo and air respectively.  Set to 'L' or
 *                       'T' for logarithmic ('LOG') and tabular ('TAB') axes.
+*
 *   restreq   int*      Multivalued flag that indicates whether rest
 *                       frequency or wavelength is required to compute
 *                       spectral variables for this CTYPEia:
@@ -340,6 +366,11 @@
 *                        spectral coordinate computations (i.e. between S- and
 *                        X-types) only if restreq%3 != 0.
 *
+*   err       struct wcserr **
+*                       For function return values > 1, this struct will
+*                       contain a detailed error message.  May be NULL if an
+*                       error message is not desired.
+*
 * Function return value:
 *             int       Status return value:
 *                         0: Success.
@@ -347,10 +378,12 @@
 *                            CTYPEia).
 *
 *
-* spcspx() - Spectral keyword analysis
+* spcspxe() - Spectral keyword analysis
 * ------------------------------------
-* spcspx() analyses the CTYPEia and CRVALia FITS spectral axis keyword values
+* spcspxe() analyses the CTYPEia and CRVALia FITS spectral axis keyword values
 * and returns information about the associated X-type spectral variable.
+*
+* A deprecated form of this function, spcspx(), lacks the wcserr** parameter.
 *
 * Given:
 *   ctypeS    const char[9]
@@ -360,8 +393,10 @@
 *                       variable in the algorithm code (i.e. the eighth
 *                       character of CTYPEia) may be set to '?' (it will not
 *                       be reset).
+*
 *   crvalS    double    Value of the S-type spectral variable at the reference
 *                       point, i.e. the CRVALia keyvalue, SI units.
+*
 *   restfrq,
 *   restwav   double    Rest frequency [Hz] and rest wavelength in vacuo [m],
 *                       only one of which need be given, the other should be
@@ -374,20 +409,29 @@
 * Returned:
 *   ptype     char*     Character code for the P-type spectral variable
 *                       derived from ctypeS, one of 'F', 'W', 'A', or 'V'.
+*
 *   xtype     char*     Character code for the X-type spectral variable
 *                       derived from ctypeS, one of 'F', 'W', 'A', or 'V'.
 *                       Also, 'w' and 'a' are synonymous to 'W' and 'A' for
 *                       grisms in vacuo and air respectively; crvalX and dXdS
 *                       (see below) will conform to these.
+*
 *   restreq   int*      Multivalued flag that indicates whether rest frequency
 *                       or wavelength is required to compute spectral
-*                       variables for this CTYPEia, as for spctyp().
+*                       variables for this CTYPEia, as for spctype().
+*
 *   crvalX    double*   Value of the X-type spectral variable at the reference
 *                       point, SI units.
+*
 *   dXdS      double*   The derivative, dX/dS, evaluated at the reference
 *                       point, SI units.  Multiply the CDELTia keyvalue by
 *                       this to get the pixel spacing in the X-type spectral
 *                       coordinate.
+*
+*   err       struct wcserr **
+*                       For function return values > 1, this struct will
+*                       contain a detailed error message.  May be NULL if an
+*                       error message is not desired.
 *
 * Function return value:
 *             int       Status return value:
@@ -395,13 +439,15 @@
 *                         2: Invalid spectral parameters.
 *
 *
-* spcxps() - Spectral keyword synthesis
+* spcxpse() - Spectral keyword synthesis
 * -------------------------------------
-* spcxps(), for the spectral axis type specified and the value provided for
+* spcxpse(), for the spectral axis type specified and the value provided for
 * the X-type spectral variable at the reference point, deduces the value of
 * the FITS spectral axis keyword CRVALia and also the derivative dS/dX which
 * may be used to compute CDELTia.  See above for an explanation of the S-,
 * P-, and X-type spectral variables.
+*
+* A deprecated form of this function, spcxps(), lacks the wcserr** parameter.
 *
 * Given:
 *   ctypeS    const char[9]
@@ -411,8 +457,10 @@
 *                       spectral variable in the algorithm code (i.e. the
 *                       eighth character of CTYPEia) may be set to '?' (it
 *                       will not be reset).
+*
 *   crvalX    double    Value of the X-type spectral variable at the reference
 *                       point (N.B. NOT the CRVALia keyvalue), SI units.
+*
 *   restfrq,
 *   restwav   double    Rest frequency [Hz] and rest wavelength in vacuo [m],
 *                       only one of which need be given, the other should be
@@ -425,20 +473,29 @@
 * Returned:
 *   ptype     char*     Character code for the P-type spectral variable
 *                       derived from ctypeS, one of 'F', 'W', 'A', or 'V'.
+*
 *   xtype     char*     Character code for the X-type spectral variable
 *                       derived from ctypeS, one of 'F', 'W', 'A', or 'V'.
 *                       Also, 'w' and 'a' are synonymous to 'W' and 'A' for
 *                       grisms; crvalX and cdeltX must conform to these.
+*
 *   restreq   int*      Multivalued flag that indicates whether rest frequency
 *                       or wavelength is required to compute spectral
-*                       variables for this CTYPEia, as for spctyp().
+*                       variables for this CTYPEia, as for spctype().
+*
 *   crvalS    double*   Value of the S-type spectral variable at the reference
 *                       point (i.e. the appropriate CRVALia keyvalue), SI
 *                       units.
+*
 *   dSdX      double*   The derivative, dS/dX, evaluated at the reference
 *                       point, SI units.  Multiply this by the pixel spacing
 *                       in the X-type spectral coordinate to get the CDELTia
 *                       keyvalue.
+*
+*   err       struct wcserr **
+*                       For function return values > 1, this struct will
+*                       contain a detailed error message.  May be NULL if an
+*                       error message is not desired.
 *
 * Function return value:
 *             int       Status return value:
@@ -446,11 +503,13 @@
 *                         2: Invalid spectral parameters.
 *
 *
-* spctrn() - Spectral keyword translation
+* spctrne() - Spectral keyword translation
 * ---------------------------------------
-* spctrn() translates a set of FITS spectral axis keywords into the
+* spctrne() translates a set of FITS spectral axis keywords into the
 * corresponding set for the specified spectral axis type.  For example, a
 * 'FREQ' axis may be translated into 'ZOPT-F2W' and vice versa.
+*
+* A deprecated form of this function, spctrn(), lacks the wcserr** parameter.
 *
 * Given:
 *   ctypeS1   const char[9]
@@ -460,10 +519,13 @@
 *                       variable in the algorithm code (i.e. the eighth
 *                       character of CTYPEia) may be set to '?' (it will not
 *                       be reset).
+*
 *   crvalS1   double    Value of the S-type spectral variable at the reference
 *                       point, i.e. the CRVALia keyvalue, SI units.
+*
 *   cdeltS1   double    Increment of the S-type spectral variable at the
 *                       reference point, SI units.
+*
 *   restfrq,
 *   restwav   double    Rest frequency [Hz] and rest wavelength in vacuo [m],
 *                       only one of which need be given, the other should be
@@ -491,9 +553,15 @@
 *   crvalS2   double*   Value of the new S-type spectral variable at the
 *                       reference point, i.e. the new CRVALia keyvalue, SI
 *                       units.
+*
 *   cdeltS2   double*   Increment of the new S-type spectral variable at the
 *                       reference point, i.e. the new CDELTia keyvalue, SI
 *                       units.
+*
+*   err       struct wcserr **
+*                       For function return values > 1, this struct will
+*                       contain a detailed error message.  May be NULL if an
+*                       error message is not desired.
 *
 * Function return value:
 *             int       Status return value:
@@ -515,6 +583,7 @@
 *   ctypeA    const char[9]
 *                       CTYPEia keyvalue (eight characters, need not be null-
 *                       terminated).
+*
 *   velref    int       AIPS-convention VELREF code.  It has the following
 *                       integer values:
 *                         1: LSR kinematic, originally described simply as
@@ -547,6 +616,7 @@
 * Returned:
 *   ctype     char[9]   Translated CTYPEia keyvalue, or a copy of ctypeA if no
 *                       translation was performed (null-filled).
+*
 *   specsys   char[9]   Doppler reference frame indicated by VELREF or else by
 *                       CTYPEn.
 *
@@ -629,6 +699,10 @@
 *   int padding
 *     (An unused variable inserted for alignment purposes only.)
 *
+*   struct wcserr *err
+*     (Returned) When an error status is returned, this structure contains
+*     detailed information about the error.
+*
 *   int (*spxX2P)(SPX_ARGS)
 *     (Returned) The first and ...
 *   int (*spxP2S)(SPX_ARGS)
@@ -656,6 +730,7 @@
 #define WCSLIB_SPC
 
 #include "spx.h"
+#include "wcserr.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -664,6 +739,15 @@ extern "C" {
 
 extern const char *spc_errmsg[];
 
+enum spc_errmsg_enum {
+  SPCERR_SUCCESS         = 0,	/* Success. */
+  SPCERR_NULL_POINTER    = 1,	/* Null spcprm pointer passed. */
+  SPCERR_BAD_SPEC_PARAMS = 2,	/* Invalid spectral parameters. */
+  SPCERR_BAD_X           = 3,	/* One or more of x coordinates were
+				   invalid. */
+  SPCERR_BAD_SPEC        = 4 	/* One or more of the spec coordinates were
+				   invalid. */
+};
 
 struct spcprm {
   /* Initialization flag (see the prologue above).                          */
@@ -699,6 +783,12 @@ struct spcprm {
   int isGrism;			/* Grism coordinates?  1: vacuum, 2: air.   */
   int padding;			/* (Dummy inserted for alignment purposes.) */
 
+  /* Error handling                                                         */
+  /*------------------------------------------------------------------------*/
+  struct wcserr *err;
+
+  /* Private                                                                */
+  /*------------------------------------------------------------------------*/
   int (*spxX2P)(SPX_ARGS);	/* Pointers to the transformation functions */
   int (*spxP2S)(SPX_ARGS);	/* in the two-step algorithm chain in the   */
 				/* pixel-to-spectral direction.             */
@@ -724,20 +814,21 @@ int spcx2s(struct spcprm *spc, int nx, int sx, int sspec,
 int spcs2x(struct spcprm *spc, int nspec, int sspec, int sx,
            const double spec[], double x[], int stat[]);
 
-int spctyp(const char ctype[], char stype[], char scode[], char sname[],
-           char units[], char *ptype, char *xtype, int *restreq);
+int spctype(const char ctype[], char stype[], char scode[], char sname[],
+            char units[], char *ptype, char *xtype, int *restreq,
+            struct wcserr **err);
 
-int spcspx(const char ctypeS[], double crvalS, double restfrq, double restwav,
-           char *ptype, char *xtype, int *restreq, double *crvalX,
-           double *dXdS);
+int spcspxe(const char ctypeS[], double crvalS, double restfrq,
+            double restwav, char *ptype, char *xtype, int *restreq,
+            double *crvalX, double *dXdS, struct wcserr **err);
 
-int spcxps(const char ctypeS[], double crvalX, double restfrq, double restwav,
-           char *ptype, char *xtype, int *restreq, double *crvalS,
-           double *dSdX);
+int spcxpse(const char ctypeS[], double crvalX, double restfrq,
+            double restwav, char *ptype, char *xtype, int *restreq,
+            double *crvalS, double *dSdX, struct wcserr **err);
 
-int spctrn(const char ctypeS1[], double crvalS1, double cdeltS1,
-           double restfrq, double restwav, char ctypeS2[], double *crvalS2,
-           double *cdeltS2);
+int spctrne(const char ctypeS1[], double crvalS1, double cdeltS1,
+            double restfrq, double restwav, char ctypeS2[], double *crvalS2,
+            double *cdeltS2, struct wcserr **err);
 
 int spcaips(const char ctypeA[], int velref, char ctype[], char specsys[]);
 
@@ -748,6 +839,18 @@ int spcaips(const char ctypeA[], int velref, char ctype[], char specsys[]);
 #define spcset_errmsg spc_errmsg
 #define spcx2s_errmsg spc_errmsg
 #define spcs2x_errmsg spc_errmsg
+
+int spctyp(const char ctype[], char stype[], char scode[], char sname[],
+           char units[], char *ptype, char *xtype, int *restreq);
+int spcspx(const char ctypeS[], double crvalS, double restfrq, double restwav,
+           char *ptype, char *xtype, int *restreq, double *crvalX,
+           double *dXdS);
+int spcxps(const char ctypeS[], double crvalX, double restfrq, double restwav,
+           char *ptype, char *xtype, int *restreq, double *crvalS,
+           double *dSdX);
+int spctrn(const char ctypeS1[], double crvalS1, double cdeltS1,
+           double restfrq, double restwav, char ctypeS2[], double *crvalS2,
+           double *cdeltS2);
 
 #ifdef __cplusplus
 }

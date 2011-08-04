@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcstrig.h,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: wcstrig.h,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp $
 *=============================================================================
 *
 * Summary of the wcstrig routines
@@ -91,6 +91,7 @@
 *
 * Returned:
 *   sin       *double   Sine of the angle.
+*
 *   cos       *double   Cosine of the angle.
 *
 * Function return value:
@@ -149,6 +150,7 @@
 *
 * Given:
 *   y         double    Cartesian y-coordinate.
+*
 *   x         double    Cartesian x-coordinate.
 *
 * Function return value:

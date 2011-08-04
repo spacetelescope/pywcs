@@ -40,6 +40,7 @@ DAMAGE.
 #include "pyutil.h"
 
 #include "wcsfix.h"
+#include "wcsprintf.h"
 #include "wcsunits.h"
 
 /*@null@*/ static inline PyObject*
@@ -277,35 +278,75 @@ wcslib_get_error_message(int status) {
 }
 
 void
-wcslib_to_python_exc(int status) {
-  if (status > 0 && status < WCS_ERRMSG_MAX) {
-    PyErr_SetString(*wcs_errexc[status], wcs_errmsg[status]);
+wcserr_to_python_exc(const struct wcserr *err) {
+  PyObject *exc;
+  if (err == NULL) {
+    PyErr_SetString(PyExc_RuntimeError, "NULL error object in wcslib");
   } else {
-    PyErr_SetString(
-        PyExc_RuntimeError,
-        "Unknown error occurred.  Something is seriously wrong.");
+    if (err->status > 0 && err->status <= WCS_ERRMSG_MAX) {
+      exc = *wcs_errexc[err->status];
+    } else {
+      exc = PyExc_RuntimeError;
+    }
+    /* This is technically not thread-safe -- make sure we have the GIL */
+    wcsprintf_set(NULL);
+    wcserr_prt(err, "");
+    PyErr_SetString(exc, wcsprintf_buf());
   }
 }
 
 void
-wcslib_fix_to_python_exc(int status) {
-  if (status > 0 && status < 11) {
-    PyErr_SetString(PyExc_ValueError, wcsfix_errmsg[status]);
+wcs_to_python_exc(const struct wcsprm *wcs) {
+  PyObject* exc;
+  const struct wcserr *err = wcs->err;
+  if (err == NULL) {
+    PyErr_SetString(PyExc_RuntimeError, "NULL error object in wcslib");
   } else {
-    PyErr_SetString(
-        PyExc_RuntimeError,
-        "Unknown error occurred.  Something is seriously wrong.");
+    if (err->status > 0 && err->status < WCS_ERRMSG_MAX) {
+      exc = *wcs_errexc[err->status];
+    } else {
+      exc = PyExc_RuntimeError;
+    }
+    /* This is technically not thread-safe -- make sure we have the GIL */
+    wcsprintf_set(NULL);
+    wcsperr(wcs, "");
+    PyErr_SetString(exc, wcsprintf_buf());
   }
 }
 
 void
-wcslib_units_to_python_exc(int status) {
-  if (status > 0 && status < 13) {
-    PyErr_SetString(PyExc_ValueError, wcsunits_errmsg[status]);
+wcserr_fix_to_python_exc(const struct wcserr *err) {
+  PyObject *exc;
+  if (err == NULL) {
+    PyErr_SetString(PyExc_RuntimeError, "NULL error object in wcslib");
   } else {
-    PyErr_SetString(
-        PyExc_RuntimeError,
-        "Unknown error occurred.  Something is seriously wrong.");
+    if (err->status > 0 && err->status <= FIXERR_NO_REF_PIX_VAL) {
+      exc = PyExc_ValueError;
+    } else {
+      exc = PyExc_RuntimeError;
+    }
+    /* This is technically not thread-safe -- make sure we have the GIL */
+    wcsprintf_set(NULL);
+    wcserr_prt(err, "");
+    PyErr_SetString(exc, wcsprintf_buf());
+  }
+}
+
+void
+wcserr_units_to_python_exc(const struct wcserr *err) {
+  PyObject *exc;
+  if (err == NULL) {
+    PyErr_SetString(PyExc_RuntimeError, "NULL error object in wcslib");
+  } else {
+    if (err->status > 0 && err->status <= UNITSERR_UNSAFE_TRANS) {
+      exc = PyExc_ValueError;
+    } else {
+      exc = PyExc_RuntimeError;
+    }
+    /* This is technically not thread-safe -- make sure we have the GIL */
+    wcsprintf_set(NULL);
+    wcserr_prt(err, "");
+    PyErr_SetString(exc, wcsprintf_buf());
   }
 }
 

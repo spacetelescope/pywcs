@@ -96,6 +96,7 @@ WCSFILES = [ # List of wcslib files to compile
     'spx.c',
     'tab.c',
     'wcs.c',
+    'wcserr.c',
     'wcsfix.c',
     'wcshdr.c',
     'wcsprintf.c',

@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: prj_f.c,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: prj_f.c,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
 *===========================================================================*/
 
 #include <string.h>
@@ -66,8 +66,9 @@
 #define PRJ_DIVERGENT 207
 #define PRJ_X0        208
 #define PRJ_Y0        209
-#define PRJ_W         210
-#define PRJ_N         211
+#define PRJ_ERR       210
+#define PRJ_W         211
+#define PRJ_N         212
 
 /*--------------------------------------------------------------------------*/
 
@@ -210,6 +211,9 @@ int prjget_(const int *prj, const int *what, void *value)
     break;
   case PRJ_Y0:
     *dvalp = prjp->y0;
+    break;
+  case PRJ_ERR:
+    *(void **)value = prjp->err;
     break;
   case PRJ_W:
     for (m = 0; m < 10; m++) {

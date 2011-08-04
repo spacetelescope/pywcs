@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: spx.h,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: spx.h,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
 *=============================================================================
 *
 * WCSLIB 4.7 - C routines that implement the spectral coordinate systems
@@ -128,7 +128,9 @@
 *                       The type of spectral variable given by spec, FREQ,
 *                       AFRQ, ENER, WAVN, VRAD, WAVE, VOPT, ZOPT, AWAV, VELO,
 *                       or BETA (case sensitive).
+*
 *   spec      double    The spectral variable given, in SI units.
+*
 *   restfrq,
 *   restwav   double    Rest frequency [Hz] or rest wavelength in vacuo [m],
 *                       only one of which need be given.  The other should be
@@ -151,6 +153,8 @@
 *                         2: Invalid spectral parameters.
 *                         3: Invalid spectral variable.
 *
+*                       For returns > 1, a detailed error message is set in
+*                       spxprm::err.
 *
 * freqafrq(), afrqfreq(), freqener(), enerfreq(), freqwavn(), wavnfreq(),
 * freqwave(), wavefreq(), freqawav(), awavfreq(), waveawav(), awavwave(),
@@ -165,14 +169,18 @@
 *
 * Given:
 *   param     double    Ignored.
+*
 *   nspec     int       Vector length.
+*
 *   instep,
 *   outstep   int       Vector strides.
+*
 *   inspec    const double[]
 *                       Input spectral variables, in SI units.
 *
 * Returned:
 *   outspec   double[]  Output spectral variables, in SI units.
+*
 *   stat      int[]     Status return value for each vector element:
 *                         0: Success.
 *                         1: Invalid value of inspec.
@@ -196,14 +204,18 @@
 *
 * Given:
 *   param     double    Rest frequency [Hz].
+*
 *   nspec     int       Vector length.
+*
 *   instep,
 *   outstep   int       Vector strides.
+*
 *   inspec    const double[]
 *                       Input spectral variables, in SI units.
 *
 * Returned:
 *   outspec   double[]  Output spectral variables, in SI units.
+*
 *   stat      int[]     Status return value for each vector element:
 *                         0: Success.
 *                         1: Invalid value of inspec.
@@ -227,14 +239,18 @@
 *
 * Given:
 *   param     double    Rest wavelength in vacuo [m].
+*
 *   nspec     int       Vector length.
+*
 *   instep,
 *   outstep   int       Vector strides.
+*
 *   inspec    const double[]
 *                       Input spectral variables, in SI units.
 *
 * Returned:
 *   outspec   double[]  Output spectral variables, in SI units.
+*
 *   stat      int[]     Status return value for each vector element:
 *                         0: Success.
 *                         1: Invalid value of inspec.
@@ -389,6 +405,10 @@
 *   double dbetavelo
 *     (Returned) ... vice versa [s/m] (constant, = 1/c, always available).
 *
+*   struct wcserr *err
+*     (Returned) When an error status is returned, this struct contains
+*     detailed information about the error.
+*
 *
 * Global variable: const char *spx_errmsg[] - Status return messages
 * ------------------------------------------------------------------
@@ -403,9 +423,18 @@
 extern "C" {
 #endif
 
+#include "wcserr.h"
 
 extern const char *spx_errmsg[];
 
+enum spx_errmsg {
+  SPXERR_SUCCESS          = 0,	/* Success. */
+  SPXERR_NULL_POINTER     = 1,	/* Null spxprm pointer passed. */
+  SPXERR_BAD_SPEC_PARAMS  = 2,	/* Invalid spectral parameters. */
+  SPXERR_BAD_SPEC_VAR     = 3,	/* Invalid spectral variable. */
+  SPXERR_BAD_INSPEC_COORD = 4 	/* One or more of the inspec coordinates were
+				   invalid. */
+};
 
 struct spxprm {
   double restfrq, restwav;	/* Rest frequency [Hz] and wavelength [m].  */
@@ -442,6 +471,10 @@ struct spxprm {
          dwavevelo, dvelowave,	/* wavetype && velotype.                    */
          dawavvelo, dveloawav,	/* wavetype && velotype.                    */
          dvelobeta, dbetavelo;	/* Constant, always available.              */
+
+  /* Error handling                                                         */
+  /*------------------------------------------------------------------------*/
+  struct wcserr *err;
 };
 
 /* Size of the spxprm struct in int units, used by the Fortran wrappers. */
@@ -454,7 +487,7 @@ int specx(const char *type, double spec, double restfrq, double restwav,
 
 /* For use in declaring function prototypes, e.g. in spcprm. */
 #define SPX_ARGS double param, int nspec, int instep, int outstep, \
-                 const double inspec[], double outspec[], int stat[]
+    const double inspec[], double outspec[], int stat[]
 
 int freqafrq(SPX_ARGS);
 int afrqfreq(SPX_ARGS);

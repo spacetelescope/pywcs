@@ -32,7 +32,7 @@
 #
 # Author: Mark Calabretta, Australia Telescope National Facility
 # http://www.atnf.csiro.au/~mcalabre/index.html
-# $Id: GNUmakefile,v 4.7 2011/02/07 07:03:43 cal103 Exp $
+# $Id: GNUmakefile,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
 #-----------------------------------------------------------------------------
 # Get configure settings.
 include makedefs

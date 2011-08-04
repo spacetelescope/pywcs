@@ -28,12 +28,22 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: log.inc,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+* $Id: log.inc,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
 *=======================================================================
 
 *     Functions.
       EXTERNAL  LOGS2X, LOGX2S
       INTEGER   LOGS2X, LOGX2S
+
+*     Error codes and messages.
+      INTEGER   LOGERR_BAD_LOG_REF_VAL, LOGERR_BAD_WORLD, LOGERR_BAD_X,
+     :          LOGERR_NULL_POINTER, LOGERR_SUCCESS
+
+      PARAMETER (LOGERR_SUCCESS         = 0)
+      PARAMETER (LOGERR_NULL_POINTER    = 1)
+      PARAMETER (LOGERR_BAD_LOG_REF_VAL = 2)
+      PARAMETER (LOGERR_BAD_X           = 3)
+      PARAMETER (LOGERR_BAD_WORLD       = 4)
 
       CHARACTER LOG_ERRMSG(0:3)*80
       COMMON /LOG_DATA/ LOG_ERRMSG

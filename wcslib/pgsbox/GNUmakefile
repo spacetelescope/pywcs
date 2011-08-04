@@ -31,7 +31,7 @@
 #
 # Author: Mark Calabretta, Australia Telescope National Facility
 # http://www.atnf.csiro.au/~mcalabre/index.html
-# $Id: GNUmakefile,v 4.7 2011/02/07 07:03:43 cal103 Exp $
+# $Id: GNUmakefile,v 4.7.1.3 2011/06/27 00:07:38 cal103 Exp cal103 $
 #-----------------------------------------------------------------------------
 # Get configure settings.
 include ../makedefs
@@ -126,7 +126,7 @@ install : build
 	   $(INSTALL) -m 644 $(PGSBOXLIB) $(LIBDIR)
 	   $(RANLIB) $(LIBDIR)/$(PGSBOXLIB)
 	   $(RM) $(LIBDIR)/libpgsbox.a
-	   $(LN_S) $(LIBDIR)/$(PGSBOXLIB) $(LIBDIR)/libpgsbox.a
+	   $(LN_S) $(PGSBOXLIB) $(LIBDIR)/libpgsbox.a
 	-  if [ "$(SHRLIB)" != "" ] ; then \
 	     $(INSTALL) -m 644 $(SHRLIB) $(LIBDIR) ; \
 	     if [ "$(SHRLN)" != "" ] ; then \
@@ -193,7 +193,7 @@ GNUmakefile : ../makedefs ;
 ../makedefs ../wcsconfig_f77.h : makedefs.in wcsconfig_f77.h.in \
     ../config.status
 	-@ $(RM) ../wcsconfig_f77.h
-	   cd .. && config.status
+	   cd .. && ./config.status
 
 show ::
 	-@ echo 'For building libpgsbox...'

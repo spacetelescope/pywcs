@@ -40,6 +40,8 @@ DAMAGE.
 #include <stdlib.h>
 #include <string.h>
 
+#define SIP_ERRMSG(status) WCSERR_SET(status)
+
 void
 sip_clear(
     sip_t* sip) {
@@ -57,6 +59,7 @@ sip_clear(
   sip->crpix[0] = 0.0;
   sip->crpix[1] = 0.0;
   sip->scratch = NULL;
+  sip->err = NULL;
 }
 
 int
@@ -68,28 +71,41 @@ sip_init(
     const unsigned int bp_order, const double* bp,
     const double* crpix /* [2] */) {
 
-  unsigned int a_size       = 0;
-  unsigned int b_size       = 0;
-  unsigned int ap_size      = 0;
-  unsigned int bp_size      = 0;
-  unsigned int scratch_size = 0;
-  int          status       = 0;
-
+  unsigned int       a_size       = 0;
+  unsigned int       b_size       = 0;
+  unsigned int       ap_size      = 0;
+  unsigned int       bp_size      = 0;
+  unsigned int       scratch_size = 0;
+  int                status       = 0;
+  struct wcserr**    err          = NULL;
+  static const char *function     = "sip_init";
+  
   assert(sip != NULL);
   sip_clear(sip);
-
+  err = &(sip->err);
+  
   /* We we have one of A/B or AP/BP, we must have both. */
-  if (((a == NULL) ^ (b == NULL)) ||
-      ((ap == NULL) ^ (bp == NULL))) {
-    return 6;
+  if ((a == NULL) ^ (b == NULL)) {
+    return wcserr_set(
+      SIP_ERRMSG(WCSERR_BAD_COORD_TRANS),
+      "Both A and B SIP transform must be defined");
   }
 
+  if ((ap == NULL) ^ (bp == NULL)) {
+    return wcserr_set(
+      SIP_ERRMSG(WCSERR_BAD_COORD_TRANS),
+      "Both AP and BP SIP transform must be defined");
+  }
+
+      
   if (a != NULL) {
     sip->a_order = a_order;
     a_size = (a_order + 1) * (a_order + 1) * sizeof(double);
     sip->a = malloc(a_size);
     if (sip->a == NULL) {
-      status = 2;
+      sip_free(sip);
+      status = wcserr_set(
+        SIP_ERRMSG(WCSERR_MEMORY), "Memory allocation failed");
       goto exit;
     }
     memcpy(sip->a, a, a_size);
@@ -101,7 +117,9 @@ sip_init(
     b_size = (b_order + 1) * (b_order + 1) * sizeof(double);
     sip->b = malloc(b_size);
     if (sip->b == NULL) {
-      status = 2;
+      sip_free(sip);
+      status = wcserr_set(
+        SIP_ERRMSG(WCSERR_MEMORY), "Memory allocation failed");
       goto exit;
     }
     memcpy(sip->b, b, b_size);
@@ -115,7 +133,9 @@ sip_init(
     ap_size = (ap_order + 1) * (ap_order + 1) * sizeof(double);
     sip->ap = malloc(ap_size);
     if (sip->ap == NULL) {
-      status = 2;
+      sip_free(sip);
+      status = wcserr_set(
+        SIP_ERRMSG(WCSERR_MEMORY), "Memory allocation failed");
       goto exit;
     }
     memcpy(sip->ap, ap, ap_size);
@@ -127,7 +147,9 @@ sip_init(
     bp_size = (bp_order + 1) * (bp_order + 1) * sizeof(double);
     sip->bp = malloc(bp_size);
     if (sip->bp == NULL) {
-      status = 2;
+      sip_free(sip);
+      status = wcserr_set(
+        SIP_ERRMSG(WCSERR_MEMORY), "Memory allocation failed");
       goto exit;
     }
     memcpy(sip->bp, bp, bp_size);
@@ -140,7 +162,9 @@ sip_init(
     scratch_size = (scratch_size + 1) * sizeof(double);
     sip->scratch = malloc(scratch_size);
     if (sip->scratch == NULL) {
-      status = 2;
+      sip_free(sip);
+      status = wcserr_set(
+        SIP_ERRMSG(WCSERR_MEMORY), "Memory allocation failed");
       goto exit;
     }
   }
@@ -149,9 +173,6 @@ sip_init(
   sip->crpix[1] = crpix[1];
 
  exit:
-  if (status != 0) {
-    sip_free(sip);
-  }
 
   return status;
 }
@@ -168,6 +189,8 @@ sip_free(sip_t* sip) {
   sip->bp = NULL;
   free(sip->scratch);
   sip->scratch = NULL;
+  free(sip->err);
+  sip->err = NULL;
 }
 
 static inline double

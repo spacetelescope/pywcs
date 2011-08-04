@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcsware.c,v 4.7 2011/02/07 07:03:43 cal103 Exp $
+  $Id: wcsware.c,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
 *=============================================================================
 * wcsware extracts the WCS keywords for an image from the specified FITS file,
 * constructs wcsprm structs for each coordinate representation found and

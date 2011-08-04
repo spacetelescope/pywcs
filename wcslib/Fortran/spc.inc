@@ -28,21 +28,25 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: spc.inc,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+* $Id: spc.inc,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
 *=======================================================================
 
 *     Functions.
       EXTERNAL  SPCAIPS, SPCGET, SPCGTC, SPCGTD, SPCGTI, SPCINI, SPCPRT,
-     :          SPCPTC, SPCPTD, SPCPTI, SPCPUT, SPCS2X, SPCSET, SPCSPX,
-     :          SPCTRN, SPCTYP, SPCX2S, SPCXPS
+     :          SPCPTC, SPCPTD, SPCPTI, SPCPUT, SPCS2X, SPCSET, SPCSPXE,
+     :          SPCTRNE, SPCTYPE, SPCX2S, SPCXPSE
       INTEGER   SPCAIPS, SPCGET, SPCGTC, SPCGTD, SPCGTI, SPCINI, SPCPRT,
-     :          SPCPTC, SPCPTD, SPCPTI, SPCPUT, SPCS2X, SPCSET, SPCSPX,
-     :          SPCTRN, SPCTYP, SPCX2S, SPCXPS
+     :          SPCPTC, SPCPTD, SPCPTI, SPCPUT, SPCS2X, SPCSET, SPCSPXE,
+     :          SPCTRNE, SPCTYPE, SPCX2S, SPCXPSE
+
+*     Deprecated functions.
+      EXTERNAL  SPCSPX, SPCTRN, SPCTYP, SPCXPS
+      INTEGER   SPCSPX, SPCTRN, SPCTYP, SPCXPS
 
 *     Length of the SPCPRM data structure (INTEGER array) on 64-bit
-*     machines.  Only needs to be 42 on 32-bit machines.
+*     machines.  Only needs to be 43 on 32-bit machines.
       INTEGER   SPCLEN
-      PARAMETER (SPCLEN = 46)
+      PARAMETER (SPCLEN = 48)
 
 *     Codes for SPC data structure elements used by SPCPUT and SPCGET.
       INTEGER   SPC_CODE, SPC_CRVAL, SPC_FLAG, SPC_PV, SPC_RESTFRQ,
@@ -57,10 +61,21 @@
       PARAMETER (SPC_PV      = 106)
 
 *     Codes for SPC data structure elements used by SPCGET (only).
-      INTEGER   SPC_ISGRISM, SPC_W
+      INTEGER   SPC_ERR, SPC_ISGRISM, SPC_W
 
       PARAMETER (SPC_W       = 200)
       PARAMETER (SPC_ISGRISM = 201)
+      PARAMETER (SPC_ERR     = 202)
+
+*     Error codes and messages.
+      INTEGER   SPCERR_BAD_SPEC, SPCERR_BAD_SPEC_PARAMS, SPCERR_BAD_X,
+     :          SPCERR_NULL_POINTER, SPCERR_SUCCESS
+
+      PARAMETER (SPCERR_SUCCESS         = 0)
+      PARAMETER (SPCERR_NULL_POINTER    = 1)
+      PARAMETER (SPCERR_BAD_SPEC_PARAMS = 2)
+      PARAMETER (SPCERR_BAD_X           = 3)
+      PARAMETER (SPCERR_BAD_SPEC        = 4)
 
       CHARACTER SPC_ERRMSG(0:4)*80
       COMMON /SPC_DATA/ SPC_ERRMSG

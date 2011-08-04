@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: lin_f.c,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: lin_f.c,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
 *===========================================================================*/
 
 #include <lin.h>
@@ -56,9 +56,10 @@
 #define LIN_PC     103
 #define LIN_CDELT  104
 
-#define LIN_UNITY  200
-#define LIN_PIXIMG 201
-#define LIN_IMGPIX 202
+#define LIN_PIXIMG 200
+#define LIN_IMGPIX 201
+#define LIN_UNITY  202
+#define LIN_ERR    203
 
 /*--------------------------------------------------------------------------*/
 
@@ -183,9 +184,6 @@ int linget_(const int *lin, const int *what, void *value)
       *(dvalp++) = linp->cdelt[i];
     }
     break;
-  case LIN_UNITY:
-    *ivalp = linp->unity;
-    break;
   case LIN_PIXIMG:
     /* C row-major to FORTRAN column-major. */
     for (j = 0; j < naxis; j++) {
@@ -205,6 +203,12 @@ int linget_(const int *lin, const int *what, void *value)
         dlinp += naxis;
       }
     }
+    break;
+  case LIN_UNITY:
+    *ivalp = linp->unity;
+    break;
+  case LIN_ERR:
+    *(void **)value = linp->err;
     break;
   default:
     return 1;

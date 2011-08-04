@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: fitshdr.inc,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+* $Id: fitshdr.inc,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
 *=======================================================================
 
 *     Functions.
@@ -38,7 +38,7 @@
      :          KEYIDPTC, KEYIDPUT
 
 *     Length of FITSKEY and FITSKEYID data structures (INTEGER arrays)
-*     on 64-bit machines.  KEYLEN only needs to be 38 on 32-bit machines.
+*     on 64-bit machines.  These are the same for 32-bit machines.
       INTEGER   KEYLEN, KEYIDLEN
       PARAMETER (KEYLEN = 48)
       PARAMETER (KEYIDLEN = 6)

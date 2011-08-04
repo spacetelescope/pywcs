@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: doxextr.l,v 4.7 2011/02/07 07:03:43 cal103 Exp $
+  $Id: doxextr.l,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
 *=============================================================================
 *
 * doxextr.l is a Flex description file containing a lexical scanner definition

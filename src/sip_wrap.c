@@ -164,7 +164,7 @@ PySip_init(
     /* Exception already set */
     return -1;
   } else {
-    wcslib_to_python_exc(status);
+    wcserr_to_python_exc(self->x.err);
     return -1;
   }
 }
@@ -234,7 +234,7 @@ PySip_pix2foc(
       /* Exception already set */
       return NULL;
     } else {
-      wcslib_to_python_exc(status);
+      wcserr_to_python_exc(self->x.err);
       return NULL;
     }
   }
@@ -305,7 +305,7 @@ PySip_foc2pix(
       /* Exception already set */
       return NULL;
     } else {
-      wcslib_to_python_exc(status);
+      wcserr_to_python_exc(self->x.err);
       return NULL;
     }
   }

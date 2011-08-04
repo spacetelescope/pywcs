@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: twcsmix.c,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: twcsmix.c,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
 *=============================================================================
 *
 * twcsmix tests wcsmix() for closure on the 1 degree celestial graticule for

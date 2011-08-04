@@ -27,7 +27,7 @@
 #
 # Author: Mark Calabretta, Australia Telescope National Facility
 # http://www.atnf.csiro.au/~mcalabre/index.html
-# $Id: pih.keyrec,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+# $Id: pih.keyrec,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
 #-----------------------------------------------------------------------------
 # FITS header keyrecords used for testing by tpih1, tpih2 and tfitshdr.
 #

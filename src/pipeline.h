@@ -46,6 +46,7 @@ typedef struct {
   /*@shared@*/ /*@null@*/ sip_t*         sip;
   distortion_lookup_t*                   cpdis[2];
   /*@shared@*/ /*@null@*/ struct wcsprm* wcs;
+  struct wcserr*                         err;
 } pipeline_t;
 
 /**
@@ -98,7 +99,7 @@ coordinates, in the following order:
 */
 int
 pipeline_all_pixel2world(
-    const pipeline_t* pipeline,
+    pipeline_t* pipeline,
     const unsigned int ncoord,
     const unsigned int nelem,
     const double* const pixcrd /* [ncoord][nelem] */,
@@ -126,7 +127,7 @@ coordinates to focal plane coordinates.
 */
 int
 pipeline_pix2foc(
-    const pipeline_t* pipeline,
+    pipeline_t* pipeline,
     const unsigned int ncoord,
     const unsigned int nelem,
     const double* const pixcrd /* [ncoord][nelem] */,

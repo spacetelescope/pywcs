@@ -28,11 +28,12 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: spc_f.c,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: spc_f.c,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
 *===========================================================================*/
 
 #include <string.h>
 
+#include <wcserr.h>
 #include <wcsutil.h>
 #include <spc.h>
 
@@ -45,10 +46,10 @@
 #define spcset_ F77_FUNC(spcset, SPCSET)
 #define spcx2s_ F77_FUNC(spcx2s, SPCX2S)
 #define spcs2x_ F77_FUNC(spcs2x, SPCS2X)
-#define spctyp_ F77_FUNC(spctyp, SPCTYP)
-#define spcspx_ F77_FUNC(spcspx, SPCSPX)
-#define spcxps_ F77_FUNC(spcxps, SPCXPS)
-#define spctrn_ F77_FUNC(spctrn, SPCTRN)
+#define spctype_ F77_FUNC(spctype, SPCTYPE)
+#define spcspxe_ F77_FUNC(spcspxe, SPCSPXE)
+#define spcxpse_ F77_FUNC(spcxpse, SPCXPSE)
+#define spctrne_ F77_FUNC(spctrne, SPCTRNE)
 #define spcaips_ F77_FUNC(spcaips, SPCAIPS)
 
 #define spcptc_ F77_FUNC(spcptc, SPCPTC)
@@ -57,6 +58,12 @@
 #define spcgtc_ F77_FUNC(spcgtc, SPCGTC)
 #define spcgtd_ F77_FUNC(spcgtd, SPCGTD)
 #define spcgti_ F77_FUNC(spcgti, SPCGTI)
+
+/* Deprecated. */
+#define spctyp_ F77_FUNC(spctyp, SPCTYP)
+#define spcspx_ F77_FUNC(spcspx, SPCSPX)
+#define spcxps_ F77_FUNC(spcxps, SPCXPS)
+#define spctrn_ F77_FUNC(spctrn, SPCTRN)
 
 #define SPC_FLAG    100
 #define SPC_TYPE    101
@@ -68,6 +75,7 @@
 
 #define SPC_W       200
 #define SPC_ISGRISM 201
+#define SPC_ERR     202
 
 /*--------------------------------------------------------------------------*/
 
@@ -190,6 +198,9 @@ int spcget_(const int *spc, const int *what, void *value)
   case SPC_ISGRISM:
     *ivalp = spcp->isGrism;
     break;
+  case SPC_ERR:
+    *(void **)value = spcp->err;
+    break;
   default:
     return 1;
   }
@@ -260,7 +271,7 @@ int spcs2x_(
 
 /*--------------------------------------------------------------------------*/
 
-int spctyp_(
+int spctype_(
   const char ctypei[8],
   char stype[4],
   char scode[3],
@@ -268,7 +279,8 @@ int spctyp_(
   char units[7],
   char ptype[1],
   char xtype[1],
-  int *restreq)
+  int *restreq,
+  iptr err)
 
 {
   char ctypei_[9], scode_[4], sname_[22], stype_[5], units_[8];
@@ -277,8 +289,8 @@ int spctyp_(
   strncpy(ctypei_, ctypei, 8);
   ctypei_[8] = '\0';
 
-  status = spctyp(ctypei_, stype_, scode_, sname_, units_, ptype, xtype,
-                  restreq);
+  status = spctype(ctypei_, stype_, scode_, sname_, units_, ptype, xtype,
+                   restreq, (struct wcserr **)err);
 
   wcsutil_blank_fill( 5, stype_);
   wcsutil_blank_fill( 4, scode_);
@@ -293,7 +305,47 @@ int spctyp_(
   return status;
 }
 
+/* : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :  */
+
+int spctyp_(
+  const char ctypei[8],
+  char stype[4],
+  char scode[3],
+  char sname[21],
+  char units[7],
+  char ptype[1],
+  char xtype[1],
+  int *restreq)
+
+{
+  return spctype_(ctypei, stype, scode, sname, units, ptype, xtype, restreq,
+                  0x0);
+}
+
 /*--------------------------------------------------------------------------*/
+
+int spcspxe_(
+  const char ctypeS[8],
+  const double *crvalS,
+  const double *restfrq,
+  const double *restwav,
+  char ptype[1],
+  char xtype[1],
+  int *restreq,
+  double *crvalX,
+  double *dXdS,
+  iptr err)
+
+{
+  char ctypeS_[9];
+  strncpy(ctypeS_, ctypeS, 8);
+  ctypeS_[8] = '\0';
+
+  return spcspxe(ctypeS_, *crvalS, *restfrq, *restwav, ptype, xtype, restreq,
+                 crvalX, dXdS, (struct wcserr **)err);
+}
+
+/* : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :  */
 
 int spcspx_(
   const char ctypeS[8],
@@ -307,15 +359,34 @@ int spcspx_(
   double *dXdS)
 
 {
+  return spcspxe_(ctypeS, crvalS, restfrq, restwav, ptype, xtype, restreq,
+                  crvalX, dXdS, 0x0);
+}
+
+/*--------------------------------------------------------------------------*/
+
+int spcxpse_(
+  const char ctypeS[8],
+  const double *crvalX,
+  const double *restfrq,
+  const double *restwav,
+  char ptype[1],
+  char xtype[1],
+  int *restreq,
+  double *crvalS,
+  double *dSdX,
+  iptr err)
+
+{
   char ctypeS_[9];
   strncpy(ctypeS_, ctypeS, 8);
   ctypeS_[8] = '\0';
 
-  return spcspx(ctypeS_, *crvalS, *restfrq, *restwav, ptype, xtype, restreq,
-                crvalX, dXdS);
+  return spcxpse(ctypeS_, *crvalX, *restfrq, *restwav, ptype, xtype, restreq,
+                 crvalS, dSdX, (struct wcserr **)err);
 }
 
-/*--------------------------------------------------------------------------*/
+/* : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :  */
 
 int spcxps_(
   const char ctypeS[8],
@@ -329,15 +400,40 @@ int spcxps_(
   double *dSdX)
 
 {
-  char ctypeS_[9];
-  strncpy(ctypeS_, ctypeS, 8);
-  ctypeS_[8] = '\0';
-
-  return spcxps(ctypeS_, *crvalX, *restfrq, *restwav, ptype, xtype, restreq,
-                crvalS, dSdX);
+  return spcxpse_(ctypeS, crvalX, restfrq, restwav, ptype, xtype, restreq,
+                  crvalS, dSdX, 0x0);
 }
 
 /*--------------------------------------------------------------------------*/
+
+int spctrne_(
+  const char ctypeS1[8],
+  const double *crvalS1,
+  const double *cdeltS1,
+  const double *restfrq,
+  const double *restwav,
+  char   ctypeS2[8],
+  double *crvalS2,
+  double *cdeltS2,
+  iptr err)
+
+{
+  int status;
+  char ctypeS1_[9], ctypeS2_[9];
+
+  strncpy(ctypeS1_, ctypeS1, 8);
+  ctypeS1_[8] = '\0';
+
+  status = spctrne(ctypeS1_, *crvalS1, *cdeltS1, *restfrq, *restwav,
+                   ctypeS2_,  crvalS2,  cdeltS2, (struct wcserr **)err);
+
+  wcsutil_blank_fill(9, ctypeS2_);
+  strncpy(ctypeS2, ctypeS2_, 8);
+
+  return status;
+}
+
+/* : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :  */
 
 int spctrn_(
   const char ctypeS1[8],
@@ -350,19 +446,8 @@ int spctrn_(
   double *cdeltS2)
 
 {
-  int status;
-  char ctypeS1_[9], ctypeS2_[9];
-
-  strncpy(ctypeS1_, ctypeS1, 8);
-  ctypeS1_[8] = '\0';
-
-  status = spctrn(ctypeS1_, *crvalS1, *cdeltS1, *restfrq, *restwav,
-                  ctypeS2_,  crvalS2,  cdeltS2);
-
-  wcsutil_blank_fill(9, ctypeS2_);
-  strncpy(ctypeS2, ctypeS2_, 8);
-
-  return status;
+  return spctrne_(ctypeS1, crvalS1, cdeltS1, restfrq, restwav, ctypeS2,
+                  crvalS2, cdeltS2, 0x0);
 }
 
 /*--------------------------------------------------------------------------*/

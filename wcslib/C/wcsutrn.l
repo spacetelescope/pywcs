@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcsutrn.l,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: wcsutrn.l,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
 *=============================================================================
 *
 * wcsutrn.l is a Flex description file containing the definition of a lexical
@@ -61,9 +61,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "wcserr.h"
 #include "wcsunits.h"
 
-#define YY_DECL int wcsutrn(int ctrl, char unitstr[])
+#define YY_DECL int wcsutrne(int ctrl, char unitstr[], struct wcserr **err)
 
 /* Used in preempting the call to exit() by yy_fatal_error(). */
 jmp_buf wcsutrn_abort_jmp_env;
@@ -72,6 +73,8 @@ jmp_buf wcsutrn_abort_jmp_env;
 %}
 
 %%
+	static const char *function = "wcsutrne";
+
 	char orig[80], subs[80];
 	int bracket = 0;
 	int unsafe  = 0;
@@ -87,7 +90,8 @@ jmp_buf wcsutrn_abort_jmp_env;
 	
 	/* Return here via longjmp() invoked by yy_fatal_error(). */
 	if (setjmp(wcsutrn_abort_jmp_env)) {
-	  return 9;
+	  return wcserr_set(WCSERR_SET(UNITSERR_PARSER_ERROR),
+	    "Internal units translator error parsing '%s'", unitstr);
 	}
 	
 	BEGIN(INITIAL);
@@ -327,7 +331,11 @@ years?|YR|YEARS? {
 	  }
 	
 	  yylex_destroy();
-	  return unsafe ? 12 : status;
+	  if (unsafe) {
+	    return wcserr_set(WCSERR_SET(UNITSERR_UNSAFE_TRANS),
+	      "Unsafe unit translation in '%s'", unitstr);
+	  }
+	  return status;
 	}
 
 %%

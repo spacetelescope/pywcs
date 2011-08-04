@@ -28,21 +28,23 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: wcs.inc,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+* $Id: wcs.inc,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
 *=======================================================================
 
 *     Functions.
       EXTERNAL  WCSCOPY, WCSFREE, WCSGET, WCSGTC, WCSGTD, WCSGTI,
-     :          WCSINI, WCSMIX, WCSNPS, WCSNPV, WCSP2S, WCSPRT, WCSSPTR,
-     :          WCSPTC, WCSPTD, WCSPTI, WCSPUT, WCSS2P, WCSSET, WCSSUB
+     :          WCSINI, WCSMIX, WCSNPS, WCSNPV, WCSP2S, WCSPERR, WCSPRT,
+     :          WCSSPTR, WCSPTC, WCSPTD, WCSPTI, WCSPUT, WCSS2P, WCSSET,
+     :          WCSSUB
       INTEGER   WCSCOPY, WCSFREE, WCSGET, WCSGTC, WCSGTD, WCSGTI,
-     :          WCSINI, WCSMIX, WCSNPS, WCSNPV, WCSP2S, WCSPRT, WCSSPTR,
-     :          WCSPTC, WCSPTD, WCSPTI, WCSPUT, WCSS2P, WCSSET, WCSSUB
+     :          WCSINI, WCSMIX, WCSNPS, WCSNPV, WCSP2S, WCSPERR, WCSPRT,
+     :          WCSSPTR, WCSPTC, WCSPTD, WCSPTI, WCSPUT, WCSS2P, WCSSET,
+     :          WCSSUB
 
 *     Length of the WCSPRM data structure (INTEGER array) on 64-bit
-*     machines.  Only needs to be 404 on 32-bit machines.
+*     machines.  Only needs to be 410 on 32-bit machines.
       INTEGER   WCSLEN
-      PARAMETER (WCSLEN = 450)
+      PARAMETER (WCSLEN = 462)
 
 *     Codes for WCS data structure elements used by WCSPUT and WCSGET.
       INTEGER   WCS_ALT, WCS_ALTLIN, WCS_CD, WCS_CDELT, WCS_CNAME,
@@ -101,9 +103,9 @@
       PARAMETER (WCS_WCSNAME  = 141)
 
 *     Codes for WCS data structure elements used by WCSGET (only).
-      INTEGER   WCS_CEL, WCS_CUBEFACE, WCS_LAT, WCS_LATTYP, WCS_LIN,
-     :          WCS_LNG, WCS_LNGTYP, WCS_NTAB, WCS_NWTB, WCS_SPC,
-     :          WCS_SPEC, WCS_TAB, WCS_TYPES, WCS_WTB
+      INTEGER   WCS_CEL, WCS_CUBEFACE, WCS_ERR, WCS_LAT, WCS_LATTYP,
+     :          WCS_LIN, WCS_LNG, WCS_LNGTYP, WCS_NTAB, WCS_NWTB,
+     :          WCS_SPC, WCS_SPEC, WCS_TAB, WCS_TYPES, WCS_WTB
 
       PARAMETER (WCS_NTAB     = 200)
       PARAMETER (WCS_NWTB     = 201)
@@ -119,6 +121,7 @@
       PARAMETER (WCS_LIN      = 211)
       PARAMETER (WCS_CEL      = 212)
       PARAMETER (WCS_SPC      = 213)
+      PARAMETER (WCS_ERR      = 214)
 
 *     Flag bits for the AXES argument.
       INTEGER WCSSUB_CELESTIAL, WCSSUB_CUBEFACE, WCSSUB_LATITUDE,
@@ -130,6 +133,29 @@
       PARAMETER (WCSSUB_CELESTIAL = 4096 +  7)
       PARAMETER (WCSSUB_SPECTRAL  = 4096 +  8)
       PARAMETER (WCSSUB_STOKES    = 4096 + 16)
+
+*     Error codes and messages.
+      INTEGER   WCSERR_BAD_COORD_TRANS, WCSERR_BAD_CTYPE,
+     :          WCSERR_BAD_PARAM, WCSERR_BAD_PIX, WCSERR_BAD_SUBIMAGE,
+     :          WCSERR_BAD_WORLD, WCSERR_BAD_WORLD_COORD,
+     :          WCSERR_ILL_COORD_TRANS, WCSERR_MEMORY,
+     :          WCSERR_NON_SEPARABLE, WCSERR_NO_SOLUTION,
+     :          WCSERR_NULL_POINTER, WCSERR_SINGULAR_MTX, WCSERR_SUCCESS
+
+      PARAMETER (WCSERR_SUCCESS         =  0)
+      PARAMETER (WCSERR_NULL_POINTER    =  1)
+      PARAMETER (WCSERR_MEMORY          =  2)
+      PARAMETER (WCSERR_SINGULAR_MTX    =  3)
+      PARAMETER (WCSERR_BAD_CTYPE       =  4)
+      PARAMETER (WCSERR_BAD_PARAM       =  5)
+      PARAMETER (WCSERR_BAD_COORD_TRANS =  6)
+      PARAMETER (WCSERR_ILL_COORD_TRANS =  7)
+      PARAMETER (WCSERR_BAD_PIX         =  8)
+      PARAMETER (WCSERR_BAD_WORLD       =  9)
+      PARAMETER (WCSERR_BAD_WORLD_COORD = 10)
+      PARAMETER (WCSERR_NO_SOLUTION     = 11)
+      PARAMETER (WCSERR_BAD_SUBIMAGE    = 12)
+      PARAMETER (WCSERR_NON_SEPARABLE   = 13)
 
       CHARACTER WCS_ERRMSG(0:13)*80
       COMMON /WCS_DATA/ WCS_ERRMSG

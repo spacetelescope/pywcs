@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: log.c,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: log.c,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
 *===========================================================================*/
 
 #include <math.h>
@@ -40,7 +40,8 @@ const char *log_errmsg[] = {
   "Success",
   "",
   "Invalid log-coordinate reference value",
-  "One or more of the x coordinates were invalid"};
+  "One or more of the x coordinates were invalid",
+  "One or more of the world coordinates were invalid"};
 
 
 /*--------------------------------------------------------------------------*/
@@ -62,7 +63,7 @@ int logx2s(
 
 
   if (crval <= 0.0) {
-    return 2;
+    return LOGERR_BAD_LOG_REF_VAL;
   }
 
   xp = x;
@@ -96,7 +97,7 @@ int logs2x(
 
 
   if (crval <= 0.0) {
-    return 2;
+    return LOGERR_BAD_LOG_REF_VAL;
   }
 
   xp = x;
@@ -109,7 +110,7 @@ int logs2x(
       *(statp++) = 0;
     } else {
       *(statp++) = 1;
-      status = 4;
+      status = LOGERR_BAD_WORLD;
     }
   }
 

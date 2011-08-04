@@ -27,7 +27,7 @@
 #
 # Author: Mark Calabretta, Australia Telescope National Facility
 # http://www.atnf.csiro.au/~mcalabre/index.html
-# $Id: GNUmakefile,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+# $Id: GNUmakefile,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
 #-----------------------------------------------------------------------------
 # Get configure settings.
 include ../makedefs
@@ -295,32 +295,33 @@ show ::
 # Dependencies
 #-------------
 
-$(WCSLIB)(cel.o)      : cel.h prj.h sph.h wcsmath.h wcsprintf.h wcstrig.h
+$(WCSLIB)(cel.o)      : cel.h prj.h sph.h wcserr.h wcsmath.h wcsprintf.h \
+	                wcstrig.h
 $(WCSLIB)(fitshdr.o)  : wcsconfig.h fitshdr.h
-$(WCSLIB)(lin.o)      : lin.h wcsprintf.h
+$(WCSLIB)(lin.o)      : lin.h wcserr.h wcsprintf.h
 $(WCSLIB)(log.o)      : log.h
-$(WCSLIB)(prj.o)      : prj.h wcsmath.h wcsprintf.h wcstrig.h
-$(WCSLIB)(spc.o)      : spc.h spx.h wcsmath.h wcsprintf.h wcstrig.h
+$(WCSLIB)(prj.o)      : prj.h wcserr.h wcsmath.h wcsprintf.h wcstrig.h
+$(WCSLIB)(spc.o)      : spc.h spx.h wcserr.h wcsmath.h wcsprintf.h wcstrig.h
 $(WCSLIB)(sph.o)      : sph.h wcstrig.h
-$(WCSLIB)(spx.o)      : spx.h
-$(WCSLIB)(tab.o)      : tab.h wcsmath.h wcsprintf.h
+$(WCSLIB)(spx.o)      : spx.h wcserr.h
+$(WCSLIB)(tab.o)      : tab.h wcserr.h wcsmath.h wcsprintf.h
 $(WCSLIB)(wcs.o)      : cel.h lin.h log.h prj.h spc.h sph.h spx.h tab.h \
-                        wcs.h wcsmath.h wcstrig.h wcsprintf.h wcsunits.h \
-                        wcsutil.h
-$(WCSLIB)(wcsbth.o)   : cel.h lin.h prj.h spc.h spx.h tab.h wcs.h wcshdr.h \
-                        wcsmath.h
+                        wcs.h wcserr.h wcsmath.h wcstrig.h wcsprintf.h \
+			wcsunits.h wcsutil.h
+$(WCSLIB)(wcsbth.o)   : cel.h lin.h prj.h spc.h spx.h tab.h wcs.h wcserr.h \
+			wcshdr.h wcsmath.h
 $(WCSLIB)(wcsfix.o)   : cel.h lin.h prj.h spc.h sph.h spx.h tab.h wcs.h \
-                        wcsfix.h wcsmath.h wcsunits.h
-$(WCSLIB)(wcshdr.o)   : cel.h lin.h prj.h spc.h spx.h tab.h wcs.h wcshdr.h \
-                        wcsutil.h
-$(WCSLIB)(wcspih.o)   : cel.h lin.h prj.h spc.h spx.h tab.h wcs.h wcshdr.h \
-                        wcsmath.h
+                        wcserr.h wcsfix.h wcsmath.h wcsunits.h
+$(WCSLIB)(wcshdr.o)   : cel.h lin.h prj.h spc.h spx.h tab.h wcs.h wcserr.h \
+			wcshdr.h wcsutil.h
+$(WCSLIB)(wcspih.o)   : cel.h lin.h prj.h spc.h spx.h tab.h wcs.h wcserr.h \
+			wcshdr.h wcsmath.h
 $(WCSLIB)(wcsprintf.o): wcsprintf.h
 $(WCSLIB)(wcstrig.o)  : wcsmath.h wcstrig.h
-$(WCSLIB)(wcsulex.o)  : wcsmath.h wcsunits.h
-$(WCSLIB)(wcsunits.o) : wcsunits.h
+$(WCSLIB)(wcsulex.o)  : wcserr.h wcsmath.h wcsunits.h
+$(WCSLIB)(wcsunits.o) : wcserr.h wcsunits.h
 $(WCSLIB)(wcsutil.o)  : wcsutil.h
-$(WCSLIB)(wcsutrn.o)  : wcsunits.h
+$(WCSLIB)(wcsutrn.o)  : wcserr.h wcsunits.h
 
 tbth1 tbth1_cfitsio : cel.h wcsconfig.h wcsconfig_tests.h lin.h prj.h spc.h \
                       spx.h tab.h wcs.h wcsfix.h wcshdr.h

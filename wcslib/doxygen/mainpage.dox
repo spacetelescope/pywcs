@@ -102,7 +102,6 @@ Several implementations of the FITS WCS standards are available:
   - @b AST, developed by David Berry within the U.K. Starlink project,
     http://www.starlink.ac.uk/ast/ and now supported by JAC, Hawaii
     http://starlink.jach.hawaii.edu/starlink/<I></I>.
-    .
     @n@n
     A useful utility for experimenting with FITS WCS descriptions (similar to
     @a wcsgrid) is also provided; go to the above site and then look at the
@@ -136,11 +135,11 @@ Java is supported via
 Recommended WCS-aware FITS image viewers:
 
   - Bill Joye's <B>DS9</B>, http://hea-www.harvard.edu/RD/ds9/<I></I>, and
-  
+
   - <B>Fv</B> by Pan Chai, http://heasarc.gsfc.nasa.gov/ftools/fv/<I></I>.
-  
+
 both handle 2-D images.
-  
+
 Currently (2011/01/14) I know of no image viewers that handle 1-D spectra
 properly nor multi-dimensional data, not even multi-dimensional data with
 only two non-degenerate image axes (please inform me if you know otherwise).
@@ -884,5 +883,5 @@ g77.
 /*
 Author: Mark Calabretta, Australia Telescope National Facility
 http://www.atnf.csiro.au/~mcalabre/index.html
-$Id: mainpage.dox,v 4.7 2011/02/07 07:03:43 cal103 Exp $
+$Id: mainpage.dox,v 4.7.1.2 2011/07/21 09:12:10 cal103 Exp cal103 $
 */

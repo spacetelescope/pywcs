@@ -1,3 +1,6 @@
+- Updated to wcslib version 4.8, which gives much more detailed error
+  messages.
+
 - Added functions get_pc() and get_cdelt().  These provide a way to
   always get the canonical representation of the linear transformation
   matrix, whether the header specified it in PC, CD or CROTA form.

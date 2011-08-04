@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcshdr_f.c,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: wcshdr_f.c,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
 *===========================================================================*/
 
 #include <wcshdr.h>
@@ -53,7 +53,7 @@ int wcspih_(
   const int *ctrl,
   int *nreject,
   int *nwcs,
-  int *wcsp)
+  iptr wcsp)
 
 {
   return wcspih(header, *nkeys, *relax, *ctrl, nreject, nwcs,
@@ -71,7 +71,7 @@ int wcsbth_(
   int *colsel,
   int *nreject,
   int *nwcs,
-  int *wcsp)
+  iptr wcsp)
 
 {
   return wcsbth(header, *nkeys, *relax, *ctrl, *keysel, colsel, nreject,
@@ -88,7 +88,7 @@ int wcstab_(int *wcs)
 
 /*--------------------------------------------------------------------------*/
 
-int wcsidx_(int *nwcs, int *wcsp, int alts[27])
+int wcsidx_(int *nwcs, iptr wcsp, int alts[27])
 
 {
   return wcsidx(*nwcs, (struct wcsprm **)wcsp, alts);
@@ -96,7 +96,7 @@ int wcsidx_(int *nwcs, int *wcsp, int alts[27])
 
 /*--------------------------------------------------------------------------*/
 
-int wcsbdx_(int *nwcs, int *wcsp, int *type, short alts[1000][28])
+int wcsbdx_(int *nwcs, iptr wcsp, int *type, short alts[1000][28])
 
 {
   return wcsbdx(*nwcs, (struct wcsprm **)wcsp, *type, alts);
@@ -104,7 +104,7 @@ int wcsbdx_(int *nwcs, int *wcsp, int *type, short alts[1000][28])
 
 /*--------------------------------------------------------------------------*/
 
-int wcsvcopy_(const int *wcspp, const int *i, int *wcs)
+int wcsvcopy_(const iptr wcspp, const int *i, int *wcs)
 
 {
   struct wcsprm *wcsdst, *wcssrc;
@@ -138,7 +138,7 @@ int wcsvcopy_(const int *wcspp, const int *i, int *wcs)
 
 /*--------------------------------------------------------------------------*/
 
-int wcsvfree_(int *nwcs, int *wcspp)
+int wcsvfree_(int *nwcs, iptr wcspp)
 
 {
   return wcsvfree(nwcs, (struct wcsprm **)wcspp);

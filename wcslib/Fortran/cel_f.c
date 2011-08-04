@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: cel_f.c,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: cel_f.c,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
 *===========================================================================*/
 
 #include <cel.h>
@@ -60,6 +60,7 @@
 #define CEL_EULER  200
 #define CEL_LATPRQ 201
 #define CEL_ISOLAT 202
+#define CEL_ERR    203
 
 /*--------------------------------------------------------------------------*/
 
@@ -183,6 +184,9 @@ int celget_(const int *cel, const int *what, void *value)
     break;
   case CEL_ISOLAT:
     *ivalp = celp->isolat;
+    break;
+  case CEL_ERR:
+    *(void **)value = celp->err;
     break;
   default:
     return 1;

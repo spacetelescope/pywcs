@@ -16673,7 +16673,7 @@ char *wcsbthtext;
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcsbth.c,v 4.7 2011/02/07 07:03:42 cal103 Exp $
+  $Id: wcsbth.c,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
 *=============================================================================
 *
 * wcsbth.l is a Flex description file containing the definition of a lexical

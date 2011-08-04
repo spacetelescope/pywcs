@@ -17,6 +17,7 @@
 </div>
 <div class="contents">
 <h1>cel.h File Reference</h1><code>#include &quot;<a class="el" href="prj_8h-source.html">prj.h</a>&quot;</code><br>
+<code>#include &quot;<a class="el" href="wcserr_8h-source.html">wcserr.h</a>&quot;</code><br>
 
 <p>
 <a href="cel_8h-source.html">Go to the source code of this file.</a><table border="0" cellpadding="0" cellspacing="0">
@@ -44,6 +45,19 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="cel_8h.html#c398f2bea2deac6d86c10a7b3efca966">cels2x_errmsg</a>&nbsp;&nbsp;&nbsp;<a class="el" href="cel_8h.html#15d7df87f0d7d52bf30c5403fbd00271">cel_errmsg</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Deprecated.  <a href="#c398f2bea2deac6d86c10a7b3efca966"></a><br></td></tr>
+<tr><td colspan="2"><br><h2>Enumerations</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="cel_8h.html#b20292954fb236dafb2cd78aee121c31">cel_errmsg_enum</a> { <br>
+&nbsp;&nbsp;<a class="el" href="cel_8h.html#b20292954fb236dafb2cd78aee121c314ca7a593593157772f3788801138dd12">CELERR_SUCCESS</a> =  0, 
+<a class="el" href="cel_8h.html#b20292954fb236dafb2cd78aee121c317fa1e5cb9c23e5f138638dad3f938e1e">CELERR_NULL_POINTER</a> =  1, 
+<a class="el" href="cel_8h.html#b20292954fb236dafb2cd78aee121c3133a743bdcdd17bae9c6961234ed6b642">CELERR_BAD_PARAM</a> =  2, 
+<a class="el" href="cel_8h.html#b20292954fb236dafb2cd78aee121c31367cf89b74764f9462bfa50c2eb50fb6">CELERR_BAD_COORD_TRANS</a> =  3, 
+<br>
+&nbsp;&nbsp;<a class="el" href="cel_8h.html#b20292954fb236dafb2cd78aee121c31cb1dec1ea393b198b93a26425ee901a2">CELERR_ILL_COORD_TRANS</a> =  4, 
+<a class="el" href="cel_8h.html#b20292954fb236dafb2cd78aee121c3144042efc5a9894182447dfcbcd24e1d4">CELERR_BAD_PIX</a> =  5, 
+<a class="el" href="cel_8h.html#b20292954fb236dafb2cd78aee121c31ac8beaf37d754d1a7a7aab5307a2140b">CELERR_BAD_WORLD</a> =  6
+<br>
+ }</td></tr>
+
 <tr><td colspan="2"><br><h2>Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="cel_8h.html#1fe1b137ade45ea28e61f44d4708fb77">celini</a> (struct <a class="el" href="structcelprm.html">celprm</a> *cel)</td></tr>
 
@@ -165,6 +179,40 @@ Size of the <a class="el" href="structcelprm.html" title="Celestial transformati
 
 </div>
 </div><p>
+<hr><h2>Enumeration Type Documentation</h2>
+<a class="anchor" name="b20292954fb236dafb2cd78aee121c31"></a><!-- doxytag: member="cel.h::cel_errmsg_enum" ref="b20292954fb236dafb2cd78aee121c31" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="cel_8h.html#b20292954fb236dafb2cd78aee121c31">cel_errmsg_enum</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+<dl compact><dt><b>Enumerator: </b></dt><dd>
+<table border="0" cellspacing="2" cellpadding="0">
+<tr><td valign="top"><em><a class="anchor" name="b20292954fb236dafb2cd78aee121c314ca7a593593157772f3788801138dd12"></a><!-- doxytag: member="CELERR_SUCCESS" ref="b20292954fb236dafb2cd78aee121c314ca7a593593157772f3788801138dd12" args="" -->CELERR_SUCCESS</em>&nbsp;</td><td>
+</td></tr>
+<tr><td valign="top"><em><a class="anchor" name="b20292954fb236dafb2cd78aee121c317fa1e5cb9c23e5f138638dad3f938e1e"></a><!-- doxytag: member="CELERR_NULL_POINTER" ref="b20292954fb236dafb2cd78aee121c317fa1e5cb9c23e5f138638dad3f938e1e" args="" -->CELERR_NULL_POINTER</em>&nbsp;</td><td>
+</td></tr>
+<tr><td valign="top"><em><a class="anchor" name="b20292954fb236dafb2cd78aee121c3133a743bdcdd17bae9c6961234ed6b642"></a><!-- doxytag: member="CELERR_BAD_PARAM" ref="b20292954fb236dafb2cd78aee121c3133a743bdcdd17bae9c6961234ed6b642" args="" -->CELERR_BAD_PARAM</em>&nbsp;</td><td>
+</td></tr>
+<tr><td valign="top"><em><a class="anchor" name="b20292954fb236dafb2cd78aee121c31367cf89b74764f9462bfa50c2eb50fb6"></a><!-- doxytag: member="CELERR_BAD_COORD_TRANS" ref="b20292954fb236dafb2cd78aee121c31367cf89b74764f9462bfa50c2eb50fb6" args="" -->CELERR_BAD_COORD_TRANS</em>&nbsp;</td><td>
+</td></tr>
+<tr><td valign="top"><em><a class="anchor" name="b20292954fb236dafb2cd78aee121c31cb1dec1ea393b198b93a26425ee901a2"></a><!-- doxytag: member="CELERR_ILL_COORD_TRANS" ref="b20292954fb236dafb2cd78aee121c31cb1dec1ea393b198b93a26425ee901a2" args="" -->CELERR_ILL_COORD_TRANS</em>&nbsp;</td><td>
+</td></tr>
+<tr><td valign="top"><em><a class="anchor" name="b20292954fb236dafb2cd78aee121c3144042efc5a9894182447dfcbcd24e1d4"></a><!-- doxytag: member="CELERR_BAD_PIX" ref="b20292954fb236dafb2cd78aee121c3144042efc5a9894182447dfcbcd24e1d4" args="" -->CELERR_BAD_PIX</em>&nbsp;</td><td>
+</td></tr>
+<tr><td valign="top"><em><a class="anchor" name="b20292954fb236dafb2cd78aee121c31ac8beaf37d754d1a7a7aab5307a2140b"></a><!-- doxytag: member="CELERR_BAD_WORLD" ref="b20292954fb236dafb2cd78aee121c31ac8beaf37d754d1a7a7aab5307a2140b" args="" -->CELERR_BAD_WORLD</em>&nbsp;</td><td>
+</td></tr>
+</table>
+</dl>
+
+</div>
+</div><p>
 <hr><h2>Function Documentation</h2>
 <a class="anchor" name="1fe1b137ade45ea28e61f44d4708fb77"></a><!-- doxytag: member="cel.h::celini" ref="1fe1b137ade45ea28e61f44d4708fb77" args="(struct celprm *cel)" -->
 <div class="memitem">
@@ -212,7 +260,7 @@ Size of the <a class="el" href="structcelprm.html" title="Celestial transformati
 <div class="memdoc">
 
 <p>
-<b>celprt</b>() prints the contents of a <a class="el" href="structcelprm.html" title="Celestial transformation parameters.">celprm</a> struct. Mainly intended for diagnostic purposes.<p>
+<b>celprt</b>() prints the contents of a <a class="el" href="structcelprm.html" title="Celestial transformation parameters.">celprm</a> struct using <a class="el" href="wcsprintf_8h.html#46950abaf5a27347da8160741f98f973" title="Print function used by WCSLIB diagnostic routines.">wcsprintf()</a>. Mainly intended for diagnostic purposes.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>cel</em>&nbsp;</td><td>Celestial transformation parameters.</td></tr>
@@ -249,8 +297,8 @@ Note that this routine need not be called directly; it will be invoked by <a cla
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>Status return value:<ul>
-<li>0: Success.</li><li>1: Null <a class="el" href="structcelprm.html" title="Celestial transformation parameters.">celprm</a> pointer passed.</li><li>2: Invalid projection parameters.</li><li>3: Invalid coordinate transformation parameters.</li><li>4: Ill-conditioned coordinate transformation parameters. </li></ul>
-</dd></dl>
+<li>0: Success.</li><li>1: Null <a class="el" href="structcelprm.html" title="Celestial transformation parameters.">celprm</a> pointer passed.</li><li>2: Invalid projection parameters.</li><li>3: Invalid coordinate transformation parameters.</li><li>4: Ill-conditioned coordinate transformation parameters.</li></ul>
+For returns &gt; 1, a detailed error message is set in <a class="el" href="structcelprm.html#1b9cbfd7cfa2306464d57dc4acd03b06">celprm::err</a>. </dd></dl>
 
 </div>
 </div><p>
@@ -355,8 +403,8 @@ Note that this routine need not be called directly; it will be invoked by <a cla
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>Status return value:<ul>
-<li>0: Success.</li><li>1: Null <a class="el" href="structcelprm.html" title="Celestial transformation parameters.">celprm</a> pointer passed.</li><li>2: Invalid projection parameters.</li><li>3: Invalid coordinate transformation parameters.</li><li>4: Ill-conditioned coordinate transformation parameters.</li><li>5: One or more of the <img class="formulaInl" alt="$(x,y)$" src="form_0.png"> coordinates were invalid, as indicated by the stat vector. </li></ul>
-</dd></dl>
+<li>0: Success.</li><li>1: Null <a class="el" href="structcelprm.html" title="Celestial transformation parameters.">celprm</a> pointer passed.</li><li>2: Invalid projection parameters.</li><li>3: Invalid coordinate transformation parameters.</li><li>4: Ill-conditioned coordinate transformation parameters.</li><li>5: One or more of the <img class="formulaInl" alt="$(x,y)$" src="form_0.png"> coordinates were invalid, as indicated by the stat vector.</li></ul>
+For returns &gt; 1, a detailed error message is set in <a class="el" href="structcelprm.html#1b9cbfd7cfa2306464d57dc4acd03b06">celprm::err</a>. </dd></dl>
 
 </div>
 </div><p>
@@ -461,8 +509,8 @@ Note that this routine need not be called directly; it will be invoked by <a cla
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>Status return value:<ul>
-<li>0: Success.</li><li>1: Null <a class="el" href="structcelprm.html" title="Celestial transformation parameters.">celprm</a> pointer passed.</li><li>2: Invalid projection parameters.</li><li>3: Invalid coordinate transformation parameters.</li><li>4: Ill-conditioned coordinate transformation parameters.</li><li>6: One or more of the <img class="formulaInl" alt="$(\alpha,\delta)$" src="form_1.png"> coordinates were invalid, as indicated by the stat vector. </li></ul>
-</dd></dl>
+<li>0: Success.</li><li>1: Null <a class="el" href="structcelprm.html" title="Celestial transformation parameters.">celprm</a> pointer passed.</li><li>2: Invalid projection parameters.</li><li>3: Invalid coordinate transformation parameters.</li><li>4: Ill-conditioned coordinate transformation parameters.</li><li>6: One or more of the <img class="formulaInl" alt="$(\alpha,\delta)$" src="form_1.png"> coordinates were invalid, as indicated by the stat vector.</li></ul>
+For returns &gt; 1, a detailed error message is set in <a class="el" href="structcelprm.html#1b9cbfd7cfa2306464d57dc4acd03b06">celprm::err</a>. </dd></dl>
 
 </div>
 </div><p>
@@ -483,7 +531,7 @@ Status messages to match the status value returned from each function.
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Feb 7 18:03:57 2011 for WCSLIB 4.7 by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Aug 3 18:15:54 2011 for WCSLIB 4.7 by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.6 </small></address>
 </body>
