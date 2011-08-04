@@ -625,6 +625,7 @@ PyWcsprm_fix(
   PyArrayObject* naxis_array     = NULL;
   int*           naxis           = NULL;
   int            stat[NWCSFIX];
+  struct wcserr  err[NWCSFIX];
   int            status          = 0;
   PyObject*      subresult;
   PyObject*      result;
@@ -679,7 +680,7 @@ PyWcsprm_fix(
 
   /* TODO: Use wcsfixi */
   wcsprm_python2c(&self->x);
-  status = wcsfix(ctrl, naxis, &self->x, stat);
+  status = wcsfixi(ctrl, naxis, &self->x, stat, err);
   wcsprm_c2python(&self->x);
 
   /* We're done with this already, so deref now so we don't have to remember
@@ -693,13 +694,15 @@ PyWcsprm_fix(
 
   for (i = 0; i < 5; ++i) {
     msg_index = stat[message_map[i].index];
-    if (msg_index >= 0 && msg_index < 11) {
-      message = wcsfix_errmsg[msg_index];
+    if (msg_index > 0 && msg_index < 11) {
+      message = err[message_map[i].index].msg;
+    } else if (msg_index == 0) {
+      message = "Success";
     } else {
       message = "No change";
     }
     #if PY3K
-    subresult = PyBytes_FromString(message);
+    subresult = PyUnicode_FromString(message);
     #else
     subresult = PyString_FromString(message);
     #endif
