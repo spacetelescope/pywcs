@@ -35,8 +35,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "spx.h"
+#include "wcserr.h"
 #include "wcsmath.h"
+#include "spx.h"
 
 
 /* Map status return value to message. */

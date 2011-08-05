@@ -3195,7 +3195,8 @@ _setup_wcsprm_type(
   Py_INCREF(&PyWcsprmType);
 
   wcsprintf_set(NULL);
-
+  wcserr_enable(1);
+  
   return (
     PyModule_AddObject(m, "_Wcsprm", (PyObject *)&PyWcsprmType) ||
     CONSTANT(WCSSUB_LONGITUDE) ||

@@ -9,6 +9,7 @@
 - @subpage overview
 - @subpage structs
 - @subpage memory
+- @subpage diagnostics
 - @subpage vector
 - @subpage threads
 - @subpage testing
@@ -113,8 +114,8 @@ Several implementations of the FITS WCS standards are available:
     including spectral,
     http://sohowww.nascom.nasa.gov/solarsoft/gen/idl/wcs/<I></I>.
 
-  - @b The IDL Astronomy Library, http://idlastro.gsfc.nasa.gov/<I></I>,
-    contains an independent implementation of FITS-WCS in IDL by Rick Balsano,
+  - The IDL Astronomy Library, http://idlastro.gsfc.nasa.gov/<I></I>, contains
+    an independent implementation of FITS-WCS in IDL by Rick Balsano,
     Wayne Landsman and others.  See
     http://idlastro.gsfc.nasa.gov/contents.html#C5<I></I>.
 
@@ -140,7 +141,7 @@ Recommended WCS-aware FITS image viewers:
 
 both handle 2-D images.
 
-Currently (2011/01/14) I know of no image viewers that handle 1-D spectra
+Currently (2011/08/05) I know of no image viewers that handle 1-D spectra
 properly nor multi-dimensional data, not even multi-dimensional data with
 only two non-degenerate image axes (please inform me if you know otherwise).
 
@@ -425,6 +426,80 @@ assignment; any changes made to allocated memory in one would be reflected in
 the other, and if the memory allocated for one was @a free'd the other would
 reference unallocated memory.  Use the relevant routine instead to make a deep
 copy: wcssub(), lincpy() or tabcpy().
+*/
+
+
+/** @page diagnostics Diagnostic output
+
+All @ref overview "WCSLIB" functions return a status value, each of which is
+associated with a fixed error message which may be used for diagnostic output.
+For example
+@verbatim
+  int status;
+  struct wcsprm wcs;
+
+  ...
+
+  if ((status = wcsset(&wcs)) {
+    fprintf(stderr, "ERROR %d from wcsset(): %s.\n", status, wcs_errmsg[status]);
+    return status;
+  }
+@endverbatim
+This might produce output like
+@verbatim
+ERROR 5 from wcsset(): Invalid parameter value.
+@endverbatim
+The error messages are provided as global variables with names of the form
+@a cel_errmsg, @a prj_errmsg, etc. by including the relevant header file.
+
+As of version 4.8, courtesy of Michael Droettboom @ref software "(pywcs)",
+WCSLIB has a second error messaging system which provides more detailed
+information about errors, including the function, source file, and line number
+where the error occurred.  For example,
+@verbatim
+  struct wcsprm wcs;
+
+  /* Enable wcserr and send messages to stderr. */
+  wcserr_enable(1);
+  wcsprintf_set(stderr);
+
+  ...
+
+  if (wcsset(&wcs) {
+    wcsperr(&wcs);
+    return wcs.err->status;
+  }
+@endverbatim
+In this example, if an error was generated in one of the prjset() functions,
+wcsperr() would print an error traceback starting with wcsset(), then
+celset(), and finally the particular projection-setting function that
+generated the error.  For each of them it would print the status return value,
+function name, source file, line number, and an error message which may be
+more specific and informative than the general error messages reported in the
+first example.  For example, in response to a deliberately generated error,
+the @c twcs test program, which tests wcserr among other things, produces a
+traceback similar to this:
+@verbatim
+ERROR 5 in wcsset() at line 1564 of file wcs.c:
+  Invalid parameter value.
+ERROR 2 in celset() at line 196 of file cel.c:
+  Invalid projection parameters.
+ERROR 2 in bonset() at line 5727 of file prj.c:
+  Invalid parameters for Bonne's projection.
+@endverbatim
+
+Each of the @ref structs "structs" in @ref overview "WCSLIB" includes a
+pointer, called @a err, to a wcserr struct.  When an error occurs, a struct is
+allocated and error information stored in it.  The wcserr pointers and the
+@ref memory "memory" allocated for them are managed by the routines that
+manage the various structs such as wcsini() and wcsfree().
+
+wcserr messaging is an opt-in system enabled via wcserr_enable(), as in the
+example above.  If enabled, when an error occurs it is the user's
+responsibility to free the memory allocated for the error message using
+wcsfree(), celfree(), prjfree(), etc.  Failure to do so before the struct goes
+out of scope will result in memory leaks (if execution continues beyond the
+error).
 */
 
 

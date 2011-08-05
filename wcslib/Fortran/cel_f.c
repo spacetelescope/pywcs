@@ -35,20 +35,21 @@
 
 /* Fortran name mangling. */
 #include <wcsconfig_f77.h>
-#define celini_ F77_FUNC(celini, CELINI)
-#define celput_ F77_FUNC(celput, CELPUT)
-#define celget_ F77_FUNC(celget, CELGET)
-#define celprt_ F77_FUNC(celprt, CELPRT)
-#define celset_ F77_FUNC(celset, CELSET)
-#define celx2s_ F77_FUNC(celx2s, CELX2S)
-#define cels2x_ F77_FUNC(cels2x, CELS2X)
+#define celini_  F77_FUNC(celini,  CELINI)
+#define celput_  F77_FUNC(celput,  CELPUT)
+#define celget_  F77_FUNC(celget,  CELGET)
+#define celfree_ F77_FUNC(celfree, CELFREE)
+#define celprt_  F77_FUNC(celprt,  CELPRT)
+#define celset_  F77_FUNC(celset,  CELSET)
+#define celx2s_  F77_FUNC(celx2s,  CELX2S)
+#define cels2x_  F77_FUNC(cels2x,  CELS2X)
 
-#define celptc_ F77_FUNC(celptc, CELPTC)
-#define celptd_ F77_FUNC(celptd, CELPTD)
-#define celpti_ F77_FUNC(celpti, CELPTI)
-#define celgtc_ F77_FUNC(celgtc, CELGTC)
-#define celgtd_ F77_FUNC(celgtd, CELGTD)
-#define celgti_ F77_FUNC(celgti, CELGTI)
+#define celptc_  F77_FUNC(celptc,  CELPTC)
+#define celptd_  F77_FUNC(celptd,  CELPTD)
+#define celpti_  F77_FUNC(celpti,  CELPTI)
+#define celgtc_  F77_FUNC(celgtc,  CELGTC)
+#define celgtd_  F77_FUNC(celgtd,  CELGTD)
+#define celgti_  F77_FUNC(celgti,  CELGTI)
 
 #define CEL_FLAG   100
 #define CEL_OFFSET 101
@@ -208,6 +209,14 @@ int celgtd_(const int *cel, const int *what, double *value)
 int celgti_(const int *cel, const int *what, int *value)
 {
   return celget_(cel, what, value);
+}
+
+/*--------------------------------------------------------------------------*/
+
+int celfree_(int *cel)
+
+{
+  return celfree((struct celprm *)cel);
 }
 
 /*--------------------------------------------------------------------------*/

@@ -33,8 +33,10 @@
 
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
+#include "wcserr.h"
 #include "wcsmath.h"
 #include "wcsprintf.h"
 #include "wcstrig.h"
@@ -174,6 +176,21 @@ struct prjprm *prj;
   prj->m = 0;
   prj->n = 0;
 
+  prj->err = 0x0;
+
+  return 0;
+}
+
+/*--------------------------------------------------------------------------*/
+
+int prjfree(prj)
+
+struct prjprm *prj;
+
+{
+  if (prj == 0x0) return PRJERR_NULL_POINTER;
+
+  if (prj->err) free(prj->err);
   prj->err = 0x0;
 
   return 0;
@@ -597,7 +614,7 @@ int stat[];
           if (fabs(t) > 1.0+tol) {
             *thetap = 0.0;
             *(statp++) = 1;
-            status = PRJERR_BAD_PIX_SET("azpx2s");
+            if (!status) status = PRJERR_BAD_PIX_SET("azpx2s");
             continue;
           }
           t = copysign(90.0, t);
@@ -690,7 +707,7 @@ int stat[];
         *xp = 0.0;
         *yp = 0.0;
         *(statp++) = 1;
-        status = PRJERR_BAD_WORLD_SET("azps2x");
+        if (!status) status = PRJERR_BAD_WORLD_SET("azps2x");
 
       } else {
         r = prj->w[0]*costhe/t;
@@ -701,7 +718,7 @@ int stat[];
           if (*thetap < prj->w[5]) {
             /* Overlap. */
             istat  = 1;
-            status = PRJERR_BAD_WORLD_SET("azps2x");
+            if (!status) status = PRJERR_BAD_WORLD_SET("azps2x");
 
           } else if (prj->w[7] > 0.0) {
             /* Divergence. */
@@ -718,7 +735,7 @@ int stat[];
 
               if (*thetap < ((a > b) ? a : b)) {
                 istat  = 1;
-                status = PRJERR_BAD_WORLD_SET("azps2x");
+                if (!status) status = PRJERR_BAD_WORLD_SET("azps2x");
               }
             }
           }
@@ -903,7 +920,7 @@ int stat[];
           *phip = 0.0;
           *thetap = 0.0;
           *(statp++) = 1;
-          status = PRJERR_BAD_PIX_SET("szpx2s");
+          if (!status) status = PRJERR_BAD_PIX_SET("szpx2s");
           continue;
         }
         d = sqrt(d);
@@ -930,7 +947,7 @@ int stat[];
           *phip   = 0.0;
           *thetap = 0.0;
           *(statp++) = 1;
-          status = PRJERR_BAD_PIX_SET("szpx2s");
+          if (!status) status = PRJERR_BAD_PIX_SET("szpx2s");
           continue;
         }
 
@@ -1017,7 +1034,7 @@ int stat[];
         *(statp++) = 1;
       }
 
-      status = PRJERR_BAD_WORLD_SET("szps2x");
+      if (!status) status = PRJERR_BAD_WORLD_SET("szps2x");
 
     } else {
       r = prj->w[6]*cosd(*thetap)/t;
@@ -1031,7 +1048,7 @@ int stat[];
           if (*thetap < prj->w[8]) {
             /* Divergence. */
             istat  = 1;
-            status = PRJERR_BAD_WORLD_SET("szps2x");
+            if (!status) status = PRJERR_BAD_WORLD_SET("szps2x");
 
           } else if (fabs(prj->pv[1]) > 1.0) {
             /* Overlap. */
@@ -1049,7 +1066,7 @@ int stat[];
 
               if (*thetap < ((a > b) ? a : b)) {
                 istat  = 1;
-                status = PRJERR_BAD_WORLD_SET("szps2x");
+                if (!status) status = PRJERR_BAD_WORLD_SET("szps2x");
               }
             }
           }
@@ -1253,7 +1270,7 @@ int stat[];
         *yp = 0.0;
         *(statp++) = 1;
       }
-      status = PRJERR_BAD_WORLD_SET("tans2x");
+      if (!status) status = PRJERR_BAD_WORLD_SET("tans2x");
 
     } else {
       r =  prj->r0*cosd(*thetap)/s;
@@ -1261,7 +1278,7 @@ int stat[];
       istat = 0;
       if (prj->bounds && s < 0.0) {
         istat  = 1;
-        status = PRJERR_BAD_WORLD_SET("tans2x");
+        if (!status) status = PRJERR_BAD_WORLD_SET("tans2x");
       }
 
       for (iphi = 0; iphi < mphi; iphi++, xp += sxy, yp += sxy) {
@@ -1471,7 +1488,7 @@ int stat[];
         *yp = 0.0;
         *(statp++) = 1;
       }
-      status = PRJERR_BAD_WORLD_SET("stgs2x");
+      if (!status) status = PRJERR_BAD_WORLD_SET("stgs2x");
 
     } else {
       r = prj->w[0]*cosd(*thetap)/s;
@@ -1629,7 +1646,7 @@ int stat[];
           *thetap = asind(sqrt(1.0 - r2));
         } else {
           *(statp++) = 1;
-          status = PRJERR_BAD_PIX_SET("sinx2s")
+          if (!status) status = PRJERR_BAD_PIX_SET("sinx2s")
           continue;
         }
 
@@ -1653,7 +1670,7 @@ int stat[];
             *phip = 0.0;
             *thetap = 0.0;
             *(statp++) = 1;
-            status = PRJERR_BAD_PIX_SET("sinx2s")
+            if (!status) status = PRJERR_BAD_PIX_SET("sinx2s")
             continue;
           }
           d = sqrt(d);
@@ -1680,7 +1697,7 @@ int stat[];
             *phip = 0.0;
             *thetap = 0.0;
             *(statp++) = 1;
-            status = PRJERR_BAD_PIX_SET("sinx2s")
+            if (!status) status = PRJERR_BAD_PIX_SET("sinx2s")
             continue;
           }
 
@@ -1783,7 +1800,7 @@ int stat[];
       istat = 0;
       if (prj->bounds && *thetap < 0.0) {
         istat  = 1;
-        status = PRJERR_BAD_WORLD_SET("sins2x");
+        if (!status) status = PRJERR_BAD_WORLD_SET("sins2x");
       }
 
       for (iphi = 0; iphi < mphi; iphi++, xp += sxy, yp += sxy) {
@@ -1804,7 +1821,7 @@ int stat[];
           t = -atand(prj->pv[1]*(*xp) - prj->pv[2]*(*yp));
           if (*thetap < t) {
             istat  = 1;
-            status = PRJERR_BAD_WORLD_SET("sins2x");
+            if (!status) status = PRJERR_BAD_WORLD_SET("sins2x");
           }
         }
 
@@ -2231,7 +2248,7 @@ int stat[];
         if (d < 0.0) {
           *thetap = 0.0;
           *(statp++) = 1;
-          status = PRJERR_BAD_PIX_SET("zpnx2s");
+          if (!status) status = PRJERR_BAD_PIX_SET("zpnx2s");
           continue;
         }
         d = sqrt(d);
@@ -2245,7 +2262,7 @@ int stat[];
           if (zd < -tol) {
             *thetap = 0.0;
             *(statp++) = 1;
-            status = PRJERR_BAD_PIX_SET("zpnx2s");
+            if (!status) status = PRJERR_BAD_PIX_SET("zpnx2s");
             continue;
           }
           zd = 0.0;
@@ -2253,7 +2270,7 @@ int stat[];
           if (zd > PI+tol) {
             *thetap = 0.0;
             *(statp++) = 1;
-            status = PRJERR_BAD_PIX_SET("zpnx2s");
+            if (!status) status = PRJERR_BAD_PIX_SET("zpnx2s");
             continue;
           }
           zd = PI;
@@ -2269,7 +2286,7 @@ int stat[];
           if (r < r1-tol) {
             *thetap = 0.0;
             *(statp++) = 1;
-            status = PRJERR_BAD_PIX_SET("zpnx2s");
+            if (!status) status = PRJERR_BAD_PIX_SET("zpnx2s");
             continue;
           }
           zd = zd1;
@@ -2277,7 +2294,7 @@ int stat[];
           if (r > r2+tol) {
             *thetap = 0.0;
             *(statp++) = 1;
-            status = PRJERR_BAD_PIX_SET("zpnx2s");
+            if (!status) status = PRJERR_BAD_PIX_SET("zpnx2s");
             continue;
           }
           zd = zd2;
@@ -2392,7 +2409,7 @@ int stat[];
     istat = 0;
     if (prj->bounds && s > prj->w[0]) {
       istat  = 1;
-      status = PRJERR_BAD_WORLD_SET("zpns2x");
+      if (!status) status = PRJERR_BAD_WORLD_SET("zpns2x");
     }
 
     for (iphi = 0; iphi < mphi; iphi++, xp += sxy, yp += sxy) {
@@ -2536,7 +2553,7 @@ int stat[];
         } else {
           *thetap = 0.0;
           *(statp++) = 1;
-          status = PRJERR_BAD_PIX_SET("zeax2s");
+          if (!status) status = PRJERR_BAD_PIX_SET("zeax2s");
           continue;
         }
       } else {
@@ -2789,7 +2806,7 @@ int stat[];
         if (k == 30) {
           *thetap = 0.0;
           *(statp++) = 1;
-          status = PRJERR_BAD_PIX_SET("airx2s");
+          if (!status) status = PRJERR_BAD_PIX_SET("airx2s");
           continue;
         }
 
@@ -2819,7 +2836,7 @@ int stat[];
         if (k == 100) {
           *thetap = 0.0;
           *(statp++) = 1;
-          status = PRJERR_BAD_PIX_SET("airx2s");
+          if (!status) status = PRJERR_BAD_PIX_SET("airx2s");
           continue;
         }
 
@@ -2910,7 +2927,7 @@ int stat[];
     } else {
       r = 0.0;
       istat  = 1;
-      status = PRJERR_BAD_WORLD_SET("airs2x");
+      if (!status) status = PRJERR_BAD_WORLD_SET("airs2x");
     }
 
     for (iphi = 0; iphi < mphi; iphi++, xp += sxy, yp += sxy) {
@@ -3137,7 +3154,7 @@ int stat[];
     istat = 0;
     if (eta == 0.0) {
       istat  = 1;
-      status = PRJERR_BAD_WORLD_SET("cyps2x");
+      if (!status) status = PRJERR_BAD_WORLD_SET("cyps2x");
 
     } else {
       eta = prj->w[2]*sind(*thetap)/eta;
@@ -3288,7 +3305,7 @@ int stat[];
       if (fabs(s) > 1.0+tol) {
         s = 0.0;
         istat  = 1;
-        status = PRJERR_BAD_PIX_SET("ceax2s");
+        if (!status) status = PRJERR_BAD_PIX_SET("ceax2s");
       } else {
         s = copysign(90.0, s);
       }
@@ -3732,7 +3749,7 @@ int stat[];
     if (*thetap <= -90.0 || *thetap >= 90.0) {
       eta = 0.0;
       istat  = 1;
-      status = PRJERR_BAD_WORLD_SET("mers2x");
+      if (!status) status = PRJERR_BAD_WORLD_SET("mers2x");
     } else {
       eta = prj->r0*log(tand((*thetap+90.0)/2.0)) - prj->y0;
     }
@@ -3862,7 +3879,7 @@ int stat[];
     istat = 0;
     if (s == 0.0) {
       istat  = 1;
-      status = PRJERR_BAD_PIX_SET("sflx2s");
+      if (!status) status = PRJERR_BAD_PIX_SET("sflx2s");
     } else {
       s = 1.0/s;
     }
@@ -4076,7 +4093,7 @@ int stat[];
       s = 0.0;
       t = 0.0;
       istat  = 1;
-      status = PRJERR_BAD_PIX_SET("parx2s");
+      if (!status) status = PRJERR_BAD_PIX_SET("parx2s");
 
     } else {
       s = 1.0 - 4.0*r*r;
@@ -4096,7 +4113,7 @@ int stat[];
           *(statp++) = 0;
         } else {
           *(statp++) = 1;
-          status = PRJERR_BAD_PIX_SET("parx2s");
+          if (!status) status = PRJERR_BAD_PIX_SET("parx2s");
         }
       }
 
@@ -4302,7 +4319,7 @@ int stat[];
     if (r <= tol) {
       if (r < -tol) {
         istat  = 1;
-        status = PRJERR_BAD_PIX_SET("molx2s");
+        if (!status) status = PRJERR_BAD_PIX_SET("molx2s");
       } else {
         /* OK if fabs(x) < tol whence phi = 0.0. */
         istat = -1;
@@ -4321,7 +4338,7 @@ int stat[];
       if (fabs(z) > 1.0+tol) {
         z = 0.0;
         istat  = 1;
-        status = PRJERR_BAD_PIX_SET("molx2s");
+        if (!status) status = PRJERR_BAD_PIX_SET("molx2s");
       } else {
         z = copysign(1.0, z) + y0*r/PI;
       }
@@ -4333,7 +4350,7 @@ int stat[];
       if (fabs(z) > 1.0+tol) {
         z = 0.0;
         istat  = 1;
-        status = PRJERR_BAD_PIX_SET("molx2s");
+        if (!status) status = PRJERR_BAD_PIX_SET("molx2s");
       } else {
         z = copysign(1.0, z);
       }
@@ -4347,7 +4364,7 @@ int stat[];
           *(statp++) = 0;
         } else {
           *(statp++) = 1;
-          status = PRJERR_BAD_PIX_SET("molx2s");
+          if (!status) status = PRJERR_BAD_PIX_SET("molx2s");
         }
       }
 
@@ -4580,7 +4597,7 @@ int stat[];
       if (s < 0.5) {
         if (s < 0.5-tol) {
           istat  = 1;
-          status = PRJERR_BAD_PIX_SET("aitx2s");
+          if (!status) status = PRJERR_BAD_PIX_SET("aitx2s");
         }
 
         s = 0.5;
@@ -4599,7 +4616,7 @@ int stat[];
       if (fabs(t) > 1.0) {
         if (fabs(t) > 1.0+tol) {
           istat  = 1;
-          status = PRJERR_BAD_PIX_SET("aitx2s");
+          if (!status) status = PRJERR_BAD_PIX_SET("aitx2s");
         }
         t = copysign(90.0, t);
 
@@ -4909,14 +4926,14 @@ int stat[];
     if (s == 0.0) {
       r = 0.0;
       istat  = 1;
-      status = PRJERR_BAD_WORLD_SET("cops2x");
+      if (!status) status = PRJERR_BAD_WORLD_SET("cops2x");
 
     } else {
       r = prj->w[2] - prj->w[3]*sind(t)/s;
 
       if (prj->bounds && r*prj->w[0] < 0.0) {
         istat  = 1;
-        status = PRJERR_BAD_WORLD_SET("cops2x");
+        if (!status) status = PRJERR_BAD_WORLD_SET("cops2x");
       }
     }
 
@@ -5098,7 +5115,7 @@ int stat[];
           } else {
             t = 0.0;
             istat  = 1;
-            status = PRJERR_BAD_PIX_SET("coex2s");
+            if (!status) status = PRJERR_BAD_PIX_SET("coex2s");
           }
         } else {
           t = asind(w);
@@ -5575,7 +5592,7 @@ int stat[];
         } else {
           t = 0.0;
           istat  = 1;
-          status = PRJERR_BAD_PIX_SET("coox2s");
+          if (!status) status = PRJERR_BAD_PIX_SET("coox2s");
         }
       } else {
         t = 90.0 - 2.0*atand(pow(r*prj->w[4],prj->w[1]));
@@ -5657,7 +5674,7 @@ int stat[];
       r = 0.0;
       if (prj->w[0] >= 0.0) {
         istat  = 1;
-        status = PRJERR_BAD_WORLD_SET("coos2x");
+        if (!status) status = PRJERR_BAD_WORLD_SET("coos2x");
       }
     } else {
       r = prj->w[3]*pow(tand((90.0 - *thetap)/2.0),prj->w[0]);
@@ -6293,7 +6310,7 @@ int stat[];
           *phip = 0.0;
           *thetap = 0.0;
           *(statp++) = 1;
-          status = PRJERR_BAD_PIX_SET("tscx2s");
+          if (!status) status = PRJERR_BAD_PIX_SET("tscx2s");
           continue;
         }
       } else {
@@ -6301,7 +6318,7 @@ int stat[];
           *phip = 0.0;
           *thetap = 0.0;
           *(statp++) = 1;
-          status = PRJERR_BAD_PIX_SET("tscx2s");
+          if (!status) status = PRJERR_BAD_PIX_SET("tscx2s");
           continue;
         }
       }
@@ -6495,14 +6512,14 @@ int stat[];
       if (fabs(xf) > 1.0) {
         if (fabs(xf) > 1.0+tol) {
           istat  = 1;
-          status = PRJERR_BAD_WORLD_SET("tscs2x");
+          if (!status) status = PRJERR_BAD_WORLD_SET("tscs2x");
         }
         xf = copysign(1.0, xf);
       }
       if (fabs(yf) > 1.0) {
         if (fabs(yf) > 1.0+tol) {
           istat  = 1;
-          status = PRJERR_BAD_WORLD_SET("tscs2x");
+          if (!status) status = PRJERR_BAD_WORLD_SET("tscs2x");
         }
         yf = copysign(1.0, yf);
       }
@@ -6666,7 +6683,7 @@ int stat[];
           *phip = 0.0;
           *thetap = 0.0;
           *(statp++) = 1;
-          status = PRJERR_BAD_PIX_SET("cscx2s");
+          if (!status) status = PRJERR_BAD_PIX_SET("cscx2s");
           continue;
         }
       } else {
@@ -6674,7 +6691,7 @@ int stat[];
           *phip = 0.0;
           *thetap = 0.0;
           *(statp++) = 1;
-          status = PRJERR_BAD_PIX_SET("cscx2s");
+          if (!status) status = PRJERR_BAD_PIX_SET("cscx2s");
           continue;
         }
       }
@@ -6948,14 +6965,14 @@ int stat[];
       if (fabs(xf) > 1.0) {
         if (fabs(xf) > 1.0+tol) {
           istat  = 1;
-          status = PRJERR_BAD_WORLD_SET("cscs2x");
+          if (!status) status = PRJERR_BAD_WORLD_SET("cscs2x");
         }
         xf = copysign(1.0, xf);
       }
       if (fabs(yf) > 1.0) {
         if (fabs(yf) > 1.0+tol) {
           istat  = 1;
-          status = PRJERR_BAD_WORLD_SET("cscs2x");
+          if (!status) status = PRJERR_BAD_WORLD_SET("cscs2x");
         }
         yf = copysign(1.0, yf);
       }
@@ -7091,7 +7108,7 @@ int stat[];
           *phip = 0.0;
           *thetap = 0.0;
           *(statp++) = 1;
-          status = PRJERR_BAD_PIX_SET("qscx2s");
+          if (!status) status = PRJERR_BAD_PIX_SET("qscx2s");
           continue;
         }
       } else {
@@ -7099,7 +7116,7 @@ int stat[];
           *phip = 0.0;
           *thetap = 0.0;
           *(statp++) = 1;
-          status = PRJERR_BAD_PIX_SET("qscx2s");
+          if (!status) status = PRJERR_BAD_PIX_SET("qscx2s");
           continue;
         }
       }
@@ -7162,7 +7179,7 @@ int stat[];
           *phip = 0.0;
           *thetap = 0.0;
           *(statp++) = 1;
-          status = PRJERR_BAD_PIX_SET("qscx2s");
+          if (!status) status = PRJERR_BAD_PIX_SET("qscx2s");
           continue;
         }
 
@@ -7469,14 +7486,14 @@ int stat[];
       if (fabs(xf) > 1.0) {
         if (fabs(xf) > 1.0+tol) {
           istat  = 1;
-          status = PRJERR_BAD_WORLD_SET("qscs2x");
+          if (!status) status = PRJERR_BAD_WORLD_SET("qscs2x");
         }
         xf = copysign(1.0, xf);
       }
       if (fabs(yf) > 1.0) {
         if (fabs(yf) > 1.0+tol) {
           istat  = 1;
-          status = PRJERR_BAD_WORLD_SET("qscs2x");
+          if (!status) status = PRJERR_BAD_WORLD_SET("qscs2x");
         }
         yf = copysign(1.0, yf);
       }
@@ -7670,7 +7687,7 @@ int stat[];
           s = 0.0;
           t = 0.0;
           istat  = 1;
-          status = PRJERR_BAD_PIX_SET("hpxx2s");
+          if (!status) status = PRJERR_BAD_PIX_SET("hpxx2s");
         } else {
           s = 1.0/sigma;
           t = asind(t);
@@ -7701,7 +7718,7 @@ int stat[];
           *phip   = 0.0;
           *thetap = 0.0;
           *(statp++) = 1;
-          status = PRJERR_BAD_PIX_SET("hpxx2s");
+          if (!status) status = PRJERR_BAD_PIX_SET("hpxx2s");
         }
       }
 
@@ -7712,7 +7729,7 @@ int stat[];
         *thetap = 0.0;
         *(statp++) = 1;
       }
-      status = PRJERR_BAD_PIX_SET("hpxx2s");
+      if (!status) status = PRJERR_BAD_PIX_SET("hpxx2s");
     }
   }
 

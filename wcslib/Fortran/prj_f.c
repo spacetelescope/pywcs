@@ -36,17 +36,18 @@
 
 /* Fortran name mangling. */
 #include <wcsconfig_f77.h>
-#define prjini_ F77_FUNC(prjini, PRJINI)
-#define prjput_ F77_FUNC(prjput, PRJPUT)
-#define prjget_ F77_FUNC(prjget, PRJGET)
-#define prjprt_ F77_FUNC(prjprt, PRJPRT)
+#define prjini_  F77_FUNC(prjini,  PRJINI)
+#define prjput_  F77_FUNC(prjput,  PRJPUT)
+#define prjget_  F77_FUNC(prjget,  PRJGET)
+#define prjfree_ F77_FUNC(prjfree, PRJFREE)
+#define prjprt_  F77_FUNC(prjprt,  PRJPRT)
 
-#define prjptc_ F77_FUNC(prjptc, PRJPTC)
-#define prjptd_ F77_FUNC(prjptd, PRJPTD)
-#define prjpti_ F77_FUNC(prjpti, PRJPTI)
-#define prjgtc_ F77_FUNC(prjgtc, PRJGTC)
-#define prjgtd_ F77_FUNC(prjgtd, PRJGTD)
-#define prjgti_ F77_FUNC(prjgti, PRJGTI)
+#define prjptc_  F77_FUNC(prjptc,  PRJPTC)
+#define prjptd_  F77_FUNC(prjptd,  PRJPTD)
+#define prjpti_  F77_FUNC(prjpti,  PRJPTI)
+#define prjgtc_  F77_FUNC(prjgtc,  PRJGTC)
+#define prjgtd_  F77_FUNC(prjgtd,  PRJGTD)
+#define prjgti_  F77_FUNC(prjgti,  PRJGTI)
 
 #define PRJ_FLAG      100
 #define PRJ_CODE      101
@@ -243,6 +244,14 @@ int prjgtd_(const int *prj, const int *what, double *value)
 int prjgti_(const int *prj, const int *what, int *value)
 {
   return prjget_(prj, what, value);
+}
+
+/*--------------------------------------------------------------------------*/
+
+int prjfree_(int *prj)
+
+{
+  return prjfree((struct prjprm *)prj);
 }
 
 /*--------------------------------------------------------------------------*/

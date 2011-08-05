@@ -42,6 +42,7 @@
       INCLUDE 'cel.inc'
       INCLUDE 'prj.inc'
       INCLUDE 'wcs.inc'
+      INCLUDE 'wcserr.inc'
       INCLUDE 'wcsmath.inc'
 
       DOUBLE PRECISION TOL
@@ -217,12 +218,16 @@
       WRITE (*, 130)
  130  FORMAT (//,'IGNORE messages marked with ''OK'', they test ',
      :           'WCSERR: ')
-      CALL TEST_ERRORS
 
+      STATUS = WCSERR_ENABLE(1)
+
+*     Test 1.
       STATUS = WCSPUT (WCS, WCS_PV, UNDEFINED, PVI(3), PVM(3))
       STATUS = WCSSET (WCS)
       CALL CHECK_ERROR (WCS, STATUS, WCSERR_BAD_PARAM,
      :  'Invalid parameter value')
+
+      CALL TEST_ERRORS
 
 
 *     Clean up.
@@ -298,27 +303,31 @@
 
       COMMON /ERRTST/ ETEST
 *-----------------------------------------------------------------------
+*     Test 2.
       STATUS = WCSPUT (WCS, WCS_FLAG, -1, 0, 0)
-
       STATUS = WCSINI (-32, WCS)
       CALL CHECK_ERROR (WCS, STATUS, WCSERR_MEMORY,
      :  'naxis must be positive (got -32)')
 
+*     Test 3.
       STATUS = WCSPUT (WCS, WCS_FLAG, 0, 0, 0)
       status = WCSINI (1000000000, WCS)
       CALL CHECK_ERROR (WCS, STATUS, WCSERR_MEMORY,
      :  'Memory allocation failed')
 
+*     Test 4.
       STATUS = WCSPUT (WCS, WCS_FLAG, 0, 0, 0)
       STATUS = WCSINI (2, WCS)
       CALL CHECK_ERROR (WCS, STATUS, WCSERR_SUCCESS, ' ')
 
+*     Test 5.
       STATUS = WCSPUT (WCS, WCS_CTYPE, 'CUBEFACE', 1, 0)
       STATUS = WCSPUT (WCS, WCS_CTYPE, 'CUBEFACE', 2, 0)
       STATUS = WCSSET (WCS)
       CALL CHECK_ERROR (WCS, STATUS, WCSERR_BAD_CTYPE,
      :  'Multiple CUBEFACE axes (in CTYPE0 and CTYPE1)')
 
+*     Test 6.
       STATUS = WCSPUT (WCS, WCS_FLAG, 0, 0, 0)
       STATUS = WCSINI (2, WCS)
       STATUS = WCSPUT (WCS, WCS_CTYPE, 'RA---FOO', 1, 0)
@@ -327,6 +336,7 @@
       CALL CHECK_ERROR (WCS, STATUS, WCSERR_BAD_CTYPE,
      :  'Unrecognized projection code (FOO in CTYPE0)')
 
+*     Test 7.
       STATUS = WCSPUT (WCS, WCS_FLAG, 0, 0, 0)
       STATUS = WCSINI (2, WCS)
       STATUS = WCSPUT (WCS, WCS_CTYPE, 'RA---TAN', 1, 0)

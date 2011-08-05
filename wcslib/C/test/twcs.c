@@ -262,11 +262,15 @@ int main()
   wcsprintf_set(stderr);
   wcsprintf("\n\nIGNORE messages marked with 'OK', they test wcserr "
     "(and wcsprintf):\n");
-  test_errors();
 
+  wcserr_enable(1);
+
+  /* Test 1. */
   wcs->pv[2].value = UNDEFINED;
   status = wcsset(wcs);
   check_error(wcs, status, WCSERR_BAD_PARAM, "Invalid parameter value");
+
+  test_errors();
 
 
   /* Clean up. */
@@ -379,19 +383,23 @@ void test_errors()
     "RA---TAN", "FREQ-LOG"
   };
 
+  /* Test 2. */
   wcs.flag = -1;
   status = wcsini(1, -32, &wcs);
   check_error(&wcs, status, WCSERR_MEMORY,
     "naxis must be positive (got -32)");
 
+  /* Test 3. */
   wcs.flag = 0;
   status = wcsini(1, 1 << 30, &wcs);
   check_error(&wcs, status, WCSERR_MEMORY, "Memory allocation failed");
 
+  /* Test 4. */
   wcs.flag = 0;
   status = wcsini(1, 2, &wcs);
   check_error(&wcs, status, WCSERR_SUCCESS, "");
 
+  /* Test 5. */
   for (i = 0; i < 2; i++) {
     strcpy(wcs.ctype[i], &multiple_cubeface[i][0]);
   }
@@ -399,6 +407,7 @@ void test_errors()
   check_error(&wcs, status, WCSERR_BAD_CTYPE,
     "Multiple CUBEFACE axes (in CTYPE0 and CTYPE1)");
 
+  /* Test 6. */
   wcs.flag = 0;
   status = wcsini(1, 2, &wcs);
   for (i = 0; i < 2; i++) {
@@ -408,6 +417,7 @@ void test_errors()
   check_error(&wcs, status, WCSERR_BAD_CTYPE,
     "Unrecognized projection code (FOO in CTYPE0)");
 
+  /* Test 7. */
   wcs.flag = 0;
   status = wcsini(1, 2, &wcs);
   for (i = 0; i < 2; i++) {

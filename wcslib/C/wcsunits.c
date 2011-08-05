@@ -145,7 +145,9 @@ int wcsunitse(
   case 0:
     /* No function. */
     if (func2) {
-      goto fail_mismatched_function;
+      return wcserr_set(WCSERR_SET(UNITSERR_BAD_FUNCS),
+        "Mismatched unit functions: have '%s' (%s), want '%s' (%s)",
+        have, wcsunits_funcs[func1], want, wcsunits_funcs[func2]);
     }
 
     *scale = scale1 / scale2;
@@ -164,7 +166,9 @@ int wcsunitse(
       *offset = log(scale1 / scale2);
 
     } else {
-      goto fail_mismatched_function;
+      return wcserr_set(WCSERR_SET(UNITSERR_BAD_FUNCS),
+        "Mismatched unit functions: have '%s' (%s), want '%s' (%s)",
+        have, wcsunits_funcs[func1], want, wcsunits_funcs[func2]);
     }
 
     break;
@@ -182,7 +186,9 @@ int wcsunitse(
       *offset = log(scale1 / scale2);
 
     } else {
-      goto fail_mismatched_function;
+      return wcserr_set(WCSERR_SET(UNITSERR_BAD_FUNCS),
+        "Mismatched unit functions: have '%s' (%s), want '%s' (%s)",
+        have, wcsunits_funcs[func1], want, wcsunits_funcs[func2]);
     }
 
     break;
@@ -190,7 +196,9 @@ int wcsunitse(
   case 3:
     /* exp(). */
     if (func2 != 3) {
-      goto fail_mismatched_function;
+      return wcserr_set(WCSERR_SET(UNITSERR_BAD_FUNCS),
+        "Mismatched unit functions: have '%s' (%s), want '%s' (%s)",
+        have, wcsunits_funcs[func1], want, wcsunits_funcs[func2]);
     }
 
     *scale = 1.0;
@@ -204,11 +212,6 @@ int wcsunitse(
   }
 
   return 0;
-
-fail_mismatched_function:
-  return wcserr_set(WCSERR_SET(UNITSERR_BAD_FUNCS),
-    "Mismatched unit functions: have '%s' (%s), want '%s' (%s)",
-    have, wcsunits_funcs[func1], want, wcsunits_funcs[func2]);
 }
 
 /*--------------------------------------------------------------------------*/

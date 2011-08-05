@@ -39,31 +39,32 @@
 
 /* Fortran name mangling. */
 #include <wcsconfig_f77.h>
-#define spcini_ F77_FUNC(spcini, SPCINI)
-#define spcput_ F77_FUNC(spcput, SPCPUT)
-#define spcget_ F77_FUNC(spcget, SPCGET)
-#define spcprt_ F77_FUNC(spcprt, SPCPRT)
-#define spcset_ F77_FUNC(spcset, SPCSET)
-#define spcx2s_ F77_FUNC(spcx2s, SPCX2S)
-#define spcs2x_ F77_FUNC(spcs2x, SPCS2X)
+#define spcini_  F77_FUNC(spcini,  SPCINI)
+#define spcput_  F77_FUNC(spcput,  SPCPUT)
+#define spcget_  F77_FUNC(spcget,  SPCGET)
+#define spcfree_ F77_FUNC(spcfree, SPCFREE)
+#define spcprt_  F77_FUNC(spcprt,  SPCPRT)
+#define spcset_  F77_FUNC(spcset,  SPCSET)
+#define spcx2s_  F77_FUNC(spcx2s,  SPCX2S)
+#define spcs2x_  F77_FUNC(spcs2x,  SPCS2X)
 #define spctype_ F77_FUNC(spctype, SPCTYPE)
 #define spcspxe_ F77_FUNC(spcspxe, SPCSPXE)
 #define spcxpse_ F77_FUNC(spcxpse, SPCXPSE)
 #define spctrne_ F77_FUNC(spctrne, SPCTRNE)
 #define spcaips_ F77_FUNC(spcaips, SPCAIPS)
 
-#define spcptc_ F77_FUNC(spcptc, SPCPTC)
-#define spcptd_ F77_FUNC(spcptd, SPCPTD)
-#define spcpti_ F77_FUNC(spcpti, SPCPTI)
-#define spcgtc_ F77_FUNC(spcgtc, SPCGTC)
-#define spcgtd_ F77_FUNC(spcgtd, SPCGTD)
-#define spcgti_ F77_FUNC(spcgti, SPCGTI)
+#define spcptc_  F77_FUNC(spcptc,  SPCPTC)
+#define spcptd_  F77_FUNC(spcptd,  SPCPTD)
+#define spcpti_  F77_FUNC(spcpti,  SPCPTI)
+#define spcgtc_  F77_FUNC(spcgtc,  SPCGTC)
+#define spcgtd_  F77_FUNC(spcgtd,  SPCGTD)
+#define spcgti_  F77_FUNC(spcgti,  SPCGTI)
 
 /* Deprecated. */
-#define spctyp_ F77_FUNC(spctyp, SPCTYP)
-#define spcspx_ F77_FUNC(spcspx, SPCSPX)
-#define spcxps_ F77_FUNC(spcxps, SPCXPS)
-#define spctrn_ F77_FUNC(spctrn, SPCTRN)
+#define spctyp_  F77_FUNC(spctyp,  SPCTYP)
+#define spcspx_  F77_FUNC(spcspx,  SPCSPX)
+#define spcxps_  F77_FUNC(spcxps,  SPCXPS)
+#define spctrn_  F77_FUNC(spctrn,  SPCTRN)
 
 #define SPC_FLAG    100
 #define SPC_TYPE    101
@@ -221,6 +222,14 @@ int spcgtd_(const int *spc, const int *what, double *value)
 int spcgti_(const int *spc, const int *what, int *value)
 {
   return spcget_(spc, what, value);
+}
+
+/*--------------------------------------------------------------------------*/
+
+int spcfree_(int *spc)
+
+{
+  return spcfree((struct spcprm *)spc);
 }
 
 /*--------------------------------------------------------------------------*/

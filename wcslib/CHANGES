@@ -1,9 +1,11 @@
-WCSLIB version 4.8 (2011/07/??)
+WCSLIB version 4.8 (2011/08/??)
 -------------------------------
 
 * C library
 
-  - Most functions that return a numeric status (error) code now also
+  - New error handling mechanism contributed by Michael Droetboom:
+
+    Most functions that return a numeric status (error) code now also
     fill in a detailed error message to a wcserr struct attached to
     the passed-in *prm struct.  See wcserr.h for more information.
 
@@ -27,6 +29,11 @@ WCSLIB version 4.8 (2011/07/??)
   - In wcssub(), ensure that wcstab->m_tab has been initialized
     before trying to free it on status return 12 or 13 (reported by
     Hans Terlow).
+
+* Fortran wrappers
+
+    Extensive modifications to track the new error handling mechanism
+    in the C library.
 
 * Installation
 

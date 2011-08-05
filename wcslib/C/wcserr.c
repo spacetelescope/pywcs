@@ -40,19 +40,14 @@
 #include "wcserr.h"
 #include "wcsprintf.h"
 
+static int wcserr_enabled = 0;
+
 /*--------------------------------------------------------------------------*/
 
-int wcserr_ini(
-  struct wcserr *err)
+int wcserr_enable(int enable)
 
 {
-  if (err == 0x0) {
-    return 1;
-  }
-
-  memset(err, 0, sizeof(struct wcserr));
-
-  return 0;
+  return wcserr_enabled = (enable ? 1 : 0);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -69,22 +64,30 @@ int wcserr_set(
 {
   va_list argp;
 
+  if (!wcserr_enabled) return status;
+
   if (err == 0x0) {
     return status;
   }
 
-  if (*err == 0x0) {
-    *err = calloc(1, sizeof(struct wcserr));
+  if (status) {
+    if (*err == 0x0) {
+      *err = calloc(1, sizeof(struct wcserr));
+    }
+
+    (*err)->status   = status;
+    (*err)->function = function;
+    (*err)->file     = file;
+    (*err)->line_no  = line_no;
+
+    va_start(argp, format);
+    vsnprintf((*err)->msg, WCSERR_MSG_LENGTH, format, argp);
+    va_end(argp);
+
+  } else {
+    if (*err) free(*err);
+    *err = 0x0;
   }
-
-  (*err)->status   = status;
-  (*err)->function = function;
-  (*err)->file     = file;
-  (*err)->line_no  = line_no;
-
-  va_start(argp, format);
-  vsnprintf((*err)->msg, WCSERR_MSG_LENGTH, format, argp);
-  va_end(argp);
 
   return status;
 }
@@ -93,23 +96,21 @@ int wcserr_set(
 
 int wcserr_copy(
   const struct wcserr *src,
-  struct wcserr **dst)
+  struct wcserr *dst)
 
 {
   if (src == 0x0) {
-    return 1;
+    if (dst) {
+      memset(dst, 0, sizeof(struct wcserr));
+    }
+    return 0;
   }
 
-  if (dst == 0x0) {
-    return src->status;
+  if (dst) {
+    memcpy(dst, src, sizeof(struct wcserr));
   }
 
-  if (*dst == 0x0) {
-    *dst = calloc(1, sizeof(struct wcserr));
-  }
-
-  memcpy(*dst, src, sizeof(struct wcserr));
-  return (*dst)->status;
+  return src->status;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -119,14 +120,21 @@ int wcserr_prt(
   const char *prefix)
 
 {
+  if (!wcserr_enabled) {
+    wcsprintf("Error messaging is not enabled, use wcserr_enable().\n");
+    return 2;
+  }
+
   if (err == 0x0) {
     return 0;
   }
 
-  if (prefix == 0x0) prefix = "";
+  if (err->status) {
+    if (prefix == 0x0) prefix = "";
 
-  wcsprintf("%sERROR %d in %s() at line %d of file %s:\n%s  %s.\n", prefix,
-    err->status, err->function, err->line_no, err->file, prefix, err->msg);
+    wcsprintf("%sERROR %d in %s() at line %d of file %s:\n%s  %s.\n", prefix,
+      err->status, err->function, err->line_no, err->file, prefix, err->msg);
+  }
 
   return 0;
 }

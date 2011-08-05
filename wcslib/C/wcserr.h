@@ -34,17 +34,19 @@
 *
 * Summary of the wcserr routines
 * ------------------------------
-* Most structs in WCSLIB contain a wcserr struct as a member.  Functions in
-* WCSLIB that return an error status code also set a detailed error message in
-* this struct which also identifies the source file and line number where the
-* error occurred.
+* Most of the structs in WCSLIB contain a pointer to a wcserr struct as a
+* member.  Functions in WCSLIB that return an error status code can also
+* allocate and set a detailed error message in this struct which also
+* identifies the function, source file, and line number where the error
+* occurred.
 *
 * For example:
 *
-=     struct wcsprm wcs;
-=     if (wcsini(&wcs)) {
-=       // Print the error message to the console
-=       printf("%s\n", wcs.err.msg);
+=     struct prjprm prj;
+=     if (prjini(&prj)) {
+=       // Print the error message to stderr.
+=       wcsprintf_set(stderr);
+=       wcserr_prt(prj.err);
 =     }
 *
 * A number of utility functions used in managing the wcserr struct are for
@@ -56,8 +58,8 @@
 * wcserr struct - Error message handling
 * --------------------------------------
 * The wcserr struct contains the numeric error code, a textual description of
-* the error, and information about the source file and line number where the
-* error was generated.
+* the error, and information about the function, source file, and line number
+* where the error was generated.
 *
 *   int status
 *     Numeric status code associated with the error, the meaning of which
@@ -79,6 +81,21 @@
 *     Informative error message.
 *
 *
+* wcserr_enable() - Enable/disable error messaging
+* ------------------------------------------------
+* wcserr_enable() enables or disables wcserr error messaging.  By default it
+* is disabled.
+*
+* Given:
+*   enable    int       If true (non-zero), enable error messaging, else
+*                       disable it.
+*
+* Function return value:
+*             int       Status return value:
+*                         0: Error messaging is disabled.
+*                         1: Error messaging is enabled.
+*
+*
 * wcserr_prt() - Print a wcserr struct
 * ------------------------------------
 * wcserr_prt() prints the error message (if any) contained in a wcserr struct.
@@ -95,24 +112,7 @@
 * Function return value:
 *             int       Status return value:
 *                         0: Success.
-*
-*
-* wcserr_ini() - Default constructor for the wcserr struct
-* --------------------------------------------------------
-* INTERNAL USE ONLY.
-*
-* wcserr_ini() initializes the memory in a wcserr struct.  If the struct has
-* already been initialized, calling wcserr_ini() is not harmful, but will
-* merely clear the error information.
-*
-* Given and returned:
-*   err       struct wcserr*
-*                       The error object.
-*
-* Function return value:
-*             int       Status return value:
-*                         0: Success.
-*                         1: Null wcserr pointer passed.
+*                         2: Error messaging is not enabled.
 *
 *
 * wcserr_set() - Fill in the contents of an error object
@@ -131,10 +131,12 @@
 *                       If err is NULL, returns the status code given without
 *                       setting an error message.
 *
-*                       If *err is NULL, allocates memory for a wcserr struct.
+*                       If *err is NULL, allocates memory for a wcserr struct
+*                       (provided that status is non-zero).
 *
 * Given:
-*   status    int       Numeric status code to set
+*   status    int       Numeric status code to set.  If 0, then *err will be
+*                       deleted and *err will be returned as NULL.
 *
 *   function  const char *
 *                       Name of the function generating the error.  This
@@ -168,22 +170,17 @@
 * ------------------------------------
 * INTERNAL USE ONLY.
 *
-* wcserr_copy() copies an error object from src to dst.
+* wcserr_copy() copies one error object to another.  Use of this function
+* should be avoided in general since the function, source file, and line
+* number information copied to the destination may lose its context.
 *
 * Given:
 *   src       const struct wcserr*
-*                       Source error object.
-*
-*                       If src is NULL, returns 1.
+*                       Source error object.  If src is NULL, returns 1.
 *
 * Returned:
-*   dst       struct wcserr**
-*                       Destination error object.
-*
-*                       If dst is NULL, returns the status code given without
-*                       copying the wcserr struct.
-*
-*                       If *dst is NULL, allocates memory for a wcserr struct.
+*   dst       struct wcserr*
+*                       Destination error object.  If NULL, no copy is made.
 *
 * Function return value:
 *             int       Numeric status code of the source error object.
@@ -217,16 +214,16 @@ struct wcserr {
 /* Size of the wcserr struct in int units, used by the Fortran wrappers. */
 #define ERRLEN (sizeof(struct wcserr)/sizeof(int))
 
+int wcserr_enable(int enable);
+
 int wcserr_prt(const struct wcserr *err, const char *prefix);
 
 
 /* INTERNAL USE ONLY -------------------------------------------------------*/
-int wcserr_ini(struct wcserr *err);
-
 int wcserr_set(struct wcserr **err, int status, const char *function,
   const char *file, int line_no, const char *format, ...);
 
-int wcserr_copy(const struct wcserr *src, struct wcserr **dst);
+int wcserr_copy(const struct wcserr *src, struct wcserr *dst);
 
 /* Convenience macro for invoking wcserr_set(). */
 #define WCSERR_SET(status) err, status, function, __FILE__, __LINE__

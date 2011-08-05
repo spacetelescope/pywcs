@@ -625,10 +625,16 @@ int wcsget_(const int *wcs, const int *what, void *value)
     break;
   case WCS_ERR:
     /* Copy the contents of the wcserr struct. */
-    k = (int *)(wcsp->err) - (int *)wcsp;
-    iwcsp = wcs + k;
-    for (k = 0; k < ERRLEN; k++) {
-      *(ivalp++) = *(iwcsp++);
+    if (wcsp->err) {
+      k = (int *)(wcsp->err) - (int *)wcsp;
+      iwcsp = wcs + k;
+      for (k = 0; k < ERRLEN; k++) {
+        *(ivalp++) = *(iwcsp++);
+      }
+    } else {
+      for (k = 0; k < ERRLEN; k++) {
+        *(ivalp++) = 0;
+      }
     }
     break;
   default:

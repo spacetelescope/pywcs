@@ -66,7 +66,7 @@
 * wcssub().
 *
 * wcsperr() prints the error message(s) (if any) stored in a wcsprm struct,
-* and linprm, celprm, prjprm, and spcprm structs that it contains.
+* and the linprm, celprm, prjprm, spcprm, and tabprm structs that it contains.
 *
 * A setup routine, wcsset(), computes intermediate values in the wcsprm struct
 * from parameters in it that were supplied by the user.  The struct always
@@ -351,8 +351,8 @@
 * wcsperr() - Print error messages from a wcsprm struct
 * -----------------------------------------------------
 * wcsperr() prints the error message(s), if any, stored in a wcsprm struct,
-* and linprm, celprm, prjprm, and spcprm structs that it contains.  If there
-* are no errors then nothing is printed.  It uses wcsprintf(), q.v.
+* and the linprm, celprm, prjprm, spcprm, and tabprm structs that it contains.
+* If there are no errors then nothing is printed.  It uses wcserr_prt(), q.v.
 *
 * Given:
 *   wcs       const struct wcsprm*

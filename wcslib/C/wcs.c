@@ -36,6 +36,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "wcserr.h"
 #include "wcsmath.h"
 #include "wcsprintf.h"
 #include "wcstrig.h"
@@ -1038,18 +1039,13 @@ int wcsfree(struct wcsprm *wcs)
   wcs->flag = 0;
 
   if (wcs->err) free(wcs->err);
-  if ((wcs->lin).err) free((wcs->lin).err);
-  if ((wcs->cel).err) free((wcs->cel).err);
-  if ((wcs->spc).err) free((wcs->spc).err);
-  if ((wcs->cel).prj.err) free(((wcs->cel).prj).err);
-
   wcs->err = 0x0;
-  (wcs->lin).err = 0x0;
-  (wcs->cel).err = 0x0;
-  (wcs->spc).err = 0x0;
-  ((wcs->cel).prj).err = 0x0;
 
-  return linfree(&(wcs->lin));
+  linfree(&(wcs->lin));
+  celfree(&(wcs->cel));
+  spcfree(&(wcs->spc));
+
+  return 0;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -2008,9 +2004,11 @@ int wcs_units(struct wcsprm *wcs)
     wcsutil_null_fill(72, wcs->cunit[i]);
     if (wcs->cunit[i][0]) {
       if (wcsunitse(wcs->cunit[i], units, &scale, &offset, &power,
-          &uniterr)) {
-        return wcserr_set(WCSERR_SET(WCSERR_BAD_COORD_TRANS),
+                    &uniterr)) {
+        wcserr_set(WCSERR_SET(WCSERR_BAD_COORD_TRANS),
           "In CUNIT%d%.1s: %s", i, (*wcs->alt)?wcs->alt:"", uniterr->msg);
+        free(uniterr);
+        return WCSERR_BAD_COORD_TRANS;
       }
 
       if (scale != 1.0) {

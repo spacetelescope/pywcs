@@ -231,7 +231,7 @@ int wcstab(struct wcsprm *wcs)
 
   for (itab = 0; itab < wcs->ntab; itab++) {
     if ((status = tabini(1, wcs->tab[itab].M, 0, wcs->tab + itab))) {
-      wcserr_copy((wcs->tab + itab)->err, &(wcs->err));
+      wcserr_set(WCSHDR_ERRMSG(status));
       goto cleanup;
     }
   }

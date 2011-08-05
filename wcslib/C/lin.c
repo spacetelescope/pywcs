@@ -35,6 +35,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "wcserr.h"
 #include "wcsprintf.h"
 #include "lin.h"
 

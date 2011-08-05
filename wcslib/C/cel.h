@@ -56,7 +56,8 @@
 * somewhat like a C++ class but with no encapsulation.
 *
 * Routine celini() is provided to initialize the celprm struct with default
-* values, and another, celprt(), to print its contents.
+* values, celfree() reclaims any memory that may have been allocated to store
+* an error message, and celprt() prints its contents.
 *
 * A setup routine, celset(), computes intermediate values in the celprm struct
 * from parameters in it that were supplied by the user.  The struct always
@@ -75,6 +76,21 @@
 * be used to initialize every celprm struct.
 *
 * Returned:
+*   cel       struct celprm*
+*                       Celestial transformation parameters.
+*
+* Function return value:
+*             int       Status return value:
+*                         0: Success.
+*                         1: Null celprm pointer passed.
+*
+*
+* celfree() - Destructor for the celprm struct
+* --------------------------------------------
+* celfree() frees any memory that may have been allocated to store an error
+* message in the celprm struct.
+*
+* Given:
 *   cel       struct celprm*
 *                       Celestial transformation parameters.
 *
@@ -387,6 +403,8 @@ struct celprm {
 
 
 int celini(struct celprm *cel);
+
+int celfree(struct celprm *cel);
 
 int celprt(const struct celprm *cel);
 

@@ -53,7 +53,8 @@
 * routines, somewhat like a C++ class but with no encapsulation.
 *
 * Routine prjini() is provided to initialize the prjprm struct with default
-* values, and another, prjprt(), to print its contents.
+* values, prjfree() reclaims any memory that may have been allocated to store
+* an error message, and prjprt() prints its contents.
 *
 * Setup routines for each projection with names of the form ???set(), where
 * "???" is the down-cased three-letter projection code, compute intermediate
@@ -143,6 +144,21 @@
 * be used to initialize every prjprm struct.
 *
 * Returned:
+*   prj       struct prjprm*
+*                       Projection parameters.
+*
+* Function return value:
+*             int       Status return value:
+*                         0: Success.
+*                         1: Null prjprm pointer passed.
+*
+*
+* prjfree() - Destructor for the prjprm struct
+* --------------------------------------------
+* prjfree() frees any memory that may have been allocated to store an error
+* message in the prjprm struct.
+*
+* Given:
 *   prj       struct prjprm*
 *                       Projection parameters.
 *
@@ -614,6 +630,7 @@ struct prjprm {
 
 /* Use the preprocessor to help declare function prototypes (see above). */
 int prjini(struct prjprm *prj);
+int prjfree(struct prjprm *prj);
 int prjprt(const struct prjprm *prj);
 
 int prjset(struct prjprm *prj);

@@ -33,7 +33,9 @@
 
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 
+#include "wcserr.h"
 #include "wcsmath.h"
 #include "wcsprintf.h"
 #include "wcstrig.h"
@@ -82,6 +84,23 @@ struct celprm *cel;
   cel->err = 0x0;
 
   return prjini(&(cel->prj));
+}
+
+/*--------------------------------------------------------------------------*/
+
+int celfree(cel)
+
+struct celprm *cel;
+
+{
+  if (cel == 0x0) return CELERR_NULL_POINTER;
+
+  if (cel->err) free(cel->err);
+  cel->err = 0x0;
+
+  prjfree(&(cel->prj));
+
+  return 0;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -412,7 +431,7 @@ int stat[];
   err = &(cel->err);
 
   if (cel->flag != CELSET) {
-    if (celset(cel)) return (cel->err)->status;
+    if ((status = celset(cel))) return status;
   }
 
   /* Apply spherical deprojection. */
@@ -459,7 +478,7 @@ int stat[];
   err = &(cel->err);
 
   if (cel->flag != CELSET) {
-    if (celset(cel)) return (cel->err)->status;
+    if ((status = celset(cel))) return status;
   }
 
   /* Compute native coordinates. */

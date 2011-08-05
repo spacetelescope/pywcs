@@ -57,7 +57,8 @@
 * C++ class but with no encapsulation.
 *
 * Routine spcini() is provided to initialize the spcprm struct with default
-* values, and another, spcprt(), to print its contents.
+* values, spcfree() reclaims any memory that may have been allocated to store
+* an error message, and spcprt() prints its contents.
 *
 * A setup routine, spcset(), computes intermediate values in the spcprm struct
 * from parameters in it that were supplied by the user.  The struct always
@@ -182,6 +183,21 @@
 * be used to initialize every spcprm struct.
 *
 * Given and returned:
+*   spc       struct spcprm*
+*                       Spectral transformation parameters.
+*
+* Function return value:
+*             int       Status return value:
+*                         0: Success.
+*                         1: Null spcprm pointer passed.
+*
+*
+* spcfree() - Destructor for the spcprm struct
+* --------------------------------------------
+* spcfree() frees any memory that may have been allocated to store an error
+* message in the spcprm struct.
+*
+* Given:
 *   spc       struct spcprm*
 *                       Spectral transformation parameters.
 *
@@ -803,6 +819,8 @@ struct spcprm {
 
 
 int spcini(struct spcprm *spc);
+
+int spcfree(struct spcprm *spc);
 
 int spcprt(const struct spcprm *spc);
 

@@ -32,10 +32,10 @@
 *=======================================================================
 
 *     Functions.
-      EXTERNAL  CELGET, CELGTC, CELGTD, CELGTI, CELINI, CELPRT, CELPTC,
-     :          CELPTD, CELPTI, CELPUT, CELS2X, CELSET, CELX2S
-      INTEGER   CELGET, CELGTC, CELGTD, CELGTI, CELINI, CELPRT, CELPTC,
-     :          CELPTD, CELPTI, CELPUT, CELS2X, CELSET, CELX2S
+      EXTERNAL  CELFREE, CELGET, CELGTC, CELGTD, CELGTI, CELINI, CELPRT,
+     :          CELPTC,  CELPTD, CELPTI, CELPUT, CELS2X, CELSET, CELX2S
+      INTEGER   CELFREE, CELGET, CELGTC, CELGTD, CELGTI, CELINI, CELPRT,
+     :          CELPTC,  CELPTD, CELPTI, CELPUT, CELS2X, CELSET, CELX2S
 
 *     Length of the CELPRM data structure (INTEGER array) on 64-bit
 *     machines.  Only needs to be 142 on 32-bit machines.

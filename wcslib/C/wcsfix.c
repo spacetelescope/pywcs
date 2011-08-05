@@ -36,6 +36,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "wcserr.h"
 #include "wcsmath.h"
 #include "wcsutil.h"
 #include "sph.h"
@@ -114,50 +115,50 @@ int wcsfixi(int ctrl, const int naxis[], struct wcsprm *wcs, int stat[],
 
   err = info + CDFIX;
   if ((stat[CDFIX] = cdfix(wcs)) > 0) {
-    wcserr_copy(wcs->err, &err);
+    wcserr_copy(wcs->err, err);
     status = 1;
   } else {
-    wcserr_ini(err);
+    wcserr_copy(0x0, err);
   }
 
   err = info + DATFIX;
   if ((stat[DATFIX] = datfix(wcs)) > 0) {
-    wcserr_copy(wcs->err, &err);
+    wcserr_copy(wcs->err, err);
     status = 1;
   } else {
-    wcserr_ini(err);
+    wcserr_copy(0x0, err);
   }
 
   err = info + UNITFIX;
   if ((stat[UNITFIX] = unitfix(ctrl, wcs)) > 0) {
-    wcserr_copy(wcs->err, &err);
+    wcserr_copy(wcs->err, err);
     status = 1;
   } else {
-    wcserr_ini(err);
+    wcserr_copy(0x0, err);
   }
 
   err = info + CELFIX;
   if ((stat[CELFIX] = celfix(wcs)) > 0) {
-    wcserr_copy(wcs->err, &err);
+    wcserr_copy(wcs->err, err);
     status = 1;
   } else {
-    wcserr_ini(err);
+    wcserr_copy(0x0, err);
   }
 
   err = info + SPCFIX;
   if ((stat[SPCFIX] = spcfix(wcs)) > 0) {
-    wcserr_copy(wcs->err, &err);
+    wcserr_copy(wcs->err, err);
     status = 1;
   } else {
-    wcserr_ini(err);
+    wcserr_copy(0x0, err);
   }
 
   err = info + CYLFIX;
-  wcserr_ini(err);
+  wcserr_copy(0x0, err);
   if (naxis) {
     if ((stat[CYLFIX] = cylfix(naxis, wcs)) > 0) {
       err = info + CYLFIX;
-      wcserr_copy(wcs->err, &err);
+      wcserr_copy(wcs->err, err);
       status = 1;
     }
   } else {
@@ -377,7 +378,7 @@ int datfix(struct wcsprm *wcs)
 int unitfix(int ctrl, struct wcsprm *wcs)
 
 {
-  int  i, status = -1;
+  int  i, status = FIXERR_NO_CHANGE;
 
   if (wcs == 0x0) return FIXERR_NULL_POINTER;
 
@@ -397,7 +398,7 @@ int celfix(struct wcsprm *wcs)
 {
   static const char *function = "celfix";
 
-  int k;
+  int k, status;
   struct celprm *wcscel = &(wcs->cel);
   struct prjprm *wcsprj = &(wcscel->prj);
   struct wcserr **err;
@@ -407,7 +408,7 @@ int celfix(struct wcsprm *wcs)
 
   /* Initialize if required. */
   if (wcs->flag != WCSSET) {
-    if (wcsset(wcs)) return (wcs->err)->status;
+    if ((status = wcsset(wcs))) return status;
   }
 
   /* Was an NCP or GLS projection code translated? */
@@ -523,7 +524,7 @@ int spcfix(struct wcsprm *wcs)
   /* Initialize if required. */
   if (wcs == 0x0) return FIXERR_NULL_POINTER;
   if (wcs->flag != WCSSET) {
-    if (wcsset(wcs)) return (wcs->err)->status;
+    if ((status = wcsset(wcs))) return status;
   }
 
   if ((i = wcs->spec) < 0) {
@@ -559,15 +560,20 @@ int spcfix(struct wcsprm *wcs)
 int cylfix(const int naxis[], struct wcsprm *wcs)
 
 {
+  static const char *function = "cylfix";
+
   unsigned short icnr, indx[NMAX], ncnr;
-  int    j, k, stat[4];
+  int    j, k, stat[4], status;
   double img[4][NMAX], lat, lng, phi[4], phi0, phimax, phimin, pix[4][NMAX],
          *pixj, theta[4], theta0, world[4][NMAX], x, y;
+  struct wcserr **err;
+
+  if (wcs == 0x0) return FIXERR_NULL_POINTER;
+  err = &(wcs->err);
 
   /* Initialize if required. */
-  if (wcs == 0x0) return FIXERR_NULL_POINTER;
   if (wcs->flag != WCSSET) {
-    if (wcsset(wcs)) return (wcs->err)->status;
+    if ((status = wcsset(wcs))) return status;
   }
 
   /* Check that we have a cylindrical projection. */
@@ -606,7 +612,7 @@ int cylfix(const int naxis[], struct wcsprm *wcs)
     }
   }
 
-  if (phimin > phimax) return (wcs->err)->status;
+  if (phimin > phimax) return wcs->err->status;
 
   /* Any changes needed? */
   if (phimin >= -180.0 && phimax <= 180.0) return FIXERR_NO_CHANGE;
@@ -616,14 +622,12 @@ int cylfix(const int naxis[], struct wcsprm *wcs)
   phi0 = (phimin + phimax) / 2.0;
   theta0 = 0.0;
 
-  if (prjs2x(&(wcs->cel.prj), 1, 1, 1, 1, &phi0, &theta0, &x, &y, stat)) {
-    wcserr_copy(((wcs->cel).prj).err, &(wcs->err));
-    if ((wcs->err)->status == PRJERR_BAD_PARAM) {
-      (wcs->err)->status = FIXERR_BAD_PARAM;
-    } else {
-      (wcs->err)->status = FIXERR_NO_REF_PIX_COORD;
+  if ((status = prjs2x(&(wcs->cel.prj), 1, 1, 1, 1, &phi0, &theta0, &x, &y,
+                       stat))) {
+    if (status == PRJERR_BAD_PARAM) {
+      return wcserr_set(WCSFIX_ERRMSG(FIXERR_BAD_PARAM));
     }
-    return (wcs->err)->status;
+    return wcserr_set(WCSFIX_ERRMSG(FIXERR_NO_REF_PIX_COORD));
   }
 
   for (k = 0; k < wcs->naxis; k++) {
@@ -632,17 +636,18 @@ int cylfix(const int naxis[], struct wcsprm *wcs)
   img[0][wcs->lng] = x;
   img[0][wcs->lat] = y;
 
-  if (linx2p(&(wcs->lin), 1, 0, img[0], pix[0])) {
-    return wcserr_copy((wcs->lin).err, &(wcs->err));
+  if ((status = linx2p(&(wcs->lin), 1, 0, img[0], pix[0]))) {
+    return wcserr_set(WCSFIX_ERRMSG(status));
   }
 
 
   /* Compute celestial coordinates at the new reference pixel. */
-  if (wcsp2s(wcs, 1, 0, pix[0], img[0], phi, theta, world[0], stat)) {
-    if ((wcs->err)->status == WCSERR_BAD_PIX) {
-      (wcs->err)->status = FIXERR_NO_REF_PIX_COORD;
+  if ((status = wcsp2s(wcs, 1, 0, pix[0], img[0], phi, theta, world[0],
+                       stat))) {
+    if (wcs->err->status == WCSERR_BAD_PIX) {
+      wcs->err->status = FIXERR_NO_REF_PIX_COORD;
     }
-    return (wcs->err)->status;
+    return wcs->err->status;
   }
 
   /* Compute native coordinates of the celestial pole. */

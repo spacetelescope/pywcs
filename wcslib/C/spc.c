@@ -36,6 +36,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "wcserr.h"
 #include "wcsmath.h"
 #include "wcsprintf.h"
 #include "wcstrig.h"
@@ -113,6 +114,21 @@ int spcini(struct spcprm *spc)
   spc->spxP2S = 0x0;
   spc->spxS2P = 0x0;
   spc->spxP2X = 0x0;
+
+  return 0;
+}
+
+/*--------------------------------------------------------------------------*/
+
+int spcfree(spc)
+
+struct spcprm *spc;
+
+{
+  if (spc == 0x0) return SPCERR_NULL_POINTER;
+
+  if (spc->err) free(spc->err);
+  spc->err = 0x0;
 
   return 0;
 }
@@ -202,7 +218,7 @@ int spcset(struct spcprm *spc)
   static const char *function = "spcset";
 
   char   ctype[9], ptype, xtype;
-  int    restreq;
+  int    restreq, status;
   double alpha, beta_r, crvalX, dn_r, dXdS, epsilon, G, m, lambda_r, n_r,
          t, restfrq, restwav, theta;
   struct wcserr **err;
@@ -224,9 +240,9 @@ int spcset(struct spcprm *spc)
   sprintf(ctype, "%s-%s", spc->type, spc->code);
   restfrq = spc->restfrq;
   restwav = spc->restwav;
-  if (spcspxe(ctype, spc->crval, restfrq, restwav, &ptype, &xtype, &restreq,
-              &crvalX, &dXdS, &(spc->err))) {
-    return (spc->err)->status;
+  if ((status = spcspxe(ctype, spc->crval, restfrq, restwav, &ptype, &xtype,
+                        &restreq, &crvalX, &dXdS, &(spc->err)))) {
+    return status;
   }
 
   /* Satisfy rest frequency/wavelength requirements. */
@@ -505,7 +521,7 @@ int spcx2s(
   err = &(spc->err);
 
   if (spc->flag == 0) {
-    if (spcset(spc)) return (spc->err)->status;
+    if ((status = spcset(spc))) return status;
   }
 
   /* Convert intermediate world coordinate x to X. */
@@ -591,7 +607,7 @@ int spcs2x(
   err = &(spc->err);
 
   if (spc->flag == 0) {
-    if (spcset(spc)) return (spc->err)->status;
+    if ((status = spcset(spc))) return status;
   }
 
   /* Apply the linear step of the algorithm chain to convert the S-type */
