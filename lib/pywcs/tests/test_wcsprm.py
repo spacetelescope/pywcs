@@ -284,8 +284,8 @@ def test_fix3():
         'spcfix': b('No change'),
         'unitfix': b('No change'),
         'celfix': b('No change')}
-    assert w.dateobs == b('1999-12-31')
-    assert w.mjdobs == 51543.0
+    assert w.dateobs == b('31/12/F9')
+    assert np.isnan(w.mjdobs)
     
 def test_get_ps():
     # TODO: We need some data with PSi_ma keywords
