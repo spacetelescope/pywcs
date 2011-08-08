@@ -10,7 +10,7 @@ import pywcs
 ROOT_DIR = None
 
 def setup():
-    global ROOT_DIR, hdr_file_list
+    global ROOT_DIR
 
     # do not use __file__ here - we want to find the data files that
     # belong to the pywcs that we are testing, even if we are not running
