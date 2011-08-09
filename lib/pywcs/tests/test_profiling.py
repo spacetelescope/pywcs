@@ -15,7 +15,7 @@ def setup():
     # belong to the pywcs that we are testing, even if we are not running
     # this test from the installed copy of this file.  Use pywcs.__file__
     
-    ROOT_DIR = os.path.dirname(pywcs.__file__)
+    ROOT_DIR = os.path.join(os.path.dirname(pywcs.__file__), 'tests')
 
 def test_maps():
     def test_map(filename):
