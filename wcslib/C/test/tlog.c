@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: tlog.c,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+  $Id: tlog.c,v 4.8 2011/08/15 08:05:54 cal103 Exp $
 *=============================================================================
 *
 *   tlog tests the logarithmic coordinate transformation routines for closure.
@@ -50,7 +50,7 @@ int main()
 
 {
   register int j, k;
-  int    stat1[NCRD], stat2[NCRD], status;
+  int    nFail = 0, stat1[NCRD], stat2[NCRD], status;
   double logc[NCRD], resid, residmax, step, x0[NCRD], x1[NCRD];
   double crval = 3.3;
 
@@ -89,12 +89,12 @@ int main()
   /* Test closure. */
   for (j = 0; j < NCRD; j++) {
     if (stat1[j]) {
-      printf("logx2s: x =%20.12E -> log = ???, stat = %d\n", x0[j], stat1[j]);
+      printf("logx2s: x =%20.12e -> log = ???, stat = %d\n", x0[j], stat1[j]);
       continue;
     }
 
     if (stat2[j]) {
-      printf("logs2x: x =%20.12E -> log =%20.12E -> x = ???, stat = %d\n",
+      printf("logs2x: x =%20.12e -> log =%20.12e -> x = ???, stat = %d\n",
              x0[j], logc[j], stat2[j]);
       continue;
     }
@@ -107,13 +107,22 @@ int main()
     }
 
     if (resid > tol) {
-      printf("logx2s: x =%20.12E -> log =%20.12E ->\n        x =%20.12E, "
-        "resid =%20.12E\n", x0[j], logc[j], x1[j], resid);
+      nFail++;
+      printf("logx2s: x =%20.12e -> log =%20.12e ->\n        x =%20.12e, "
+        "resid =%20.12e\n", x0[j], logc[j], x1[j], resid);
     }
   }
 
-  if (residmax > tol) printf("\n");
-  printf("logx2s: Maximum residual =%19.12E\n", residmax);
+  if (nFail) printf("\n");
+  printf("logx2s/logs2x: Maximum closure residual = %.1e\n", residmax);
 
-  return 0;
+
+  if (nFail) {
+    printf("\nFAIL: %d closure residuals exceed reporting tolerance.\n",
+      nFail);
+  } else {
+    printf("\nPASS: All closure residuals are within reporting tolerance.\n");
+  }
+
+  return nFail;
 }

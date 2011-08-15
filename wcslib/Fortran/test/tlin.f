@@ -1,6 +1,6 @@
 *=======================================================================
 *
-* WCSLIB 4.7 - an implementation of the FITS WCS standard.
+* WCSLIB 4.8 - an implementation of the FITS WCS standard.
 * Copyright (C) 1995-2011, Mark Calabretta
 *
 * This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: tlin.f,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+* $Id: tlin.f,v 4.8 2011/08/15 08:05:54 cal103 Exp $
 *=======================================================================
 
       PROGRAM TLIN
@@ -37,16 +37,19 @@
 * TLIN tests the linear transformation routines supplied with WCSLIB.
 *
 *-----------------------------------------------------------------------
-      INTEGER   NAXIS, NCOORD, NELEM
-      PARAMETER (NAXIS  = 5)
-      PARAMETER (NCOORD = 2)
-      PARAMETER (NELEM  = 9)
-
-      INTEGER   I, J, K, STATUS
-      DOUBLE PRECISION CDELT(NAXIS), CRPIX(NAXIS), IMG(NELEM,2),
-     :          PC(NAXIS,NAXIS), PIX(NELEM,2)
-
       INCLUDE 'lin.inc'
+
+      DOUBLE PRECISION TOL
+      PARAMETER (TOL = 1D-13)
+
+      INTEGER   NAXIS, NCOORD, NELEM
+      PARAMETER (NAXIS = 5, NCOORD = 2, NELEM  = 9)
+
+      INTEGER   I, J, K, NFAIL, STATUS
+      DOUBLE PRECISION CDELT(NAXIS), CRPIX(NAXIS), IMG(NELEM,2),
+     :          PC(NAXIS,NAXIS), PIX0(NELEM,2), PIX(NELEM,2), RESID,
+     :          RESIDMAX
+
       INTEGER LIN(LINLEN)
       DOUBLE PRECISION DUMMY
       EQUIVALENCE (LIN,DUMMY)
@@ -61,7 +64,7 @@
      :              0.0D0,   0.0D0,   0D0,   0D0,   1D0/
       DATA (CDELT(I), I=1,NAXIS)
      :           /  1.2D0,   2.3D0,   3.4D0,   4.5D0,   5.6D0/
-      DATA ((PIX(I,J), I=1,NAXIS), J=1,2)
+      DATA ((PIX0(I,J), I=1,NAXIS), J=1,2)
      :           /303.0D0, 265.0D0, 112.4D0, 144.5D0,  28.2D0,
      :             19.0D0,  57.0D0,   2.0D0,  15.0D0,  42.0D0/
 *-----------------------------------------------------------------------
@@ -85,11 +88,11 @@
 
       WRITE (*, *)
       DO 50 K = 1, NCOORD
-        WRITE (*, 40) K, (PIX(J,K), J=1,NAXIS)
+        WRITE (*, 40) K, (PIX0(J,K), J=1,NAXIS)
  40     FORMAT ('PIX',I2,':',10F14.8)
  50   CONTINUE
 
-      STATUS = LINP2X (LIN, NCOORD, NELEM, PIX, IMG)
+      STATUS = LINP2X (LIN, NCOORD, NELEM, PIX0, IMG)
       IF (STATUS.NE.0) THEN
         WRITE (*, 60) STATUS
  60     FORMAT ('LINP2X ERROR',I3)
@@ -114,15 +117,33 @@
         WRITE (*, 40) K, (PIX(J,K), J=1,NAXIS)
  100  CONTINUE
 
-      STATUS = LINP2X (LIN, NCOORD, NELEM, PIX, IMG)
-      IF (STATUS.NE.0) THEN
-        WRITE (*, 60) STATUS
-        GO TO 999
+*     Check closure.
+      NFAIL = 0
+      RESIDMAX = 0D0
+
+      DO 120 K = 1, NCOORD
+        DO 110 J = 1, NAXIS
+          RESID = ABS(PIX(j,k) - PIX0(j,k))
+          IF (RESIDMAX.LT.RESID) RESIDMAX = RESID
+          IF (RESID.GT.TOL) NFAIL = NFAIL + 1
+ 110    CONTINUE
+ 120  CONTINUE
+
+      WRITE (*, 130) RESIDMAX
+ 130  FORMAT (/,'LINP2X/LINX2P: Maximum closure residual =',1PE8.1,
+     :  ' pixel.')
+
+
+      IF (NFAIL.NE.0) THEN
+        WRITE (*, 140) NFAIL
+ 140    FORMAT (/,'FAIL:',I5,' closure residuals exceed reporting ',
+     :    'tolerance.')
+      ELSE
+        WRITE (*, 150)
+ 150    FORMAT (/,'PASS: All closure residuals are within reporting ',
+     :    'tolerance.')
       END IF
 
-      WRITE (*, *)
-      DO 110 K = 1, NCOORD
-        WRITE (*, 70) K, (IMG(J,K), J=1,NAXIS)
- 110  CONTINUE
+ 999  STATUS = LINFREE(LIN)
 
- 999  END
+      END

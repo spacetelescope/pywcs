@@ -1,6 +1,6 @@
 *=======================================================================
 *
-* WCSLIB 4.7 - an implementation of the FITS WCS standard.
+* WCSLIB 4.8 - an implementation of the FITS WCS standard.
 * Copyright (C) 1995-2011, Mark Calabretta
 *
 * This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: tlog.f,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+* $Id: tlog.f,v 4.8 2011/08/15 08:05:54 cal103 Exp $
 *=======================================================================
 
       PROGRAM TLOG
@@ -44,7 +44,7 @@
       INTEGER   NCRD
       PARAMETER (NCRD = 10000)
 
-      INTEGER   J, K, STAT1(NCRD), STAT2(NCRD), STATUS
+      INTEGER   J, K, NFAIL, STAT1(NCRD), STAT2(NCRD), STATUS
       DOUBLE PRECISION CRVAL, LOGC(NCRD), RESID, RESMAX, STEP,
      :          X0(NCRD), X1(NCRD)
 
@@ -85,9 +85,10 @@
  50     FORMAT ('LOGS2X ERROR',I2,'.')
       END IF
 
-      RESMAX = 0D0
 
 *     Test closure.
+      NFAIL  = 0
+      RESMAX = 0D0
       DO 90 J = 1, NCRD
         IF (STAT1(J).NE.0) THEN
           WRITE (*, 60) X0(J), STAT1(J)
@@ -110,6 +111,7 @@
         END IF
 
         IF (RESID.GT.TOL) THEN
+          NFAIL = NFAIL + 1
           WRITE (*, 80) X0(J), LOGC(J), X1(J), RESID
  80       FORMAT ('LOGX2S: x =',1PE20.12,' -> log =',1PE20.12,' ->',/,
      :            '        x =',1PE20.12,', resid =',1PE20.12)
@@ -120,6 +122,17 @@
         WRITE (*, *)
       END IF
       WRITE (*, 100) RESMAX
- 100  FORMAT ('LOGX2S: Maximum residual =',1PE19.12)
+ 100  FORMAT ('LOGX2S/LOGS2X: Maximum closure residual =',1PE8.1)
+
+
+      IF (NFAIL.NE.0) THEN
+        WRITE (*, 110) NFAIL
+ 110    FORMAT (/,'FAIL:',I5,' closure residuals exceed reporting ',
+     :    'tolerance.')
+      ELSE
+        WRITE (*, 120)
+ 120    FORMAT (/,'PASS: All closure residuals are within reporting ',
+     :    'tolerance.')
+      END IF
 
       END

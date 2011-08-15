@@ -1,6 +1,6 @@
 *=======================================================================
 *
-* WCSLIB 4.7 - an implementation of the FITS WCS standard.
+* WCSLIB 4.8 - an implementation of the FITS WCS standard.
 * Copyright (C) 1995-2011, Mark Calabretta
 *
 * This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: spc.inc,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+* $Id: spc.inc,v 4.8 2011/08/15 08:05:54 cal103 Exp $
 *=======================================================================
 
 *     Functions.
@@ -44,9 +44,9 @@
       INTEGER   SPCSPX, SPCTRN, SPCTYP, SPCXPS
 
 *     Length of the SPCPRM data structure (INTEGER array) on 64-bit
-*     machines.  Only needs to be 43 on 32-bit machines.
+*     machines.  Only needs to be 44 on 32-bit machines.
       INTEGER   SPCLEN
-      PARAMETER (SPCLEN = 48)
+      PARAMETER (SPCLEN = 50)
 
 *     Codes for SPC data structure elements used by SPCPUT and SPCGET.
       INTEGER   SPC_CODE, SPC_CRVAL, SPC_FLAG, SPC_PV, SPC_RESTFRQ,

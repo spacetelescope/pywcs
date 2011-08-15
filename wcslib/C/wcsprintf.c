@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcsprintf.c,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp $
+  $Id: wcsprintf.c,v 4.8 2011/08/15 08:05:53 cal103 Exp $
 *===========================================================================*/
 
 #include <stdarg.h>
@@ -37,10 +37,10 @@
 
 #include "wcsprintf.h"
 
-FILE  *wcsprintf_file = 0x0;
-char  *wcsprintf_buff = 0x0;
-char  *wcsprintf_bufp = 0x0;
-size_t wcsprintf_size = 0;
+static FILE  *wcsprintf_file = 0x0;
+static char  *wcsprintf_buff = 0x0;
+static char  *wcsprintf_bufp = 0x0;
+static size_t wcsprintf_size = 0;
 
 /*--------------------------------------------------------------------------*/
 

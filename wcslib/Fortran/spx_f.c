@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: spx_f.c,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+  $Id: spx_f.c,v 4.8 2011/08/15 08:05:54 cal103 Exp $
 *===========================================================================*/
 
 #include <string.h>
@@ -47,8 +47,9 @@
 int spxget_(const int *spx, const int *what, void *value)
 
 {
-  int m;
+  int  k;
   int  *ivalp;
+  const int *ispxp;
   const struct spxprm *spxp;
 
   /* Cast pointers. */
@@ -57,7 +58,17 @@ int spxget_(const int *spx, const int *what, void *value)
 
   switch (*what) {
   case SPX_ERR:
-    *(void **)value = spxp->err;
+    /* Copy the contents of the wcserr struct. */
+    if (spxp->err) {
+      ispxp = (int *)(spxp->err);
+      for (k = 0; k < ERRLEN; k++) {
+        *(ivalp++) = *(ispxp++);
+      }
+    } else {
+      for (k = 0; k < ERRLEN; k++) {
+        *(ivalp++) = 0;
+      }
+    }
     break;
   default:
     return 1;

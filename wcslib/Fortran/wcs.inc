@@ -1,6 +1,6 @@
 *=======================================================================
 *
-* WCSLIB 4.7 - an implementation of the FITS WCS standard.
+* WCSLIB 4.8 - an implementation of the FITS WCS standard.
 * Copyright (C) 1995-2011, Mark Calabretta
 *
 * This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: wcs.inc,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+* $Id: wcs.inc,v 4.8 2011/08/15 08:05:54 cal103 Exp $
 *=======================================================================
 
 *     Functions.
@@ -42,9 +42,9 @@
      :          WCSSUB
 
 *     Length of the WCSPRM data structure (INTEGER array) on 64-bit
-*     machines.  Only needs to be 410 on 32-bit machines.
+*     machines.  Only needs to be 416 on 32-bit machines.
       INTEGER   WCSLEN
-      PARAMETER (WCSLEN = 462)
+      PARAMETER (WCSLEN = 474)
 
 *     Codes for WCS data structure elements used by WCSPUT and WCSGET.
       INTEGER   WCS_ALT, WCS_ALTLIN, WCS_CD, WCS_CDELT, WCS_CNAME,
@@ -111,13 +111,13 @@
       PARAMETER (WCS_NWTB     = 201)
       PARAMETER (WCS_TAB      = 202)
       PARAMETER (WCS_WTB      = 203)
-      PARAMETER (WCS_TYPES    = 204)
-      PARAMETER (WCS_LNGTYP   = 205)
-      PARAMETER (WCS_LATTYP   = 206)
-      PARAMETER (WCS_LNG      = 207)
-      PARAMETER (WCS_LAT      = 208)
-      PARAMETER (WCS_SPEC     = 209)
-      PARAMETER (WCS_CUBEFACE = 210)
+      PARAMETER (WCS_LNGTYP   = 204)
+      PARAMETER (WCS_LATTYP   = 205)
+      PARAMETER (WCS_LNG      = 206)
+      PARAMETER (WCS_LAT      = 207)
+      PARAMETER (WCS_SPEC     = 208)
+      PARAMETER (WCS_CUBEFACE = 209)
+      PARAMETER (WCS_TYPES    = 210)
       PARAMETER (WCS_LIN      = 211)
       PARAMETER (WCS_CEL      = 212)
       PARAMETER (WCS_SPC      = 213)

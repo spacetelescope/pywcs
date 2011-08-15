@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,9 +28,10 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcs_f.c,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+  $Id: wcs_f.c,v 4.8 2011/08/15 08:05:54 cal103 Exp $
 *===========================================================================*/
 
+#include <stdio.h>
 #include <string.h>
 
 #include <wcsutil.h>
@@ -110,13 +111,13 @@
 #define WCS_NWTB     201
 #define WCS_TAB      202
 #define WCS_WTB      203
-#define WCS_TYPES    204
-#define WCS_LNGTYP   205
-#define WCS_LATTYP   206
-#define WCS_LNG      207
-#define WCS_LAT      208
-#define WCS_SPEC     209
-#define WCS_CUBEFACE 210
+#define WCS_LNGTYP   204
+#define WCS_LATTYP   205
+#define WCS_LNG      206
+#define WCS_LAT      207
+#define WCS_SPEC     208
+#define WCS_CUBEFACE 209
+#define WCS_TYPES    210
 #define WCS_LIN      211
 #define WCS_CEL      212
 #define WCS_SPC      213
@@ -574,11 +575,6 @@ int wcsget_(const int *wcs, const int *what, void *value)
   case WCS_WTB:
     *(void **)value = wcsp->wtb;
     break;
-  case WCS_TYPES:
-    for (i = 0; i < naxis; i++) {
-      *(ivalp++) = wcsp->types[i];
-    }
-    break;
   case WCS_LNGTYP:
     strncpy(cvalp, wcsp->lngtyp, 4);
     wcsutil_blank_fill(4, cvalp);
@@ -599,26 +595,28 @@ int wcsget_(const int *wcs, const int *what, void *value)
   case WCS_CUBEFACE:
     *ivalp = wcsp->cubeface;
     break;
+  case WCS_TYPES:
+    for (i = 0; i < naxis; i++) {
+      *(ivalp++) = wcsp->types[i];
+    }
+    break;
   case WCS_LIN:
     /* Copy the contents of the linprm struct. */
-    k = (int *)(&(wcsp->lin)) - (int *)wcsp;
-    iwcsp = wcs + k;
+    iwcsp = (int *)(&(wcsp->lin));
     for (k = 0; k < LINLEN; k++) {
       *(ivalp++) = *(iwcsp++);
     }
     break;
   case WCS_CEL:
     /* Copy the contents of the celprm struct. */
-    k = (int *)(&(wcsp->cel)) - (int *)wcsp;
-    iwcsp = wcs + k;
+    iwcsp = (int *)(&(wcsp->cel));
     for (k = 0; k < CELLEN; k++) {
       *(ivalp++) = *(iwcsp++);
     }
     break;
   case WCS_SPC:
     /* Copy the contents of the spcprm struct. */
-    k = (int *)(&(wcsp->spc)) - (int *)wcsp;
-    iwcsp = wcs + k;
+    iwcsp = (int *)(&(wcsp->spc));
     for (k = 0; k < SPCLEN; k++) {
       *(ivalp++) = *(iwcsp++);
     }
@@ -626,8 +624,7 @@ int wcsget_(const int *wcs, const int *what, void *value)
   case WCS_ERR:
     /* Copy the contents of the wcserr struct. */
     if (wcsp->err) {
-      k = (int *)(wcsp->err) - (int *)wcsp;
-      iwcsp = wcs + k;
+      iwcsp = (int *)(wcsp->err);
       for (k = 0; k < ERRLEN; k++) {
         *(ivalp++) = *(iwcsp++);
       }
@@ -672,6 +669,10 @@ int wcsfree_(int *wcs)
 int wcsprt_(int *wcs)
 
 {
+  /* This may or may not force the Fortran I/O buffers to be flushed.  If
+   * not, try CALL FLUSH(6) before calling WCSPRT in the Fortran code. */
+  fflush(NULL);
+
   return wcsprt((struct wcsprm *)wcs);
 }
 
@@ -695,6 +696,10 @@ int wcsperr_(int *wcs, const char prefix[72])
   } else {
     prefix_[71] = '\0';
   }
+
+  /* This may or may not force the Fortran I/O buffers to be flushed. */
+  /* If not, try CALL FLUSH(6) before calling WCSPERR in the Fortran code. */
+  fflush(NULL);
 
   return wcsperr((struct wcsprm *)wcs, prefix_);
 }

@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,10 +28,10 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: spc.h,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
+  $Id: spc.h,v 4.8 2011/08/15 08:05:53 cal103 Exp $
 *=============================================================================
 *
-* WCSLIB 4.7 - C routines that implement the spectral coordinate systems
+* WCSLIB 4.8 - C routines that implement the spectral coordinate systems
 * recognized by the FITS World Coordinate System (WCS) standard.  Refer to
 *
 *   "Representations of world coordinates in FITS",
@@ -242,7 +242,7 @@
 *                         2: Invalid spectral parameters.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       spcprm::err.
+*                       spcprm::err if enabled, see wcserr_enable().
 *
 *
 * spcx2s() - Transform to spectral coordinates
@@ -279,7 +279,7 @@
 *                            as indicated by the stat vector.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       spcprm::err.
+*                       spcprm::err if enabled, see wcserr_enable().
 *
 *
 * spcs2x() - Transform spectral coordinates
@@ -317,7 +317,7 @@
 *                            invalid, as indicated by the stat vector.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       spcprm::err.
+*                       spcprm::err if enabled, see wcserr_enable().
 *
 *
 * spctype() - Spectral CTYPEia keyword analysis
@@ -712,13 +712,15 @@
 *       - 1: in vacuum,
 *       - 2: in air.
 *
-*   int padding
+*   int padding1
 *     (An unused variable inserted for alignment purposes only.)
 *
 *   struct wcserr *err
-*     (Returned) When an error status is returned, this structure contains
-*     detailed information about the error.
+*     (Returned) If enabled, when an error status is returned this structure
+*     contains detailed information about the error, see wcserr_enable().
 *
+*   void *padding2
+*     (An unused variable inserted for alignment purposes only.)
 *   int (*spxX2P)(SPX_ARGS)
 *     (Returned) The first and ...
 *   int (*spxP2S)(SPX_ARGS)
@@ -768,7 +770,7 @@ enum spc_errmsg_enum {
 struct spcprm {
   /* Initialization flag (see the prologue above).                          */
   /*------------------------------------------------------------------------*/
-  int   flag;			/* Set to zero to force initialization.     */
+  int    flag;			/* Set to zero to force initialization.     */
 
   /* Parameters to be provided (see the prologue above).                    */
   /*------------------------------------------------------------------------*/
@@ -796,8 +798,8 @@ struct spcprm {
 				/*   2: CDELTX/CDELTia = dX/dS (SI units).  */
 				/* The remainder are grism intermediates.   */
 
-  int isGrism;			/* Grism coordinates?  1: vacuum, 2: air.   */
-  int padding;			/* (Dummy inserted for alignment purposes.) */
+  int    isGrism;		/* Grism coordinates?  1: vacuum, 2: air.   */
+  int    padding1;		/* (Dummy inserted for alignment purposes.) */
 
   /* Error handling                                                         */
   /*------------------------------------------------------------------------*/
@@ -805,6 +807,7 @@ struct spcprm {
 
   /* Private                                                                */
   /*------------------------------------------------------------------------*/
+  void   *padding2;		/* (Dummy inserted for alignment purposes.) */
   int (*spxX2P)(SPX_ARGS);	/* Pointers to the transformation functions */
   int (*spxP2S)(SPX_ARGS);	/* in the two-step algorithm chain in the   */
 				/* pixel-to-spectral direction.             */

@@ -1,9 +1,9 @@
-WCSLIB version 4.8 (2011/08/??)
+WCSLIB version 4.8 (2011/08/15)
 -------------------------------
 
 * C library
 
-  - New error handling mechanism contributed by Michael Droetboom:
+  - New error diagnostics mechanism contributed by Michael Droetboom:
 
     Most functions that return a numeric status (error) code now also
     fill in a detailed error message to a wcserr struct attached to
@@ -29,6 +29,21 @@ WCSLIB version 4.8 (2011/08/??)
   - In wcssub(), ensure that wcstab->m_tab has been initialized
     before trying to free it on status return 12 or 13 (reported by
     Hans Terlow).
+
+  - Bug fixes:
+    - In sphx2s() and sphs2x() for the case where |eul[1]| = 180.0.
+    - For parsing AIPS-convention VELREF in wcsbth().
+    - In spcaips() for translating AIPS-convention CTYPEia without
+      Doppler frame.
+
+  - Non-graphical test programs now simply report "PASS" if they satisfy
+    the reporting tolerance for closure residuals, etc.  Their full
+    output is reported otherwise.  Run 'make MODE=interactive check' to
+    revert to the previous behaviour of reporting the full output for
+    tests that succeed.
+
+  - Eliminated compiler warnings about type-punning of pointer-to-
+    function.
 
 * Fortran wrappers
 
@@ -1746,4 +1761,4 @@ WCSLIB version 1.0 (1995/01/31)
   Initial release.
 
 ------------------------------------------------------------------------
-$Id: CHANGES,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+$Id: CHANGES,v 4.8 2011/08/15 08:05:55 cal103 Exp $

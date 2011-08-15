@@ -1,6 +1,6 @@
 *=======================================================================
 *
-* WCSLIB 4.7 - an implementation of the FITS WCS standard.
+* WCSLIB 4.8 - an implementation of the FITS WCS standard.
 * Copyright (C) 1995-2011, Mark Calabretta
 *
 * This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: prj.inc,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+* $Id: prj.inc,v 4.8 2011/08/15 08:05:54 cal103 Exp $
 *=======================================================================
 
 *     Functions.
@@ -65,9 +65,9 @@
      :          MERSET, MERX2S, MERS2X,    QSCSET, QSCX2S, QSCS2X
 
 *     Length of the PRJPRM data structure (INTEGER array) on 64-bit
-*     machines.  Only needs to be 115 on 32-bit machines.
+*     machines.  Only needs to be 116 on 32-bit machines.
       INTEGER   PRJLEN
-      PARAMETER (PRJLEN = 118)
+      PARAMETER (PRJLEN = 120)
 
 *     Number of projection parameters supported by WCSLIB, 0 to PVN-1.
       INTEGER   PRJ_PVN

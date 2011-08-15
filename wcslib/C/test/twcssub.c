@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: twcssub.c,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+  $Id: twcssub.c,v 4.8 2011/08/15 08:05:54 cal103 Exp $
 *=============================================================================
 *
 * twcssub tests wcssub() which extracts the coordinate description for a
@@ -40,6 +40,7 @@
 #include <string.h>
 
 #include <wcs.h>
+#include <wcserr.h>
 
 
 /* In real life these would be encoded as FITS header keyrecords. */
@@ -143,6 +144,7 @@ int main()
 
 
   /* Initialize the wcsprm struct. */
+  wcserr_enable(1);
   (void) wcsset(&wcs);
 
   printf("Testing WCSLIB subimage extraction routine (twcssub.c)\n"
@@ -158,12 +160,12 @@ int main()
   axes[1] = WCSSUB_LATITUDE;
   axes[2] = -(WCSSUB_SPECTRAL | WCSSUB_STOKES);
   printf("\n\nExtracted contents of wcsprm struct:\n");
-  if ((status = wcssub(1, &wcs, &nsub, axes, &wcsext))) {
-    printf("wcssub ERROR %d: %s.\n", status, wcs_errmsg[status]);
+  if (wcssub(1, &wcs, &nsub, axes, &wcsext)) {
+    wcsperr(&wcsext, "");
   } else if (nsub == 0) {
     printf("None of the requested subimage axes were found.\n");
-  } else if ((status = wcsset(&wcsext))) {
-    printf("wcsset ERROR %d: %s.\n", status, wcs_errmsg[status]);
+  } else if (wcsset(&wcsext)) {
+    wcsperr(&wcsext, "");
   } else {
     wcsprt(&wcsext);
   }
@@ -174,13 +176,14 @@ int main()
   nsub = 2;
   axes[0] = 4;
   axes[1] = 3;
-  if ((status = wcssub(1, &wcs, &nsub, axes, &wcsext)) == 13) {
-    printf("\n\nReceived wcssub status 13 as expected for a non-separable "
-           "subimage\ncoordinate system.\n");
+  status = wcssub(1, &wcs, &nsub, axes, &wcsext);
+  if (status == WCSERR_NON_SEPARABLE) {
+    printf("\n\nReceived wcssub status %d as expected for a non-separable "
+           "subimage\ncoordinate system.\n", WCSERR_NON_SEPARABLE);
   } else {
-    printf("\n\nERROR: expected wcssub status 13 for a non-separable "
+    printf("\n\nERROR: expected wcssub status %d for a non-separable "
            "subimage coordinate\nsystem, but received status %d instead.\n",
-           status);
+           WCSERR_NON_SEPARABLE, status);
   }
 
   wcsfree(&wcs);

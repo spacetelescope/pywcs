@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -29,7 +29,7 @@
   Author: Mark Calabretta, Australia Telescope National Facility
      and: Michael Droetboom, Space Telescope Science Institute
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: twcs.c,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+  $Id: twcs.c,v 4.8 2011/08/15 08:05:54 cal103 Exp $
 *=============================================================================
 *
 * twcs tests wcss2p() and wcsp2s() for closure on an oblique 2-D slice through
@@ -48,7 +48,7 @@
 
 void parser(struct wcsprm *);
 int  check_error(struct wcsprm *, int, int, char *);
-void test_errors();
+int  test_errors();
 
 /* Reporting tolerance. */
 const double tol = 1.0e-10;
@@ -82,7 +82,7 @@ int main()
 #define NELEM 9
 
   char   ok[] = "", mismatch[] = " (WARNING, mismatch)", *s;
-  int    i, k, lat, lng, stat[361], status;
+  int    i, k, lat, lng, nFail1 = 0, nFail2 = 0, stat[361], status;
   double freq, img[361][NELEM], lat1, lng1, phi[361], pixel1[361][NELEM],
          pixel2[361][NELEM], r, resid, residmax, theta[361], time,
          world1[361][NELEM], world2[361][NELEM];
@@ -140,6 +140,10 @@ int main()
   s = (sizeof(struct spcprm) == sizeof(int)*SPCLEN) ? ok : mismatch;
   printf("         spcprm:%5"MODZ"u /%4"MODZ"u%s\n", sizeof(struct spcprm),
          SPCLEN, s);
+
+  s = (sizeof(struct spxprm) == sizeof(int)*SPXLEN) ? ok : mismatch;
+  printf("         spxprm:%5"MODZ"u /%4"MODZ"u%s\n", sizeof(struct spxprm),
+         SPXLEN, s);
 
   s = (sizeof(struct tabprm) == sizeof(int)*TABLEN) ? ok : mismatch;
   printf("         tabprm:%5"MODZ"u /%4"MODZ"u%s\n", sizeof(struct tabprm),
@@ -242,6 +246,7 @@ int main()
       if (resid > residmax) residmax = resid;
 
       if (resid > tol) {
+        nFail1++;
         printf("\nClosure error:\n"
                "world1:%18.12f%18.12f%18.12f%18.12f\n"
                "pixel1:%18.12f%18.12f%18.12f%18.12f\n"
@@ -255,11 +260,12 @@ int main()
     }
   }
 
-  printf("Maximum closure residual: %10.3e pixel.\n", residmax);
+  printf("wcsp2s/wcss2p: Maximum closure residual = %.1e pixel.\n", residmax);
 
 
   /* Test wcserr and wcsprintf() as well. */
-  wcsprintf_set(stderr);
+  nFail2 = 0;
+  wcsprintf_set(stdout);
   wcsprintf("\n\nIGNORE messages marked with 'OK', they test wcserr "
     "(and wcsprintf):\n");
 
@@ -268,16 +274,32 @@ int main()
   /* Test 1. */
   wcs->pv[2].value = UNDEFINED;
   status = wcsset(wcs);
-  check_error(wcs, status, WCSERR_BAD_PARAM, "Invalid parameter value");
+  nFail2 += check_error(wcs, status, WCSERR_BAD_PARAM,
+                        "Invalid parameter value");
 
-  test_errors();
+  nFail2 += test_errors();
+
+
+  if (nFail1 || nFail2) {
+    if (nFail1) {
+      printf("\nFAIL: %d closure residuals exceed reporting tolerance.\n",
+        nFail1);
+    }
+
+    if (nFail2) {
+      printf("FAIL: %d error messages differ from that expected.\n", nFail2);
+    }
+  } else {
+    printf("\nPASS: All closure residuals are within reporting tolerance.\n");
+    printf("PASS: All error messages reported as expected.\n");
+  }
 
 
   /* Clean up. */
   wcsfree(wcs);
   free(wcs);
 
-  return 0;
+  return nFail1 + nFail2;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -367,62 +389,53 @@ int check_error(struct wcsprm *wcs, int status, int exstatus, char *exmsg)
 
 /*--------------------------------------------------------------------------*/
 
-void test_errors()
+int test_errors()
 
 {
+  const char *(multiple_cubeface[2]) = {"CUBEFACE", "CUBEFACE"};
+  const char *(projection_code[2])   = {"RA---FOO", "DEC--BAR"};
+  const char *(unmatched[2])         = {"RA---TAN", "FREQ-LOG"};
+  int i, nFail = 0, status;
   struct wcsprm wcs;
-  int status;
-  int i;
-  char multiple_cubeface[2][9] = {
-    "CUBEFACE", "CUBEFACE"
-  };
-  char projection_code[2][9] = {
-    "RA---FOO", "DEC--BAR"
-  };
-  char unmatched[2][9] = {
-    "RA---TAN", "FREQ-LOG"
-  };
 
   /* Test 2. */
   wcs.flag = -1;
   status = wcsini(1, -32, &wcs);
-  check_error(&wcs, status, WCSERR_MEMORY,
-    "naxis must be positive (got -32)");
+  nFail += check_error(&wcs, status, WCSERR_MEMORY,
+             "naxis must be positive (got -32)");
 
   /* Test 3. */
   wcs.flag = 0;
-  status = wcsini(1, 1 << 30, &wcs);
-  check_error(&wcs, status, WCSERR_MEMORY, "Memory allocation failed");
+  status = wcsini(1, 2, &wcs);
+  nFail += check_error(&wcs, status, WCSERR_SUCCESS, "");
 
   /* Test 4. */
-  wcs.flag = 0;
-  status = wcsini(1, 2, &wcs);
-  check_error(&wcs, status, WCSERR_SUCCESS, "");
-
-  /* Test 5. */
   for (i = 0; i < 2; i++) {
     strcpy(wcs.ctype[i], &multiple_cubeface[i][0]);
   }
   status = wcsset(&wcs);
-  check_error(&wcs, status, WCSERR_BAD_CTYPE,
-    "Multiple CUBEFACE axes (in CTYPE0 and CTYPE1)");
+  nFail += check_error(&wcs, status, WCSERR_BAD_CTYPE,
+             "Multiple CUBEFACE axes (in CTYPE1 and CTYPE2)");
 
-  /* Test 6. */
+  /* Test 5. */
   wcs.flag = 0;
   status = wcsini(1, 2, &wcs);
   for (i = 0; i < 2; i++) {
     strcpy(wcs.ctype[i], &projection_code[i][0]);
   }
   status = wcsset(&wcs);
-  check_error(&wcs, status, WCSERR_BAD_CTYPE,
-    "Unrecognized projection code (FOO in CTYPE0)");
+  nFail += check_error(&wcs, status, WCSERR_BAD_CTYPE,
+             "Unrecognized projection code (FOO in CTYPE1)");
 
-  /* Test 7. */
+  /* Test 6. */
   wcs.flag = 0;
   status = wcsini(1, 2, &wcs);
   for (i = 0; i < 2; i++) {
     strcpy(wcs.ctype[i], &unmatched[i][0]);
   }
   status = wcsset(&wcs);
-  check_error(&wcs, status, WCSERR_BAD_CTYPE, "Unmatched celestial axes");
+  nFail += check_error(&wcs, status, WCSERR_BAD_CTYPE,
+             "Unmatched celestial axes");
+
+  return nFail;
 }

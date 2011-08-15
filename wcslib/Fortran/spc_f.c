@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,9 +28,10 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: spc_f.c,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+  $Id: spc_f.c,v 4.8 2011/08/15 08:05:54 cal103 Exp $
 *===========================================================================*/
 
+#include <stdio.h>
 #include <string.h>
 
 #include <wcserr.h>
@@ -155,10 +156,11 @@ int spcpti_(int *spc, const int *what, const int *value, const int *m)
 int spcget_(const int *spc, const int *what, void *value)
 
 {
-  int m;
+  int  k, m;
   char *cvalp;
   int  *ivalp;
   double *dvalp;
+  const int *ispcp;
   const struct spcprm *spcp;
 
   /* Cast pointers. */
@@ -200,7 +202,17 @@ int spcget_(const int *spc, const int *what, void *value)
     *ivalp = spcp->isGrism;
     break;
   case SPC_ERR:
-    *(void **)value = spcp->err;
+    /* Copy the contents of the wcserr struct. */
+    if (spcp->err) {
+      ispcp = (int *)(spcp->err);
+      for (k = 0; k < ERRLEN; k++) {
+        *(ivalp++) = *(ispcp++);
+      }
+    } else {
+      for (k = 0; k < ERRLEN; k++) {
+        *(ivalp++) = 0;
+      }
+    }
     break;
   default:
     return 1;
@@ -237,6 +249,10 @@ int spcfree_(int *spc)
 int spcprt_(int *spc)
 
 {
+  /* This may or may not force the Fortran I/O buffers to be flushed.  If
+   * not, try CALL FLUSH(6) before calling SPCPRT in the Fortran code. */
+  fflush(NULL);
+
   return spcprt((struct spcprm *)spc);
 }
 

@@ -1,6 +1,6 @@
 *=======================================================================
 *
-* WCSLIB 4.7 - an implementation of the FITS WCS standard.
+* WCSLIB 4.8 - an implementation of the FITS WCS standard.
 * Copyright (C) 1995-2011, Mark Calabretta
 *
 * This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: twcsfix.f,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+* $Id: twcsfix.f,v 4.8 2011/08/15 08:05:54 cal103 Exp $
 *=======================================================================
 
       PROGRAM TWCSFIX
@@ -42,9 +42,10 @@
       DOUBLE PRECISION TOL
       PARAMETER (TOL = 1D-10)
 
+*     CUNITia is set to arcsec below as an additional test.
       DOUBLE PRECISION DEC, RA
-      PARAMETER (RA  = 265.62209470900*3600D0)
-      PARAMETER (DEC = -28.98849996030*3600D0)
+      PARAMETER (RA  = 265.62209470900D0 * 3600D0)
+      PARAMETER (DEC = -28.98849996030D0 * 3600D0)
 
 *     Number of axes.
       INTEGER   N
@@ -98,6 +99,7 @@
       CALL PARSER (WCS)
 
 *     Print the unmodified struct.
+      CALL FLUSH(6)
       STATUS = WCSPRT (WCS)
       WRITE (*, 20)
  20   FORMAT (/,'------------------------------------',
@@ -111,6 +113,7 @@
         GO TO 999
       END IF
 
+      CALL FLUSH(6)
       STATUS = WCSPRT (WCS)
       WRITE (*, 20)
 
@@ -131,6 +134,7 @@
         GO TO 999
       END IF
 
+      CALL FLUSH(6)
       STATUS = WCSPRT (WCS)
 
       STATUS = WCSFREE (WCS)

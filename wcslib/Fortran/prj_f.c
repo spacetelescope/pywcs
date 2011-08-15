@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,10 +28,12 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: prj_f.c,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+  $Id: prj_f.c,v 4.8 2011/08/15 08:05:54 cal103 Exp $
 *===========================================================================*/
 
+#include <stdio.h>
 #include <string.h>
+
 #include <prj.h>
 
 /* Fortran name mangling. */
@@ -147,10 +149,11 @@ int prjpti_(int *prj, const int *what, const int *value, const int *m)
 int prjget_(const int *prj, const int *what, void *value)
 
 {
-  int m;
+  int  k, m;
   char *cvalp;
   int  *ivalp;
   double *dvalp;
+  const int *iprjp;
   const struct prjprm *prjp;
 
   /* Cast pointers. */
@@ -214,7 +217,17 @@ int prjget_(const int *prj, const int *what, void *value)
     *dvalp = prjp->y0;
     break;
   case PRJ_ERR:
-    *(void **)value = prjp->err;
+    /* Copy the contents of the wcserr struct. */
+    if (prjp->err) {
+      iprjp = (int *)(prjp->err);
+      for (k = 0; k < ERRLEN; k++) {
+        *(ivalp++) = *(iprjp++);
+      }
+    } else {
+      for (k = 0; k < ERRLEN; k++) {
+        *(ivalp++) = 0;
+      }
+    }
     break;
   case PRJ_W:
     for (m = 0; m < 10; m++) {
@@ -259,6 +272,10 @@ int prjfree_(int *prj)
 int prjprt_(int *prj)
 
 {
+  /* This may or may not force the Fortran I/O buffers to be flushed.  If
+   * not, try CALL FLUSH(6) before calling PRJPRT in the Fortran code. */
+  fflush(NULL);
+
   return prjprt((struct prjprm *)prj);
 }
 

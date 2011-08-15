@@ -1,6 +1,6 @@
 *=======================================================================
 *
-* WCSLIB 4.7 - an implementation of the FITS WCS standard.
+* WCSLIB 4.8 - an implementation of the FITS WCS standard.
 * Copyright (C) 1995-2011, Mark Calabretta
 *
 * This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: cel.inc,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+* $Id: cel.inc,v 4.8 2011/08/15 08:05:54 cal103 Exp $
 *=======================================================================
 
 *     Functions.
@@ -38,9 +38,9 @@
      :          CELPTC,  CELPTD, CELPTI, CELPUT, CELS2X, CELSET, CELX2S
 
 *     Length of the CELPRM data structure (INTEGER array) on 64-bit
-*     machines.  Only needs to be 142 on 32-bit machines.
+*     machines.  Only needs to be 144 on 32-bit machines.
       INTEGER   CELLEN
-      PARAMETER (CELLEN = 146)
+      PARAMETER (CELLEN = 150)
 
 *     Codes for CEL data structure elements used by CELPUT and CELGET.
       INTEGER   CEL_FLAG, CEL_OFFSET, CEL_PHI0, CEL_PRJ, CEL_REF,

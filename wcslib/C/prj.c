@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: prj.c,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
+  $Id: prj.c,v 4.8 2011/08/15 08:05:53 cal103 Exp $
 *===========================================================================*/
 
 #include <math.h>
@@ -103,7 +103,7 @@ const char *prj_errmsg[] = {
   "One or more of the (x,y) coordinates were invalid",
   "One or more of the (phi,theta) coordinates were invalid"};
 
-/* Some convenience macros for creating common projection errors */
+/* Convenience macros for generating common error messages. */
 #define PRJERR_BAD_PARAM_SET(function) \
   wcserr_set(&(prj->err), PRJERR_BAD_PARAM, function, __FILE__, __LINE__, \
     "Invalid parameters for %s projection", prj->name);
@@ -262,7 +262,7 @@ const struct prjprm *prj;
   wcsprintf("         x0: %f\n", prj->x0);
   wcsprintf("         y0: %f\n", prj->y0);
 
-  wcsprintf("        err: %p\n", (void *)prj->err);
+  WCSPRINTF_PTR("        err: ", prj->err, "\n");
   if (prj->err) {
     wcserr_prt(prj->err, "");
   }

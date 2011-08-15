@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,10 +28,10 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: cel.h,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
+  $Id: cel.h,v 4.8 2011/08/15 08:05:53 cal103 Exp $
 *=============================================================================
 *
-* WCSLIB 4.7 - C routines that implement the FITS World Coordinate System
+* WCSLIB 4.8 - C routines that implement the FITS World Coordinate System
 * (WCS) standard.  Refer to
 *
 *   "Representations of world coordinates in FITS",
@@ -138,7 +138,7 @@
 *                            parameters.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       celprm::err.
+*                       celprm::err if enabled, see wcserr_enable().
 *
 *
 * celx2s() - Pixel-to-world celestial transformation
@@ -181,7 +181,7 @@
 *                            invalid, as indicated by the stat vector.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       celprm::err.
+*                       celprm::err if enabled, see wcserr_enable().
 *
 *
 * cels2x() - World-to-pixel celestial transformation
@@ -224,7 +224,7 @@
 *                            invalid, as indicated by the stat vector.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       celprm::err.
+*                       celprm::err if enabled, see wcserr_enable().
 *
 *
 * celprm struct - Celestial transformation parameters
@@ -335,9 +335,11 @@
 *     computation.
 *
 *   struct wcserr *err
-*     (Returned) When an error status is returned, this struct contains
-*     detailed information about the error.
+*     (Returned) If enabled, when an error status is returned this struct
+*     contains detailed information about the error, see wcserr_enable().
 *
+*   void *padding
+*     (An unused variable inserted for alignment purposes only.)
 *
 * Global variable: const char *cel_errmsg[] - Status return messages
 * ------------------------------------------------------------------
@@ -396,6 +398,10 @@ struct celprm {
   /* Error handling                                                         */
   /*------------------------------------------------------------------------*/
   struct wcserr *err;
+
+  /* Private                                                                */
+  /*------------------------------------------------------------------------*/
+  void   *padding;		/* (Dummy inserted for alignment purposes.) */
 };
 
 /* Size of the celprm struct in int units, used by the Fortran wrappers. */

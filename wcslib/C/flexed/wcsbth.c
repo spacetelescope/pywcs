@@ -16645,7 +16645,7 @@ char *wcsbthtext;
 #line 1 "wcsbth.l"
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -16673,7 +16673,7 @@ char *wcsbthtext;
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcsbth.c,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
+  $Id: wcsbth.c,v 4.8 2011/08/15 08:05:54 cal103 Exp $
 *=============================================================================
 *
 * wcsbth.l is a Flex description file containing the definition of a lexical
@@ -18274,7 +18274,7 @@ YY_RULE_SETUP
 	
 	  if (a == ' ' || (relax & WCSHDR_VELREFa)) {
 	    valtype = INTEGER;
-	    vptr = wcstem.specsys;
+	    vptr = &(wcstem.velref);
 	
 	    unput(a);
 	    extkey = "VELREF";

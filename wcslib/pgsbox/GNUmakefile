@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------
-# GNU makefile for building PGSBOX 4.7
+# GNU makefile for building PGSBOX 4.8
 #
 # Summary of the main targets
 # ---------------------------
@@ -26,12 +26,12 @@
 #      instead and re-run configure.
 #
 #   2) In compiling the test programs, this makefile assumes that the
-#      WCSLIB 4.7 sources reside in ../C and ../Fortran (as in the
+#      WCSLIB 4.8 sources reside in ../C and ../Fortran (as in the
 #      distribution kit).
 #
 # Author: Mark Calabretta, Australia Telescope National Facility
 # http://www.atnf.csiro.au/~mcalabre/index.html
-# $Id: GNUmakefile,v 4.7.1.3 2011/06/27 00:07:38 cal103 Exp cal103 $
+# $Id: GNUmakefile,v 4.8 2011/08/15 08:05:55 cal103 Exp $
 #-----------------------------------------------------------------------------
 # Get configure settings.
 include ../makedefs
@@ -116,7 +116,7 @@ $(SHRLIB) : $(PICLIB)
 	     cd tmp && \
 	     trap 'cd .. ; $(RM) -r tmp' 0 1 2 3 15 ; \
 	     $(AR) x ../$(PICLIB) && \
-	     $(SHRLD) -o $@ *.o ../$(WCSSHR) $(LDFLAGS) $(PGPLOTLIB) && \
+	     $(SHRLD) -o $@ *.o ../$(WCSSHR) $(LDFLAGS) $(PGPLOTLIB) $(FLIBS) && \
 	     mv $@ ..
 
 $(PICLIB) : $(MODULES:%.o=$(PICLIB)(%.o)) ;

@@ -1,15 +1,18 @@
 #-----------------------------------------------------------------------------
 # Makefile overrides for various combinations of architecture, operating
-# system and compiler, used for WCSLIB development and testing, not for
-# distribution.  Variables like CC and CFLAGS are exported into the
-# environment so that they will be seen by 'configure', e.g.
+# system and compiler.  Used for development and testing only, not required
+# for building WCSLIB.
 #
-#   gmake distclean
-#   gmake FLAVOUR=Linux configure
+# Variables like CC and CFLAGS are exported into the environment so that they
+# will be seen by 'configure'.  Thus, normal usage is as follows:
+#
+#   make distclean
+#   make FLAVOUR=Linux configure
+#   make
 #
 # Reminder: add '-d' to FLFLAGS for debugging.
 #
-# $Id: flavours,v 4.7.1.2 2011/02/09 02:47:31 cal103 Exp cal103 $
+# $Id: flavours,v 4.8 2011/08/15 08:05:55 cal103 Exp $
 #-----------------------------------------------------------------------------
 
 # The list of FLAVOURs can be set on the command line.
@@ -43,7 +46,7 @@ ifeq "$(notdir $(shell pwd))" "utils"
 endif
 
 
-# Linux with gcc/gfortran.
+# Linux with gcc/gfortran (also works for Darwin).
 ifeq "$(FLAVOUR)" "Linux"
   F := $(FLAVOUR)
   export CC       := gcc -std=c89 -pedantic

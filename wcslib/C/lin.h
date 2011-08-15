@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,10 +28,10 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: lin.h,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
+  $Id: lin.h,v 4.8 2011/08/15 08:05:53 cal103 Exp $
 *=============================================================================
 *
-* WCSLIB 4.7 - C routines that implement the FITS World Coordinate System
+* WCSLIB 4.8 - C routines that implement the FITS World Coordinate System
 * (WCS) standard.  Refer to
 *
 *   "Representations of world coordinates in FITS",
@@ -101,7 +101,7 @@
 *                         2: Memory allocation failed.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       linprm::err.
+*                       linprm::err if enabled, see wcserr_enable().
 *
 *
 * lincpy() - Copy routine for the linprm struct
@@ -134,7 +134,7 @@
 *                         2: Memory allocation failed.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       linprm::err.
+*                       linprm::err if enabled, see wcserr_enable().
 *
 *
 * linfree() - Destructor for the linprm struct
@@ -193,7 +193,7 @@
 *                         3: PCi_ja matrix is singular.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       linprm::err.
+*                       linprm::err if enabled, see wcserr_enable().
 *
 *
 * linp2x() - Pixel-to-world linear transformation
@@ -224,7 +224,7 @@
 *                         3: PCi_ja matrix is singular.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       linprm::err.
+*                       linprm::err if enabled, see wcserr_enable().
 *
 *
 * linx2p() - World-to-pixel linear transformation
@@ -254,7 +254,7 @@
 *                         3: PCi_ja matrix is singular.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       linprm::err.
+*                       linprm::err if enabled, see wcserr_enable().
 *
 *
 * linprm struct - Linear transformation parameters
@@ -338,8 +338,8 @@
 *     linprm::piximg matrix.
 *
 *   struct wcserr *err
-*     (Returned) When an error status is returned, this struct contains
-*     detailed information about the error.
+*     (Returned) If enabled, when an error status is returned this struct
+*     contains detailed information about the error, see wcserr_enable().
 *
 *   int i_naxis
 *     (For internal use only.)
@@ -354,6 +354,8 @@
 *   double *m_pc
 *     (For internal use only.)
 *   double *m_cdelt
+*     (For internal use only.)
+*   void *padding2
 *     (For internal use only.)
 *
 *
@@ -398,18 +400,19 @@ struct linprm {
   /*------------------------------------------------------------------------*/
   double *piximg;		/* Product of CDELTia and PCi_ja matrices.  */
   double *imgpix;		/* Inverse of the piximg matrix.            */
-  int unity;			/* True if the PCi_ja matrix is unity.      */
-  int padding;			/* (Dummy inserted for alignment purposes.) */
+  int    unity;			/* True if the PCi_ja matrix is unity.      */
 
   /* Error handling                                                         */
   /*------------------------------------------------------------------------*/
+  int    padding;		/* (Dummy inserted for alignment purposes.) */
   struct wcserr *err;
 
   /* Private - the remainder are for memory management.                     */
   /*------------------------------------------------------------------------*/
-  int i_naxis;			
-  int m_flag, m_naxis, m_padding;
+  int    i_naxis;
+  int    m_flag, m_naxis, m_padding;
   double *m_crpix, *m_pc, *m_cdelt;
+  void   *padding2;
 };
 
 /* Size of the linprm struct in int units, used by the Fortran wrappers. */

@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,10 +28,10 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: spx.h,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
+  $Id: spx.h,v 4.8 2011/08/15 08:05:53 cal103 Exp $
 *=============================================================================
 *
-* WCSLIB 4.7 - C routines that implement the spectral coordinate systems
+* WCSLIB 4.8 - C routines that implement the spectral coordinate systems
 * recognized by the FITS World Coordinate System (WCS) standard.  Refer to
 *
 *   "Representations of world coordinates in FITS",
@@ -154,7 +154,7 @@
 *                         3: Invalid spectral variable.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       spxprm::err.
+*                       spxprm::err if enabled, see wcserr_enable().
 *
 * freqafrq(), afrqfreq(), freqener(), enerfreq(), freqwavn(), wavnfreq(),
 * freqwave(), wavefreq(), freqawav(), awavfreq(), waveawav(), awavwave(),
@@ -406,9 +406,11 @@
 *     (Returned) ... vice versa [s/m] (constant, = 1/c, always available).
 *
 *   struct wcserr *err
-*     (Returned) When an error status is returned, this struct contains
-*     detailed information about the error.
+*     (Returned) If enabled, when an error status is returned this struct
+*     contains detailed information about the error, see wcserr_enable().
 *
+*   void *padding
+*     (An unused variable inserted for alignment purposes only.)
 *
 * Global variable: const char *spx_errmsg[] - Status return messages
 * ------------------------------------------------------------------
@@ -475,6 +477,10 @@ struct spxprm {
   /* Error handling                                                         */
   /*------------------------------------------------------------------------*/
   struct wcserr *err;
+
+  /* Private                                                                */
+  /*------------------------------------------------------------------------*/
+  void   *padding;		/* (Dummy inserted for alignment purposes.) */
 };
 
 /* Size of the spxprm struct in int units, used by the Fortran wrappers. */

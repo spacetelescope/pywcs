@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,10 +28,10 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: tab.h,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
+  $Id: tab.h,v 4.8 2011/08/15 08:05:53 cal103 Exp $
 *=============================================================================
 *
-* WCSLIB 4.7 - C routines that implement tabular coordinate systems as
+* WCSLIB 4.8 - C routines that implement tabular coordinate systems as
 * defined by the FITS World Coordinate System (WCS) standard.  Refer to
 *
 *   "Representations of world coordinates in FITS",
@@ -130,7 +130,7 @@
 *                         3: Invalid tabular parameters.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       tabprm::err.
+*                       tabprm::err if enabled, see wcserr_enable().
 *
 *
 * tabmem() - Acquire tabular memory
@@ -149,7 +149,7 @@
 *                         2: Memory allocation failed.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       tabprm::err.
+*                       tabprm::err if enabled, see wcserr_enable().
 *
 *
 * tabcpy() - Copy routine for the tabprm struct
@@ -185,7 +185,8 @@
 *                         2: Memory allocation failed.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       tabprm::err (associated with tabdst).
+*                       tabprm::err (associated with tabdst) if enabled, see
+*                       wcserr_enable().
 *
 *
 * tabfree() - Destructor for the tabprm struct
@@ -242,7 +243,7 @@
 *                         3: Invalid tabular parameters.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       tabprm::err.
+*                       tabprm::err if enabled, see wcserr_enable().
 *
 *
 * tabx2s() - Pixel-to-world transformation
@@ -280,7 +281,7 @@
 *                            as indicated by the stat vector.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       tabprm::err.
+*                       tabprm::err if enabled, see wcserr_enable().
 *
 *
 * tabs2x() - World-to-pixel transformation
@@ -315,7 +316,7 @@
 *                            invalid, as indicated by the stat vector.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       tabprm::err.
+*                       tabprm::err if enabled, see wcserr_enable().
 *
 *
 * tabprm struct - Tabular transformation parameters
@@ -444,8 +445,8 @@
 *     inverse table lookup function, tabs2x(), to speed up table searches.
 *
 *   struct wcserr *err
-*     (Returned) When an error status is returned, this struct contains
-*     detailed information about the error.
+*     (Returned) If enabled, when an error status is returned this struct
+*     contains detailed information about the error, see wcserr_enable().
 *
 *   int m_flag
 *     (For internal use only.)

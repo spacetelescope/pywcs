@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,10 +28,10 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: prj.h,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
+  $Id: prj.h,v 4.8 2011/08/15 08:05:53 cal103 Exp $
 *=============================================================================
 *
-* WCSLIB 4.7 - C routines that implement the spherical map projections
+* WCSLIB 4.8 - C routines that implement the spherical map projections
 * recognized by the FITS World Coordinate System (WCS) standard.  Refer to
 *
 *   "Representations of world coordinates in FITS",
@@ -210,7 +210,7 @@
 *                         2: Invalid projection parameters.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       prjprm::err.
+*                       prjprm::err if enabled, see wcserr_enable().
 *
 *
 * prjx2s() - Generic Cartesian-to-spherical deprojection
@@ -249,7 +249,7 @@
 *                            invalid, as indicated by the stat vector.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       prjprm::err.
+*                       prjprm::err if enabled, see wcserr_enable().
 *
 *
 * prjs2x() - Generic spherical-to-Cartesian projection
@@ -289,7 +289,7 @@
 *                            were, invalid, as indicated by the stat vector.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       prjprm::err.
+*                       prjprm::err if enabled, see wcserr_enable().
 *
 *
 * ???set() - Specific setup routines for the prjprm struct
@@ -308,7 +308,7 @@
 *                         2: Invalid projection parameters.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       prjprm::err.
+*                       prjprm::err if enabled, see wcserr_enable().
 *
 *
 * ???x2s() - Specific Cartesian-to-spherical deprojection routines
@@ -345,7 +345,7 @@
 *                            invalid, as indicated by the stat vector.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       prjprm::err.
+*                       prjprm::err if enabled, see wcserr_enable().
 *
 *
 * ???s2x() - Specific spherical-to-Cartesian projection routines
@@ -383,7 +383,7 @@
 *                            were, invalid, as indicated by the stat vector.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       prjprm::err.
+*                       prjprm::err if enabled, see wcserr_enable().
 *
 *
 * prjprm struct - Projection parameters
@@ -511,8 +511,11 @@
 *     (phi_0,theta_0).
 *
 *   struct wcserr *err
-*     (Returned) When an error status is returned, this struct contains
-*     detailed information about the error.
+*     (Returned) If enabled, when an error status is returned this struct
+*     contains detailed information about the error, see wcserr_enable().
+*
+*   void *padding
+*     (An unused variable inserted for alignment purposes only.)
 *
 *   double w[10]
 *     (Returned) Intermediate floating-point values derived from the
@@ -617,6 +620,7 @@ struct prjprm {
 
   /* Private                                                                */
   /*------------------------------------------------------------------------*/
+  void   *padding;		/* (Dummy inserted for alignment purposes.) */
   double w[10];			/* Intermediate values.                     */
   int    m, n;			/* Intermediate values.                     */
 

@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,10 +28,10 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcs.h,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
+  $Id: wcs.h,v 4.8 2011/08/15 08:05:53 cal103 Exp $
 *=============================================================================
 *
-* WCSLIB 4.7 - C routines that implement the FITS World Coordinate System
+* WCSLIB 4.8 - C routines that implement the FITS World Coordinate System
 * (WCS) standard.  Refer to
 *
 *   "Representations of world coordinates in FITS",
@@ -156,7 +156,7 @@
 *                         2: Memory allocation failed.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       wcsprm::err.
+*                       wcsprm::err if enabled, see wcserr_enable().
 *
 *
 * wcsnpv() - Memory allocation for PVi_ma
@@ -271,7 +271,7 @@
 *                        13: Non-separable subimage coordinate system.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       wcsprm::err.
+*                       wcsprm::err if enabled, see wcserr_enable().
 *
 * Notes:
 *   Combinations of subimage axes of particular types may be extracted in the
@@ -400,7 +400,7 @@
 *                            parameters.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       wcsprm::err.
+*                       wcsprm::err if enabled, see wcserr_enable().
 *
 *
 * wcsp2s() - Pixel-to-world transformation
@@ -464,7 +464,7 @@
 *                            invalid, as indicated by the stat vector.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       wcsprm::err.
+*                       wcsprm::err if enabled, see wcserr_enable().
 *
 *
 * wcss2p() - World-to-pixel transformation
@@ -530,7 +530,7 @@
 *                            invalid, as indicated by the stat vector.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       wcsprm::err.
+*                       wcsprm::err if enabled, see wcserr_enable().
 *
 *
 * wcsmix() - Hybrid coordinate transformation
@@ -614,7 +614,7 @@
 *                        11: No solution found in the specified interval.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       wcsprm::err.
+*                       wcsprm::err if enabled, see wcserr_enable().
 *
 * Notes:
 *   Initially the specified solution interval is checked to see if it's a
@@ -680,7 +680,7 @@
 *                            axis).
 *
 *                       For returns > 1, a detailed error message is set in
-*                       wcsprm::err.
+*                       wcsprm::err if enabled, see wcserr_enable().
 *
 *
 * wcsprm struct - Coordinate transformation parameters
@@ -1075,8 +1075,29 @@
 *     Although technically wcsprm::nwtb and wtb are "given", they will
 *     normally be set by invoking wcstab(), whether directly or indirectly.
 *
-*   int padding
-*     (An unused variable inserted for alignment purposes only.)
+*   char lngtyp[8]
+*     (Returned) Four-character WCS celestial longitude and ...
+*   char lattyp[8]
+*     (Returned) ... latitude axis types. e.g. "RA", "DEC", "GLON", "GLAT",
+*     etc. extracted from 'RA--', 'DEC-', 'GLON', 'GLAT', etc. in the first
+*     four characters of CTYPEia but with trailing dashes removed.  (Declared
+*     as char[8] for alignment reasons.)
+*
+*   int lng
+*     (Returned) Index for the longitude coordinate, and ...
+*   int lat
+*     (Returned) ... index for the latitude coordinate, and ...
+*   int spec
+*     (Returned) ... index for the spectral coordinate in the imgcrd[][] and
+*     world[][] arrays in the API of wcsp2s(), wcss2p() and wcsmix().
+*
+*     These may also serve as indices into the pixcrd[][] array provided that
+*     the PCi_ja matrix does not transpose axes.
+*
+*   int cubeface
+*     (Returned) Index into the pixcrd[][] array for the CUBEFACE axis.  This
+*     is used for quadcube projections where the cube faces are stored on a
+*     separate axis (see wcs.h).
 *
 *   int *types
 *     (Returned) Address of the first element of an array of int containing a
@@ -1112,29 +1133,8 @@
 *     CTYPEia in "4-3" form with unrecognized algorithm code will have its
 *     type set to -1 and generate an error.
 *
-*   char lngtyp[8]
-*     (Returned) Four-character WCS celestial longitude and ...
-*   char lattyp[8]
-*     (Returned) ... latitude axis types. e.g. "RA", "DEC", "GLON", "GLAT",
-*     etc. extracted from 'RA--', 'DEC-', 'GLON', 'GLAT', etc. in the first
-*     four characters of CTYPEia but with trailing dashes removed.  (Declared
-*     as char[8] for alignment reasons.)
-*
-*   int lng
-*     (Returned) Index for the longitude coordinate, and ...
-*   int lat
-*     (Returned) ... index for the latitude coordinate, and ...
-*   int spec
-*     (Returned) ... index for the spectral coordinate in the imgcrd[][] and
-*     world[][] arrays in the API of wcsp2s(), wcss2p() and wcsmix().
-*
-*     These may also serve as indices into the pixcrd[][] array provided that
-*     the PCi_ja matrix does not transpose axes.
-*
-*   int cubeface
-*     (Returned) Index into the pixcrd[][] array for the CUBEFACE axis.  This
-*     is used for quadcube projections where the cube faces are stored on a
-*     separate axis (see wcs.h).
+*   void *padding
+*     (An unused variable inserted for alignment purposes only.)
 *
 *   struct linprm lin
 *     (Returned) Linear transformation parameters (usage is described in the
@@ -1149,9 +1149,11 @@
 *     prologue to spc.h).
 *
 *   struct wcserr *err
-*     (Returned) When an error status is returned, this struct contains
-*     detailed information about the error.
+*     (Returned) If enabled, when an error status is returned this struct
+*     contains detailed information about the error, see wcserr_enable().
 *
+*   void *m_padding
+*     (For internal use only.)
 *   int m_flag
 *     (For internal use only.)
 *   int m_naxis
@@ -1438,11 +1440,12 @@ struct wcsprm {
 
   /* Information derived from the FITS header keyvalues by wcsset().        */
   /*------------------------------------------------------------------------*/
-  int    *types;		/* Coordinate type codes for each axis.     */
   char   lngtyp[8], lattyp[8];	/* Celestial axis types, e.g. RA, DEC.      */
   int    lng, lat, spec;	/* Longitude, latitude and spectral axis    */
 				/* indices (0-relative).                    */
   int    cubeface;		/* True if there is a CUBEFACE axis.        */
+  int    *types;		/* Coordinate type codes for each axis.     */
+  void   *padding;		/* (Dummy inserted for alignment purposes.) */
 
   struct linprm lin;		/* Linear    transformation parameters.     */
   struct celprm cel;		/* Celestial transformation parameters.     */
@@ -1454,6 +1457,7 @@ struct wcsprm {
 
   /* Private - the remainder are for memory management.                     */
   /*------------------------------------------------------------------------*/
+  void   *m_padding;
   int    m_flag, m_naxis;
   double *m_crpix, *m_pc, *m_cdelt, *m_crval;
   char  (*m_cunit)[72], (*m_ctype)[72];

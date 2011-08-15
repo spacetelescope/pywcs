@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: spc.c,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
+  $Id: spc.c,v 4.8 2011/08/15 08:05:53 cal103 Exp $
 *===========================================================================*/
 
 #include <math.h>
@@ -193,7 +193,7 @@ int spcprt(const struct spcprm *spc)
 
   wcsprintf("    isGrism: %d\n", spc->isGrism);
 
-  wcsprintf("        err: %p\n", (void *)spc->err);
+  WCSPRINTF_PTR("        err: ", spc->err, "\n");
   if (spc->err) {
     wcserr_prt(spc->err, "");
   }
@@ -702,7 +702,7 @@ int spctyp(
     ctypei, stype, scode, sname, units, ptype, xtype, restreq, NULL);
 }
 
-/*--------------------------------------------------------------------------*/
+/* : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :  */
 
 int spctype(
   const char ctypei[9],
@@ -881,7 +881,7 @@ int spcspx(
                  crvalX, dXdS, 0x0);
 }
 
-/*--------------------------------------------------------------------------*/
+/* : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :  */
 
 int spcspxe(
   const char ctypeS[9],
@@ -1053,7 +1053,7 @@ int spcxps(
                  crvalS, dSdX, NULL);
 }
 
-/*--------------------------------------------------------------------------*/
+/* : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :  */
 
 int spcxpse(
   const char ctypeS[9],
@@ -1227,7 +1227,7 @@ int spctrn(
                  ctypeS2, crvalS2, cdeltS2, NULL);
 }
 
-/*--------------------------------------------------------------------------*/
+/* : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :  */
 
 int spctrne(
   const char ctypeS1[9],
@@ -1318,7 +1318,7 @@ int spcaips(
       strncmp(ctype, "VELO", 4) == 0 ||
       strncmp(ctype, "FELO", 4) == 0) {
     /* Look for the Doppler frame. */
-    if ((fcode = ctype+4)) {
+    if (*(fcode = ctype+4)) {
       if (strcmp(fcode, "-LSR") == 0) {
         strcpy(specsys, "LSRK");
       } else if (strcmp(fcode, "-HEL") == 0) {

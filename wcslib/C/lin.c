@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: lin.c,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
+  $Id: lin.c,v 4.8 2011/08/15 08:05:53 cal103 Exp $
 *===========================================================================*/
 
 #include <stdio.h>
@@ -85,7 +85,7 @@ struct linprm *lin;
   }
 
 
-  if (naxis <= 0) {
+  if (naxis < 1) {
     return wcserr_set(WCSERR_SET(LINERR_MEMORY),
       "naxis must be positive (got %d)", naxis);
   }
@@ -218,7 +218,7 @@ struct linprm *lindst;
   err = &(lindst->err);
 
   naxis = linsrc->naxis;
-  if (naxis <= 0) {
+  if (naxis < 1) {
     return wcserr_set(WCSERR_SET(LINERR_MEMORY),
       "naxis must be positive (got %d)", naxis);
   }
@@ -315,7 +315,7 @@ const struct linprm *lin;
 
   wcsprintf("       flag: %d\n", lin->flag);
   wcsprintf("      naxis: %d\n", lin->naxis);
-  wcsprintf("      crpix: %p\n", (void *)lin->crpix);
+  WCSPRINTF_PTR("      crpix: ", lin->crpix, "\n");
   wcsprintf("            ");
   for (i = 0; i < lin->naxis; i++) {
     wcsprintf("  %- 11.5g", lin->crpix[i]);
@@ -323,7 +323,7 @@ const struct linprm *lin;
   wcsprintf("\n");
 
   k = 0;
-  wcsprintf("         pc: %p\n", (void *)lin->pc);
+  WCSPRINTF_PTR("         pc: ", lin->pc, "\n");
   for (i = 0; i < lin->naxis; i++) {
     wcsprintf("    pc[%d][]:", i);
     for (j = 0; j < lin->naxis; j++) {
@@ -332,7 +332,7 @@ const struct linprm *lin;
     wcsprintf("\n");
   }
 
-  wcsprintf("      cdelt: %p\n", (void *)lin->cdelt);
+  WCSPRINTF_PTR("      cdelt: ", lin->cdelt, "\n");
   wcsprintf("            ");
   for (i = 0; i < lin->naxis; i++) {
     wcsprintf("  %- 11.5g", lin->cdelt[i]);
@@ -341,7 +341,7 @@ const struct linprm *lin;
 
   wcsprintf("      unity: %d\n", lin->unity);
 
-  wcsprintf("        err: %p\n", (void *)lin->err);
+  WCSPRINTF_PTR("        err: ", lin->err, "\n");
   if (lin->err) {
     wcserr_prt(lin->err, "");
   }
@@ -374,13 +374,13 @@ const struct linprm *lin;
 
   wcsprintf("     m_flag: %d\n", lin->m_flag);
   wcsprintf("    m_naxis: %d\n", lin->m_naxis);
-  wcsprintf("    m_crpix: %p", (void *)lin->m_crpix);
+  WCSPRINTF_PTR("    m_crpix: ", lin->m_crpix, "");
   if (lin->m_crpix == lin->crpix) wcsprintf("  (= crpix)");
   wcsprintf("\n");
-  wcsprintf("       m_pc: %p", (void *)lin->m_pc);
+  WCSPRINTF_PTR("       m_pc: ", lin->m_pc, "");
   if (lin->m_pc == lin->pc) wcsprintf("  (= pc)");
   wcsprintf("\n");
-  wcsprintf("    m_cdelt: %p", (void *)lin->m_cdelt);
+  WCSPRINTF_PTR("    m_cdelt: ", lin->m_cdelt, "");
   if (lin->m_cdelt == lin->cdelt) wcsprintf("  (= cdelt)");
   wcsprintf("\n");
 

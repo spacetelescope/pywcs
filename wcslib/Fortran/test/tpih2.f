@@ -1,6 +1,6 @@
 *=======================================================================
 *
-* WCSLIB 4.7 - an implementation of the FITS WCS standard.
+* WCSLIB 4.8 - an implementation of the FITS WCS standard.
 * Copyright (C) 1995-2011, Mark Calabretta
 *
 * This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: tpih2.f,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+* $Id: tpih2.f,v 4.8 2011/08/15 08:05:54 cal103 Exp $
 *=======================================================================
 
       PROGRAM TPIH2
@@ -40,10 +40,13 @@
 *
 * Input comes from file 'pih.fits'.
 *
+* WCSP, which is meant to hold an address, is declared as an INTEGER
+* array of length 2 to accomodate 64-bit machines for which
+* sizeof(void *) = 2*sizeof(int).
 *-----------------------------------------------------------------------
       LOGICAL   GOTEND
       INTEGER   C0(7), GCODE(2), I, IC, IERR, J, K, NAXIS(2),
-     :          NKEYRC, NREJECT, NWCS, RELAX, WCSP
+     :          NKEYRC, NREJECT, NWCS, RELAX, WCSP(2)
       REAL      BLC(2), TRC(2)
       DOUBLE PRECISION CACHE(4,0:256), NLDPRM(8)
       CHARACTER KEYREC*80, DEVTYP*16, HEADER*28801, IDENTS(3)*80,

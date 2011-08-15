@@ -29,7 +29,7 @@ else:
 # custom command that adds a command-line option for this?
 BUILD = 'release'
 OPENMP = False
-WCSLIB_VERSION = '4.7' # TODO: Could this be determined automagically?
+WCSLIB_VERSION = '4.8' # TODO: Could this be determined automagically?
 
 
 def setup_hook(config):

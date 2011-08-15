@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,8 +28,10 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcshdr_f.c,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+  $Id: wcshdr_f.c,v 4.8 2011/08/15 08:05:54 cal103 Exp $
 *===========================================================================*/
+
+#include <stdio.h>
 
 #include <wcshdr.h>
 #include <wcs.h>
@@ -56,6 +58,10 @@ int wcspih_(
   iptr wcsp)
 
 {
+  /* This may or may not force the Fortran I/O buffers to be flushed.  If
+   * not, try CALL FLUSH(6) before calling WCSPIH in the Fortran code. */
+  fflush(NULL);
+
   return wcspih(header, *nkeys, *relax, *ctrl, nreject, nwcs,
     (struct wcsprm **)wcsp);
 }
@@ -74,6 +80,10 @@ int wcsbth_(
   iptr wcsp)
 
 {
+  /* This may or may not force the Fortran I/O buffers to be flushed.  If
+   * not, try CALL FLUSH(6) before calling WCSBTH in the Fortran code. */
+  fflush(NULL);
+
   return wcsbth(header, *nkeys, *relax, *ctrl, *keysel, colsel, nreject,
     nwcs, (struct wcsprm **)wcsp);
 }

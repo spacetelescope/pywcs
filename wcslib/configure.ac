@@ -8,12 +8,12 @@
 #
 # Author: Mark Calabretta, Australia Telescope National Facility
 # http://www.atnf.csiro.au/~mcalabre/index.html
-# $Id: configure.ac,v 4.7.1.2 2011/02/09 02:01:01 cal103 Exp cal103 $
+# $Id: configure.ac,v 4.8 2011/08/15 08:05:55 cal103 Exp $
 #-----------------------------------------------------------------------------
 
-AC_INIT([WCSLIB], [4.7], [mcalabre@atnf.csiro.au], [wcslib-4.7])
+AC_INIT([WCSLIB], [4.8], [mcalabre@atnf.csiro.au], [wcslib-4.8])
 AC_PREREQ([2.53])
-AC_REVISION([$Revision: 4.7.1.2 $])
+AC_REVISION([$Revision: 4.8 $])
 AC_SUBST([PACKAGE_VERSION])
 AC_DEFINE_UNQUOTED([WCSLIB_VERSION], [$PACKAGE_VERSION], [Define wcslib version])
 
@@ -139,9 +139,9 @@ AC_RUN_IFELSE(
                        return 2;]])],
   AC_DEFINE([MODZ], ["z"], [printf format modifier for size_t type.])
     AC_MSG_RESULT(yes),
-  AC_DEFINE([MODZ], ["l"], [printf format modifier for size_t type.])
+  AC_DEFINE([MODZ], [""],  [printf format modifier for size_t type.])
     AC_MSG_RESULT(no),
-  AC_DEFINE([MODZ], ["l"], [printf format modifier for size_t type.])
+  AC_DEFINE([MODZ], [""],  [printf format modifier for size_t type.])
     AC_MSG_RESULT(assumed not)
 )
 
@@ -422,15 +422,24 @@ if test "x$with_cfitsio" != xno -o \
     AC_CHECK_LIB([F77],     [f77_init],  [PGPLOTLIB="-lF77 $PGPLOTLIB"],
                  [], [$PGPLOTLIB $LIBS])
 
-    # PGPLOT compiled with g77 but linked with something else.
-    AC_CHECK_LIB([frtbegin], [main],     [PGPLOTLIB="-lfrtbegin $PGPLOTLIB"],
-                 [], [$PGPLOTLIB $LIBS])
-    AC_CHECK_LIB([g2c],      [gerror_],  [PGPLOTLIB="-lg2c $PGPLOTLIB"],
-                 [], [$PGPLOTLIB $LIBS])
+    if test "x$F77" != xg77; then
+      # For PGPLOT compiled with g77 but linked with something else.
+      AC_CHECK_LIB([frtbegin], [main],     [PGPLOTLIB="-lfrtbegin $PGPLOTLIB"],
+                   [], [$PGPLOTLIB $LIBS])
+      AC_CHECK_LIB([g2c],      [gerror_],  [PGPLOTLIB="-lg2c $PGPLOTLIB"],
+                   [], [$PGPLOTLIB $LIBS])
+    fi
 
-    # PGPLOT compiled with gfortran but linked with something else.
-    AC_CHECK_LIB([gfortran], [_gfortran_abort],
-                 [PGPLOTLIB="-lgfortran $PGPLOTLIB"], [], [$PGPLOTLIB $LIBS])
+    if test "x$F77" != xgfortran; then
+      # For PGPLOT compiled with gfortran but linked with something else.
+      # Note that if gfortran itself is driving the linker it can be harmful
+      # to add -lgfortran to the link list without also adding -lgfortranbegin.
+      # Doing so stops gfortran from adding -lgfortranbegin which is needed to
+      # resolve "main".
+      AC_CHECK_LIB([gfortran], [_gfortran_abort],
+                   [PGPLOTLIB="-lgfortran $PGPLOTLIB"], [],
+                   [$PGPLOTLIB $LIBS])
+    fi
 
     # Search for X11 includes and libraries.
     AC_PATH_X

@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -29,7 +29,7 @@
   Author: Mark Calabretta, Australia Telescope National Facility
   Module author: Michael Droettboom
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id$
+  $Id: wcserr.h,v 4.8 2011/08/15 08:05:53 cal103 Exp $
 *=============================================================================
 *
 * Summary of the wcserr routines
@@ -85,6 +85,8 @@
 * ------------------------------------------------
 * wcserr_enable() enables or disables wcserr error messaging.  By default it
 * is disabled.
+*
+* PLEASE NOTE: This function is not thread-safe.
 *
 * Given:
 *   enable    int       If true (non-zero), enable error messaging, else
@@ -220,6 +222,7 @@ int wcserr_prt(const struct wcserr *err, const char *prefix);
 
 
 /* INTERNAL USE ONLY -------------------------------------------------------*/
+
 int wcserr_set(struct wcserr **err, int status, const char *function,
   const char *file, int line_no, const char *format, ...);
 

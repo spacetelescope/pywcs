@@ -1,6 +1,6 @@
 *=======================================================================
 *
-* WCSLIB 4.7 - an implementation of the FITS WCS standard.
+* WCSLIB 4.8 - an implementation of the FITS WCS standard.
 * Copyright (C) 1995-2011, Mark Calabretta
 *
 * This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: twcssub.f,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+* $Id: twcssub.f,v 4.8 2011/08/15 08:05:54 cal103 Exp $
 *=======================================================================
 
       PROGRAM TWCSSUB
@@ -51,6 +51,7 @@
      :          PS(10)*72
 
       INCLUDE 'wcs.inc'
+      INCLUDE 'wcserr.inc'
 
       INTEGER   WCS(WCSLEN), WCSEXT(WCSLEN)
       DOUBLE PRECISION DUMMY1, DUMMY2
@@ -132,8 +133,9 @@
       WRITE (*, 60)
  60   FORMAT (
      :  'Testing WCSLIB subimage extraction subroutine (twcssub.f)',/,
-     :  '---------------------------------------------------------',/,
+     :  '---------------------------------------------------------',//,
      :  'Initial contents of wcsprm struct:')
+      CALL FLUSH(6)
       STATUS = WCSPRT (WCS)
 
 
@@ -148,14 +150,13 @@
       STATUS = WCSPUT (WCSEXT, WCS_FLAG, -1, 0, 0)
       STATUS = WCSSUB (WCS, NSUB, AXES, WCSEXT)
 
+      CALL FLUSH(6)
       IF (STATUS.NE.0) THEN
-        WRITE (6, 80) STATUS
- 80     FORMAT ('WCSSUB ERROR', I3,'.')
+        STATUS = WCSPERR (WCSEXT, CHAR(0))
       ELSE
         STATUS = WCSSET (WCSEXT)
         IF (STATUS.NE.0) THEN
-          WRITE (6, 90) STATUS
- 90       FORMAT ('WCSSET ERROR', I3,'.')
+          STATUS = WCSPERR (WCSEXT, CHAR(0))
         ELSE
           STATUS = WCSPRT (WCSEXT)
         END IF
@@ -168,13 +169,13 @@
       AXES(1) = 4
       AXES(2) = 3
       STATUS = WCSSUB(WCS, NSUB, AXES, WCSEXT)
-      IF (STATUS.EQ.13) THEN
-        WRITE (6, 100)
- 100    FORMAT (//,'Received wcssub status 13 for a non-separable ',
-     :    'subimage coordinate system,',/,'as expected.')
+      IF (STATUS.EQ.WCSERR_NON_SEPARABLE) THEN
+        WRITE (6, 80) WCSERR_NON_SEPARABLE
+ 80     FORMAT (//,'Received wcssub status',I3,' as expected for a '
+     :    'non-separable subimage',/,'coordinate system.')
       ELSE
-        WRITE (6, 110) STATUS
- 110    FORMAT (//,'ERROR: expected wcssub status 13 for a non-',
+        WRITE (6, 90) WCSERR_NON_SEPARABLE, STATUS
+ 90     FORMAT (//,'ERROR: expected wcssub status',I3,' for a non-',
      :    'separable subimage coordinate',/,'system, but received ',
      :    'status',I3,' instead.')
       END IF

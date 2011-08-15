@@ -1,6 +1,6 @@
 *=======================================================================
 *
-* WCSLIB 4.7 - an implementation of the FITS WCS standard.
+* WCSLIB 4.8 - an implementation of the FITS WCS standard.
 * Copyright (C) 1995-2011, Mark Calabretta
 *
 * This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: lin.inc,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+* $Id: lin.inc,v 4.8 2011/08/15 08:05:54 cal103 Exp $
 *=======================================================================
 
 *     Functions.
@@ -38,9 +38,9 @@
      :          LINPRT, LINPTD, LINPTI, LINPUT, LINSET, LINX2P
 
 *     Length of the LINPRM data structure (INTEGER array) on 64-bit
-*     machines.  Only needs to be 17 on 32-bit machines.
+*     machines.  Only needs to be 18 on 32-bit machines.
       INTEGER   LINLEN
-      PARAMETER (LINLEN = 26)
+      PARAMETER (LINLEN = 28)
 
 *     Codes for LIN data structure elements used by LINPUT and LINGET.
       INTEGER   LIN_CDELT, LIN_CRPIX, LIN_FLAG, LIN_NAXIS, LIN_PC

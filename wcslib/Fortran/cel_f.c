@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,8 +28,10 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: cel_f.c,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+  $Id: cel_f.c,v 4.8 2011/08/15 08:05:54 cal103 Exp $
 *===========================================================================*/
+
+#include <stdio.h>
 
 #include <cel.h>
 
@@ -169,8 +171,7 @@ int celget_(const int *cel, const int *what, void *value)
     }
     break;
   case CEL_PRJ:
-    k = (int *)(&(celp->prj)) - (int *)celp;
-    icelp = cel + k;
+    icelp = (int *)(&(celp->prj));
     for (k = 0; k < PRJLEN; k++) {
       *(ivalp++) = *(icelp++);
     }
@@ -187,7 +188,17 @@ int celget_(const int *cel, const int *what, void *value)
     *ivalp = celp->isolat;
     break;
   case CEL_ERR:
-    *(void **)value = celp->err;
+    /* Copy the contents of the wcserr struct. */
+    if (celp->err) {
+      icelp = (int *)(celp->err);
+      for (k = 0; k < ERRLEN; k++) {
+        *(ivalp++) = *(icelp++);
+      }
+    } else {
+      for (k = 0; k < ERRLEN; k++) {
+        *(ivalp++) = 0;
+      }
+    }
     break;
   default:
     return 1;
@@ -224,6 +235,10 @@ int celfree_(int *cel)
 int celprt_(int *cel)
 
 {
+  /* This may or may not force the Fortran I/O buffers to be flushed.  If
+   * not, try CALL FLUSH(6) before calling CELPRT in the Fortran code. */
+  fflush(NULL);
+
   return celprt((struct celprm *)cel);
 }
 

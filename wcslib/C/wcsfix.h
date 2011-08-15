@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,10 +28,10 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcsfix.h,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
+  $Id: wcsfix.h,v 4.8 2011/08/15 08:05:53 cal103 Exp $
 *=============================================================================
 *
-* WCSLIB 4.7 - C routines that implement the FITS World Coordinate System
+* WCSLIB 4.8 - C routines that implement the FITS World Coordinate System
 * (WCS) standard.  Refer to
 *
 *   "Representations of world coordinates in FITS",
@@ -197,7 +197,7 @@
 *                         5: Invalid parameter value.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       wcsprm::err.
+*                       wcsprm::err if enabled, see wcserr_enable().
 *
 * Notes:
 *   The MJD algorithms used by datfix() are from D.A. Hatcher, 1984, QJRAS,
@@ -255,7 +255,7 @@
 *                            parameters.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       wcsprm::err.
+*                       wcsprm::err if enabled, see wcserr_enable().
 *
 *
 * spcfix() - Translate AIPS-convention spectral types
@@ -284,7 +284,7 @@
 *                            parameters.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       wcsprm::err.
+*                       wcsprm::err if enabled, see wcserr_enable().
 *
 *
 * cylfix() - Fix malformed cylindrical projections
@@ -318,7 +318,7 @@
 *                        10: Could not determine reference pixel value.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       wcsprm::err.
+*                       wcsprm::err if enabled, see wcserr_enable().
 *
 *
 * Global variable: const char *wcsfix_errmsg[] - Status return messages

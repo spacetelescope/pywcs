@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcsfix.c,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
+  $Id: wcsfix.c,v 4.8 2011/08/15 08:05:53 cal103 Exp $
 *===========================================================================*/
 
 #include <math.h>
@@ -604,7 +604,8 @@ int cylfix(const int naxis[], struct wcsprm *wcs)
       }
     }
 
-    if (!wcsp2s(wcs, 4, NMAX, pix[0], img[0], phi, theta, world[0], stat)) {
+    if (!(status = wcsp2s(wcs, 4, NMAX, pix[0], img[0], phi, theta, world[0],
+                          stat))) {
       for (j = 0; j < 4; j++) {
         if (phi[j] < phimin) phimin = phi[j];
         if (phi[j] > phimax) phimax = phi[j];
@@ -612,7 +613,7 @@ int cylfix(const int naxis[], struct wcsprm *wcs)
     }
   }
 
-  if (phimin > phimax) return wcs->err->status;
+  if (phimin > phimax) return status;
 
   /* Any changes needed? */
   if (phimin >= -180.0 && phimax <= 180.0) return FIXERR_NO_CHANGE;

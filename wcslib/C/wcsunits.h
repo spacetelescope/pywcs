@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,10 +28,10 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcsunits.h,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
+  $Id: wcsunits.h,v 4.8 2011/08/15 08:05:53 cal103 Exp $
 *=============================================================================
 *
-* WCSLIB 4.7 - C routines that implement the FITS World Coordinate System
+* WCSLIB 4.8 - C routines that implement the FITS World Coordinate System
 * (WCS) standard.  Refer to
 *
 *   "Representations of world coordinates in FITS",
@@ -101,9 +101,10 @@
 =                         value *= scale;
 *
 *   err       struct wcserr **
-*                       For function return values > 1, this struct will
-*                       contain a detailed error message.  May be NULL if an
-*                       error message is not desired.
+*                       If enabled, for function return values > 1, this
+*                       struct will contain a detailed error message, see
+*                       wcserr_enable().  May be NULL if an error message is
+*                       not desired.
 *
 * Function return value:
 *             int       Status return value:
@@ -149,9 +150,10 @@
 *                       bracket will be preserved without modification.
 *
 *   err       struct wcserr **
-*                       When the return value >= 2, this structure will
-*                       contain a detailed error message.  May be NULL if an
-*                       error message is not desired.
+*                       If enabled, for function return values > 1, this
+*                       struct will contain a detailed error message, see
+*                       wcserr_enable().  May be NULL if an error message is
+*                       not desired.
 *
 * Function return value:
 *             int       Status return value:
@@ -241,9 +243,10 @@
 *                       quantity and its canonical units.
 *
 *   err       struct wcserr **
-*                       When the return value >= 2, this structure will
-*                       contain a detailed error message.  May be NULL if an
-*                       error message is not desired.
+*                       If enabled, for function return values > 1, this
+*                       struct will contain a detailed error message, see
+*                       wcserr_enable().  May be NULL if an error message is
+*                       not desired.
 *
 * Function return value:
 *             int       Status return value:

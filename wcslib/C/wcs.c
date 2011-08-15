@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcs.c,v 4.7.1.2 2011/06/03 02:05:54 cal103 Exp cal103 $
+  $Id: wcs.c,v 4.8 2011/08/15 08:05:53 cal103 Exp $
 *===========================================================================*/
 
 #include <math.h>
@@ -81,9 +81,9 @@ const char *wcs_errmsg[] = {
 #define signbit(X) ((X) < 0.0 ? 1 : 0)
 #endif
 
-/* Internal helper functions, not intended for general use. */
-int  wcs_types(struct wcsprm *);
-int  wcs_units(struct wcsprm *);
+/* Internal helper functions, not for general use. */
+static int wcs_types(struct wcsprm *);
+static int wcs_units(struct wcsprm *);
 
 /*--------------------------------------------------------------------------*/
 
@@ -1065,7 +1065,7 @@ int wcsprt(const struct wcsprm *wcs)
 
   wcsprintf("       flag: %d\n", wcs->flag);
   wcsprintf("      naxis: %d\n", wcs->naxis);
-  wcsprintf("      crpix: %p\n", (void *)wcs->crpix);
+  WCSPRINTF_PTR("      crpix: ", wcs->crpix, "\n");
   wcsprintf("            ");
   for (i = 0; i < wcs->naxis; i++) {
     wcsprintf("  %- 11.5g", wcs->crpix[i]);
@@ -1074,7 +1074,7 @@ int wcsprt(const struct wcsprm *wcs)
 
   /* Linear transformation. */
   k = 0;
-  wcsprintf("         pc: %p\n", (void *)wcs->pc);
+  WCSPRINTF_PTR("         pc: ", wcs->pc, "\n");
   for (i = 0; i < wcs->naxis; i++) {
     wcsprintf("    pc[%d][]:", i);
     for (j = 0; j < wcs->naxis; j++) {
@@ -1084,7 +1084,7 @@ int wcsprt(const struct wcsprm *wcs)
   }
 
   /* Coordinate increment at reference point. */
-  wcsprintf("      cdelt: %p\n", (void *)wcs->cdelt);
+  WCSPRINTF_PTR("      cdelt: ", wcs->cdelt, "\n");
   wcsprintf("            ");
   for (i = 0; i < wcs->naxis; i++) {
     wcsprintf("  %- 11.5g", wcs->cdelt[i]);
@@ -1092,7 +1092,7 @@ int wcsprt(const struct wcsprm *wcs)
   wcsprintf("\n");
 
   /* Coordinate value at reference point. */
-  wcsprintf("      crval: %p\n", (void *)wcs->crval);
+  WCSPRINTF_PTR("      crval: ", wcs->crval, "\n");
   wcsprintf("            ");
   for (i = 0; i < wcs->naxis; i++) {
     wcsprintf("  %- 11.5g", wcs->crval[i]);
@@ -1100,12 +1100,12 @@ int wcsprt(const struct wcsprm *wcs)
   wcsprintf("\n");
 
   /* Coordinate units and type. */
-  wcsprintf("      cunit: %p\n", (void *)wcs->cunit);
+  WCSPRINTF_PTR("      cunit: ", wcs->cunit, "\n");
   for (i = 0; i < wcs->naxis; i++) {
     wcsprintf("             \"%s\"\n", wcs->cunit[i]);
   }
 
-  wcsprintf("      ctype: %p\n", (void *)wcs->ctype);
+  WCSPRINTF_PTR("      ctype: ", wcs->ctype, "\n");
   for (i = 0; i < wcs->naxis; i++) {
     wcsprintf("             \"%s\"\n", wcs->ctype[i]);
   }
@@ -1123,14 +1123,14 @@ int wcsprt(const struct wcsprm *wcs)
   /* Parameter values. */
   wcsprintf("        npv: %d\n", wcs->npv);
   wcsprintf("     npvmax: %d\n", wcs->npvmax);
-  wcsprintf("         pv: %p\n", (void *)wcs->pv);
+  WCSPRINTF_PTR("         pv: ", wcs->pv, "\n");
   for (i = 0; i < wcs->npv; i++) {
     wcsprintf("             %3d%4d  %- 11.5g\n", (wcs->pv[i]).i,
       (wcs->pv[i]).m, (wcs->pv[i]).value);
   }
   wcsprintf("        nps: %d\n", wcs->nps);
   wcsprintf("     npsmax: %d\n", wcs->npsmax);
-  wcsprintf("         ps: %p\n", (void *)wcs->ps);
+  WCSPRINTF_PTR("         ps: ", wcs->ps, "\n");
   for (i = 0; i < wcs->nps; i++) {
     wcsprintf("             %3d%4d  %s\n", (wcs->ps[i]).i,
       (wcs->ps[i]).m, (wcs->ps[i]).value);
@@ -1138,7 +1138,7 @@ int wcsprt(const struct wcsprm *wcs)
 
   /* Alternate linear transformations. */
   k = 0;
-  wcsprintf("         cd: %p\n", (void *)wcs->cd);
+  WCSPRINTF_PTR("         cd: ", wcs->cd, "\n");
   if (wcs->cd) {
     for (i = 0; i < wcs->naxis; i++) {
       wcsprintf("    cd[%d][]:", i);
@@ -1149,7 +1149,7 @@ int wcsprt(const struct wcsprm *wcs)
     }
   }
 
-  wcsprintf("      crota: %p\n", (void *)wcs->crota);
+  WCSPRINTF_PTR("      crota: ", wcs->crota, "\n");
   if (wcs->crota) {
     wcsprintf("            ");
     for (i = 0; i < wcs->naxis; i++) {
@@ -1167,7 +1167,7 @@ int wcsprt(const struct wcsprm *wcs)
   wcsprintf("        alt: '%c'\n", wcs->alt[0]);
   wcsprintf("     colnum: %d\n", wcs->colnum);
 
-  wcsprintf("      colax: %p\n", (void *)wcs->colax);
+  WCSPRINTF_PTR("      colax: ", wcs->colax, "\n");
   if (wcs->colax) {
     wcsprintf("           ");
     for (i = 0; i < wcs->naxis; i++) {
@@ -1182,7 +1182,7 @@ int wcsprt(const struct wcsprm *wcs)
     wcsprintf("    wcsname: \"%s\"\n", wcs->wcsname);
   }
 
-  wcsprintf("      cname: %p\n", (void *)wcs->cname);
+  WCSPRINTF_PTR("      cname: ", wcs->cname, "\n");
   if (wcs->cname) {
     for (i = 0; i < wcs->naxis; i++) {
       if (wcs->cname[i][0] == '\0') {
@@ -1193,7 +1193,7 @@ int wcsprt(const struct wcsprm *wcs)
     }
   }
 
-  wcsprintf("      crder: %p\n", (void *)wcs->crder);
+  WCSPRINTF_PTR("      crder: ", wcs->crder, "\n");
   if (wcs->crder) {
     wcsprintf("           ");
     for (i = 0; i < wcs->naxis; i++) {
@@ -1206,7 +1206,7 @@ int wcsprt(const struct wcsprm *wcs)
     wcsprintf("\n");
   }
 
-  wcsprintf("      csyer: %p\n", (void *)wcs->csyer);
+  WCSPRINTF_PTR("      csyer: ", wcs->csyer, "\n");
   if (wcs->csyer) {
     wcsprintf("           ");
     for (i = 0; i < wcs->naxis; i++) {
@@ -1296,16 +1296,16 @@ int wcsprt(const struct wcsprm *wcs)
   }
 
   wcsprintf("       ntab: %d\n", wcs->ntab);
-  wcsprintf("        tab: %p", (void *)wcs->tab);
+  WCSPRINTF_PTR("        tab: ", wcs->tab, "");
   if (wcs->tab != 0x0) wcsprintf("  (see below)");
   wcsprintf("\n");
   wcsprintf("       nwtb: %d\n", wcs->nwtb);
-  wcsprintf("        wtb: %p", (void *)wcs->wtb);
+  WCSPRINTF_PTR("        wtb: ", wcs->wtb, "");
   if (wcs->wtb != 0x0) wcsprintf("  (see below)");
   wcsprintf("\n");
 
   /* Derived values. */
-  wcsprintf("      types: %p\n           ", (void *)wcs->types);
+  WCSPRINTF_PTR("      types: ", wcs->types, "\n           ");
   for (i = 0; i < wcs->naxis; i++) {
     wcsprintf("%5d", wcs->types[i]);
   }
@@ -1318,7 +1318,7 @@ int wcsprt(const struct wcsprm *wcs)
   wcsprintf("       spec: %d\n", wcs->spec);
   wcsprintf("   cubeface: %d\n", wcs->cubeface);
 
-  wcsprintf("        err: %p\n", (void *)wcs->err);
+  WCSPRINTF_PTR("        err: ", wcs->err, "\n");
   if (wcs->err) {
     wcserr_prt(wcs->err, "");
   }
@@ -1330,53 +1330,53 @@ int wcsprt(const struct wcsprm *wcs)
   /* Memory management. */
   wcsprintf("     m_flag: %d\n", wcs->m_flag);
   wcsprintf("    m_naxis: %d\n", wcs->m_naxis);
-  wcsprintf("    m_crpix: %p", (void *)wcs->m_crpix);
+  WCSPRINTF_PTR("    m_crpix: ", wcs->m_crpix, "");
   if (wcs->m_crpix == wcs->crpix) wcsprintf("  (= crpix)");
   wcsprintf("\n");
-  wcsprintf("       m_pc: %p", (void *)wcs->m_pc);
+  WCSPRINTF_PTR("       m_pc: ", wcs->m_pc, "");
   if (wcs->m_pc == wcs->pc) wcsprintf("  (= pc)");
   wcsprintf("\n");
-  wcsprintf("    m_cdelt: %p", (void *)wcs->m_cdelt);
+  WCSPRINTF_PTR("    m_cdelt: ", wcs->m_cdelt, "");
   if (wcs->m_cdelt == wcs->cdelt) wcsprintf("  (= cdelt)");
   wcsprintf("\n");
-  wcsprintf("    m_crval: %p", (void *)wcs->m_crval);
+  WCSPRINTF_PTR("    m_crval: ", wcs->m_crval, "");
   if (wcs->m_crval == wcs->crval) wcsprintf("  (= crval)");
   wcsprintf("\n");
-  wcsprintf("    m_cunit: %p", (void *)wcs->m_cunit);
+  WCSPRINTF_PTR("    m_cunit: ", wcs->m_cunit, "");
   if (wcs->m_cunit == wcs->cunit) wcsprintf("  (= cunit)");
   wcsprintf("\n");
-  wcsprintf("    m_ctype: %p", (void *)wcs->m_ctype);
+  WCSPRINTF_PTR("    m_ctype: ", wcs->m_ctype, "");
   if (wcs->m_ctype == wcs->ctype) wcsprintf("  (= ctype)");
   wcsprintf("\n");
-  wcsprintf("       m_pv: %p", (void *)wcs->m_pv);
+  WCSPRINTF_PTR("       m_pv: ", wcs->m_pv, "");
   if (wcs->m_pv == wcs->pv) wcsprintf("  (= pv)");
   wcsprintf("\n");
-  wcsprintf("       m_ps: %p", (void *)wcs->m_ps);
+  WCSPRINTF_PTR("       m_ps: ", wcs->m_ps, "");
   if (wcs->m_ps == wcs->ps) wcsprintf("  (= ps)");
   wcsprintf("\n");
-  wcsprintf("       m_cd: %p", (void *)wcs->m_cd);
+  WCSPRINTF_PTR("       m_cd: ", wcs->m_cd, "");
   if (wcs->m_cd == wcs->cd) wcsprintf("  (= cd)");
   wcsprintf("\n");
-  wcsprintf("    m_crota: %p", (void *)wcs->m_crota);
+  WCSPRINTF_PTR("    m_crota: ", wcs->m_crota, "");
   if (wcs->m_crota == wcs->crota) wcsprintf("  (= crota)");
   wcsprintf("\n");
   wcsprintf("\n");
-  wcsprintf("    m_colax: %p", (void *)wcs->m_colax);
+  WCSPRINTF_PTR("    m_colax: ", wcs->m_colax, "");
   if (wcs->m_colax == wcs->colax) wcsprintf("  (= colax)");
   wcsprintf("\n");
-  wcsprintf("    m_cname: %p", (void *)wcs->m_cname);
+  WCSPRINTF_PTR("    m_cname: ", wcs->m_cname, "");
   if (wcs->m_cname == wcs->cname) wcsprintf("  (= cname)");
   wcsprintf("\n");
-  wcsprintf("    m_crder: %p", (void *)wcs->m_crder);
+  WCSPRINTF_PTR("    m_crder: ", wcs->m_crder, "");
   if (wcs->m_crder == wcs->crder) wcsprintf("  (= crder)");
   wcsprintf("\n");
-  wcsprintf("    m_csyer: %p", (void *)wcs->m_csyer);
+  WCSPRINTF_PTR("    m_csyer: ", wcs->m_csyer, "");
   if (wcs->m_csyer == wcs->csyer) wcsprintf("  (= csyer)");
   wcsprintf("\n");
-  wcsprintf("      m_tab: %p", (void *)wcs->m_tab);
+  WCSPRINTF_PTR("      m_tab: ", wcs->m_tab, "");
   if (wcs->m_tab == wcs->tab) wcsprintf("  (= tab)");
   wcsprintf("\n");
-  wcsprintf("      m_wtb: %p", (void *)wcs->m_wtb);
+  WCSPRINTF_PTR("      m_wtb: ", wcs->m_wtb, "");
   if (wcs->m_wtb == wcs->wtb) wcsprintf("  (= wtb)");
   wcsprintf("\n");
 
@@ -1394,9 +1394,9 @@ int wcsprt(const struct wcsprm *wcs)
       wcsprintf("      ttype: %s\n", wtbp->ttype);
       wcsprintf("        row: %ld\n", wtbp->row);
       wcsprintf("       ndim: %d\n", wtbp->ndim);
-      wcsprintf("     dimlen: %p\n", (void *)wtbp->dimlen);
-      wcsprintf("     arrayp: %p -> %p\n", (void *)wtbp->arrayp,
-                                           (void *)(*(wtbp->arrayp)));
+      WCSPRINTF_PTR("     dimlen: ", wtbp->dimlen, "\n");
+      WCSPRINTF_PTR("     arrayp: ", wtbp->arrayp, " -> ");
+      WCSPRINTF_PTR("", *(wtbp->arrayp), "\n");
     }
   }
 
@@ -1435,14 +1435,15 @@ int wcsperr(const struct wcsprm *wcs, const char *prefix)
 
   if (wcs == 0x0) return WCSERR_NULL_POINTER;
 
-  wcserr_prt(wcs->err, prefix);
-  wcserr_prt(wcs->lin.err, prefix);
-  wcserr_prt(wcs->cel.err, prefix);
-  wcserr_prt(wcs->cel.prj.err, prefix);
-  wcserr_prt(wcs->spc.err, prefix);
-  if (wcs->tab) {
-    for (j = 0; j < wcs->ntab; j++) {
-      wcserr_prt((wcs->tab + j)->err, prefix);
+  if (!wcserr_prt(wcs->err, prefix)) {
+    wcserr_prt(wcs->lin.err, prefix);
+    wcserr_prt(wcs->cel.err, prefix);
+    wcserr_prt(wcs->cel.prj.err, prefix);
+    wcserr_prt(wcs->spc.err, prefix);
+    if (wcs->tab) {
+      for (j = 0; j < wcs->ntab; j++) {
+        wcserr_prt((wcs->tab + j)->err, prefix);
+      }
     }
   }
 
@@ -1658,7 +1659,7 @@ int wcsset(struct wcsprm *wcs)
 
         if (wcs->cdelt[i] == 0.0) {
           return wcserr_set(WCSERR_SET(WCSERR_SINGULAR_MTX),
-            "Singular transformation matrix");
+            "Singular transformation matrix, CDELT%d is zero", i+1);
         }
         lambda = wcs->cdelt[j]/wcs->cdelt[i];
 
@@ -1696,7 +1697,7 @@ int wcsset(struct wcsprm *wcs)
   return 0;
 }
 
-/*--------------------------------------------------------------------------*/
+/* : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :  */
 
 int wcs_types(struct wcsprm *wcs)
 
@@ -1780,8 +1781,7 @@ int wcs_types(struct wcsprm *wcs)
     }
 
     /* Process linear axes. */
-    if (!(strlen(ctypei) == 8 && ctypei[4] == '-') ||
-        (strlen(ctypei) > 8 && ctypei[8] == '-')) {
+    if (!(strlen(ctypei) == 8 && ctypei[4] == '-')) {
       /* Identify Stokes, celestial and spectral types. */
       if (strcmp(ctypei, "STOKES") == 0) {
         /* STOKES axis. */
@@ -1810,7 +1810,7 @@ int wcs_types(struct wcsprm *wcs)
           /* Multiple CUBEFACE axes! */
           return wcserr_set(WCSERR_SET(WCSERR_BAD_CTYPE),
             "Multiple CUBEFACE axes (in CTYPE%d%.1s and CTYPE%d%.1s)",
-            wcs->cubeface, alt, i, alt);
+            wcs->cubeface+1, alt, i+1, alt);
         }
 
       } else if (spctyp(ctypei, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0) == 0) {
@@ -1832,7 +1832,7 @@ int wcs_types(struct wcsprm *wcs)
       if (wcs->spec >= 0) {
         return wcserr_set(WCSERR_SET(WCSERR_BAD_CTYPE),
           "Multiple spectral axes (in CTYPE%d%.1s and CTYPE%d%.1s)",
-          wcs->spec, alt, i, alt);
+          wcs->spec+1, alt, i+1, alt);
       }
 
       wcs->spec = i;
@@ -1857,7 +1857,7 @@ int wcs_types(struct wcsprm *wcs)
         wcs->types[i] = -1;
         return wcserr_set(WCSERR_SET(WCSERR_BAD_CTYPE),
           "Unrecognized projection code (%s in CTYPE%d%.1s)",
-          ctypei+5, i, alt);
+          ctypei+5, i+1, alt);
       }
     }
 
@@ -1911,7 +1911,7 @@ int wcs_types(struct wcsprm *wcs)
         wcs->lat = -1;
         return wcserr_set(WCSERR_SET(WCSERR_BAD_CTYPE),
           "Unrecognized celestial type (%5s in CTYPE%d%.1s)",
-          ctypei, i, alt);
+          ctypei, i+1, alt);
       }
 
       if (wcs->lat >= 0) wcs->types[i]++;
@@ -1926,7 +1926,7 @@ int wcs_types(struct wcsprm *wcs)
         wcs->lat = -1;
         return wcserr_set(WCSERR_SET(WCSERR_BAD_CTYPE), "Inconsistent "
           "projection types (expected %s, got %s in CTYPE%d%.1s)", requir,
-          ctypei, i, alt);
+          ctypei, i+1, alt);
       }
 
       *ndx = i;
@@ -1961,7 +1961,7 @@ int wcs_types(struct wcsprm *wcs)
   return 0;
 }
 
-/*--------------------------------------------------------------------------*/
+/* : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :  */
 
 int wcs_units(struct wcsprm *wcs)
 

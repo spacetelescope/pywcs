@@ -1,6 +1,6 @@
 *=======================================================================
 *
-* WCSLIB 4.7 - an implementation of the FITS WCS standard.
+* WCSLIB 4.8 - an implementation of the FITS WCS standard.
 * Copyright (C) 1995-2011, Mark Calabretta
 *
 * This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: tfitshdr.f,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+* $Id: tfitshdr.f,v 4.8 2011/08/15 08:05:54 cal103 Exp $
 *=======================================================================
 
       PROGRAM TFITSHDR
@@ -194,7 +194,7 @@
      :             ABS(IVAL(1))
           ELSE
             WRITE (TEXT, '(SP,I11,SS,I9.9)') IVAL(2), ABS(IVAL(1))
-          ENDIF
+          END IF
 
         ELSE IF (KTYP.EQ.4) THEN
 *         Very long integer.
@@ -222,7 +222,7 @@
         ELSE IF (KTYP.EQ.6) THEN
 *         Int complex.
           IERR = KEYGET (KEYS, I, KEY_KEYVALUE, FVAL, NC)
-          WRITE (TEXT, *) NINT(FVAL(1)), ' ', NINT(FVAL(2))
+          WRITE (TEXT, '(2I11)') NINT(FVAL(1)), NINT(FVAL(2))
 
         ELSE IF (KTYP.EQ.7) THEN
 *         Float complex.

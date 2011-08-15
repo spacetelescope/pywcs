@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,10 +28,10 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcshdr.h,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
+  $Id: wcshdr.h,v 4.8 2011/08/15 08:05:53 cal103 Exp $
 *=============================================================================
 *
-* WCSLIB 4.7 - C routines that implement the FITS World Coordinate System
+* WCSLIB 4.8 - C routines that implement the FITS World Coordinate System
 * (WCS) standard.  Refer to
 *
 *   "Representations of world coordinates in FITS",
@@ -776,7 +776,7 @@
 *                         3: Invalid tabular parameters.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       wcsprm::err.
+*                       wcsprm::err if enabled, see wcserr_enable().
 *
 *
 * wcsidx() - Index alternate coordinate representations
@@ -945,7 +945,7 @@
 *                       (*header)[0], the second at (*header)[80], etc.
 *
 * Function return value:
-*             int       Status return value:
+*             int       Status return value (associated with wcs_errmsg[]):
 *                         0: Success.
 *                         1: Null wcsprm pointer passed.
 *                         2: Memory allocation failed.
@@ -958,7 +958,7 @@
 *                            parameters.
 *
 *                       For returns > 1, a detailed error message is set in
-*                       wcsprm::err.
+*                       wcsprm::err if enabled, see wcserr_enable().
 *
 * Notes:
 *   wcshdo() interprets the "relax" argument as a vector of flag bits to
@@ -1051,6 +1051,7 @@
 * Global variable: const char *wcshdr_errmsg[] - Status return messages
 * ---------------------------------------------------------------------
 * Error messages to match the status value returned from each function.
+* Use wcs_errmsg[] for status returns from wcshdo().
 *
 *===========================================================================*/
 
@@ -1102,9 +1103,10 @@ enum wcshdr_errmsg_enum {
   WCSHDRERR_SUCCESS            = 0,	/* Success. */
   WCSHDRERR_NULL_POINTER       = 1,	/* Null wcsprm pointer passed. */
   WCSHDRERR_MEMORY             = 2,	/* Memory allocation failed. */
-  WCSHDRERR_BAD_TABULAR_PARAMS = 3,	/* Invalid tabular parameters. */
-  WCSHDRERR_PARSER             = 4	/* Fatal error returned by Flex
+  WCSHDRERR_BAD_COLUMN         = 3,	/* Invalid column selection. */
+  WCSHDRERR_PARSER             = 4,	/* Fatal error returned by Flex
 					   parser. */
+  WCSHDRERR_BAD_TABULAR_PARAMS = 5 	/* Invalid tabular parameters. */
 };
 
 int wcspih(char *header, int nkeyrec, int relax, int ctrl, int *nreject,

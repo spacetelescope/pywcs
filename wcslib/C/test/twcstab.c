@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: twcstab.c,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+  $Id: twcstab.c,v 4.8 2011/08/15 08:05:54 cal103 Exp $
 *=============================================================================
 *
 * twcstab tests wcstab() and also provides sample code for using it in
@@ -44,7 +44,6 @@
 
 #include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include <fitsio.h>
@@ -54,6 +53,7 @@
 
 int create_input();
 int do_wcs_stuff(fitsfile *fptr, struct wcsprm *wcs);
+double lcprng();
 
 int main()
 
@@ -236,14 +236,13 @@ int create_input()
   fits_insert_key_str(fptr, "TDIM1", keyrec, "Dimensions of 3-D array",
     &status);
 
-  /* Plate carree projection with a bit of noise for the sake of realism. */
-  srand(137u);
+  /* Plate carrée projection with a bit of noise for the sake of realism. */
   fp = array;
   for (k2 = 0; k2 < K2; k2++) {
     for (k1 = 0; k1 < K1; k1++) {
       /* Box-Muller transformation: uniform -> normal distribution. */
-      x1 = ((double)rand()) / RAND_MAX;
-      x2 = ((double)rand()) / RAND_MAX;
+      x1 = lcprng();
+      x2 = lcprng();
       if (x1 == 0.0) x1 = 1.0;
       z  = sqrt(-2.0 * log(x1));
       x2 *= TWOPI;
@@ -306,6 +305,21 @@ int create_input()
   }
 
   return 0;
+}
+
+/*--------------------------------------------------------------------------*/
+
+/* A simple linear congruential pseudo-random number generator that produces
+ * the same results on all systems so that the test output can be compared.
+ * Implemented in such a way that the Fortran test programs can emulate it.
+ * It produces a fixed sequence of uniformly distributed numbers in [0,1].  */
+
+double lcprng()
+{
+  static int next = 137;
+
+  while ((next = next * 1103515245 + 12345) < 0);
+  return (double)(next % 1073741824) / 1073741823.0;
 }
 
 /*--------------------------------------------------------------------------*/

@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.7 - an implementation of the FITS WCS standard.
+  WCSLIB 4.8 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2011, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcshdr.c,v 4.7.1.1 2011/02/07 07:04:22 cal103 Exp cal103 $
+  $Id: wcshdr.c,v 4.8 2011/08/15 08:05:53 cal103 Exp $
 *===========================================================================*/
 
 #include <ctype.h>
@@ -49,14 +49,15 @@ const char *wcshdr_errmsg[] = {
   "Success",
   "Null wcsprm pointer passed",
   "Memory allocation failed",
-  "Invalid tabular parameters",
-  "Fatal error returned by Flex parser"};
+  "Invalid column selection",
+  "Fatal error returned by Flex parser",
+  "Invalid tabular parameters"};
 
 /* Convenience macro for invoking wcserr_set(). */
 #define WCSHDR_ERRMSG(status) WCSERR_SET(status), wcshdr_errmsg[status]
 
-void wcshdo_util(int, const char [], const char [], int, const char [], int,
-  int, int, char, int, int [], char [], const char [], int *, char **,
+static void wcshdo_util(int, const char [], const char [], int, const char [],
+  int, int, int, char, int, int [], char [], const char [], int *, char **,
   int *);
 
 /*--------------------------------------------------------------------------*/
@@ -231,6 +232,7 @@ int wcstab(struct wcsprm *wcs)
 
   for (itab = 0; itab < wcs->ntab; itab++) {
     if ((status = tabini(1, wcs->tab[itab].M, 0, wcs->tab + itab))) {
+      if (status == 3) status = 5;
       wcserr_set(WCSHDR_ERRMSG(status));
       goto cleanup;
     }

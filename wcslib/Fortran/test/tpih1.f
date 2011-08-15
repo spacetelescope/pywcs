@@ -1,6 +1,6 @@
 *=======================================================================
 *
-* WCSLIB 4.7 - an implementation of the FITS WCS standard.
+* WCSLIB 4.8 - an implementation of the FITS WCS standard.
 * Copyright (C) 1995-2011, Mark Calabretta
 *
 * This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: tpih1.f,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+* $Id: tpih1.f,v 4.8 2011/08/15 08:05:54 cal103 Exp $
 *=======================================================================
 
       PROGRAM TPIH1
@@ -40,10 +40,13 @@
 *
 * Input comes from file 'pih.fits'.
 *
+* WCSP, which is meant to hold an address, is declared as an INTEGER
+* array of length 2 to accomodate 64-bit machines for which
+* sizeof(void *) = 2*sizeof(int).
 *-----------------------------------------------------------------------
       LOGICAL   GOTEND
       INTEGER   ALTS(0:26), CTRL, I, IERR, J, K, NKEYRC, NREJECT, NWCS,
-     :          RELAX, WCSP
+     :          RELAX, WCSP(2)
       CHARACTER CALTS(0:26)*2, KEYREC*80, HEADER*288001, INFILE*9
 
       INCLUDE 'wcshdr.inc'
@@ -111,7 +114,9 @@
  80   FORMAT (/,'Illegal-WCS header keyrecords rejected by wcspih():')
       RELAX = WCSHDR_all
       CTRL = -2
+
 *     WCSPIH will allocate memory for NWCS intialized WCSPRM structs.
+      CALL FLUSH(6)
       IERR = WCSPIH (HEADER, NKEYRC, RELAX, CTRL, NREJECT, NWCS, WCSP)
       IF (IERR.NE.0) THEN
         WRITE (*, 90) IERR
@@ -162,6 +167,7 @@
           GO TO 190
         END IF
 
+        CALL FLUSH(6)
         IERR = WCSPRT (WCS)
         IF (IERR.NE.0) THEN
           WRITE (*, 180) IERR

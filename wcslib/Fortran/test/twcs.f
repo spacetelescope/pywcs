@@ -1,6 +1,6 @@
 *=======================================================================
 *
-* WCSLIB 4.7 - an implementation of the FITS WCS standard.
+* WCSLIB 4.8 - an implementation of the FITS WCS standard.
 * Copyright (C) 1995-2011, Mark Calabretta
 *
 * This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: twcs.f,v 4.7.1.1 2011/02/07 07:04:23 cal103 Exp cal103 $
+* $Id: twcs.f,v 4.8 2011/08/15 08:05:54 cal103 Exp $
 *=======================================================================
 
       PROGRAM TWCS
@@ -51,8 +51,9 @@
       INTEGER   NELEM
       PARAMETER (NELEM = 9)
 
-      INTEGER   ETEST, I, J, K, LAT, LATIDX, LNG, LNGIDX, SPCIDX,
-     :          STAT(0:360), STATUS, WCS(WCSLEN)
+      INTEGER   CHECK_ERROR, ETEST, I, J, K, LAT, LATIDX, LNG, LNGIDX,
+     :          NFAIL1, NFAIL2, SPCIDX, STAT(0:360), STATUS,
+     :          TEST_ERRORS, WCS(WCSLEN)
       DOUBLE PRECISION DUMMY, FREQ, IMG(NELEM,0:360), LAT1, LNG1,
      :          PHI(0:360), PIXEL1(NELEM,0:360), PIXEL2(NELEM,0:360), R,
      :          RESID, RESMAX, THETA(0:360), TIME, WORLD1(NELEM,0:360),
@@ -147,6 +148,7 @@
         FREQ = FREQ + 62500D0
  30   CONTINUE
 
+      NFAIL1 = 0
       RESMAX = 0D0
       DO 110 LAT = 90, -90, -1
         LAT1 = DBLE(LAT)
@@ -195,6 +197,7 @@
           IF (RESID.GT.RESMAX) RESMAX = RESID
 
           IF (RESID.GT.TOL) THEN
+            NFAIL1 = NFAIL1 + 1
             WRITE (*, 90) (WORLD1(I,K), I=1,NAXIS),
      :                    (PIXEL1(I,K), I=1,NAXIS),
      :                    (WORLD2(I,K), I=1,NAXIS),
@@ -211,7 +214,8 @@
  110  CONTINUE
 
       WRITE (*, 120) RESMAX
- 120  FORMAT ('Maximum closure residual:',1P,G11.3,' pixel.')
+ 120  FORMAT ('WCSP2S/WCSS2P: Maximum closure residual =',1P,G8.1,
+     :        ' pixel.')
 
 
 *     Test WCSERR.
@@ -224,10 +228,29 @@
 *     Test 1.
       STATUS = WCSPUT (WCS, WCS_PV, UNDEFINED, PVI(3), PVM(3))
       STATUS = WCSSET (WCS)
-      CALL CHECK_ERROR (WCS, STATUS, WCSERR_BAD_PARAM,
-     :  'Invalid parameter value')
+      NFAIL2 = CHECK_ERROR (WCS, STATUS, WCSERR_BAD_PARAM,
+     :                      'Invalid parameter value')
 
-      CALL TEST_ERRORS
+      NFAIL2 = NFAIL2 + TEST_ERRORS()
+
+      IF (NFAIL1.NE.0 .OR. NFAIL2.NE.0) THEN
+        IF (NFAIL1.NE.0) THEN
+          WRITE (*, 140) NFAIL1
+ 140      FORMAT (/,'FAIL:',I5,' closure residuals exceed reporting ',
+     :      'tolerance.')
+        END IF
+
+        IF (NFAIL2.NE.0) THEN
+          WRITE (*, 150) NFAIL2
+ 150      FORMAT ('FAIL:',I5,' error messages differ from that ',
+     :      'expected.')
+        END IF
+      ELSE
+        WRITE (*, 160)
+ 160    FORMAT (/,'PASS: All closure residuals are within reporting ',
+     :    'tolerance.',/,'PASS: All error messages reported as ',
+     :    'expected.')
+      END IF
 
 
 *     Clean up.
@@ -295,62 +318,60 @@
       END
 
 *-----------------------------------------------------------------------
-      SUBROUTINE TEST_ERRORS
+      INTEGER FUNCTION TEST_ERRORS()
 *-----------------------------------------------------------------------
       INCLUDE 'wcs.inc'
 
-      INTEGER   ETEST, STATUS, WCS(WCSLEN)
+      INTEGER   CHECK_ERROR, ETEST, NFAIL, STATUS, WCS(WCSLEN)
 
       COMMON /ERRTST/ ETEST
 *-----------------------------------------------------------------------
+      NFAIL = 0
+
 *     Test 2.
       STATUS = WCSPUT (WCS, WCS_FLAG, -1, 0, 0)
       STATUS = WCSINI (-32, WCS)
-      CALL CHECK_ERROR (WCS, STATUS, WCSERR_MEMORY,
-     :  'naxis must be positive (got -32)')
+      NFAIL = NFAIL + CHECK_ERROR (WCS, STATUS, WCSERR_MEMORY,
+     :          'naxis must be positive (got -32)')
 
 *     Test 3.
       STATUS = WCSPUT (WCS, WCS_FLAG, 0, 0, 0)
-      status = WCSINI (1000000000, WCS)
-      CALL CHECK_ERROR (WCS, STATUS, WCSERR_MEMORY,
-     :  'Memory allocation failed')
+      STATUS = WCSINI (2, WCS)
+      NFAIL = NFAIL + CHECK_ERROR (WCS, STATUS, WCSERR_SUCCESS, ' ')
 
 *     Test 4.
-      STATUS = WCSPUT (WCS, WCS_FLAG, 0, 0, 0)
-      STATUS = WCSINI (2, WCS)
-      CALL CHECK_ERROR (WCS, STATUS, WCSERR_SUCCESS, ' ')
-
-*     Test 5.
       STATUS = WCSPUT (WCS, WCS_CTYPE, 'CUBEFACE', 1, 0)
       STATUS = WCSPUT (WCS, WCS_CTYPE, 'CUBEFACE', 2, 0)
       STATUS = WCSSET (WCS)
-      CALL CHECK_ERROR (WCS, STATUS, WCSERR_BAD_CTYPE,
-     :  'Multiple CUBEFACE axes (in CTYPE0 and CTYPE1)')
+      NFAIL = NFAIL + CHECK_ERROR (WCS, STATUS, WCSERR_BAD_CTYPE,
+     :          'Multiple CUBEFACE axes (in CTYPE1 and CTYPE2)')
 
-*     Test 6.
+*     Test 5.
       STATUS = WCSPUT (WCS, WCS_FLAG, 0, 0, 0)
       STATUS = WCSINI (2, WCS)
       STATUS = WCSPUT (WCS, WCS_CTYPE, 'RA---FOO', 1, 0)
       STATUS = WCSPUT (WCS, WCS_CTYPE, 'DEC--BAR', 2, 0)
       STATUS = WCSSET (WCS)
-      CALL CHECK_ERROR (WCS, STATUS, WCSERR_BAD_CTYPE,
-     :  'Unrecognized projection code (FOO in CTYPE0)')
+      NFAIL = NFAIL + CHECK_ERROR (WCS, STATUS, WCSERR_BAD_CTYPE,
+     :          'Unrecognized projection code (FOO in CTYPE1)')
 
-*     Test 7.
+*     Test 6.
       STATUS = WCSPUT (WCS, WCS_FLAG, 0, 0, 0)
       STATUS = WCSINI (2, WCS)
       STATUS = WCSPUT (WCS, WCS_CTYPE, 'RA---TAN', 1, 0)
       STATUS = WCSPUT (WCS, WCS_CTYPE, 'FREQ-LOG', 2, 0)
       STATUS = WCSSET (WCS)
-      CALL CHECK_ERROR (WCS, STATUS, WCSERR_BAD_CTYPE,
-     :  'Unmatched celestial axes')
+      NFAIL = NFAIL + CHECK_ERROR (WCS, STATUS, WCSERR_BAD_CTYPE,
+     :          'Unmatched celestial axes')
 
       STATUS = WCSFREE(WCS)
+
+      TEST_ERRORS = NFAIL
 
       END
 
 *-----------------------------------------------------------------------
-      SUBROUTINE CHECK_ERROR(WCS, STATUS, EXSTATUS, EXMSG)
+      INTEGER FUNCTION CHECK_ERROR(WCS, STATUS, EXSTATUS, EXMSG)
 *-----------------------------------------------------------------------
       INCLUDE 'wcs.inc'
       INCLUDE 'wcserr.inc'
@@ -373,13 +394,17 @@
  10   FORMAT (/,'Test ',I2,'...')
 
       IF (STATUS.EQ.EXSTATUS .AND. ERRMSG.EQ.EXMSG) THEN
+        CALL FLUSH(6)
         ISTAT = WCSPERR (WCS, 'OK: '//CHAR(0))
         WRITE (*, *) '...succeeded.'
+        CHECK_ERROR = 0
       ELSE
         WRITE (*, 20) EXSTATUS, EXMSG(:ILEN(EXMSG))
  20     FORMAT ('Expected error ',I2,': ''',A,''', got')
+        CALL FLUSH(6)
         ISTAT = WCSPERR (WCS, CHAR(0))
         WRITE (*, *) '...failed.'
+        CHECK_ERROR = 1
       END IF
 
       END
