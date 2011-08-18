@@ -285,7 +285,7 @@ naxis kwarg.
         return new_copy
 
     def __deepcopy__(self, memo):
-        new_copy = WCS()
+        new_copy = self.__class__()
         new_copy.naxis = copy.deepcopy(self.naxis, memo)
         WCSBase.__init__(new_copy, copy.deepcopy(self.sip, memo),
                          (copy.deepcopy(self.cpdis1, memo),
