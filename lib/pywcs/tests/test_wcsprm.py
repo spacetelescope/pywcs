@@ -487,7 +487,8 @@ def test_spcfix():
     # really test
     header = open(os.path.join(ROOT_DIR, 'spectra', 'orion-velo-1.hdr'), 'rb').read()
     w = _pywcs._Wcsprm(header)
-    assert w.spcfix() == -1
+    print w.spcfix()
+    assert w.spcfix() == 0
 
 def test_spec():
     w = _pywcs._Wcsprm()
