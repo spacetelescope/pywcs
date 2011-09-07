@@ -97,7 +97,7 @@ pipeline_all_pixel2world(
   int             has_wcs;
   int             status     = 1;
   struct wcserr **err;
-  
+
   /* Temporary buffer for performing WCS calculations */
   unsigned char*     buffer = NULL;
   unsigned char*     mem = NULL;
@@ -112,7 +112,7 @@ pipeline_all_pixel2world(
   }
 
   err = &(pipeline->err);
-  
+
   has_det2im = pipeline->det2im[0] != NULL || pipeline->det2im[1] != NULL;
   has_sip    = pipeline->sip != NULL;
   has_p4     = pipeline->cpdis[0] != NULL || pipeline->cpdis[1] != NULL;
@@ -172,7 +172,7 @@ pipeline_all_pixel2world(
 
     if ((status = wcsp2s(pipeline->wcs, (int)ncoord, (int)nelem, wcs_input, imgcrd,
                          phi, theta, wcs_output, stat))) {
-      wcserr_copy(pipeline->wcs->err, &(pipeline->err));
+      wcserr_copy(pipeline->wcs->err, pipeline->err);
     }
   } else {
     if (has_det2im || has_sip || has_p4) {
@@ -194,7 +194,7 @@ int pipeline_pix2foc(
     double* foc /* [ncoord][nelem] */) {
 
   static const char* function = "pipeline_pix2foc";
-  
+
   int              has_det2im;
   int              has_sip;
   int              has_p4;
@@ -202,7 +202,7 @@ int pipeline_pix2foc(
   double *         tmp    = NULL;
   int              status = 1;
   struct wcserr  **err;
-  
+
   assert(nelem == 2);
   assert(pixcrd != foc);
 
@@ -211,7 +211,7 @@ int pipeline_pix2foc(
   }
 
   err = &(pipeline->err);
-  
+
   has_det2im = pipeline->det2im[0] != NULL || pipeline->det2im[1] != NULL;
   has_sip    = pipeline->sip != NULL;
   has_p4     = pipeline->cpdis[0] != NULL || pipeline->cpdis[1] != NULL;
@@ -254,7 +254,7 @@ int pipeline_pix2foc(
   if (has_sip) {
     status = sip_pix2deltas(pipeline->sip, 2, ncoord, input, foc);
     if (status) {
-      wcserr_copy(pipeline->sip->err, &pipeline->err);
+      wcserr_copy(pipeline->sip->err, pipeline->err);
       goto exit;
     }
   }
