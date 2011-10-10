@@ -1,3 +1,26 @@
+WCSLIB version 4.8.2 (2011/10/04)
+---------------------------------
+
+* Installation
+
+  - Changes for Debian package generation contributed by Ole Streicher:
+    - Corrections to 'configure' reported by 'lintian'.
+    - Generate man pages for the utility programs and install them.
+
+
+WCSLIB version 4.8.1 (2011/09/19)
+---------------------------------
+
+* Installation
+
+  - Set SONAME in the sharable library in accordance with
+    tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html
+    (reported by Ole Streicher, Debian package maintainer).  The
+    sharable library will again be installed with full release number
+    and with a symbolic link from SONAME pointing to it.  If defined,
+    SHRLN will point to SONAME.
+
+
 WCSLIB version 4.8 (2011/08/15)
 -------------------------------
 
@@ -6,8 +29,8 @@ WCSLIB version 4.8 (2011/08/15)
   - New error diagnostics mechanism contributed by Michael Droetboom:
 
     Most functions that return a numeric status (error) code now also
-    fill in a detailed error message to a wcserr struct attached to
-    the passed-in *prm struct.  See wcserr.h for more information.
+    write a detailed error message to a wcserr struct attached to the
+    passed-in *prm struct.  See wcserr.h for more information.
 
     Functions that didn't have a *prm struct as an argument have no
     direct way to return an error message.  Therefore, these functions
@@ -1761,4 +1784,4 @@ WCSLIB version 1.0 (1995/01/31)
   Initial release.
 
 ------------------------------------------------------------------------
-$Id: CHANGES,v 4.8 2011/08/15 08:05:55 cal103 Exp $
+$Id: CHANGES,v 4.8.1.3 2011/10/04 08:01:03 cal103 Exp cal103 $

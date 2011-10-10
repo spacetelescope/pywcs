@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: tlin.f,v 4.8 2011/08/15 08:05:54 cal103 Exp $
+* $Id: tlin.f,v 4.8.1.2 2011/08/16 01:34:41 cal103 Exp cal103 $
 *=======================================================================
 
       PROGRAM TLIN
@@ -37,8 +37,6 @@
 * TLIN tests the linear transformation routines supplied with WCSLIB.
 *
 *-----------------------------------------------------------------------
-      INCLUDE 'lin.inc'
-
       DOUBLE PRECISION TOL
       PARAMETER (TOL = 1D-13)
 
@@ -50,7 +48,11 @@
      :          PC(NAXIS,NAXIS), PIX0(NELEM,2), PIX(NELEM,2), RESID,
      :          RESIDMAX
 
-      INTEGER LIN(LINLEN)
+*     On some systems, such as Sun Sparc, the struct MUST be aligned
+*     on a double precision boundary, done here using an equivalence.
+*     Failure to do this may result in mysterious "bus errors".
+      INCLUDE 'lin.inc'
+      INTEGER   LIN(LINLEN)
       DOUBLE PRECISION DUMMY
       EQUIVALENCE (LIN,DUMMY)
 

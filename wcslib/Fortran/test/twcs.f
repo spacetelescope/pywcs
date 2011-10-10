@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: twcs.f,v 4.8 2011/08/15 08:05:54 cal103 Exp $
+* $Id: twcs.f,v 4.8.1.2 2011/08/16 01:43:12 cal103 Exp cal103 $
 *=======================================================================
 
       PROGRAM TWCS
@@ -53,12 +53,17 @@
 
       INTEGER   CHECK_ERROR, ETEST, I, J, K, LAT, LATIDX, LNG, LNGIDX,
      :          NFAIL1, NFAIL2, SPCIDX, STAT(0:360), STATUS,
-     :          TEST_ERRORS, WCS(WCSLEN)
-      DOUBLE PRECISION DUMMY, FREQ, IMG(NELEM,0:360), LAT1, LNG1,
-     :          PHI(0:360), PIXEL1(NELEM,0:360), PIXEL2(NELEM,0:360), R,
-     :          RESID, RESMAX, THETA(0:360), TIME, WORLD1(NELEM,0:360),
+     :          TEST_ERRORS
+      DOUBLE PRECISION FREQ, IMG(NELEM,0:360), LAT1, LNG1, PHI(0:360),
+     :          PIXEL1(NELEM,0:360), PIXEL2(NELEM,0:360), R, RESID,
+     :          RESMAX, THETA(0:360), TIME, WORLD1(NELEM,0:360),
      :          WORLD2(NELEM,0:360)
 
+*     On some systems, such as Sun Sparc, the struct MUST be aligned
+*     on a double precision boundary, done here using an equivalence.
+*     Failure to do this may result in mysterious "bus errors".
+      INTEGER   WCS(WCSLEN)
+      DOUBLE PRECISION DUMMY
       EQUIVALENCE (WCS,DUMMY)
 
 *     Number of axes.
@@ -320,9 +325,15 @@
 *-----------------------------------------------------------------------
       INTEGER FUNCTION TEST_ERRORS()
 *-----------------------------------------------------------------------
-      INCLUDE 'wcs.inc'
+      INTEGER   CHECK_ERROR, ETEST, NFAIL, STATUS
 
-      INTEGER   CHECK_ERROR, ETEST, NFAIL, STATUS, WCS(WCSLEN)
+*     On some systems, such as Sun Sparc, the struct MUST be aligned
+*     on a double precision boundary, done here using an equivalence.
+*     Failure to do this may result in mysterious "bus errors".
+      INCLUDE 'wcs.inc'
+      INTEGER   WCS(WCSLEN)
+      DOUBLE PRECISION DUMMY
+      EQUIVALENCE (WCS,DUMMY)
 
       COMMON /ERRTST/ ETEST
 *-----------------------------------------------------------------------
@@ -376,9 +387,16 @@
       INCLUDE 'wcs.inc'
       INCLUDE 'wcserr.inc'
 
-      INTEGER   EXSTATUS, ILEN, ISTAT, ETEST, STATUS, WCS(WCSLEN),
-     :          WCSERR(ERRLEN)
+      INTEGER   EXSTATUS, ILEN, ISTAT, ETEST, STATUS, WCS(WCSLEN)
       CHARACTER ERRMSG*(WCSERR_MSG_LENGTH), EXMSG*(*)
+
+*     On some systems, such as Sun Sparc, the structs MUST be aligned
+*     on a double precision boundary.  As a dummy argument, WCS should
+*     already be aligned.  WCSERR is aligned here using an equivalence.
+*     Failure to do this may result in mysterious "bus errors".
+      INTEGER   WCSERR(ERRLEN)
+      DOUBLE PRECISION DUMMY
+      EQUIVALENCE (WCSERR,DUMMY)
 
       COMMON /ERRTST/ ETEST
 *-----------------------------------------------------------------------

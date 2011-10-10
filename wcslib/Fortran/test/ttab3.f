@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: ttab3.f,v 4.8 2011/08/15 08:05:54 cal103 Exp $
+* $Id: ttab3.f,v 4.8.1.2 2011/08/16 01:34:41 cal103 Exp cal103 $
 *=======================================================================
 
       PROGRAM TTAB3
@@ -55,6 +55,9 @@
       DOUBLE PRECISION COORD(M,K1,K2), WORLD(M,361), X(K1), XY(M,361),
      :          Y(K2)
 
+*     On some systems, such as Sun Sparc, the structs MUST be aligned
+*     on a double precision boundary, done here using equivalences.
+*     Failure to do this may result in mysterious "bus errors".
       INCLUDE 'prj.inc'
       INCLUDE 'tab.inc'
       INTEGER   PRJ(PRJLEN), TAB(TABLEN)

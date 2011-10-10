@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: twcssub.f,v 4.8 2011/08/15 08:05:54 cal103 Exp $
+* $Id: twcssub.f,v 4.8.1.2 2011/08/16 01:34:41 cal103 Exp cal103 $
 *=======================================================================
 
       PROGRAM TWCSSUB
@@ -50,9 +50,11 @@
       CHARACTER CNAME(NAXIS)*72, CTYPE(NAXIS)*72, CUNIT(NAXIS)*72,
      :          PS(10)*72
 
+*     On some systems, such as Sun Sparc, the structs MUST be aligned
+*     on a double precision boundary, done here using equivalences.
+*     Failure to do this may result in mysterious "bus errors".
       INCLUDE 'wcs.inc'
       INCLUDE 'wcserr.inc'
-
       INTEGER   WCS(WCSLEN), WCSEXT(WCSLEN)
       DOUBLE PRECISION DUMMY1, DUMMY2
       EQUIVALENCE (WCS,DUMMY1), (WCSEXT,DUMMY2)

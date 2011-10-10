@@ -17,6 +17,13 @@ WCSLIB version 4.8 (2011/08/15)
   gfortran --version: GNU Fortran (Debian 4.3.2-1.1) 4.3.2
 
 
+* Marvell SheevaPlug (Feroceon 88FR131 rev 1 ARM v5L), Debian linux 6.0 
+  (squeeze)
+  uname -r (kernel version): 2.6.32-5-kirkwood
+  gcc --version: gcc (Debian 4.4.5-8) 4.4.5
+  gfortran --version: GNU Fortran (Debian 4.4.5-8) 4.4.5
+
+
 * Mac mini (Intel Core 2 Duo) running Mac OS X 10.6.2 (10C540)
   uname -r (Darwin kernel version): 10.2.0
   gcc --version: i686-apple-darwin10-gcc-4.2.1 (GCC) 4.2.1
@@ -178,4 +185,4 @@ WCSLIB version 4.4 (2009/08/06)
           2004/04/23
 
 ------------------------------------------------------------------------------
-$Id: VALIDATION,v 4.8 2011/08/15 08:05:55 cal103 Exp $
+$Id: VALIDATION,v 4.8.1.1 2011/08/15 08:07:07 cal103 Exp cal103 $

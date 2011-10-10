@@ -5,8 +5,8 @@
 # ---------------------------
 #   build:     Build all utilities.
 #   clean (or cleaner): Delete intermediate object files.
-#   cleanest (distclean, or realclean): cleaner, and also delete the
-#              executables.
+#   distclean (or realclean): cleaner, and also delete the executables.
+#   cleanest: distclean, and also delete the man pages.
 #
 # Notes:
 #   1: If you need to make changes then preferably modify ../makedefs.in
@@ -17,7 +17,7 @@
 #
 # Author: Mark Calabretta, Australia Telescope National Facility
 # http://www.atnf.csiro.au/~mcalabre/index.html
-# $Id: GNUmakefile,v 4.8 2011/08/15 08:05:55 cal103 Exp $
+# $Id: GNUmakefile,v 4.8.1.2 2011/10/04 07:54:06 cal103 Exp cal103 $
 #-----------------------------------------------------------------------------
 # Get configure settings.
 include ../makedefs
@@ -36,6 +36,8 @@ ifneq "$(CFITSIOLIB)" ""
 endif
 endif
 
+MAN := $(addsuffix .1,$(UTILS))
+
 WCSLIB    := ../C/$(WCSLIB)
 PGSBOXLIB := ../pgsbox/libpgsbox-$(LIBVER).a
 
@@ -52,7 +54,7 @@ vpath %.in ..
 # Static and static pattern rules
 #--------------------------------
 
-.PHONY : build clean cleaner cleanest distclean install realclean
+.PHONY : build clean cleaner cleanest distclean install man realclean
 
 build : $(UTILS)
 
@@ -90,8 +92,11 @@ wcsgrid : wcsgrid.c $(PGSBOXLIB) $(GETWCSTAB) $(WCSLIB)
 clean cleaner :
 	-  $(RM) -r *.o *.i a.out core *.dSYM $(EXTRA_CLEAN)
 
-cleanest distclean realclean : cleaner
+distclean realclean : cleaner
 	-  $(RM) $(UTILS)
+
+cleanest : distclean
+	-  $(RM) $(MAN)
 
 $(PGSBOXLIB) :
 	-@ echo ''
@@ -106,6 +111,10 @@ install : build
 	     $(INSTALL) -d -m 2775 $(BINDIR) ; \
 	   fi
 	   $(INSTALL) -m 755 $(UTILS) $(BINDIR)
+	-  if [ ! -d "$(MANDIR)" ] ; then \
+	     $(INSTALL) -d -m 2775 $(MANDIR)/man1 ; \
+	   fi
+	   $(INSTALL) -m 755 $(MAN) $(MANDIR)/man1
 
 GNUmakefile : ../makedefs ;
 
@@ -114,6 +123,25 @@ GNUmakefile : ../makedefs ;
 	-@ $(RM) ../wcsconfig.h ../wcsconfig_utils.h
 	   cd .. && ./config.status
 
+man : $(MAN)
+
+fitshdr.1 : fitshdr
+	help2man --no-discard-stderr --version-string=$(LIBVER) \
+	  -n "List headers from a FITS file" -N ./$< > $@
+
+wcsware.1 : wcsware
+	help2man --no-discard-stderr --version-string=$(LIBVER) \
+	  -n "Extract WCS keywords for an image" -N ./$< > $@
+
+wcsgrid.1 : wcsgrid
+	help2man --no-discard-stderr --version-string=$(LIBVER) \
+	  -n "Extract WCS keywords for an image" -N ./$< > $@
+
+HPXcvt.1 : HPXcvt
+	help2man --no-discard-stderr --version-string=$(LIBVER) \
+	  -n "Reorganise HEALPix data into a 2-D FITS image" -N ./$< > $@
+
+# Dependency lists.
 fitshdr : wcsconfig.h wcsconfig_utils.h
 wcsware : getwcstab.h wcs.h wcsfix.h wcshdr.h
 wcsgrid : cpgsbox.h getwcstab.h wcs.h wcsfix.h wcshdr.h

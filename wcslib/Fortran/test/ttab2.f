@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: ttab2.f,v 4.8 2011/08/15 08:05:54 cal103 Exp $
+* $Id: ttab2.f,v 4.8.1.2 2011/08/16 01:34:41 cal103 Exp cal103 $
 *=======================================================================
 
       PROGRAM TTAB2
@@ -62,6 +62,9 @@
       DOUBLE PRECISION X(M,NP,NP), WORLD(M,NP,NP)
       CHARACTER TEXT*80
 
+*     On some systems, such as Sun Sparc, the struct MUST be aligned
+*     on a double precision boundary, done here using an equivalence.
+*     Failure to do this may result in mysterious "bus errors".
       INCLUDE 'tab.inc'
       INTEGER   TAB(TABLEN)
       DOUBLE PRECISION DUMMY

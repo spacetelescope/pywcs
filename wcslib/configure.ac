@@ -2,23 +2,23 @@
 # Process this file with autoconf-2.53 or later to produce a configure script.
 #-----------------------------------------------------------------------------
 # N.B. it is necessary to run autoconf on a Mac in order for configure to
-# locate the X11 dylibs for PGPLOT.  Use autoconf-2.61 in MacOSX 10.6.2 to
-# avoid spurious messages about deleting conftest.dSYM when configuring in
-# MacOSX 10.6.
+# locate the X11 dylibs for PGPLOT.  Use autoconf-2.61 in MacOSX 10.6.2 or
+# later to avoid spurious messages about deleting conftest.dSYM when
+# configuring in MacOSX 10.6.
 #
 # Author: Mark Calabretta, Australia Telescope National Facility
 # http://www.atnf.csiro.au/~mcalabre/index.html
-# $Id: configure.ac,v 4.8 2011/08/15 08:05:55 cal103 Exp $
+# $Id: configure.ac,v 4.8.1.5 2011/10/04 08:01:03 cal103 Exp cal103 $
 #-----------------------------------------------------------------------------
 
-AC_INIT([WCSLIB], [4.8], [mcalabre@atnf.csiro.au], [wcslib-4.8])
+AC_INIT([WCSLIB], [4.8.2], [mcalabre@atnf.csiro.au], [wcslib-4.8.2])
 AC_PREREQ([2.53])
-AC_REVISION([$Revision: 4.8 $])
+AC_REVISION([$Revision: 4.8.1.5 $])
 AC_SUBST([PACKAGE_VERSION])
 AC_DEFINE_UNQUOTED([WCSLIB_VERSION], [$PACKAGE_VERSION], [Define wcslib version])
 
-# Remove the patch number from the library version.
-LIBVER=`echo "$PACKAGE_VERSION" | sed -e '{s/\./-/;s/\.[[0-9]]*$//;s/-/./;}'`
+# Library version number, same as package version.
+LIBVER="$PACKAGE_VERSION"
 AC_SUBST([LIBVER])
 
 AC_CONFIG_SRCDIR([C/wcs.h])
@@ -236,6 +236,8 @@ AC_PROG_RANLIB
 
 # Shared library generation.
 if test "x$ac_cv_c_compiler_gnu" = xyes ; then
+  SHVER=`echo "$LIBVER" | sed -e 's/\..*$//'`
+
   # Note that -fPIC is on by default for Macs, this just makes it obvious.
   SHRFLAGS="-fPIC"
   SHRLD="\$(CC) \$(SHRFLAGS)"
@@ -243,13 +245,14 @@ if test "x$ac_cv_c_compiler_gnu" = xyes ; then
   case "$build_os" in
   darwin*)
     SHRLIB="libwcs.$LIBVER.dylib"
+    SONAME="libwcs.$SHVER.dylib"
     SHRLD="$SHRLD -dynamiclib -single_module"
-    SHRLD="$SHRLD -compatibility_version $LIBVER -current_version $LIBVER"
+    SHRLD="$SHRLD -compatibility_version $SHVER -current_version $LIBVER"
     SHRLN=
 
     case "$build_cpu" in
     powerpc*)
-      # Switch off -fPIC (not applicable for Intel Macs).
+      # Switch off -fPIC (not applicable for PowerPC Macs).
       CFLAGS="$CFLAGS -mdynamic-no-pic"
       ;;
     esac
@@ -257,13 +260,15 @@ if test "x$ac_cv_c_compiler_gnu" = xyes ; then
   *)
     # Covers Linux and Solaris at least.
     SHRLIB="libwcs.so.$LIBVER"
-    SHRLD="$SHRLD -shared -Wl,-h\$(SHRLIB)"
+    SONAME="libwcs.so.$SHVER"
+    SHRLD="$SHRLD -shared -Wl,-h\$(SONAME) -lm"
     SHRLN="libwcs.so"
     ;;
   esac
 
 else
   SHRLIB=
+  SONAME=
   SHRFLAGS=
   SHRLD=
   SHRSFX=
@@ -271,6 +276,7 @@ else
 fi
 
 AC_SUBST([SHRLIB])
+AC_SUBST([SONAME])
 AC_SUBST([SHRFLAGS])
 AC_SUBST([SHRLD])
 AC_SUBST([SHRSFX])
@@ -512,6 +518,5 @@ AC_MSG_NOTICE([End of auxiliary configuration.
 # Do it.
 AC_MSG_NOTICE([Configuring files...])
 AC_CONFIG_FILES([makedefs wcslib.pc])
-AC_CONFIG_HEADERS([wcsconfig.h wcsconfig_f77.h wcsconfig_tests.h
-                   wcsconfig_utils.h])
+AC_CONFIG_HEADERS([wcsconfig.h wcsconfig_f77.h wcsconfig_tests.h wcsconfig_utils.h])
 AC_OUTPUT

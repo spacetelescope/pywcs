@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: twcshdr.c,v 4.8 2011/08/15 08:05:54 cal103 Exp $
+  $Id: twcshdr.c,v 4.8.1.1 2011/08/15 08:07:06 cal103 Exp cal103 $
 *=============================================================================
 *
 * twcshdr illustrates the steps required to read WCS information (including

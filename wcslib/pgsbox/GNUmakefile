@@ -31,7 +31,7 @@
 #
 # Author: Mark Calabretta, Australia Telescope National Facility
 # http://www.atnf.csiro.au/~mcalabre/index.html
-# $Id: GNUmakefile,v 4.8 2011/08/15 08:05:55 cal103 Exp $
+# $Id: GNUmakefile,v 4.8.1.2 2011/09/16 04:41:29 cal103 Exp cal103 $
 #-----------------------------------------------------------------------------
 # Get configure settings.
 include ../makedefs
@@ -48,6 +48,7 @@ WCSLIB   := ../C/$(WCSLIB)
 PICLIB := libpgsbox-PIC.a
 WCSSHR := ../C/$(SHRLIB)
 SHRLIB := $(subst libwcs,libpgsbox,$(SHRLIB))
+SONAME := $(subst libwcs,libpgsbox,$(SONAME))
 SHRLD  := $(subst libwcs,libpgsbox,$(SHRLD))
 SHRLN  := $(subst libwcs,libpgsbox,$(SHRLN))
 
@@ -129,11 +130,15 @@ install : build
 	   $(LN_S) $(PGSBOXLIB) $(LIBDIR)/libpgsbox.a
 	-  if [ "$(SHRLIB)" != "" ] ; then \
 	     $(INSTALL) -m 644 $(SHRLIB) $(LIBDIR) ; \
+	     if [ -h "$(LIBDIR)/$(SONAME)" ] ; then \
+	       $(RM) $(LIBDIR)/$(SONAME) ; \
+	     fi ; \
+	     $(LN_S) $(SHRLIB) $(LIBDIR)/$(SONAME) ; \
 	     if [ "$(SHRLN)" != "" ] ; then \
 	       if [ -h "$(LIBDIR)/$(SHRLN)" ] ; then \
 	         $(RM) $(LIBDIR)/$(SHRLN) ; \
 	       fi ; \
-	       $(LN_S) $(SHRLIB) $(LIBDIR)/$(SHRLN) ; \
+	       $(LN_S) $(SONAME) $(LIBDIR)/$(SHRLN) ; \
 	     fi ; \
 	   fi
 	   $(INSTALL) -m 444 *.h $(INCDIR)
@@ -201,6 +206,7 @@ show ::
 	-@ echo '  PICLIB      := $(PICLIB)'
 	-@ echo '  WCSSHR      := $(WCSSHR)'
 	-@ echo '  SHRLIB      := $(SHRLIB)'
+	-@ echo '  SONAME      := $(SONAME)'
 	-@ echo '  SHRFLAGS    := $(SHRFLAGS)'
 	-@ echo '  SHRLD       := $(SHRLD)'
 	-@ echo '  SHRLN       := $(SHRLN)'

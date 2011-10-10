@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: twcsmix.f,v 4.8 2011/08/15 08:05:54 cal103 Exp $
+* $Id: twcsmix.f,v 4.8.1.2 2011/08/16 01:34:41 cal103 Exp cal103 $
 *=======================================================================
 
       PROGRAM TWCS2
@@ -227,6 +227,9 @@
      :          WORLD(4)
       CHARACTER PCODE*3
 
+*     On some systems, such as Sun Sparc, the structs MUST be aligned
+*     on a double precision boundary, done here using equivalences.
+*     Failure to do this may result in mysterious "bus errors".
       INCLUDE 'wcs.inc'
       INCLUDE 'cel.inc'
       INCLUDE 'prj.inc'
@@ -408,6 +411,11 @@
       DOUBLE PRECISION EULER(5), LNG1, LAT1, PHI, PIXLAT, PIXLNG, THETA
       CHARACTER PCODE*3
 
+*     On some systems, such as Sun Sparc, the structs MUST be aligned
+*     on a double precision boundary.  As a dummy argument, WCS should
+*     already be aligned.  The others are aligned here using
+*     equivalences.  Failure to do this may result in mysterious "bus
+*     errors".
       INCLUDE 'wcs.inc'
       INCLUDE 'cel.inc'
       INCLUDE 'prj.inc'
@@ -456,6 +464,11 @@
      :          WORLD(NELEM,0:360)
       CHARACTER PCODE*3, TEXT*80
 
+*     On some systems, such as Sun Sparc, the structs MUST be aligned
+*     on a double precision boundary.  As a dummy argument, WCS should
+*     already be aligned.  The others are aligned here using
+*     equivalences.  Failure to do this may result in mysterious "bus
+*     errors".
       INCLUDE 'wcs.inc'
       INCLUDE 'cel.inc'
       INCLUDE 'prj.inc'

@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: twcsfix.f,v 4.8 2011/08/15 08:05:54 cal103 Exp $
+* $Id: twcsfix.f,v 4.8.1.2 2011/08/16 01:34:41 cal103 Exp cal103 $
 *=======================================================================
 
       PROGRAM TWCSFIX
@@ -59,6 +59,17 @@
       COMMON /HEADER/ CRPIX, PC, CDELT, CRVAL, RESTFRQ, RESTWAV, NAXIS
       COMMON /HEADCH/ CTYPE, CUNIT, DATEOBS
 
+*     On some systems, such as Sun Sparc, the struct MUST be aligned
+*     on a double precision boundary, done here using an equivalence.
+*     Failure to do this may result in mysterious "bus errors".
+      INCLUDE 'wcs.inc'
+      INCLUDE 'wcsfix.inc'
+      INTEGER   STAT(WCSFIX_NWCS), STATUS
+      CHARACTER CTYPES*8
+      INTEGER   WCS(WCSLEN)
+      DOUBLE PRECISION DUMMY
+      EQUIVALENCE (WCS,DUMMY)
+
       DATA NAXIS   /N/
       DATA (CRPIX(J), J=1,N)
      :             /90D0,   90D0,   1D0/
@@ -79,14 +90,6 @@
 
 *     N.B. non-standard, corresponding to MJD 35884.04861111
       DATA DATEOBS /'1957/02/15 01:10:00'/
-
-      INCLUDE 'wcs.inc'
-      INCLUDE 'wcsfix.inc'
-      INTEGER   STAT(WCSFIX_NWCS), STATUS
-      CHARACTER CTYPES*8
-      INTEGER   WCS(WCSLEN)
-      DOUBLE PRECISION DUMMY
-      EQUIVALENCE (WCS,DUMMY)
 *-----------------------------------------------------------------------
       WRITE (*, 10)
  10   FORMAT ('Testing WCSLIB translator for non-standard usage ',

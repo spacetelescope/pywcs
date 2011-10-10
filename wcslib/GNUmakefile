@@ -15,11 +15,11 @@
 #              programmers' manual.
 #   distclean (or realclean): Recursively delete all platform-dependent files
 #              generated during the build, preserving only the programmers'
-#              manual (which is normally provided pre-built).  It is the one
-#              to use between builds for multiple platforms.
+#              manual and man pages (which are normally provided pre-built).
+#              It is the one to use between builds for multiple platforms.
 #   cleanest:  Like distclean, but deletes everything that can be regenerated
-#              from the source files, including the programmers' manual, but
-#              excluding 'configure'.
+#              from the source files, including the programmers' manual and
+#              man pages, but excluding 'configure'.
 #   show:      Print the values of important variables used in this and the
 #              other makefiles.
 #   writable:  Run chmod recursively to make all sources writable.
@@ -32,7 +32,7 @@
 #
 # Author: Mark Calabretta, Australia Telescope National Facility
 # http://www.atnf.csiro.au/~mcalabre/index.html
-# $Id: GNUmakefile,v 4.8 2011/08/15 08:05:55 cal103 Exp $
+# $Id: GNUmakefile,v 4.8.1.2 2011/10/04 07:49:19 cal103 Exp cal103 $
 #-----------------------------------------------------------------------------
 # Get configure settings.
 include makedefs
@@ -139,6 +139,7 @@ config.status : configure
 
 dist :
 	   $(MAKE) -C doxygen cleanest build
+	   $(MAKE) -C utils man
 	   $(MAKE) distclean
 	-@ echo $(WCSLIBPKG)/C/RCS        >  wcslib.X
 	-@ echo $(WCSLIBPKG)/C/flexed/RCS >> wcslib.X

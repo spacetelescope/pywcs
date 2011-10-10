@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: tpih2.f,v 4.8 2011/08/15 08:05:54 cal103 Exp $
+* $Id: tpih2.f,v 4.8.1.2 2011/08/16 01:34:41 cal103 Exp cal103 $
 *=======================================================================
 
       PROGRAM TPIH2
@@ -52,9 +52,12 @@
       CHARACTER KEYREC*80, DEVTYP*16, HEADER*28801, IDENTS(3)*80,
      :          INFILE*9, NLCPRM(1)*1, OPT(2)*1, WCSNAME*72
 
+*     On some systems, such as Sun Sparc, the struct MUST be aligned
+*     on a double precision boundary, done here using an equivalence.
+*     Failure to do this may result in mysterious "bus errors".
       INCLUDE 'wcshdr.inc'
       INCLUDE 'wcs.inc'
-      INTEGER WCS(WCSLEN)
+      INTEGER   WCS(WCSLEN)
       DOUBLE PRECISION DUMMY
       EQUIVALENCE (WCS,DUMMY)
 

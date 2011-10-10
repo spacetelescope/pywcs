@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcs.c,v 4.8 2011/08/15 08:05:53 cal103 Exp $
+  $Id: wcs.c,v 4.8.1.1 2011/08/15 08:07:06 cal103 Exp cal103 $
 *===========================================================================*/
 
 #include <math.h>
@@ -1781,7 +1781,8 @@ int wcs_types(struct wcsprm *wcs)
     }
 
     /* Process linear axes. */
-    if (!(strlen(ctypei) == 8 && ctypei[4] == '-')) {
+    if (!(strlen(ctypei) == 8 && ctypei[4] == '-') ||
+        (strlen(ctypei) > 8 && ctypei[8] == '-')) {
       /* Identify Stokes, celestial and spectral types. */
       if (strcmp(ctypei, "STOKES") == 0) {
         /* STOKES axis. */

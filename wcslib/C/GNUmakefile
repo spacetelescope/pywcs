@@ -28,7 +28,7 @@
 #
 # Author: Mark Calabretta, Australia Telescope National Facility
 # http://www.atnf.csiro.au/~mcalabre/index.html
-# $Id: GNUmakefile,v 4.8 2011/08/15 08:05:53 cal103 Exp $
+# $Id: GNUmakefile,v 4.8.1.2 2011/09/16 04:41:29 cal103 Exp cal103 $
 #-----------------------------------------------------------------------------
 # Get configure settings.
 include ../makedefs
@@ -224,11 +224,15 @@ install : build
 	-  $(LN_S) $(WCSLIB) $(LIBDIR)/libwcs.a
 	-  if [ "$(SHRLIB)" != "" ] ; then \
 	     $(INSTALL) -m 644 $(SHRLIB) $(LIBDIR) ; \
+	     if [ -h "$(LIBDIR)/$(SONAME)" ] ; then \
+	       $(RM) $(LIBDIR)/$(SONAME) ; \
+	     fi ; \
+	     $(LN_S) $(SHRLIB) $(LIBDIR)/$(SONAME) ; \
 	     if [ "$(SHRLN)" != "" ] ; then \
 	       if [ -h "$(LIBDIR)/$(SHRLN)" ] ; then \
 	         $(RM) $(LIBDIR)/$(SHRLN) ; \
 	       fi ; \
-	       $(LN_S) $(SHRLIB) $(LIBDIR)/$(SHRLN) ; \
+	       $(LN_S) $(SONAME) $(LIBDIR)/$(SHRLN) ; \
 	     fi ; \
 	   fi
 	-  if [ ! -d "$(INCDIR)" ] ; then \

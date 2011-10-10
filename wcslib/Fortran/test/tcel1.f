@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: tcel1.f,v 4.8 2011/08/15 08:05:54 cal103 Exp $
+* $Id: tcel1.f,v 4.8.1.2 2011/08/16 01:34:41 cal103 Exp cal103 $
 *=======================================================================
 
       PROGRAM TCEL1
@@ -46,6 +46,9 @@
      :          X(361), Y(361)
       CHARACTER TEXT*72
 
+*     On some systems, such as Sun Sparc, the structs MUST be aligned
+*     on a double precision boundary, done here using a equivalences.
+*     Failure to do this may result in mysterious "bus errors".
       INCLUDE 'cel.inc'
       INCLUDE 'prj.inc'
       INTEGER   CEL(CELLEN)

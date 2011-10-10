@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: fscan.f,v 4.8 2011/08/15 08:05:55 cal103 Exp $
+* $Id: fscan.f,v 4.8.1.1 2011/08/15 08:07:07 cal103 Exp cal103 $
 *=======================================================================
 *
 * FSCAN defines an azimuth/frequency coordinate system for PGSBOX.
