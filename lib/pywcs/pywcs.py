@@ -433,7 +433,7 @@ naxis kwarg.
                 tables[i] = None
                 continue
             distortion = dist+str(i)+key
-            if header.has_key(distortion):
+            if distortion in header:
                 dis = header[distortion].lower()
                 if dis == 'lookup':
                     if fobj is not None and not HAS_PYFITS:
@@ -476,8 +476,8 @@ naxis kwarg.
             # TODO: Parse SIP from a string without pyfits around
             return None
 
-        if header.has_key("A_ORDER"+key):
-            if not header.has_key("B_ORDER"+key):
+        if "A_ORDER"+key in header:
+            if "B_ORDER"+key not in header:
                 raise ValueError(
                     "A_ORDER provided without corresponding B_ORDER "
                     "keyword for SIP distortion")
@@ -493,7 +493,7 @@ naxis kwarg.
             for i in range(m+1):
                 for j in range(m-i+1):
                     b[i, j] = header.get(("B_%d_%d" % (i, j))+key, 0.0)
-        elif header.has_key("B_ORDER"+key):
+        elif "B_ORDER"+key in header:
             raise ValueError(
                 "B_ORDER provided without corresponding A_ORDER "
                 "keyword for SIP distortion")
@@ -501,8 +501,8 @@ naxis kwarg.
             a = None
             b = None
 
-        if header.has_key("AP_ORDER"):
-            if not header.has_key("BP_ORDER"):
+        if "AP_ORDER" in header:
+            if "BP_ORDER" not in header:
                 raise ValueError(
                     "AP_ORDER provided without corresponding BP_ORDER "
                     "keyword for SIP distortion")
@@ -518,7 +518,7 @@ naxis kwarg.
             for i in range(m+1):
                 for j in range(m-i+1):
                     bp[i, j] = header.get("BP_%d_%d" % (i, j), 0.0)
-        elif header.has_key("BP_ORDER"):
+        elif "BP_ORDER" in header:
             raise ValueError(
                 "BP_ORDER provided without corresponding AP_ORDER "
                 "keyword for SIP distortion")
@@ -529,7 +529,7 @@ naxis kwarg.
         if a is None and b is None and ap is None and bp is None:
             return None
 
-        if not header.has_key("CRPIX1") or not header.has_key("CRPIX2"):
+        if "CRPIX1" not in header or "CRPIX2" not in header:
             raise ValueError(
                 "Header has SIP keywords without CRPIX keywords")
 
