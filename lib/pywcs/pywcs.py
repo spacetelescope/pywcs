@@ -259,8 +259,8 @@ class WCS(WCSBase):
 
             det2im = self._read_det2im_kw(header, fobj)
             cpdis = self._read_distortion_kw(
-                header, fobj, key=key,dist='CPDIS', err=minerr)
-            sip = self._read_sip_kw(header, key=key)
+                header, fobj, dist='CPDIS', err=minerr)
+            sip = self._read_sip_kw(header)
             if (wcsprm.naxis != 2 and
                 (det2im[0] or det2im[1] or cpdis[0] or cpdis[1] or sip)):
                 raise ValueError(
@@ -407,7 +407,7 @@ naxis kwarg.
         else:
             return (None, cpdis)
 
-    def _read_distortion_kw(self, header, fobj, key='', dist='CPDIS', err=0.0):
+    def _read_distortion_kw(self, header, fobj, dist='CPDIS', err=0.0):
         """
         Reads `Paper IV`_ table-lookup distortion keywords and data,
         and returns a 2-tuple of `~pywcs.DistortionLookupTable`
@@ -432,7 +432,7 @@ naxis kwarg.
             if d_error < err:
                 tables[i] = None
                 continue
-            distortion = dist+str(i)+key
+            distortion = dist+str(i)
             if distortion in header:
                 dis = header[distortion].lower()
                 if dis == 'lookup':
@@ -442,7 +442,7 @@ naxis kwarg.
 
                     assert isinstance(fobj, pyfits.HDUList), \
                         'A pyfits HDUList is required for Lookup table distortion.'
-                    dp = (d_kw+str(i)+key).strip()
+                    dp = (d_kw+str(i)).strip()
                     d_extver = header.get(dp+'.EXTVER', 1)
                     if i == header[dp+'.AXIS.%s'%i]:
                         d_data = fobj['WCSDVARR', d_extver].data
@@ -465,7 +465,7 @@ naxis kwarg.
         else:
             return (tables.get(1), tables.get(2))
 
-    def _read_sip_kw(self, header, key=''):
+    def _read_sip_kw(self, header):
         """
         Reads `SIP`_ header keywords and returns a `~pywcs.Sip`
         object.
@@ -476,24 +476,24 @@ naxis kwarg.
             # TODO: Parse SIP from a string without pyfits around
             return None
 
-        if "A_ORDER"+key in header:
-            if "B_ORDER"+key not in header:
+        if "A_ORDER" in header:
+            if "B_ORDER" not in header:
                 raise ValueError(
                     "A_ORDER provided without corresponding B_ORDER "
                     "keyword for SIP distortion")
 
-            m = int(header["A_ORDER"+key])
+            m = int(header["A_ORDER"])
             a = np.zeros((m+1, m+1), np.double)
             for i in range(m+1):
                 for j in range(m-i+1):
-                    a[i, j] = header.get(("A_%d_%d" % (i, j))+key, 0.0)
+                    a[i, j] = header.get(("A_%d_%d" % (i, j)), 0.0)
 
-            m = int(header["B_ORDER"+key])
+            m = int(header["B_ORDER"])
             b = np.zeros((m+1, m+1), np.double)
             for i in range(m+1):
                 for j in range(m-i+1):
-                    b[i, j] = header.get(("B_%d_%d" % (i, j))+key, 0.0)
-        elif "B_ORDER"+key in header:
+                    b[i, j] = header.get(("B_%d_%d" % (i, j)), 0.0)
+        elif "B_ORDER" in header:
             raise ValueError(
                 "B_ORDER provided without corresponding A_ORDER "
                 "keyword for SIP distortion")
