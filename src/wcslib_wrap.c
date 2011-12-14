@@ -1009,6 +1009,8 @@ PyWcsprm_p2s(
     PyObject* kwds) {
 
   int            naxis      = 2;
+  int            ncoord     = 0;
+  int            nelem      = 0;
   PyObject*      pixcrd_obj = NULL;
   int            origin     = 1;
   PyArrayObject* pixcrd     = NULL;
@@ -1078,12 +1080,14 @@ PyWcsprm_p2s(
 
   /* Make the call */
   Py_BEGIN_ALLOW_THREADS
+  ncoord = PyArray_DIM(pixcrd, 0);
+  nelem = PyArray_DIM(pixcrd, 1);
   preoffset_array(pixcrd, origin);
   wcsprm_python2c(&self->x);
   status = wcsp2s(
       &self->x,
-      (int)PyArray_DIM(pixcrd, 0),
-      (int)PyArray_DIM(pixcrd, 1),
+      ncoord,
+      nelem,
       (double*)PyArray_DATA(pixcrd),
       (double*)PyArray_DATA(imgcrd),
       (double*)PyArray_DATA(phi),
@@ -1094,6 +1098,16 @@ PyWcsprm_p2s(
   unoffset_array(pixcrd, origin);
   /* unoffset_array(world, origin); */
   unoffset_array(imgcrd, origin);
+  if (status == 8) {
+    set_invalid_to_nan(
+        ncoord, nelem, (double*)PyArray_DATA(imgcrd), (int*)PyArray_DATA(stat));
+    set_invalid_to_nan(
+        ncoord, 1, (double*)PyArray_DATA(phi), (int*)PyArray_DATA(stat));
+    set_invalid_to_nan(
+        ncoord, 1, (double*)PyArray_DATA(theta), (int*)PyArray_DATA(stat));
+    set_invalid_to_nan(
+        ncoord, nelem, (double*)PyArray_DATA(world), (int*)PyArray_DATA(stat));
+  }
   Py_END_ALLOW_THREADS
 
   if (status == 0 || status == 8) {
@@ -1137,6 +1151,8 @@ PyWcsprm_s2p(
     PyObject* kwds) {
 
   int            naxis     = 2;
+  int            ncoord    = 0;
+  int            nelem     = 0;
   PyObject*      world_obj = NULL;
   int            origin    = 1;
   PyArrayObject* world     = NULL;
@@ -1207,12 +1223,14 @@ PyWcsprm_s2p(
 
   /* Make the call */
   Py_BEGIN_ALLOW_THREADS
+  ncoord = PyArray_DIM(world, 0);
+  nelem = PyArray_DIM(world, 1);
   /* preoffset_array(world, origin); */
   wcsprm_python2c(&self->x);
   status = wcss2p(
       &self->x,
-      (int)PyArray_DIM(world, 0),
-      (int)PyArray_DIM(world, 1),
+      ncoord,
+      nelem,
       (double*)PyArray_DATA(world),
       (double*)PyArray_DATA(phi),
       (double*)PyArray_DATA(theta),
@@ -1223,6 +1241,16 @@ PyWcsprm_s2p(
   /* unoffset_array(world, origin); */
   unoffset_array(pixcrd, origin);
   unoffset_array(imgcrd, origin);
+  if (status == 8) {
+    set_invalid_to_nan(
+        ncoord, 1, (double*)PyArray_DATA(phi), (int*)PyArray_DATA(stat));
+    set_invalid_to_nan(
+        ncoord, 1, (double*)PyArray_DATA(theta), (int*)PyArray_DATA(stat));
+    set_invalid_to_nan(
+        ncoord, nelem, (double*)PyArray_DATA(imgcrd), (int*)PyArray_DATA(stat));
+    set_invalid_to_nan(
+        ncoord, nelem, (double*)PyArray_DATA(pixcrd), (int*)PyArray_DATA(stat));
+  }
   Py_END_ALLOW_THREADS
 
   if (status == 0 || status == 9) {
@@ -1346,7 +1374,7 @@ PyWcsprm_print_contents(
   /* This is not thread-safe, but since we're holding onto the GIL,
      we can assume we won't have thread conflicts */
   wcsprintf_set(NULL);
-  
+
   wcsprm_python2c(&self->x);
   if (PyWcsprm_cset(self, 0)) {
     wcsprm_c2python(&self->x);
@@ -1429,7 +1457,7 @@ PyWcsprm___str__(
   /* This is not thread-safe, but since we're holding onto the GIL,
      we can assume we won't have thread conflicts */
   wcsprintf_set(NULL);
-  
+
   wcsprm_python2c(&self->x);
   if (PyWcsprm_cset(self, 0)) {
     wcsprm_c2python(&self->x);
@@ -2232,7 +2260,7 @@ unit_verify(char* val) {
   int status, func;
   double scale, units[WCSUNITS_NTYPE];
   struct wcserr *err = NULL;
-  
+
   status = wcsulexe(val, &func, &scale, units, &err);
   if (status == 0) {
     return 1;
@@ -3196,7 +3224,7 @@ _setup_wcsprm_type(
 
   wcsprintf_set(NULL);
   wcserr_enable(1);
-  
+
   return (
     PyModule_AddObject(m, "_Wcsprm", (PyObject *)&PyWcsprmType) ||
     CONSTANT(WCSSUB_LONGITUDE) ||

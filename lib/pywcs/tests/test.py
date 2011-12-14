@@ -21,7 +21,7 @@ def setup():
 # test_maps() is a generator
 def test_maps():
 
-    # test_map() is the function that is called to perform the generated test 
+    # test_map() is the function that is called to perform the generated test
     def test_map(filename):
 
         # the test parameter is the base name of the file to use; find
@@ -55,7 +55,7 @@ def test_maps():
 
         # yield a function name and parameters to make a generated test
         yield test_map, filename
-    
+
     # AFTER we tested with every file that we found, check to see that we
     # actually have the list we expect.  If N=0, we will not have performed
     # any tests at all.  If N < n_data_files, we are missing some files,
@@ -66,7 +66,7 @@ def test_maps():
     n_data_files = 28
 
     if len(hdr_file_list) != n_data_files :
-        assert False, ( 
+        assert False, (
             "test_maps has wrong number data files: found %d, expected "
             " %d, looking in %s" % (
                 len(hdr_file_list), n_data_files, ROOT_DIR
@@ -79,7 +79,7 @@ def test_maps():
 # test_spectra() is a generator
 def test_spectra():
 
-    # test_spectrum() is the function that is called to perform the generated test 
+    # test_spectrum() is the function that is called to perform the generated test
     def test_spectrum(filename):
 
         # the test parameter is the base name of the file to use; find
@@ -107,7 +107,7 @@ def test_spectra():
 
         # yield a function name and parameters to make a generated test
         yield test_spectrum, filename
-    
+
     # AFTER we tested with every file that we found, check to see that we
     # actually have the list we expect.  If N=0, we will not have performed
     # any tests at all.  If N < n_data_files, we are missing some files,
@@ -118,7 +118,7 @@ def test_spectra():
     n_data_files = 6
 
     if len(hdr_file_list) != n_data_files :
-        assert False, ( 
+        assert False, (
             "test_spectra has wrong number data files: found %d, expected "
             " %d, looking in %s" % (
                 len(hdr_file_list), n_data_files, ROOT_DIR
@@ -220,4 +220,21 @@ def test_unit_prefixes():
     for unit in add_sub_units:
         for prefix in sub_prefixes:
             yield test_self, unit, prefix
+
+
+def test_outside_sky():
+    """
+    From github issue #107
+    """
+    filename = os.path.join(ROOT_DIR, "data", "outside_sky.hdr")
+    fd = open(filename, 'rb')
+    header = fd.read()
+    fd.close()
+
+    w = pywcs.WCS(header)
+
+    assert np.all(np.isnan(w.wcs_pix2sky([[100.,500.]], 0)))  # outside sky
+    assert np.all(np.isnan(w.wcs_pix2sky([[200.,200.]], 0)))  # outside sky
+    assert not np.any(np.isnan(w.wcs_pix2sky([[1000.,1000.]], 0)))
+
 

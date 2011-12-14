@@ -34,29 +34,32 @@ DAMAGE.
          mdroe@stsci.edu
 */
 
-#ifndef __UTIL_H__
-#define __UTIL_H__
+#define NO_IMPORT_ARRAY
 
-#ifdef __SUNPRO_C
-#define inline
-#endif
-
-#ifdef _MSC_VER
-#define inline __inline
-#endif
-
-#include <wcs.h>
-#include <wcsmath.h>
-
-#include "isnan.h"
-
-#undef	CLAMP
-#define CLAMP(x, low, high)  (((x) > (high)) ? (high) : (((x) < (low)) ? (low) : (x)))
+#include "util.h"
+#include <math.h>
 
 void set_invalid_to_nan(
     const int ncoord,
     const int nelem,
     double* const data,
-    const int* const stat);
+    const int* const stat)
+{
+  int i = 0;
+  double* d = data;
+  const int* s = stat;
+  const int* s_end = stat + ncoord;
+  double n;
 
-#endif /* __UTIL_H__ */
+  n = nan("");
+
+  for ( ; s != s_end; ++s) {
+    if (*s) {
+      for (i = 0; i < nelem; ++i) {
+        *d++ = n;
+      }
+    } else {
+      d += nelem;
+    }
+  }
+}
