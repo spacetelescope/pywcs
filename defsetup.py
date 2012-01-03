@@ -293,10 +293,13 @@ else:
     raise ValueError("BUILD should be one of 'debug', 'profile', or 'release'")
 
 if sys.platform == 'win32':
-    define_macros.append(('YY_NO_UNISTD_H', None))
-    define_macros.append(('_CRT_SECURE_NO_WARNINGS', None))
-    define_macros.append(('_NO_OLDNAMES', None)) # for mingw32
-    define_macros.append(('NO_OLDNAMES', None)) # for mingw64
+    define_macros.extend([
+        ('YY_NO_UNISTD_H', None),
+        ('_CRT_SECURE_NO_WARNINGS', None),
+        ('_NO_OLDNAMES', None), # for mingw32
+        ('NO_OLDNAMES', None), # for mingw64
+        ('__STDC__', None) # for MSVC
+        ])
 
 if sys.platform.startswith('linux'):
     define_macros.append(('HAVE_SINCOS', None))
