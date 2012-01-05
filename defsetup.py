@@ -144,38 +144,6 @@ h_file.write("""
 write_if_different(join(srcroot, 'src', 'wcsconfig.h'), h_file.getvalue())
 
 ######################################################################
-# WCSLIB PATCHES
-
-# We need to patch wcslib in various places.  The wcslib source tree
-# is copied to wcslib_patched, and then all of the patches in the
-# patches/ directory are applied.  This should only be done once if
-# the patched copy can not be found.  To redo the patching, simply
-# delete wcslib_patched.
-
-# JUL 2011: there does not appear to be a patch any more.
-if False and not os.path.exists(WCSLIB_PATCHED):
-    import patch
-
-    print "Patching wcslib"
-    shutil.copytree(WCSLIB, WCSLIB_PATCHED)
-    # Apply some patches to wcslib
-    cwd = os.getcwd()
-    patchfiles = [os.path.abspath(x) for x in glob.glob('patches/*.patch')]
-    os.chdir(WCSLIB_PATCHED)
-    try:
-        for patchfile in patchfiles:
-            p = patch.fromfile(patchfile)
-            if not p.apply():
-                print("Error applying patch '%s'" % patchfile)
-                sys.exit(1)
-    except:
-        os.chdir(cwd)
-        shutil.rmtree(WCSLIB_PATCHED)
-        raise
-    finally:
-        os.chdir(cwd)
-
-######################################################################
 # GENERATE DOCSTRINGS IN C
 docstrings = {}
 with open(join(srcroot, 'doc', 'docstrings.py'), 'rb') as fd:
