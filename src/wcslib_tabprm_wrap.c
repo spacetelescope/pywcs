@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2008 Association of Universities for Research in Astronomy (AURA)
+Copyright (C) 2008-2012 Association of Universities for Research in Astronomy (AURA)
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -173,7 +173,7 @@ PyTabprm_print_contents(
     PyTabprm* self) {
 
   int ignored;
-  
+
   if (PyTabprm_cset(self)) {
     return NULL;
   }
@@ -181,7 +181,7 @@ PyTabprm_print_contents(
   /* This is not thread-safe, but since we're holding onto the GIL,
      we can assume we won't have thread conflicts */
   wcsprintf_set(NULL);
-  
+
   ignored = tabprt(self->x);
 
   printf(wcsprintf_buf());
@@ -203,7 +203,7 @@ PyTabprm___str__(
   /* This is not thread-safe, but since we're holding onto the GIL,
      we can assume we won't have thread conflicts */
   wcsprintf_set(NULL);
-  
+
   ignored = tabprt(self->x);
 
   #if PY3K

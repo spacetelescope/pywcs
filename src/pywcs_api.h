@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2008 Association of Universities for Research in Astronomy (AURA)
+Copyright (C) 2008-2012 Association of Universities for Research in Astronomy (AURA)
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -126,7 +126,7 @@ import_pywcs(void) {
       goto exit;
     }
   #endif
-    
+
   /* Perform runtime check of C API version */
   if (REVISION != PyWcs_GetCVersion()) {
     PyErr_Format(

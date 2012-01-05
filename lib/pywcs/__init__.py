@@ -1,4 +1,4 @@
-# Copyright (C) 2008 Association of Universities for Research in Astronomy (AURA)
+# Copyright (C) 2008-2012 Association of Universities for Research in Astronomy (AURA)
 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -83,4 +83,4 @@ if sys.version_info[0] >= 3:
 else:
     from pywcs import *
 
-__version__ = "1.10-4.7"
+__version__ = "1.11-4.7"

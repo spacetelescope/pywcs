@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2008 Association of Universities for Research in Astronomy (AURA)
+Copyright (C) 2008-2012 Association of Universities for Research in Astronomy (AURA)
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -79,11 +79,11 @@ sip_init(
   int                status       = 0;
   struct wcserr**    err          = NULL;
   static const char *function     = "sip_init";
-  
+
   assert(sip != NULL);
   sip_clear(sip);
   err = &(sip->err);
-  
+
   /* We we have one of A/B or AP/BP, we must have both. */
   if ((a == NULL) ^ (b == NULL)) {
     return wcserr_set(
@@ -97,7 +97,7 @@ sip_init(
       "Both AP and BP SIP transform must be defined");
   }
 
-      
+
   if (a != NULL) {
     sip->a_order = a_order;
     a_size = (a_order + 1) * (a_order + 1) * sizeof(double);

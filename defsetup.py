@@ -211,7 +211,7 @@ write_if_different(join(srcroot, 'src', 'docstrings.c'), c_file.getvalue())
 
 ######################################################################
 # PYWCS-SPECIFIC AND WRAPPER SOURCE FILES
-PYWCS_VERSION = '1.10'
+PYWCS_VERSION = '1.11'
 VERSION = '%s-%s' % (PYWCS_VERSION, WCSVERSION)
 PYWCS_SOURCES = [ # List of pywcs files to compile
     'distortion.c',
