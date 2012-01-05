@@ -1,0 +1,6 @@
+include CHANGELOG defsetup.py LICENSE MANIFEST.in README stsci_distutils_hack.py
+recursive-include wcslib *
+recursive-include src *.c *.h
+include doc/docstrings.py doc/make.bat doc/Makefile
+recursive-include doc/source *.rst *.py
+recursive-include lib/pywcs/tests *.hdr
