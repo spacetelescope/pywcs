@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: twcstab.c,v 4.8.1.1 2011/08/15 08:07:06 cal103 Exp cal103 $
+  $Id: twcstab.c,v 4.8.1.2 2011/12/05 06:44:07 cal103 Exp cal103 $
 *=============================================================================
 *
 * twcstab tests wcstab() and also provides sample code for using it in
@@ -311,15 +311,15 @@ int create_input()
 
 /* A simple linear congruential pseudo-random number generator that produces
  * the same results on all systems so that the test output can be compared.
- * Implemented in such a way that the Fortran test programs can emulate it.
- * It produces a fixed sequence of uniformly distributed numbers in [0,1].  */
+ * It produces a fixed sequence of uniformly distributed numbers in [0,1].
+ * Adapted from the example in Numerical Recipes in C. */
 
 double lcprng()
 {
-  static int next = 137;
+  static unsigned long next = 137UL;
 
-  while ((next = next * 1103515245 + 12345) < 0);
-  return (double)(next % 1073741824) / 1073741823.0;
+  next = next * 1664525UL + 1013904223UL;
+  return (double)(next % 1073741824UL) / 1073741823.0;
 }
 
 /*--------------------------------------------------------------------------*/

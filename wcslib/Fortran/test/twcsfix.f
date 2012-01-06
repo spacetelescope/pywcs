@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: twcsfix.f,v 4.8.1.2 2011/08/16 01:34:41 cal103 Exp cal103 $
+* $Id: twcsfix.f,v 4.8.1.3 2011/11/17 05:02:54 cal103 Exp cal103 $
 *=======================================================================
 
       PROGRAM TWCSFIX
@@ -101,39 +101,44 @@
       STATUS = WCSPUT (WCS, WCS_FLAG, -1, 0, 0)
       CALL PARSER (WCS)
 
-*     Print the unmodified struct.
-      CALL FLUSH(6)
-      STATUS = WCSPRT (WCS)
-      WRITE (*, 20)
- 20   FORMAT (/,'------------------------------------',
-     :          '------------------------------------')
-
 *     Fix non-standard WCS keyvalues.
       STATUS = WCSFIX (7, 0, WCS, STAT)
+      WRITE (*, 20) (STAT(I), I=1,WCSFIX_NWCS)
+ 20   FORMAT ('WCSFIX status returns: (',I2,5(',',I2),')',/)
+
       IF (STATUS.NE.0) THEN
-        WRITE (*, 30) (STAT(I), I=1,WCSFIX_NWCS)
- 30     FORMAT ('WCSFIX ERROR, status returns: (',(I2,:,','),')')
+        WRITE (*, 30) STATUS
+ 30     FORMAT ('WCSFIX ERROR',I2,'.')
         GO TO 999
+      END IF
+
+*     Extract information from the FITS header.
+      STATUS = WCSSET (WCS)
+      IF (STATUS.NE.0) THEN
+        WRITE (*, 40) STATUS
+ 40     FORMAT (/,'WCSSET ERROR',I2,'.')
       END IF
 
       CALL FLUSH(6)
       STATUS = WCSPRT (WCS)
-      WRITE (*, 20)
+      WRITE (*, 50)
+ 50   FORMAT (/,'------------------------------------',
+     :          '------------------------------------')
 
 *     Should now have a 'VOPT-F2W' axis, translate it to frequency.
       CTYPES = 'FREQ-???'
       I = -1
       STATUS = WCSSPTR (WCS, I, CTYPES)
       IF (STATUS.NE.0) THEN
-        WRITE (*, 40) STATUS
- 40     FORMAT ('WCSPTR ERROR',I2,'.')
+        WRITE (*, 60) STATUS
+ 60     FORMAT ('WCSPTR ERROR',I2,'.')
         GO TO 999
       END IF
 
       STATUS = WCSSET (WCS)
       IF (STATUS.NE.0) THEN
-        WRITE (*, 50) STATUS
- 50     FORMAT ('WCSSET ERROR',I2,'.')
+        WRITE (*, 70) STATUS
+ 70     FORMAT ('WCSSET ERROR',I2,'.')
         GO TO 999
       END IF
 
@@ -183,11 +188,7 @@
  10     CONTINUE
 
         STATUS = WCSPUT (WCS, WCS_CDELT, CDELT(I), I, 0)
-
-*       Translate non-standard units specifications.
-        STATUS = WCSUTRN (7, CUNIT(I))
         STATUS = WCSPUT (WCS, WCS_CUNIT, CUNIT(I), I, 0)
-
         STATUS = WCSPUT (WCS, WCS_CTYPE, CTYPE(I), I, 0)
         STATUS = WCSPUT (WCS, WCS_CRVAL, CRVAL(I), I, 0)
  20   CONTINUE
@@ -199,13 +200,6 @@
       STATUS = WCSPUT (WCS, WCS_PV, -1D0, -1, -1)
 
       STATUS = WCSPUT (WCS, WCS_DATEOBS, DATEOBS, 0, 0)
-
-*     Extract information from the FITS header.
-      STATUS = WCSSET (WCS)
-      IF (STATUS.NE.0) THEN
-        WRITE (*, 30) STATUS
- 30     FORMAT (/,'WCSSET ERROR',I3,'.')
-      END IF
 
       RETURN
       END

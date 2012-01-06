@@ -16,9 +16,12 @@
 #              executed in batch mode, and non-graphical tests only report
 #              "PASS" on success.  Use
 #
-#                gmake MODE=interactive check
+#                make MODE=interactive check
 #
-#              to run them interactively with full diagnostic output.
+#              to run them interactively with full diagnostic output.  To skip
+#              graphical tests even if PGPLOT is available, use
+#
+#                make CHECK=nopgplot check
 #
 #   tests:     Compile the test programs (but don't run them).
 #
@@ -34,7 +37,7 @@
 #
 # Author: Mark Calabretta, Australia Telescope National Facility
 # http://www.atnf.csiro.au/~mcalabre/index.html
-# $Id: GNUmakefile,v 4.8.1.1 2011/08/15 08:07:07 cal103 Exp cal103 $
+# $Id: GNUmakefile,v 4.8.1.2 2011/12/05 06:46:06 cal103 Exp cal103 $
 #-----------------------------------------------------------------------------
 # Get configure settings.
 include ../makedefs
@@ -62,7 +65,7 @@ vpath %.in ..
 
 # For building and exercising the test suite
 # ------------------------------------------
-# Test programs that don't require PGPLOT.
+# Test programs that don't require CFITSIO or PGPLOT.
 TEST_N := tlin tlog tprj1 tsph tspx ttab1 twcs twcssub tpih1 tfitshdr tunits \
           twcsfix
 
@@ -85,9 +88,11 @@ endif
 endif
 
 # Add test programs that require PGPLOT if we have it.
+ifneq "$(CHECK)" "nopgplot"
 ifneq "$(PGPLOTINC)" ""
 ifneq "$(PGPLOTLIB)" ""
   TESTS   += $(TEST_P) $(TEST_B)
+endif
 endif
 endif
 
@@ -143,6 +148,8 @@ run_% : %
 	 @ if [ '$(MODE)' = interactive -o '$(VALGRIND)' ] ; then \
 	     printf 'Press <CR> to run $<: ' ; \
 	     read DUMMY ; \
+	   fi ; \
+	   if [ '$(VALGRIND)' ] ; then \
 	     if [ '$<' = tunits ] ; then \
 	       $(VALGRIND) ./$< < test/units_test ; \
 	     else \
@@ -151,31 +158,55 @@ run_% : %
 	   else \
 	     if [ '$(filter $<, $(TEST_N) $(TEST_C))' ] ; then \
 	       if [ '$<' = tunits ] ; then \
-	         ./$< < ../C/test/units_test > $<.out 2>&1 ; \
+	         if [ '$(MODE)' = interactive ] ; then \
+	           ./$< < ../C/test/units_test 2>&1 | tee $<.out ; \
+	         else \
+	           ./$< < ../C/test/units_test > $<.out 2>&1 ; \
+	         fi ; \
 	       else \
-	         ./$< < /dev/null > $<.out 2>&1 ; \
+	         if [ '$(MODE)' = interactive ] ; then \
+	           ./$< < /dev/null 2>&1 | tee $<.out ; \
+	         else \
+	           ./$< < /dev/null > $<.out 2>&1 ; \
+	         fi ; \
 	       fi ; \
 	       if grep 'PASS:' $<.out > /dev/null ; then \
-	         head -2 $<.out ; \
-	         grep 'PASS:' $<.out ; \
+	         if [ '$(MODE)' != interactive ] ; then \
+	           head -2 $<.out ; \
+	           grep 'PASS:' $<.out ; \
+	         fi ; \
+	         echo 'PASS: Fortran/$<' >> test_results ; \
 	       elif [ -f 'test/$<.out' ] ; then \
 	         trap 'rm -f run_test.tmp' 0 1 2 3 15 ; \
 	         sed -e 's/0x[0-9a-f][0-9a-f][0-9a-f]*/0x<address>/g' $<.out > \
 	           run_test.tmp ; \
 	         mv -f run_test.tmp $<.out ; \
 	         if cmp -s $<.out test/$<.out ; then \
-	           head -2 $<.out ; \
-	           echo 'PASS: Output agrees with Fortran/test/$<.out' ; \
+	           if [ '$(MODE)' != interactive ] ; then \
+	             head -2 $<.out ; \
+	             echo 'PASS: Output agrees with Fortran/test/$<.out' ; \
+	           fi ; \
+	           echo 'PASS: Fortran/$<' >> test_results ; \
 	         else \
-	           cat $<.out ; \
+	           if [ '$(MODE)' != interactive ] ; then \
+	             cat $<.out ; \
+	           fi ; \
 	           echo '' ; \
 	           echo 'FAIL: Output disagrees with Fortran/test/$<.out' ; \
+	           echo 'FAIL: Fortran/$<' >> test_results ; \
 	         fi ; \
-	       else \
+	       elif [ '$(MODE)' != interactive ] ; then \
 	         cat $<.out ; \
+	         echo 'FAIL: Fortran/$<' >> test_results ; \
 	       fi ; \
+	     elif [ '$(MODE)' = interactive ] ; then \
+	       ./$< ; \
 	     else \
-	       ./$< < /dev/null 2>&1 ; \
+	       if [ '$<' = tcel2 ] ; then \
+	         echo N | ./$< ; \
+	       else \
+	         ./$< < /dev/null 2>&1 ; \
+	       fi ; \
 	     fi ; \
 	   fi
 	-@ echo ''
@@ -221,7 +252,7 @@ cleaner : clean
 	-  $(RM) .gdb_history
 	-  $(RM) $(TEST_N)
 	-  $(RM) $(TEST_P) tpih2 twcstab
-	-  $(RM) tofits pih.fits
+	-  $(RM) tofits pih.fits test_results
 
 cleanest distclean realclean : cleaner
 	-  $(RM) $(WCSLIB) $(PICLIB) $(SHRLIB)

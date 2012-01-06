@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcsfix.c,v 4.8.1.1 2011/08/15 08:07:06 cal103 Exp cal103 $
+  $Id: wcsfix.c,v 4.8.1.2 2011/11/17 03:19:58 cal103 Exp cal103 $
 *===========================================================================*/
 
 #include <math.h>
@@ -111,58 +111,40 @@ int wcsfixi(int ctrl, const int naxis[], struct wcsprm *wcs, int stat[],
 
 {
   int status = 0;
-  struct wcserr *err;
 
-  err = info + CDFIX;
   if ((stat[CDFIX] = cdfix(wcs)) > 0) {
-    wcserr_copy(wcs->err, err);
     status = 1;
-  } else {
-    wcserr_copy(0x0, err);
   }
+  wcserr_copy(wcs->err, info+CDFIX);
 
-  err = info + DATFIX;
   if ((stat[DATFIX] = datfix(wcs)) > 0) {
-    wcserr_copy(wcs->err, err);
     status = 1;
-  } else {
-    wcserr_copy(0x0, err);
   }
+  wcserr_copy(wcs->err, info+DATFIX);
 
-  err = info + UNITFIX;
   if ((stat[UNITFIX] = unitfix(ctrl, wcs)) > 0) {
-    wcserr_copy(wcs->err, err);
     status = 1;
-  } else {
-    wcserr_copy(0x0, err);
   }
+  wcserr_copy(wcs->err, info+UNITFIX);
 
-  err = info + CELFIX;
   if ((stat[CELFIX] = celfix(wcs)) > 0) {
-    wcserr_copy(wcs->err, err);
     status = 1;
-  } else {
-    wcserr_copy(0x0, err);
   }
+  wcserr_copy(wcs->err, info+CELFIX);
 
-  err = info + SPCFIX;
   if ((stat[SPCFIX] = spcfix(wcs)) > 0) {
-    wcserr_copy(wcs->err, err);
     status = 1;
-  } else {
-    wcserr_copy(0x0, err);
   }
+  wcserr_copy(wcs->err, info+SPCFIX);
 
-  err = info + CYLFIX;
-  wcserr_copy(0x0, err);
   if (naxis) {
     if ((stat[CYLFIX] = cylfix(naxis, wcs)) > 0) {
-      err = info + CYLFIX;
-      wcserr_copy(wcs->err, err);
       status = 1;
     }
+    wcserr_copy(wcs->err, info+CYLFIX);
   } else {
     stat[CYLFIX] = -2;
+    wcserr_copy(0x0, info+CYLFIX);
   }
 
   if (wcs->err) free(wcs->err);
@@ -378,14 +360,30 @@ int datfix(struct wcsprm *wcs)
 int unitfix(int ctrl, struct wcsprm *wcs)
 
 {
-  int  i, status = FIXERR_NO_CHANGE;
+  int  i, k, status = FIXERR_NO_CHANGE;
+  char orig_unit[80], msg[WCSERR_MSG_LENGTH];
+  const char *function = "unitfix";
+  struct wcserr **err;
 
   if (wcs == 0x0) return FIXERR_NULL_POINTER;
+  err = &(wcs->err);
 
+  strcpy(msg, "Translated units: ");
   for (i = 0; i < wcs->naxis; i++) {
+    strncpy(orig_unit, wcs->cunit[i], 80);
     if (wcsutrne(ctrl, wcs->cunit[i], &(wcs->err)) == 0) {
-      status = FIXERR_SUCCESS;
+      k = strlen(msg);
+      sprintf(msg+k, "'%s' -> '%s', ", orig_unit, wcs->cunit[i]);
+      status = FIXERR_UNITS_ALIAS;
     }
+  }
+
+  if (status == FIXERR_UNITS_ALIAS) {
+    k = strlen(msg) - 2;
+    msg[k] = '\0';
+    wcserr_set(WCSERR_SET(FIXERR_UNITS_ALIAS), msg);
+
+    status = FIXERR_SUCCESS;
   }
 
   return status;
@@ -552,7 +550,7 @@ int spcfix(struct wcsprm *wcs)
   wcsutil_null_fill(72, wcs->ctype[i]);
   wcsutil_null_fill(72, wcs->specsys);
 
-  return 0;
+  return FIXERR_SUCCESS;
 }
 
 /*--------------------------------------------------------------------------*/

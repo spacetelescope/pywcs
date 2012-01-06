@@ -1,4 +1,4 @@
-/** @mainpage WCSLIB 4.8.2 and PGSBOX 4.8.2
+/** @mainpage WCSLIB 4.8.4 and PGSBOX 4.8.4
 
 @image html Bonne.gif "Bonne's projection"
 
@@ -977,5 +977,5 @@ g77.
 /*
 Author: Mark Calabretta, Australia Telescope National Facility
 http://www.atnf.csiro.au/~mcalabre/index.html
-$Id: mainpage.dox,v 4.8.1.3 2011/10/04 08:01:19 cal103 Exp cal103 $
+$Id: mainpage.dox,v 4.8.1.5 2011/12/05 06:54:43 cal103 Exp cal103 $
 */

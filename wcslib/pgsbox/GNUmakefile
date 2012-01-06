@@ -15,7 +15,7 @@
 #   check (or test): Compile and run the test programs.  By default they are
 #              executed in batch mode; use
 #
-#                gmake MODE=interactive check
+#                make MODE=interactive check
 #
 #              to run them interactively.
 #
@@ -31,7 +31,7 @@
 #
 # Author: Mark Calabretta, Australia Telescope National Facility
 # http://www.atnf.csiro.au/~mcalabre/index.html
-# $Id: GNUmakefile,v 4.8.1.2 2011/09/16 04:41:29 cal103 Exp cal103 $
+# $Id: GNUmakefile,v 4.8.1.3 2011/12/05 06:47:31 cal103 Exp cal103 $
 #-----------------------------------------------------------------------------
 # Get configure settings.
 include ../makedefs

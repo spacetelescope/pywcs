@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcsfix_f.c,v 4.8.1.1 2011/08/15 08:07:07 cal103 Exp cal103 $
+  $Id: wcsfix_f.c,v 4.8.1.2 2011/11/17 05:01:01 cal103 Exp cal103 $
 *===========================================================================*/
 
 #include <wcsfix.h>
@@ -48,6 +48,7 @@
 int wcsfix_(int *ctrl, const int naxis[], int *wcs, int stat[])
 
 {
+  if (*naxis == 0) naxis = 0x0;
   return wcsfix(*ctrl, naxis, (struct wcsprm *)wcs, stat);
 }
 

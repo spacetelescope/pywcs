@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-<title>WCSLIB 4.8.2: wcsfix.h Source File</title>
+<title>WCSLIB 4.8.4: wcsfix.h Source File</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -44,7 +44,7 @@
 <a name="l00028"></a>00028 <span class="comment"></span>
 <a name="l00029"></a>00029 <span class="comment">  Author: Mark Calabretta, Australia Telescope National Facility</span>
 <a name="l00030"></a>00030 <span class="comment">  http://www.atnf.csiro.au/~mcalabre/index.html</span>
-<a name="l00031"></a>00031 <span class="comment">  $Id: wcsfix.h,v 4.8.1.1 2011/08/15 08:07:06 cal103 Exp cal103 $</span>
+<a name="l00031"></a>00031 <span class="comment">  $Id: wcsfix.h,v 4.8.1.2 2011/11/17 03:23:16 cal103 Exp cal103 $</span>
 <a name="l00032"></a>00032 <span class="comment">*=============================================================================</span>
 <a name="l00033"></a>00033 <span class="comment">*</span>
 <a name="l00034"></a>00034 <span class="comment">* WCSLIB 4.8 - C routines that implement the FITS World Coordinate System</span>
@@ -237,180 +237,185 @@
 <a name="l00221"></a>00221 <span class="comment">* Function return value:</span>
 <a name="l00222"></a>00222 <span class="comment">*             int       Status return value:</span>
 <a name="l00223"></a>00223 <span class="comment">*                        -1: No change required (not an error).</span>
-<a name="l00224"></a>00224 <span class="comment">*                         0: Success.</span>
+<a name="l00224"></a>00224 <span class="comment">*                         0: Success (an alias was applied).</span>
 <a name="l00225"></a>00225 <span class="comment">*                         1: Null wcsprm pointer passed.</span>
 <a name="l00226"></a>00226 <span class="comment">*</span>
-<a name="l00227"></a>00227 <span class="comment">*</span>
-<a name="l00228"></a>00228 <span class="comment">* celfix() - Translate AIPS-convention celestial projection types</span>
-<a name="l00229"></a>00229 <span class="comment">* ---------------------------------------------------------------</span>
-<a name="l00230"></a>00230 <span class="comment">* celfix() translates AIPS-convention celestial projection types, NCP and</span>
-<a name="l00231"></a>00231 <span class="comment">* GLS, set in the ctype[] member of the wcsprm struct.</span>
-<a name="l00232"></a>00232 <span class="comment">*</span>
-<a name="l00233"></a>00233 <span class="comment">* Two additional pv[] keyvalues are created when translating NCP.  If the</span>
-<a name="l00234"></a>00234 <span class="comment">* pv[] array was initially allocated by wcsini() then the array will be</span>
-<a name="l00235"></a>00235 <span class="comment">* expanded if necessary.  Otherwise, error 2 will be returned if two empty</span>
-<a name="l00236"></a>00236 <span class="comment">* slots are not already available for use.</span>
-<a name="l00237"></a>00237 <span class="comment">*</span>
-<a name="l00238"></a>00238 <span class="comment">* Given and returned:</span>
-<a name="l00239"></a>00239 <span class="comment">*   wcs       struct wcsprm*</span>
-<a name="l00240"></a>00240 <span class="comment">*                       Coordinate transformation parameters.  wcsprm::ctype[]</span>
-<a name="l00241"></a>00241 <span class="comment">*                       and/or wcsprm::pv[] may be changed.</span>
-<a name="l00242"></a>00242 <span class="comment">*</span>
-<a name="l00243"></a>00243 <span class="comment">* Function return value:</span>
-<a name="l00244"></a>00244 <span class="comment">*             int       Status return value:</span>
-<a name="l00245"></a>00245 <span class="comment">*                        -1: No change required (not an error).</span>
-<a name="l00246"></a>00246 <span class="comment">*                         0: Success.</span>
-<a name="l00247"></a>00247 <span class="comment">*                         1: Null wcsprm pointer passed.</span>
-<a name="l00248"></a>00248 <span class="comment">*                         2: Memory allocation failed.</span>
-<a name="l00249"></a>00249 <span class="comment">*                         3: Linear transformation matrix is singular.</span>
-<a name="l00250"></a>00250 <span class="comment">*                         4: Inconsistent or unrecognized coordinate axis</span>
-<a name="l00251"></a>00251 <span class="comment">*                            types.</span>
-<a name="l00252"></a>00252 <span class="comment">*                         5: Invalid parameter value.</span>
-<a name="l00253"></a>00253 <span class="comment">*                         6: Invalid coordinate transformation parameters.</span>
-<a name="l00254"></a>00254 <span class="comment">*                         7: Ill-conditioned coordinate transformation</span>
-<a name="l00255"></a>00255 <span class="comment">*                            parameters.</span>
-<a name="l00256"></a>00256 <span class="comment">*</span>
-<a name="l00257"></a>00257 <span class="comment">*                       For returns &gt; 1, a detailed error message is set in</span>
-<a name="l00258"></a>00258 <span class="comment">*                       wcsprm::err if enabled, see wcserr_enable().</span>
-<a name="l00259"></a>00259 <span class="comment">*</span>
+<a name="l00227"></a>00227 <span class="comment">*                       When units are translated (i.e. status 0), status -2</span>
+<a name="l00228"></a>00228 <span class="comment">*                       is set in the wcserr struct to allow an informative</span>
+<a name="l00229"></a>00229 <span class="comment">*                       message to be returned.</span>
+<a name="l00230"></a>00230 <span class="comment">*</span>
+<a name="l00231"></a>00231 <span class="comment">*</span>
+<a name="l00232"></a>00232 <span class="comment">* celfix() - Translate AIPS-convention celestial projection types</span>
+<a name="l00233"></a>00233 <span class="comment">* ---------------------------------------------------------------</span>
+<a name="l00234"></a>00234 <span class="comment">* celfix() translates AIPS-convention celestial projection types, NCP and</span>
+<a name="l00235"></a>00235 <span class="comment">* GLS, set in the ctype[] member of the wcsprm struct.</span>
+<a name="l00236"></a>00236 <span class="comment">*</span>
+<a name="l00237"></a>00237 <span class="comment">* Two additional pv[] keyvalues are created when translating NCP.  If the</span>
+<a name="l00238"></a>00238 <span class="comment">* pv[] array was initially allocated by wcsini() then the array will be</span>
+<a name="l00239"></a>00239 <span class="comment">* expanded if necessary.  Otherwise, error 2 will be returned if two empty</span>
+<a name="l00240"></a>00240 <span class="comment">* slots are not already available for use.</span>
+<a name="l00241"></a>00241 <span class="comment">*</span>
+<a name="l00242"></a>00242 <span class="comment">* Given and returned:</span>
+<a name="l00243"></a>00243 <span class="comment">*   wcs       struct wcsprm*</span>
+<a name="l00244"></a>00244 <span class="comment">*                       Coordinate transformation parameters.  wcsprm::ctype[]</span>
+<a name="l00245"></a>00245 <span class="comment">*                       and/or wcsprm::pv[] may be changed.</span>
+<a name="l00246"></a>00246 <span class="comment">*</span>
+<a name="l00247"></a>00247 <span class="comment">* Function return value:</span>
+<a name="l00248"></a>00248 <span class="comment">*             int       Status return value:</span>
+<a name="l00249"></a>00249 <span class="comment">*                        -1: No change required (not an error).</span>
+<a name="l00250"></a>00250 <span class="comment">*                         0: Success.</span>
+<a name="l00251"></a>00251 <span class="comment">*                         1: Null wcsprm pointer passed.</span>
+<a name="l00252"></a>00252 <span class="comment">*                         2: Memory allocation failed.</span>
+<a name="l00253"></a>00253 <span class="comment">*                         3: Linear transformation matrix is singular.</span>
+<a name="l00254"></a>00254 <span class="comment">*                         4: Inconsistent or unrecognized coordinate axis</span>
+<a name="l00255"></a>00255 <span class="comment">*                            types.</span>
+<a name="l00256"></a>00256 <span class="comment">*                         5: Invalid parameter value.</span>
+<a name="l00257"></a>00257 <span class="comment">*                         6: Invalid coordinate transformation parameters.</span>
+<a name="l00258"></a>00258 <span class="comment">*                         7: Ill-conditioned coordinate transformation</span>
+<a name="l00259"></a>00259 <span class="comment">*                            parameters.</span>
 <a name="l00260"></a>00260 <span class="comment">*</span>
-<a name="l00261"></a>00261 <span class="comment">* spcfix() - Translate AIPS-convention spectral types</span>
-<a name="l00262"></a>00262 <span class="comment">* ---------------------------------------------------</span>
-<a name="l00263"></a>00263 <span class="comment">* spcfix() translates AIPS-convention spectral coordinate types,</span>
-<a name="l00264"></a>00264 <span class="comment">* '{FREQ,FELO,VELO}-{LSR,HEL,OBS}' (e.g. 'FREQ-OBS', 'FELO-HEL', 'VELO-LSR')</span>
-<a name="l00265"></a>00265 <span class="comment">* set in wcsprm::ctype[], subject to VELREF set in wcsprm::velref.</span>
-<a name="l00266"></a>00266 <span class="comment">*</span>
-<a name="l00267"></a>00267 <span class="comment">* Given and returned:</span>
-<a name="l00268"></a>00268 <span class="comment">*   wcs       struct wcsprm*</span>
-<a name="l00269"></a>00269 <span class="comment">*                       Coordinate transformation parameters.  wcsprm::ctype[]</span>
-<a name="l00270"></a>00270 <span class="comment">*                       and/or wcsprm::specsys may be changed.</span>
-<a name="l00271"></a>00271 <span class="comment">*</span>
-<a name="l00272"></a>00272 <span class="comment">* Function return value:</span>
-<a name="l00273"></a>00273 <span class="comment">*             int       Status return value:</span>
-<a name="l00274"></a>00274 <span class="comment">*                        -1: No change required (not an error).</span>
-<a name="l00275"></a>00275 <span class="comment">*                         0: Success.</span>
-<a name="l00276"></a>00276 <span class="comment">*                         1: Null wcsprm pointer passed.</span>
-<a name="l00277"></a>00277 <span class="comment">*                         2: Memory allocation failed.</span>
-<a name="l00278"></a>00278 <span class="comment">*                         3: Linear transformation matrix is singular.</span>
-<a name="l00279"></a>00279 <span class="comment">*                         4: Inconsistent or unrecognized coordinate axis</span>
-<a name="l00280"></a>00280 <span class="comment">*                            types.</span>
-<a name="l00281"></a>00281 <span class="comment">*                         5: Invalid parameter value.</span>
-<a name="l00282"></a>00282 <span class="comment">*                         6: Invalid coordinate transformation parameters.</span>
-<a name="l00283"></a>00283 <span class="comment">*                         7: Ill-conditioned coordinate transformation</span>
-<a name="l00284"></a>00284 <span class="comment">*                            parameters.</span>
-<a name="l00285"></a>00285 <span class="comment">*</span>
-<a name="l00286"></a>00286 <span class="comment">*                       For returns &gt; 1, a detailed error message is set in</span>
-<a name="l00287"></a>00287 <span class="comment">*                       wcsprm::err if enabled, see wcserr_enable().</span>
-<a name="l00288"></a>00288 <span class="comment">*</span>
+<a name="l00261"></a>00261 <span class="comment">*                       For returns &gt; 1, a detailed error message is set in</span>
+<a name="l00262"></a>00262 <span class="comment">*                       wcsprm::err if enabled, see wcserr_enable().</span>
+<a name="l00263"></a>00263 <span class="comment">*</span>
+<a name="l00264"></a>00264 <span class="comment">*</span>
+<a name="l00265"></a>00265 <span class="comment">* spcfix() - Translate AIPS-convention spectral types</span>
+<a name="l00266"></a>00266 <span class="comment">* ---------------------------------------------------</span>
+<a name="l00267"></a>00267 <span class="comment">* spcfix() translates AIPS-convention spectral coordinate types,</span>
+<a name="l00268"></a>00268 <span class="comment">* '{FREQ,FELO,VELO}-{LSR,HEL,OBS}' (e.g. 'FREQ-OBS', 'FELO-HEL', 'VELO-LSR')</span>
+<a name="l00269"></a>00269 <span class="comment">* set in wcsprm::ctype[], subject to VELREF set in wcsprm::velref.</span>
+<a name="l00270"></a>00270 <span class="comment">*</span>
+<a name="l00271"></a>00271 <span class="comment">* Given and returned:</span>
+<a name="l00272"></a>00272 <span class="comment">*   wcs       struct wcsprm*</span>
+<a name="l00273"></a>00273 <span class="comment">*                       Coordinate transformation parameters.  wcsprm::ctype[]</span>
+<a name="l00274"></a>00274 <span class="comment">*                       and/or wcsprm::specsys may be changed.</span>
+<a name="l00275"></a>00275 <span class="comment">*</span>
+<a name="l00276"></a>00276 <span class="comment">* Function return value:</span>
+<a name="l00277"></a>00277 <span class="comment">*             int       Status return value:</span>
+<a name="l00278"></a>00278 <span class="comment">*                        -1: No change required (not an error).</span>
+<a name="l00279"></a>00279 <span class="comment">*                         0: Success.</span>
+<a name="l00280"></a>00280 <span class="comment">*                         1: Null wcsprm pointer passed.</span>
+<a name="l00281"></a>00281 <span class="comment">*                         2: Memory allocation failed.</span>
+<a name="l00282"></a>00282 <span class="comment">*                         3: Linear transformation matrix is singular.</span>
+<a name="l00283"></a>00283 <span class="comment">*                         4: Inconsistent or unrecognized coordinate axis</span>
+<a name="l00284"></a>00284 <span class="comment">*                            types.</span>
+<a name="l00285"></a>00285 <span class="comment">*                         5: Invalid parameter value.</span>
+<a name="l00286"></a>00286 <span class="comment">*                         6: Invalid coordinate transformation parameters.</span>
+<a name="l00287"></a>00287 <span class="comment">*                         7: Ill-conditioned coordinate transformation</span>
+<a name="l00288"></a>00288 <span class="comment">*                            parameters.</span>
 <a name="l00289"></a>00289 <span class="comment">*</span>
-<a name="l00290"></a>00290 <span class="comment">* cylfix() - Fix malformed cylindrical projections</span>
-<a name="l00291"></a>00291 <span class="comment">* ------------------------------------------------</span>
-<a name="l00292"></a>00292 <span class="comment">* cylfix() fixes WCS keyvalues for malformed cylindrical projections that</span>
-<a name="l00293"></a>00293 <span class="comment">* suffer from the problem described in Sect. 7.3.4 of Paper I.</span>
-<a name="l00294"></a>00294 <span class="comment">*</span>
-<a name="l00295"></a>00295 <span class="comment">* Given:</span>
-<a name="l00296"></a>00296 <span class="comment">*   naxis     const int []</span>
-<a name="l00297"></a>00297 <span class="comment">*                       Image axis lengths.</span>
+<a name="l00290"></a>00290 <span class="comment">*                       For returns &gt; 1, a detailed error message is set in</span>
+<a name="l00291"></a>00291 <span class="comment">*                       wcsprm::err if enabled, see wcserr_enable().</span>
+<a name="l00292"></a>00292 <span class="comment">*</span>
+<a name="l00293"></a>00293 <span class="comment">*</span>
+<a name="l00294"></a>00294 <span class="comment">* cylfix() - Fix malformed cylindrical projections</span>
+<a name="l00295"></a>00295 <span class="comment">* ------------------------------------------------</span>
+<a name="l00296"></a>00296 <span class="comment">* cylfix() fixes WCS keyvalues for malformed cylindrical projections that</span>
+<a name="l00297"></a>00297 <span class="comment">* suffer from the problem described in Sect. 7.3.4 of Paper I.</span>
 <a name="l00298"></a>00298 <span class="comment">*</span>
-<a name="l00299"></a>00299 <span class="comment">* Given and returned:</span>
-<a name="l00300"></a>00300 <span class="comment">*   wcs       struct wcsprm*</span>
-<a name="l00301"></a>00301 <span class="comment">*                       Coordinate transformation parameters.</span>
+<a name="l00299"></a>00299 <span class="comment">* Given:</span>
+<a name="l00300"></a>00300 <span class="comment">*   naxis     const int []</span>
+<a name="l00301"></a>00301 <span class="comment">*                       Image axis lengths.</span>
 <a name="l00302"></a>00302 <span class="comment">*</span>
-<a name="l00303"></a>00303 <span class="comment">* Function return value:</span>
-<a name="l00304"></a>00304 <span class="comment">*             int       Status return value:</span>
-<a name="l00305"></a>00305 <span class="comment">*                        -1: No change required (not an error).</span>
-<a name="l00306"></a>00306 <span class="comment">*                         0: Success.</span>
-<a name="l00307"></a>00307 <span class="comment">*                         1: Null wcsprm pointer passed.</span>
-<a name="l00308"></a>00308 <span class="comment">*                         2: Memory allocation failed.</span>
-<a name="l00309"></a>00309 <span class="comment">*                         3: Linear transformation matrix is singular.</span>
-<a name="l00310"></a>00310 <span class="comment">*                         4: Inconsistent or unrecognized coordinate axis</span>
-<a name="l00311"></a>00311 <span class="comment">*                            types.</span>
-<a name="l00312"></a>00312 <span class="comment">*                         5: Invalid parameter value.</span>
-<a name="l00313"></a>00313 <span class="comment">*                         6: Invalid coordinate transformation parameters.</span>
-<a name="l00314"></a>00314 <span class="comment">*                         7: Ill-conditioned coordinate transformation</span>
-<a name="l00315"></a>00315 <span class="comment">*                            parameters.</span>
-<a name="l00316"></a>00316 <span class="comment">*                         8: All of the corner pixel coordinates are invalid.</span>
-<a name="l00317"></a>00317 <span class="comment">*                         9: Could not determine reference pixel coordinate.</span>
-<a name="l00318"></a>00318 <span class="comment">*                        10: Could not determine reference pixel value.</span>
-<a name="l00319"></a>00319 <span class="comment">*</span>
-<a name="l00320"></a>00320 <span class="comment">*                       For returns &gt; 1, a detailed error message is set in</span>
-<a name="l00321"></a>00321 <span class="comment">*                       wcsprm::err if enabled, see wcserr_enable().</span>
-<a name="l00322"></a>00322 <span class="comment">*</span>
+<a name="l00303"></a>00303 <span class="comment">* Given and returned:</span>
+<a name="l00304"></a>00304 <span class="comment">*   wcs       struct wcsprm*</span>
+<a name="l00305"></a>00305 <span class="comment">*                       Coordinate transformation parameters.</span>
+<a name="l00306"></a>00306 <span class="comment">*</span>
+<a name="l00307"></a>00307 <span class="comment">* Function return value:</span>
+<a name="l00308"></a>00308 <span class="comment">*             int       Status return value:</span>
+<a name="l00309"></a>00309 <span class="comment">*                        -1: No change required (not an error).</span>
+<a name="l00310"></a>00310 <span class="comment">*                         0: Success.</span>
+<a name="l00311"></a>00311 <span class="comment">*                         1: Null wcsprm pointer passed.</span>
+<a name="l00312"></a>00312 <span class="comment">*                         2: Memory allocation failed.</span>
+<a name="l00313"></a>00313 <span class="comment">*                         3: Linear transformation matrix is singular.</span>
+<a name="l00314"></a>00314 <span class="comment">*                         4: Inconsistent or unrecognized coordinate axis</span>
+<a name="l00315"></a>00315 <span class="comment">*                            types.</span>
+<a name="l00316"></a>00316 <span class="comment">*                         5: Invalid parameter value.</span>
+<a name="l00317"></a>00317 <span class="comment">*                         6: Invalid coordinate transformation parameters.</span>
+<a name="l00318"></a>00318 <span class="comment">*                         7: Ill-conditioned coordinate transformation</span>
+<a name="l00319"></a>00319 <span class="comment">*                            parameters.</span>
+<a name="l00320"></a>00320 <span class="comment">*                         8: All of the corner pixel coordinates are invalid.</span>
+<a name="l00321"></a>00321 <span class="comment">*                         9: Could not determine reference pixel coordinate.</span>
+<a name="l00322"></a>00322 <span class="comment">*                        10: Could not determine reference pixel value.</span>
 <a name="l00323"></a>00323 <span class="comment">*</span>
-<a name="l00324"></a>00324 <span class="comment">* Global variable: const char *wcsfix_errmsg[] - Status return messages</span>
-<a name="l00325"></a>00325 <span class="comment">* ---------------------------------------------------------------------</span>
-<a name="l00326"></a>00326 <span class="comment">* Error messages to match the status value returned from each function.</span>
+<a name="l00324"></a>00324 <span class="comment">*                       For returns &gt; 1, a detailed error message is set in</span>
+<a name="l00325"></a>00325 <span class="comment">*                       wcsprm::err if enabled, see wcserr_enable().</span>
+<a name="l00326"></a>00326 <span class="comment">*</span>
 <a name="l00327"></a>00327 <span class="comment">*</span>
-<a name="l00328"></a>00328 <span class="comment">*===========================================================================*/</span>
-<a name="l00329"></a>00329 
-<a name="l00330"></a>00330 <span class="preprocessor">#ifndef WCSLIB_WCSFIX</span>
-<a name="l00331"></a>00331 <span class="preprocessor"></span><span class="preprocessor">#define WCSLIB_WCSFIX</span>
-<a name="l00332"></a>00332 <span class="preprocessor"></span>
-<a name="l00333"></a>00333 <span class="preprocessor">#include "<a class="code" href="wcs_8h.html">wcs.h</a>"</span>
-<a name="l00334"></a>00334 <span class="preprocessor">#include "<a class="code" href="wcserr_8h.html">wcserr.h</a>"</span>
-<a name="l00335"></a>00335 
-<a name="l00336"></a>00336 <span class="preprocessor">#ifdef __cplusplus</span>
-<a name="l00337"></a>00337 <span class="preprocessor"></span><span class="keyword">extern</span> <span class="stringliteral">"C"</span> {
-<a name="l00338"></a>00338 <span class="preprocessor">#endif</span>
-<a name="l00339"></a>00339 <span class="preprocessor"></span>
-<a name="l00340"></a><a class="code" href="wcsfix_8h.html#f23e7b02522c40fa5dfbf3d569348844">00340</a> <span class="preprocessor">#define CDFIX    0</span>
-<a name="l00341"></a><a class="code" href="wcsfix_8h.html#7181ebe5e9f0a4058642c56dc848bd5c">00341</a> <span class="preprocessor"></span><span class="preprocessor">#define DATFIX   1</span>
-<a name="l00342"></a><a class="code" href="wcsfix_8h.html#8f4a947e2605b35ffa92f08b113d60b2">00342</a> <span class="preprocessor"></span><span class="preprocessor">#define UNITFIX  2</span>
-<a name="l00343"></a><a class="code" href="wcsfix_8h.html#f1b99efe520fbd2d4bd0e5a35f87e186">00343</a> <span class="preprocessor"></span><span class="preprocessor">#define CELFIX   3</span>
-<a name="l00344"></a><a class="code" href="wcsfix_8h.html#0816c5f2354ee6c0044e11867d7558ea">00344</a> <span class="preprocessor"></span><span class="preprocessor">#define SPCFIX   4</span>
-<a name="l00345"></a><a class="code" href="wcsfix_8h.html#4d37e0274dff84649cba075b8761b3fa">00345</a> <span class="preprocessor"></span><span class="preprocessor">#define CYLFIX   5</span>
-<a name="l00346"></a><a class="code" href="wcsfix_8h.html#0ed13e54c3eacb9325afbae78ef33b61">00346</a> <span class="preprocessor"></span><span class="preprocessor">#define NWCSFIX  6</span>
-<a name="l00347"></a>00347 <span class="preprocessor"></span>
-<a name="l00348"></a>00348 <span class="keyword">extern</span> <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="wcsfix_8h.html#256ce6281894f65dd15396cc0994e875" title="Status return messages.">wcsfix_errmsg</a>[];
-<a name="l00349"></a><a class="code" href="wcsfix_8h.html#3229b126ed844da0a2d4f7abff1de7d0">00349</a> <span class="preprocessor">#define cylfix_errmsg wcsfix_errmsg</span>
-<a name="l00350"></a>00350 <span class="preprocessor"></span>
-<a name="l00351"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b25183">00351</a> <span class="keyword">enum</span> <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b25183">wcsfix_errmsg_enum</a> {
-<a name="l00352"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b25183ec3fdc50ed9f4ca8d80d7ce7751ef0e3">00352</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b25183ec3fdc50ed9f4ca8d80d7ce7751ef0e3">FIXERR_NO_CHANGE</a>        = -1, <span class="comment">/* No change. */</span>
-<a name="l00353"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b25183ee9fbc64e56bb6d307d06d8ef8e8b244">00353</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b25183ee9fbc64e56bb6d307d06d8ef8e8b244">FIXERR_SUCCESS</a>          =  0, <span class="comment">/* Success. */</span>
-<a name="l00354"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b25183f574a836e251e8a0257da97580bb9354">00354</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b25183f574a836e251e8a0257da97580bb9354">FIXERR_NULL_POINTER</a>     =  1, <span class="comment">/* Null wcsprm pointer passed. */</span>
-<a name="l00355"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b251831e4cf4eeb3cd2f4d8c2c1f040aa62f6c">00355</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b251831e4cf4eeb3cd2f4d8c2c1f040aa62f6c">FIXERR_MEMORY</a>           =  2, <span class="comment">/* Memory allocation failed. */</span>
-<a name="l00356"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b251838553bf40509263e3c3a198810f83d26e">00356</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b251838553bf40509263e3c3a198810f83d26e">FIXERR_SINGULAR_MTX</a>     =  3, <span class="comment">/* Linear transformation matrix is</span>
-<a name="l00357"></a>00357 <span class="comment">                                   singular. */</span>
-<a name="l00358"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b25183421fc9b9a2aac54bc832b3c1180f8f07">00358</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b25183421fc9b9a2aac54bc832b3c1180f8f07">FIXERR_BAD_CTYPE</a>        =  4, <span class="comment">/* Inconsistent or unrecognized coordinate</span>
-<a name="l00359"></a>00359 <span class="comment">                                   axis types. */</span>
-<a name="l00360"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b2518326d787caed068586fbef3d3c0fbce41f">00360</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b2518326d787caed068586fbef3d3c0fbce41f">FIXERR_BAD_PARAM</a>        =  5, <span class="comment">/* Invalid parameter value. */</span>
-<a name="l00361"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b251835dd410d6f1a55543c4f7d0f82435eb40">00361</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b251835dd410d6f1a55543c4f7d0f82435eb40">FIXERR_BAD_COORD_TRANS</a>  =  6, <span class="comment">/* Invalid coordinate transformation</span>
-<a name="l00362"></a>00362 <span class="comment">                                   parameters. */</span>
-<a name="l00363"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b2518381b5390b4f770515ae950d9e382b2885">00363</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b2518381b5390b4f770515ae950d9e382b2885">FIXERR_ILL_COORD_TRANS</a>  =  7, <span class="comment">/* Ill-conditioned coordinate transformation</span>
-<a name="l00364"></a>00364 <span class="comment">                                   parameters. */</span>
-<a name="l00365"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b251833f4b7a9a303943f6c12ea51cce2240cf">00365</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b251833f4b7a9a303943f6c12ea51cce2240cf">FIXERR_BAD_CORNER_PIX</a>   =  8, <span class="comment">/* All of the corner pixel coordinates are</span>
-<a name="l00366"></a>00366 <span class="comment">                                   invalid. */</span>
-<a name="l00367"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b25183d6bf7801d043f41f67c54677d6cfcb75">00367</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b25183d6bf7801d043f41f67c54677d6cfcb75">FIXERR_NO_REF_PIX_COORD</a> =  9, <span class="comment">/* Could not determine reference pixel</span>
-<a name="l00368"></a>00368 <span class="comment">                                   coordinate. */</span>
-<a name="l00369"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b2518315a9e5f9cbb559ef53018e9aade43e88">00369</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b2518315a9e5f9cbb559ef53018e9aade43e88">FIXERR_NO_REF_PIX_VAL</a>   = 10  <span class="comment">/* Could not determine reference pixel</span>
-<a name="l00370"></a>00370 <span class="comment">                                   value. */</span>
-<a name="l00371"></a>00371 };
-<a name="l00372"></a>00372 
-<a name="l00373"></a>00373 <span class="keywordtype">int</span> <a class="code" href="wcsfix_8h.html#89e1b5b4d2fa89af03f5d1143352b05f" title="Translate a non-standard WCS struct.">wcsfix</a>(<span class="keywordtype">int</span> ctrl, <span class="keyword">const</span> <span class="keywordtype">int</span> naxis[], <span class="keyword">struct</span> <a class="code" href="structwcsprm.html" title="Coordinate transformation parameters.">wcsprm</a> *wcs, <span class="keywordtype">int</span> stat[]);
-<a name="l00374"></a>00374 
-<a name="l00375"></a>00375 <span class="keywordtype">int</span> <a class="code" href="wcsfix_8h.html#62298e0fb06332a282d9daab718a1286" title="Translate a non-standard WCS struct.">wcsfixi</a>(<span class="keywordtype">int</span> ctrl, <span class="keyword">const</span> <span class="keywordtype">int</span> naxis[], <span class="keyword">struct</span> <a class="code" href="structwcsprm.html" title="Coordinate transformation parameters.">wcsprm</a> *wcs, <span class="keywordtype">int</span> stat[],
-<a name="l00376"></a>00376             <span class="keyword">struct</span> <a class="code" href="structwcserr.html" title="Error message handling.">wcserr</a> info[]);
+<a name="l00328"></a>00328 <span class="comment">* Global variable: const char *wcsfix_errmsg[] - Status return messages</span>
+<a name="l00329"></a>00329 <span class="comment">* ---------------------------------------------------------------------</span>
+<a name="l00330"></a>00330 <span class="comment">* Error messages to match the status value returned from each function.</span>
+<a name="l00331"></a>00331 <span class="comment">*</span>
+<a name="l00332"></a>00332 <span class="comment">*===========================================================================*/</span>
+<a name="l00333"></a>00333 
+<a name="l00334"></a>00334 <span class="preprocessor">#ifndef WCSLIB_WCSFIX</span>
+<a name="l00335"></a>00335 <span class="preprocessor"></span><span class="preprocessor">#define WCSLIB_WCSFIX</span>
+<a name="l00336"></a>00336 <span class="preprocessor"></span>
+<a name="l00337"></a>00337 <span class="preprocessor">#include "<a class="code" href="wcs_8h.html">wcs.h</a>"</span>
+<a name="l00338"></a>00338 <span class="preprocessor">#include "<a class="code" href="wcserr_8h.html">wcserr.h</a>"</span>
+<a name="l00339"></a>00339 
+<a name="l00340"></a>00340 <span class="preprocessor">#ifdef __cplusplus</span>
+<a name="l00341"></a>00341 <span class="preprocessor"></span><span class="keyword">extern</span> <span class="stringliteral">"C"</span> {
+<a name="l00342"></a>00342 <span class="preprocessor">#endif</span>
+<a name="l00343"></a>00343 <span class="preprocessor"></span>
+<a name="l00344"></a><a class="code" href="wcsfix_8h.html#f23e7b02522c40fa5dfbf3d569348844">00344</a> <span class="preprocessor">#define CDFIX    0</span>
+<a name="l00345"></a><a class="code" href="wcsfix_8h.html#7181ebe5e9f0a4058642c56dc848bd5c">00345</a> <span class="preprocessor"></span><span class="preprocessor">#define DATFIX   1</span>
+<a name="l00346"></a><a class="code" href="wcsfix_8h.html#8f4a947e2605b35ffa92f08b113d60b2">00346</a> <span class="preprocessor"></span><span class="preprocessor">#define UNITFIX  2</span>
+<a name="l00347"></a><a class="code" href="wcsfix_8h.html#f1b99efe520fbd2d4bd0e5a35f87e186">00347</a> <span class="preprocessor"></span><span class="preprocessor">#define CELFIX   3</span>
+<a name="l00348"></a><a class="code" href="wcsfix_8h.html#0816c5f2354ee6c0044e11867d7558ea">00348</a> <span class="preprocessor"></span><span class="preprocessor">#define SPCFIX   4</span>
+<a name="l00349"></a><a class="code" href="wcsfix_8h.html#4d37e0274dff84649cba075b8761b3fa">00349</a> <span class="preprocessor"></span><span class="preprocessor">#define CYLFIX   5</span>
+<a name="l00350"></a><a class="code" href="wcsfix_8h.html#0ed13e54c3eacb9325afbae78ef33b61">00350</a> <span class="preprocessor"></span><span class="preprocessor">#define NWCSFIX  6</span>
+<a name="l00351"></a>00351 <span class="preprocessor"></span>
+<a name="l00352"></a>00352 <span class="keyword">extern</span> <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="wcsfix_8h.html#256ce6281894f65dd15396cc0994e875" title="Status return messages.">wcsfix_errmsg</a>[];
+<a name="l00353"></a><a class="code" href="wcsfix_8h.html#3229b126ed844da0a2d4f7abff1de7d0">00353</a> <span class="preprocessor">#define cylfix_errmsg wcsfix_errmsg</span>
+<a name="l00354"></a>00354 <span class="preprocessor"></span>
+<a name="l00355"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b25183">00355</a> <span class="keyword">enum</span> <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b25183">wcsfix_errmsg_enum</a> {
+<a name="l00356"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b251831e255b3aa269ff0c251ada8a6c3f9602">00356</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b251831e255b3aa269ff0c251ada8a6c3f9602">FIXERR_UNITS_ALIAS</a>      = -2, <span class="comment">/* Units alias translation. */</span>
+<a name="l00357"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b25183ec3fdc50ed9f4ca8d80d7ce7751ef0e3">00357</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b25183ec3fdc50ed9f4ca8d80d7ce7751ef0e3">FIXERR_NO_CHANGE</a>        = -1, <span class="comment">/* No change. */</span>
+<a name="l00358"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b25183ee9fbc64e56bb6d307d06d8ef8e8b244">00358</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b25183ee9fbc64e56bb6d307d06d8ef8e8b244">FIXERR_SUCCESS</a>          =  0, <span class="comment">/* Success. */</span>
+<a name="l00359"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b25183f574a836e251e8a0257da97580bb9354">00359</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b25183f574a836e251e8a0257da97580bb9354">FIXERR_NULL_POINTER</a>     =  1, <span class="comment">/* Null wcsprm pointer passed. */</span>
+<a name="l00360"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b251831e4cf4eeb3cd2f4d8c2c1f040aa62f6c">00360</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b251831e4cf4eeb3cd2f4d8c2c1f040aa62f6c">FIXERR_MEMORY</a>           =  2, <span class="comment">/* Memory allocation failed. */</span>
+<a name="l00361"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b251838553bf40509263e3c3a198810f83d26e">00361</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b251838553bf40509263e3c3a198810f83d26e">FIXERR_SINGULAR_MTX</a>     =  3, <span class="comment">/* Linear transformation matrix is</span>
+<a name="l00362"></a>00362 <span class="comment">                                   singular. */</span>
+<a name="l00363"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b25183421fc9b9a2aac54bc832b3c1180f8f07">00363</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b25183421fc9b9a2aac54bc832b3c1180f8f07">FIXERR_BAD_CTYPE</a>        =  4, <span class="comment">/* Inconsistent or unrecognized coordinate</span>
+<a name="l00364"></a>00364 <span class="comment">                                   axis types. */</span>
+<a name="l00365"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b2518326d787caed068586fbef3d3c0fbce41f">00365</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b2518326d787caed068586fbef3d3c0fbce41f">FIXERR_BAD_PARAM</a>        =  5, <span class="comment">/* Invalid parameter value. */</span>
+<a name="l00366"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b251835dd410d6f1a55543c4f7d0f82435eb40">00366</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b251835dd410d6f1a55543c4f7d0f82435eb40">FIXERR_BAD_COORD_TRANS</a>  =  6, <span class="comment">/* Invalid coordinate transformation</span>
+<a name="l00367"></a>00367 <span class="comment">                                   parameters. */</span>
+<a name="l00368"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b2518381b5390b4f770515ae950d9e382b2885">00368</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b2518381b5390b4f770515ae950d9e382b2885">FIXERR_ILL_COORD_TRANS</a>  =  7, <span class="comment">/* Ill-conditioned coordinate transformation</span>
+<a name="l00369"></a>00369 <span class="comment">                                   parameters. */</span>
+<a name="l00370"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b251833f4b7a9a303943f6c12ea51cce2240cf">00370</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b251833f4b7a9a303943f6c12ea51cce2240cf">FIXERR_BAD_CORNER_PIX</a>   =  8, <span class="comment">/* All of the corner pixel coordinates are</span>
+<a name="l00371"></a>00371 <span class="comment">                                   invalid. */</span>
+<a name="l00372"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b25183d6bf7801d043f41f67c54677d6cfcb75">00372</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b25183d6bf7801d043f41f67c54677d6cfcb75">FIXERR_NO_REF_PIX_COORD</a> =  9, <span class="comment">/* Could not determine reference pixel</span>
+<a name="l00373"></a>00373 <span class="comment">                                   coordinate. */</span>
+<a name="l00374"></a><a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b2518315a9e5f9cbb559ef53018e9aade43e88">00374</a>   <a class="code" href="wcsfix_8h.html#0399bbea1e28abad3259a8ea05b2518315a9e5f9cbb559ef53018e9aade43e88">FIXERR_NO_REF_PIX_VAL</a>   = 10  <span class="comment">/* Could not determine reference pixel</span>
+<a name="l00375"></a>00375 <span class="comment">                                   value. */</span>
+<a name="l00376"></a>00376 };
 <a name="l00377"></a>00377 
-<a name="l00378"></a>00378 <span class="keywordtype">int</span> <a class="code" href="wcsfix_8h.html#25714f1558ecbee6c1b1fef0abf8ea7f" title="Fix erroneously omitted CDi_ja keywords.">cdfix</a>(<span class="keyword">struct</span> <a class="code" href="structwcsprm.html" title="Coordinate transformation parameters.">wcsprm</a> *wcs);
+<a name="l00378"></a>00378 <span class="keywordtype">int</span> <a class="code" href="wcsfix_8h.html#89e1b5b4d2fa89af03f5d1143352b05f" title="Translate a non-standard WCS struct.">wcsfix</a>(<span class="keywordtype">int</span> ctrl, <span class="keyword">const</span> <span class="keywordtype">int</span> naxis[], <span class="keyword">struct</span> <a class="code" href="structwcsprm.html" title="Coordinate transformation parameters.">wcsprm</a> *wcs, <span class="keywordtype">int</span> stat[]);
 <a name="l00379"></a>00379 
-<a name="l00380"></a>00380 <span class="keywordtype">int</span> <a class="code" href="wcsfix_8h.html#77b614a15de67b42040c2be46cbfca1a" title="Translate DATE-OBS and derive MJD-OBS or vice versa.">datfix</a>(<span class="keyword">struct</span> <a class="code" href="structwcsprm.html" title="Coordinate transformation parameters.">wcsprm</a> *wcs);
-<a name="l00381"></a>00381 
-<a name="l00382"></a>00382 <span class="keywordtype">int</span> <a class="code" href="wcsfix_8h.html#883167275c4d3855ba453364db3d8d66" title="Correct aberrant CUNITia keyvalues.">unitfix</a>(<span class="keywordtype">int</span> ctrl, <span class="keyword">struct</span> <a class="code" href="structwcsprm.html" title="Coordinate transformation parameters.">wcsprm</a> *wcs);
-<a name="l00383"></a>00383 
-<a name="l00384"></a>00384 <span class="keywordtype">int</span> <a class="code" href="wcsfix_8h.html#c1df72303f64e50d5e3cb320c126443b" title="Translate AIPS-convention celestial projection types.">celfix</a>(<span class="keyword">struct</span> <a class="code" href="structwcsprm.html" title="Coordinate transformation parameters.">wcsprm</a> *wcs);
-<a name="l00385"></a>00385 
-<a name="l00386"></a>00386 <span class="keywordtype">int</span> <a class="code" href="wcsfix_8h.html#f011e4065b6179e19d2964bc9646b6af" title="Translate AIPS-convention spectral types.">spcfix</a>(<span class="keyword">struct</span> <a class="code" href="structwcsprm.html" title="Coordinate transformation parameters.">wcsprm</a> *wcs);
-<a name="l00387"></a>00387 
-<a name="l00388"></a>00388 <span class="keywordtype">int</span> <a class="code" href="wcsfix_8h.html#07281faacbec1df800a417bf157751d7" title="Fix malformed cylindrical projections.">cylfix</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> naxis[], <span class="keyword">struct</span> <a class="code" href="structwcsprm.html" title="Coordinate transformation parameters.">wcsprm</a> *wcs);
-<a name="l00389"></a>00389 
+<a name="l00380"></a>00380 <span class="keywordtype">int</span> <a class="code" href="wcsfix_8h.html#62298e0fb06332a282d9daab718a1286" title="Translate a non-standard WCS struct.">wcsfixi</a>(<span class="keywordtype">int</span> ctrl, <span class="keyword">const</span> <span class="keywordtype">int</span> naxis[], <span class="keyword">struct</span> <a class="code" href="structwcsprm.html" title="Coordinate transformation parameters.">wcsprm</a> *wcs, <span class="keywordtype">int</span> stat[],
+<a name="l00381"></a>00381             <span class="keyword">struct</span> <a class="code" href="structwcserr.html" title="Error message handling.">wcserr</a> info[]);
+<a name="l00382"></a>00382 
+<a name="l00383"></a>00383 <span class="keywordtype">int</span> <a class="code" href="wcsfix_8h.html#25714f1558ecbee6c1b1fef0abf8ea7f" title="Fix erroneously omitted CDi_ja keywords.">cdfix</a>(<span class="keyword">struct</span> <a class="code" href="structwcsprm.html" title="Coordinate transformation parameters.">wcsprm</a> *wcs);
+<a name="l00384"></a>00384 
+<a name="l00385"></a>00385 <span class="keywordtype">int</span> <a class="code" href="wcsfix_8h.html#77b614a15de67b42040c2be46cbfca1a" title="Translate DATE-OBS and derive MJD-OBS or vice versa.">datfix</a>(<span class="keyword">struct</span> <a class="code" href="structwcsprm.html" title="Coordinate transformation parameters.">wcsprm</a> *wcs);
+<a name="l00386"></a>00386 
+<a name="l00387"></a>00387 <span class="keywordtype">int</span> <a class="code" href="wcsfix_8h.html#883167275c4d3855ba453364db3d8d66" title="Correct aberrant CUNITia keyvalues.">unitfix</a>(<span class="keywordtype">int</span> ctrl, <span class="keyword">struct</span> <a class="code" href="structwcsprm.html" title="Coordinate transformation parameters.">wcsprm</a> *wcs);
+<a name="l00388"></a>00388 
+<a name="l00389"></a>00389 <span class="keywordtype">int</span> <a class="code" href="wcsfix_8h.html#c1df72303f64e50d5e3cb320c126443b" title="Translate AIPS-convention celestial projection types.">celfix</a>(<span class="keyword">struct</span> <a class="code" href="structwcsprm.html" title="Coordinate transformation parameters.">wcsprm</a> *wcs);
 <a name="l00390"></a>00390 
-<a name="l00391"></a>00391 <span class="preprocessor">#ifdef __cplusplus</span>
-<a name="l00392"></a>00392 <span class="preprocessor"></span>}
-<a name="l00393"></a>00393 <span class="preprocessor">#endif</span>
-<a name="l00394"></a>00394 <span class="preprocessor"></span>
-<a name="l00395"></a>00395 <span class="preprocessor">#endif </span><span class="comment">/* WCSLIB_WCSFIX */</span>
+<a name="l00391"></a>00391 <span class="keywordtype">int</span> <a class="code" href="wcsfix_8h.html#f011e4065b6179e19d2964bc9646b6af" title="Translate AIPS-convention spectral types.">spcfix</a>(<span class="keyword">struct</span> <a class="code" href="structwcsprm.html" title="Coordinate transformation parameters.">wcsprm</a> *wcs);
+<a name="l00392"></a>00392 
+<a name="l00393"></a>00393 <span class="keywordtype">int</span> <a class="code" href="wcsfix_8h.html#07281faacbec1df800a417bf157751d7" title="Fix malformed cylindrical projections.">cylfix</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> naxis[], <span class="keyword">struct</span> <a class="code" href="structwcsprm.html" title="Coordinate transformation parameters.">wcsprm</a> *wcs);
+<a name="l00394"></a>00394 
+<a name="l00395"></a>00395 
+<a name="l00396"></a>00396 <span class="preprocessor">#ifdef __cplusplus</span>
+<a name="l00397"></a>00397 <span class="preprocessor"></span>}
+<a name="l00398"></a>00398 <span class="preprocessor">#endif</span>
+<a name="l00399"></a>00399 <span class="preprocessor"></span>
+<a name="l00400"></a>00400 <span class="preprocessor">#endif </span><span class="comment">/* WCSLIB_WCSFIX */</span>
 </pre></div></div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Oct 4 19:02:30 2011 for WCSLIB 4.8.2 by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Dec 5 17:58:12 2011 for WCSLIB 4.8.4 by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.6 </small></address>
 </body>

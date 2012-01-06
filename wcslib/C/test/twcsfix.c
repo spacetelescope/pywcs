@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: twcsfix.c,v 4.8.1.1 2011/08/15 08:07:06 cal103 Exp cal103 $
+  $Id: twcsfix.c,v 4.8.1.2 2011/11/17 03:47:56 cal103 Exp cal103 $
 *=============================================================================
 *
 * twcsfix tests the translation routines for non-standard WCS keyvalues, the
@@ -40,8 +40,10 @@
 #include <string.h>
 
 #include <wcs.h>
-#include <wcsunits.h>
+#include <wcserr.h>
 #include <wcsfix.h>
+#include <wcsprintf.h>
+#include <wcsunits.h>
 
 
 void parser(struct wcsprm *);
@@ -72,42 +74,59 @@ int main()
   char ctypeS[9];
   int i, stat[NWCSFIX], status;
   struct wcsprm wcs;
+  struct wcserr info[NWCSFIX];
 
-  printf("Testing WCSLIB translator for non-standard usage (twcsfix.c)\n"
-         "------------------------------------------------------------\n\n");
+  wcsprintf("Testing WCSLIB translator for non-standard usage (twcsfix.c)\n"
+          "------------------------------------------------------------\n\n");
 
   wcs.flag = -1;
   parser(&wcs);
 
-  /* Print the unmodified struct. */
-  wcsprt(&wcs);
-  printf("\n------------------------------------"
-         "------------------------------------\n");
+  /* Note: to print the unfixed wcsprm struct using wcsprt() the struct
+     would first have to be initialized by wcsset().  However, if the struct
+     contains non-standard keyvalues then wcsset() will either fix them
+     itself or else fail (e.g. for non-standard units).  Thus, in general,
+     wcsprt() cannot be used to print the unmodified struct. */
 
   /* Fix non-standard WCS keyvalues. */
-  if ((status = wcsfix(7, 0, &wcs, stat))) {
-    printf("wcsfix error, status returns: (");
-    for (i = 0; i < NWCSFIX; i++) {
-      printf(i ? ", %d" : "%d", stat[i]);
-    }
-    printf(")\n");
+  wcserr_enable(1);
+  status = wcsfixi(7, 0, &wcs, stat, info);
+  wcsprintf("wcsfix status returns: (");
+  for (i = 0; i < NWCSFIX; i++) {
+    wcsprintf(i ? ", %d" : "%d", stat[i]);
+  }
+  wcsprintf(")\n");
+
+  if (status) {
+    wcsprintf("wcsfix error %d", status);
     return 1;
   }
 
+  if (info[UNITFIX].status == -2) {
+    wcsprintf("\n");
+    wcserr_prt(info+UNITFIX, 0x0);
+  }
+
+  /* Extract information from the FITS header. */
+  if (wcsset(&wcs)) {
+    wcsprintf("\n");
+    wcserr_prt(wcs.err, 0x0);
+  }
+
   wcsprt(&wcs);
-  printf("\n------------------------------------"
-         "------------------------------------\n");
+  wcsprintf("\n------------------------------------"
+            "------------------------------------\n");
 
   /* Should now have a 'VOPT-F2W' axis, translate it to frequency. */
   strcpy(ctypeS, "FREQ-???");
   i = -1;
-  if ((status = wcssptr(&wcs, &i, ctypeS))) {
-    printf("wcssptr ERROR %d: %s.n", status, wcs_errmsg[status]);
+  if (wcssptr(&wcs, &i, ctypeS)) {
+    wcserr_prt(wcs.err, 0x0);
     return 1;
   }
 
-  if ((status = wcsset(&wcs))) {
-    printf("wcsset ERROR %d: %s.\n", status, wcs_errmsg[status]);
+  if (wcsset(&wcs)) {
+    wcserr_prt(wcs.err, 0x0);
     return 1;
   }
 
@@ -125,7 +144,7 @@ void parser(wcs)
 struct wcsprm *wcs;
 
 {
-  int i, j, status;
+  int i, j;
   double *pcij;
 
   /* In practice a parser would read the FITS header until it encountered  */
@@ -177,17 +196,6 @@ struct wcsprm *wcs;
   wcs->npv = 1;
 
   strcpy(wcs->dateobs, DATEOBS);
-
-
-  /* Translate non-standard units specifications before wcsset(). */
-  for (i = 0; i < NAXIS; i++) {
-    wcsutrn(7, wcs->cunit[i]);
-  }
-
-  /* Extract information from the FITS header. */
-  if ((status = wcsset(wcs))) {
-    printf("wcsset ERROR %d: %s.\n", status, wcs_errmsg[status]);
-  }
 
   return;
 }
