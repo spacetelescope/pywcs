@@ -1,7 +1,7 @@
 # TODO: Test that this works for subclasses
 
 import os
-import pickle
+import cPickle
 
 import numpy as np
 from numpy.testing import assert_array_almost_equal
@@ -17,8 +17,8 @@ def setup():
 
 def test_basic():
     wcs = pywcs.WCS()
-    s = pickle.dumps(wcs)
-    wcs2 = pickle.loads(s)
+    s = cPickle.dumps(wcs)
+    wcs2 = cPickle.loads(s)
 
 
 def test_dist():
@@ -30,8 +30,8 @@ def test_dist():
     hdulist = pyfits.open(os.path.join(ROOT_DIR, "data", "dist.fits"))
     wcs1 = pywcs.WCS(hdulist[0].header, hdulist)
     assert wcs1.det2im2 is not None
-    s = pickle.dumps(wcs1)
-    wcs2 = pickle.loads(s)
+    s = cPickle.dumps(wcs1)
+    wcs2 = cPickle.loads(s)
 
     x = np.random.rand(2 ** 16, wcs1.wcs.naxis)
     world1 = wcs1.all_pix2sky(x, 1)
@@ -49,8 +49,8 @@ def test_sip():
     hdulist = pyfits.open(os.path.join(ROOT_DIR, "data", "sip.fits"))
     wcs1 = pywcs.WCS(hdulist[0].header)
     assert wcs1.sip is not None
-    s = pickle.dumps(wcs1)
-    wcs2 = pickle.loads(s)
+    s = cPickle.dumps(wcs1)
+    wcs2 = cPickle.loads(s)
 
     x = np.random.rand(2 ** 16, wcs1.wcs.naxis)
     world1 = wcs1.all_pix2sky(x, 1)
@@ -71,8 +71,8 @@ def test_wcs():
     fd.close()
 
     wcs1 = pywcs.WCS(header)
-    s = pickle.dumps(wcs1)
-    wcs2 = pickle.loads(s)
+    s = cPickle.dumps(wcs1)
+    wcs2 = cPickle.loads(s)
 
     x = np.random.rand(2 ** 16, wcs1.wcs.naxis)
     world1 = wcs1.all_pix2sky(x, 1)
@@ -80,3 +80,18 @@ def test_wcs():
 
     assert_array_almost_equal(world1, world2)
 
+
+class Sub(pywcs.WCS):
+    def __init__(self, *args, **kwargs):
+        self.foo = 42
+
+
+def test_subclass():
+    wcs = Sub()
+    s = cPickle.dumps(wcs)
+    wcs2 = cPickle.loads(s)
+
+    assert isinstance(wcs2, Sub)
+    assert wcs.foo == 42
+    assert wcs2.foo == 42
+    assert wcs2.wcs is not None

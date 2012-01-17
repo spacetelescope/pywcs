@@ -1133,7 +1133,7 @@ naxis kwarg.
         buffer = io.BytesIO()
         hdulist.writeto(buffer)
 
-        return (_unpickle_wcs, (buffer.getvalue(),))
+        return (_unpickle_wcs, (self.__class__, self.__dict__, buffer.getvalue(),))
 
     def footprint_to_file(self, filename=None, color='green', width=2):
         """
@@ -1350,7 +1350,7 @@ def find_all_wcs(header, relax=False, keysel=None):
 
     return result
 
-def _unpickle_wcs(fits_data):
+def _unpickle_wcs(cls, dct, fits_data):
     """
     Unpickles a WCS object from a serialized FITS string.
     """
@@ -1358,6 +1358,12 @@ def _unpickle_wcs(fits_data):
         raise ImportError(
             "pyfits is required for pickling support")
 
+    self = cls.__new__(cls)
+    self.__dict__.update(dct)
+
     buffer = io.BytesIO(fits_data)
     hdulist = pyfits.open(buffer)
-    return WCS(hdulist[0].header, hdulist)
+
+    WCS.__init__(self, hdulist[0].header, hdulist)
+
+    return self
