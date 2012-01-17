@@ -1,0 +1,137 @@
+SIMPLE  =                    T /                                                
+BITPIX  =                   16 /                                                
+NAXIS   =                    4 /                                                
+NAXIS1  =                  512 /                                                
+NAXIS2  =                  512 /                                                
+NAXIS3  =                    1 /                                                
+NAXIS4  =                    1 /                                                
+EXTEND  =                    T /Tables following main image                     
+BLOCKED =                    T /Tape may be blocked                             
+OBJECT  = 'F1      '                                                            
+TELESCOP= '        '                                                            
+INSTRUME= '        '                                                            
+OBSERVER= 'INA     '                                                            
+DATE-OBS= '07/10/86'                                                            
+DATE-MAP= '06/09/88'                                                            
+BSCALE  =    1.94159674120E-06 /REAL = TAPE * BSCALE + BZERO                    
+BZERO   =    5.97180128098E-02 /                                                
+BUNIT   = 'JY/BEAM '                                                            
+EPOCH   =      1.950000000E+03 /EPOCH OF RA DEC                                 
+OBSRA   =    5.01966661513E+01 /ANTENNA POINTING RA                             
+OBSDEC  =   -3.73856168315E+01 /ANTENNA POINTING DEC                            
+YSHIFT  =      7.105427358E-15 /NET SHIFT OF PHASE CENTER INY                   
+DATAMAX =      1.233247221E-01 /MAX PIXEL VALUE                                 
+DATAMIN =     -3.888696432E-03 /MIN PIXEL VALUE                                 
+CTYPE1  = 'RA---SIN'                                                            
+CRVAL1  =    5.01966661513E+01 /                                                
+CDELT1  =     -1.944444492E-03 /                                                
+CRPIX1  =      2.560000000E+02 /                                                
+CROTA1  =      0.000000000E+00 /                                                
+CTYPE2  = 'DEC--SIN'                                                            
+CRVAL2  =   -3.73856168315E+01 /                                                
+CDELT2  =      1.944444492E-03 /                                                
+CRPIX2  =      2.570000000E+02 /                                                
+CROTA2  =      0.000000000E+00 /                                                
+CTYPE3  = 'FREQ    '                                                            
+CRVAL3  =    1.51000000000E+09 /                                                
+CDELT3  =      1.690734863E+03 /                                                
+CRPIX3  =      1.000000000E+00 /                                                
+CROTA3  =      0.000000000E+00 /                                                
+CTYPE4  = 'STOKES  '                                                            
+CRVAL4  =    1.00000000000E+00 /                                                
+CDELT4  =      1.000000000E+00 /                                                
+CRPIX4  =      1.000000000E+00 /                                                
+CROTA4  =      0.000000000E+00 /                                                
+HISTORY --------------------------------------------------------------------    
+HISTORY /Begin "HISTORY" information found in fits tape header by IMLOD         
+HISTORY BLOCKED =                    T /Tape may be blocked                     
+HISTORY --------------------------------------------------------------------    
+HISTORY /Begin "HISTORY" information found in fits tape header by IMLOD         
+HISTORY BLOCKED =                    T /TAPE MAY BE BLOCKED                     
+HISTORY /--------------------------------------------------------------------   
+HISTORY /BEGIN "HISTORY" INFORMATION FOUND IN FITS TAPE HEADER BY IMLOD         
+HISTORY BLOCKED =                    T /TAPE MAY BE BLOCKED                     
+HISTORY PUTHEAD OBSRA    =  4.991666615E+01  / OLD                              
+HISTORY PUTHEAD OBSRA    =  5.019666615E+01  / NEW                              
+HISTORY PUTHEAD OBSDEC   = -3.736666683E+01  / OLD                              
+HISTORY PUTHEAD OBSDEC   = -3.738561683E+01  / NEW                              
+HISTORY CNTR   VERSION=  1  / PLOT FILE CREATED 08-SEP-1988 12:22:10            
+HISTORY GREYS  VERSION=  2  / PLOT FILE CREATED 12-SEP-1988 19:08:19            
+HISTORY GREYS  VERSION=  3  / PLOT FILE CREATED 13-SEP-1988 11:44:07            
+HISTORY GREYS  VERSION=  4  / PLOT FILE CREATED 13-SEP-1988 12:40:37            
+HISTORY GREYS  VERSION=  5  / PLOT FILE CREATED 13-SEP-1988 12:42:34            
+HISTORY GREYS  VERSION=  6  / PLOT FILE CREATED 13-SEP-1988 12:44:28            
+HISTORY GREYS  VERSION=  7  / PLOT FILE CREATED 13-SEP-1988 12:59:18            
+HISTORY GREYS  VERSION=  8  / PLOT FILE CREATED 13-SEP-1988 13:03:15            
+HISTORY GREYS  VERSION=  9  / PLOT FILE CREATED 13-SEP-1988 13:07:23            
+HISTORY GREYS  VERSION= 10  / PLOT FILE CREATED 13-SEP-1988 13:25:50            
+HISTORY GREYS  VERSION= 11  / PLOT FILE CREATED 13-SEP-1988 13:26:20            
+HISTORY GREYS  VERSION= 12  / PLOT FILE CREATED 13-SEP-1988 13:32:00            
+HISTORY GREYS  VERSION= 13  / PLOT FILE CREATED 13-SEP-1988 13:57:57            
+HISTORY GREYS  VERSION= 14  / PLOT FILE CREATED 13-SEP-1988 14:00:53            
+HISTORY GREYS  VERSION= 15  / PLOT FILE CREATED 13-SEP-1988 14:28:51            
+HISTORY GREYS  VERSION= 16  / PLOT FILE CREATED 14-SEP-1988 12:00:40            
+HISTORY GREYS  VERSION= 17  / PLOT FILE CREATED 14-SEP-1988 12:13:51            
+HISTORY GREYS  VERSION= 18  / PLOT FILE CREATED 14-SEP-1988 12:15:36            
+HISTORY GREYS  VERSION= 19  / PLOT FILE CREATED 15-SEP-1988 07:52:43            
+HISTORY GREYS  VERSION= 20  / PLOT FILE CREATED 15-SEP-1988 08:11:42            
+HISTORY GREYS  VERSION= 21  / PLOT FILE CREATED 15-SEP-1988 08:18:17            
+HISTORY GREYS  VERSION= 22  / PLOT FILE CREATED 15-SEP-1988 08:44:40            
+HISTORY GREYS  VERSION= 23  / PLOT FILE CREATED 15-SEP-1988 21:02:47            
+HISTORY GREYS  VERSION= 24  / PLOT FILE CREATED 15-SEP-1988 21:09:45            
+HISTORY GREYS  VERSION= 25  / PLOT FILE CREATED 15-SEP-1988 21:19:53            
+HISTORY GREYS  VERSION= 26  / PLOT FILE CREATED 15-SEP-1988 21:28:01            
+HISTORY GREYS  VERSION= 27  / PLOT FILE CREATED 15-SEP-1988 21:32:44            
+HISTORY GREYS  VERSION= 28  / PLOT FILE CREATED 15-SEP-1988 21:38:55            
+HISTORY GREYS  VERSION= 29  / PLOT FILE CREATED 15-SEP-1988 21:40:20            
+HISTORY GREYS  VERSION= 30  / PLOT FILE CREATED 15-SEP-1988 21:42:44            
+HISTORY GREYS  VERSION= 31  / PLOT FILE CREATED 15-SEP-1988 21:49:18            
+HISTORY GREYS  VERSION= 32  / PLOT FILE CREATED 15-SEP-1988 21:53:40            
+HISTORY GREYS  VERSION= 33  / PLOT FILE CREATED 15-SEP-1988 22:09:40            
+HISTORY GREYS  VERSION=  1  / PLOT FILE CREATED 16-SEP-1988 14:54:15            
+HISTORY GREYS  VERSION=  2  / PLOT FILE CREATED 16-SEP-1988 14:55:07            
+HISTORY GREYS  VERSION=  3  / PLOT FILE CREATED 17-SEP-1988 17:17:18            
+HISTORY GREYS  VERSION=  4  / PLOT FILE CREATED 17-SEP-1988 18:29:54            
+HISTORY GREYS  VERSION=  5  / PLOT FILE CREATED 17-SEP-1988 18:30:43            
+HISTORY GREYS  VERSION=  6  / PLOT FILE CREATED 17-SEP-1988 18:33:27            
+HISTORY GREYS  VERSION=  7  / PLOT FILE CREATED 17-SEP-1988 18:35:44            
+HISTORY AIPS   IMNAME='FORNAX/NOBL ' IMCLASS='I     ' IMSEQ=   1     /          
+HISTORY AIPS   USERNO=   51            /                                        
+HISTORY AIPS   CLEAN BMAJ=  3.8889E-03 BMIN=  3.8889E-03 BPA=   0.00            
+HISTORY AIPS   CLEAN NITER=       21 PRODUCT=4   / POINTS                       
+HISTORY /END FITS TAPE HEADER "HISTORY" INFORMATION                             
+HISTORY /--------------------------------------------------------------------   
+HISTORY IMLOD OUTNAME ='            '      OUTCLASS ='      '                   
+HISTORY IMLOD OUTSEQ =   -1     INTAPE = 3     OUTDISK= 2                       
+HISTORY IMLOD RELEASE = '15JAN89'                                               
+HISTORY RENAM INNAME='FORNAX/NOBL '   INCLASS='I     '                          
+HISTORY RENAM INSEQ=    1   INDISK=  2                                          
+HISTORY RENAM OUTNAME='FORNAX      '   OUTCLASS='I     '                        
+HISTORY RENAM OUTSEQ=    1   OUTDISK=  2                                        
+HISTORY PUTHEAD CRVAL3   =  1.384000000E+09  / OLD                              
+HISTORY PUTHEAD CRVAL3   =  1.510000000E+09  / NEW                              
+HISTORY AIPS   IMNAME='FORNAX      ' IMCLASS='I     ' IMSEQ=   1     /          
+HISTORY AIPS   USERNO=   51            /                                        
+HISTORY AIPS   CLEAN BMAJ=  3.8889E-03 BMIN=  3.8889E-03 BPA=   0.00            
+HISTORY AIPS   CLEAN NITER=       21 PRODUCT=4   / POINTS                       
+HISTORY /END FITS tape header "HISTORY" information                             
+HISTORY --------------------------------------------------------------------    
+HISTORY IMLOD OUTNAME ='FORNAX/NOBL '      OUTCLASS ='P     '                   
+HISTORY IMLOD OUTSEQ =    1     INTAPE = 1     OUTDISK= 2                       
+HISTORY IMLOD RELEASE = '15OCT92'                                               
+HISTORY AIPS   IMNAME='FORNAX      ' IMCLASS='I     ' IMSEQ=   1     /          
+HISTORY AIPS   USERNO=   51            /                                        
+HISTORY AIPS   CLEAN BMAJ=  3.8889E-03 BMIN=  3.8889E-03 BPA=    .00            
+HISTORY AIPS   CLEAN NITER=       21 PRODUCT=4   / POINTS                       
+HISTORY /END FITS tape header "HISTORY" information                             
+HISTORY --------------------------------------------------------------------    
+HISTORY IMLOD OUTNAME ='                                                        
+HISTORY IMLOD OUTSEQ =    0     INTAPE = 1     OUTDISK= 1                       
+HISTORY IMLOD INFILE = 'FITS2:FORNAXI                                   '       
+HISTORY IMLOD RELEASE = '15JUL94'                                               
+ORIGIN  = 'AIPSGorilla (NRAOCV IPX) 15JUL94'    /                               
+DATE    = '24/03/94'                    / File written on dd/mm/yy              
+HISTORY AIPS   IMNAME='FORNAX      ' IMCLASS='I     ' IMSEQ=   1     /          
+HISTORY AIPS   USERNO=  100            /                                        
+HISTORY AIPS   CLEAN BMAJ=  3.8889E-03 BMIN=  3.8889E-03 BPA=   0.00            
+HISTORY AIPS   CLEAN NITER=       21 PRODUCT=4   / POINTS                       

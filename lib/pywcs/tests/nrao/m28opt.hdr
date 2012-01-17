@@ -1,0 +1,214 @@
+SIMPLE  =                    T /
+BITPIX  =                   16 /
+NAXIS   =                    3 /
+NAXIS1  =                  558 /
+NAXIS2  =                  262 /
+NAXIS3  =                    1 /
+EXTEND  =                    T /Tables following main image
+BLOCKED =                    T /Tape may be blocked
+OBJECT  = 'NONE    '
+TELESCOP= '        '
+INSTRUME= '        '
+OBSERVER= '        '
+DATE-OBS= '        '
+DATE-MAP= '13/09/94'
+BSCALE  =    2.78159340659E-03 /REAL = TAPE * BSCALE + BZERO
+BZERO   =    1.08125000000E+02 /
+BUNIT   = '        '
+EPOCH   =      0.000000000E+00 /EPOCH OF RA DEC
+DATAMAX =      1.992500000E+02 /MAX PIXEL VALUE
+DATAMIN =      1.700000000E+01 /MIN PIXEL VALUE
+CTYPE1  = 'RA---ARC'
+CRVAL1  =    1.47927100003E+02 /
+CDELT1  =     -2.247777738E-04 /
+CRPIX1  =      3.015000000E+02 /
+CROTA1  =      0.000000000E+00 /
+CTYPE2  = 'DEC--ARC'
+CRVAL2  =    6.99079999924E+01 /
+CDELT2  =      2.273333375E-04 /
+CRPIX2  =      9.550000000E+01 /
+CROTA2  =      2.426000023E+01 /
+CTYPE3  = 'FREQ    '
+CRVAL3  =    6.67000032461E+14 /
+CDELT3  =      1.000000000E+00 /
+CRPIX3  =      1.000000000E+00 /
+CROTA3  =      0.000000000E+00 /
+HISTORY --------------------------------------------------------------------
+HISTORY /Begin "HISTORY" information found in fits tape header by IMLOD
+HISTORY BLOCKED =                    T /Tape may be blocked
+HISTORY --------------------------------------------------------------------
+HISTORY /Begin "HISTORY" information found in fits tape header by IMLOD
+HISTORY Created by fitstopgm.
+HISTORY /END FITS tape header "HISTORY" information
+HISTORY --------------------------------------------------------------------
+HISTORY IMLOD OUTNAME ='
+HISTORY IMLOD OUTSEQ =    0     INTAPE = 1     OUTDISK= 2
+HISTORY IMLOD INFILE = 'FITS2:M82BLUE.FITS                              '
+HISTORY IMLOD RELEASE = '15JUL94'
+HISTORY TRANS RELEASE ='15JUL94 '  /********* Start 23-MAR-1994   09:33:39
+HISTORY TRANS INNAME='M82 MW blue '   INCLASS='IMAP  '
+HISTORY TRANS INSEQ=    1   INDISK=  2
+HISTORY TRANS OUTNAME='M82 in blue '   OUTCLASS='TRANS '
+HISTORY TRANS OUTSEQ=    2   OUTDISK=  2
+HISTORY TRANS BLC=    1.,   1.,   1.,   1.,   1.,   1.,   1. / Input image
+HISTORY TRANS TRC=  847.,1292.,   1.,   1.,   1.,   1.,   1. / Input image
+HISTORY TRANS TRANCOD='-2-1
+HISTORY AXDEF INNAME='M82 in blue '   INCLASS='TRANS '
+HISTORY AXDEF INSEQ=    2   INDISK=  2
+HISTORY AXDEF CTYPE3  = 'X       '          / NEW Axis type
+HISTORY AXDEF CRVAL3  =  0.000000000E+00    / NEW Reference pixel value
+HISTORY AXDEF CDELT3  = -2.77778E-04        / NEW Axis increment
+HISTORY AXDEF CRPIX3  =     1.000           / NEW Reference pixel loc
+HISTORY AXDEF INNAME='M82 in blue '   INCLASS='TRANS '
+HISTORY AXDEF INSEQ=    2   INDISK=  2
+HISTORY AXDEF CTYPE1  = '        '          / OLD Axis type
+HISTORY AXDEF CRVAL1  =  0.000000000E+00    / OLD Reference pixel value
+HISTORY AXDEF CDELT1  = -1.00000E+00        / OLD Axis increment
+HISTORY AXDEF CRPIX1  =   647.000           / OLD Reference pixel loc
+HISTORY AXDEF CTYPE1  = 'X       '          / NEW Axis type
+HISTORY AXDEF CRVAL1  =  0.000000000E+00    / NEW Reference pixel value
+HISTORY AXDEF CDELT1  = -2.77778E-04        / NEW Axis increment
+HISTORY AXDEF CRPIX1  =     1.000           / NEW Reference pixel loc
+HISTORY AXDEF INNAME='M82 in blue '   INCLASS='TRANS '
+HISTORY AXDEF INSEQ=    2   INDISK=  2
+HISTORY AXDEF CTYPE2  = '        '          / OLD Axis type
+HISTORY AXDEF CRVAL2  =  0.000000000E+00    / OLD Reference pixel value
+HISTORY AXDEF CDELT2  = -1.00000E+00        / OLD Axis increment
+HISTORY AXDEF CRPIX2  =   425.000           / OLD Reference pixel loc
+HISTORY AXDEF CTYPE2  = 'Y       '          / NEW Axis type
+HISTORY AXDEF CRVAL2  =  0.000000000E+00    / NEW Reference pixel value
+HISTORY AXDEF CDELT2  =  2.77778E-04        / NEW Axis increment
+HISTORY AXDEF CRPIX2  =     1.000           / NEW Reference pixel loc
+HISTORY AXDEF INNAME='M82 in blue '   INCLASS='TRANS '
+HISTORY AXDEF INSEQ=    2   INDISK=  2
+HISTORY AXDEF CTYPE3  = 'X       '          / OLD Axis type
+HISTORY AXDEF CRVAL3  =  0.000000000E+00    / OLD Reference pixel value
+HISTORY AXDEF CDELT3  = -2.77778E-04        / OLD Axis increment
+HISTORY AXDEF CRPIX3  =     1.000           / OLD Reference pixel loc
+HISTORY AXDEF CTYPE3  = 'FREQ    '          / NEW Axis type
+HISTORY AXDEF CRVAL3  =  9.999999870E+14    / NEW Reference pixel value
+HISTORY AXDEF CDELT3  =  2.77778E-04        / NEW Axis increment
+HISTORY AXDEF CRPIX3  =     1.000           / NEW Reference pixel loc
+HISTORY AXDEF INNAME='M82 in blue '   INCLASS='TRANS '
+HISTORY AXDEF INSEQ=    2   INDISK=  2
+HISTORY AXDEF CTYPE3  = 'FREQ    '          / OLD Axis type
+HISTORY AXDEF CRVAL3  =  9.999999870E+14    / OLD Reference pixel value
+HISTORY AXDEF CDELT3  =  2.77778E-04        / OLD Axis increment
+HISTORY AXDEF CRPIX3  =     1.000           / OLD Reference pixel loc
+HISTORY AXDEF CTYPE3  = 'FREQ    '          / NEW Axis type
+HISTORY AXDEF CRVAL3  =  9.999999870E+14    / NEW Reference pixel value
+HISTORY AXDEF CDELT3  =  1.00000E+00        / NEW Axis increment
+HISTORY AXDEF CRPIX3  =     1.000           / NEW Reference pixel loc
+HISTORY AXDEF INNAME='M82 in blue '   INCLASS='TRANS '
+HISTORY AXDEF INSEQ=    2   INDISK=  2
+HISTORY AXDEF CTYPE1  = 'X       '          / OLD Axis type
+HISTORY AXDEF CRVAL1  =  0.000000000E+00    / OLD Reference pixel value
+HISTORY AXDEF CDELT1  = -2.77778E-04        / OLD Axis increment
+HISTORY AXDEF CRPIX1  =     1.000           / OLD Reference pixel loc
+HISTORY AXDEF CTYPE1  = 'X       '          / NEW Axis type
+HISTORY AXDEF CRVAL1  =  0.000000000E+00    / NEW Reference pixel value
+HISTORY AXDEF CDELT1  =  2.77778E-04        / NEW Axis increment
+HISTORY AXDEF CRPIX1  =     1.000           / NEW Reference pixel loc
+HISTORY AXDEF INNAME='M82 in blue '   INCLASS='TRANS '
+HISTORY AXDEF INSEQ=    2   INDISK=  2
+HISTORY AXDEF CTYPE1  = 'X       '          / OLD Axis type
+HISTORY AXDEF CRVAL1  =  0.000000000E+00    / OLD Reference pixel value
+HISTORY AXDEF CDELT1  =  2.77778E-04        / OLD Axis increment
+HISTORY AXDEF CRPIX1  =     1.000           / OLD Reference pixel loc
+HISTORY AXDEF CTYPE1  = 'RA---ARC'          / NEW Axis type
+HISTORY AXDEF CRVAL1  =  1.479284000E+02    / NEW Reference pixel value
+HISTORY AXDEF CDELT1  = -1.06583E-04        / NEW Axis increment
+HISTORY AXDEF CRPIX1  =   577.000           / NEW Reference pixel loc
+HISTORY AXDEF INNAME='M82 in blue '   INCLASS='TRANS '
+HISTORY AXDEF INSEQ=    2   INDISK=  2
+HISTORY AXDEF CTYPE2  = 'Y       '          / OLD Axis type
+HISTORY AXDEF CRVAL2  =  0.000000000E+00    / OLD Reference pixel value
+HISTORY AXDEF CDELT2  =  2.77778E-04        / OLD Axis increment
+HISTORY AXDEF CRPIX2  =     1.000           / OLD Reference pixel loc
+HISTORY AXDEF CTYPE2  = 'RA---ARC'          / NEW Axis type
+HISTORY AXDEF CRVAL2  =  6.992031002E+01    / NEW Reference pixel value
+HISTORY AXDEF CDELT2  =  1.13917E-04        / NEW Axis increment
+HISTORY AXDEF CRPIX2  =   502.000           / NEW Reference pixel loc
+HISTORY PUTHEAD CROTA2   =  0.00000E+00      / old
+HISTORY PUTHEAD CROTA2   =  2.40000E+01      / new
+HISTORY AXDEF INNAME='M82 in blue '   INCLASS='TRANS '
+HISTORY AXDEF INSEQ=    2   INDISK=  2
+HISTORY AXDEF CTYPE2  = 'RA---ARC'          / OLD Axis type
+HISTORY AXDEF CRVAL2  =  6.992031002E+01    / OLD Reference pixel value
+HISTORY AXDEF CDELT2  =  1.13917E-04        / OLD Axis increment
+HISTORY AXDEF CRPIX2  =   502.000           / OLD Reference pixel loc
+HISTORY AXDEF CTYPE2  = 'DEC--SIN'          / NEW Axis type
+HISTORY AXDEF CRVAL2  =  6.992031002E+01    / NEW Reference pixel value
+HISTORY AXDEF CDELT2  =  1.13917E-04        / NEW Axis increment
+HISTORY AXDEF CRPIX2  =   502.000           / NEW Reference pixel loc
+HISTORY AXDEF INNAME='M82 in blue '   INCLASS='TRANS '
+HISTORY AXDEF INSEQ=    2   INDISK=  2
+HISTORY AXDEF CTYPE2  = 'DEC--SIN'          / OLD Axis type
+HISTORY AXDEF CRVAL2  =  6.992031002E+01    / OLD Reference pixel value
+HISTORY AXDEF CDELT2  =  1.13917E-04        / OLD Axis increment
+HISTORY AXDEF CRPIX2  =   502.000           / OLD Reference pixel loc
+HISTORY AXDEF CTYPE2  = 'DEC--ARC'          / NEW Axis type
+HISTORY AXDEF CRVAL2  =  6.992031002E+01    / NEW Reference pixel value
+HISTORY AXDEF CDELT2  =  1.13917E-04        / NEW Axis increment
+HISTORY AXDEF CRPIX2  =   502.000           / NEW Reference pixel loc
+HISTORY PUTHEAD CROTA2   =  2.40000E+01      / old
+HISTORY PUTHEAD CROTA2   = -2.40000E+01      / new
+HISTORY PUTHEAD CROTA2   = -2.40000E+01      / old
+HISTORY PUTHEAD CROTA2   =  2.40000E+01      / new
+HISTORY PUTHEAD CROTA2   =  2.40000E+01      / old
+HISTORY PUTHEAD CROTA2   =  0.00000E+00      / new
+HISTORY PUTHEAD CROTA2   =  0.00000E+00      / old
+HISTORY PUTHEAD CROTA2   =  2.40000E+01      / new
+HISTORY PUTHEAD CRVAL3   =  9.999999870E+14  / old
+HISTORY PUTHEAD CRVAL3   =  6.670000325E+14  / new
+HISTORY PUTHEAD CROTA2   =  2.40000E+01      / old
+HISTORY PUTHEAD CROTA2   =  2.64000E+01      / new
+HISTORY PUTHEAD CDELT1   = -1.06583E-04      / old
+HISTORY PUTHEAD CDELT1   = -1.09861E-04      / new
+HISTORY PUTHEAD CDELT2   =  1.13917E-04      / old
+HISTORY PUTHEAD CDELT2   =  1.13667E-04      / new
+HISTORY PUTHEAD CDELT1   = -1.09861E-04      / old
+HISTORY PUTHEAD CDELT1   = -1.12389E-04      / new
+HISTORY PUTHEAD CROTA2   =  2.64000E+01      / old
+HISTORY PUTHEAD CROTA2   =  2.42600E+01      / new
+HISTORY PUTHEAD CRVAL1   =  1.479284000E+02  / old
+HISTORY PUTHEAD CRVAL1   =  1.479271000E+02  / new
+HISTORY PUTHEAD CRPIX1   =  5.77000E+02      / old
+HISTORY PUTHEAD CRPIX1   =  6.46000E+02      / new
+HISTORY PUTHEAD CRPIX2   =  5.02000E+02      / old
+HISTORY PUTHEAD CRPIX2   =  4.24000E+02      / new
+HISTORY PUTHEAD CRVAL2   =  6.992031002E+01  / old
+HISTORY PUTHEAD CRVAL2   =  6.990799999E+01  / new
+HISTORY SUBIM RELEASE ='15JUL94 '  /********* Start 25-MAR-1994   09:30:57
+HISTORY SUBIM INNAME='M82 in blue '   INCLASS='TRANS '
+HISTORY SUBIM INSEQ=    2   INDISK=  2
+HISTORY SUBIM INTYPE ='MA'      USERID=  103
+HISTORY SUBIM OUTNAME='M82 in blue '   OUTCLASS='SUBIM '
+HISTORY SUBIM OUTSEQ=    1   OUTDISK=  2
+HISTORY SUBIM BLC    =   45,  235,    1,    1,    1,    1,    1
+HISTORY SUBIM TRC    = 1159,  759,    1,    1,    1,    1,    1
+HISTORY SUBIM XINC   =    2      YINC =    2
+HISTORY SUBIM OPCODE = 'AVE '
+HISTORY AIPS   IMNAME='M82 in blue ' IMCLASS='SUBIM ' IMSEQ=   1     /
+HISTORY AIPS   USERNO=  103            /
+HISTORY /END FITS tape header "HISTORY" information
+HISTORY --------------------------------------------------------------------
+HISTORY IMLOD OUTNAME ='
+HISTORY IMLOD OUTSEQ =    0     INTAPE = 1     OUTDISK= 4
+HISTORY IMLOD INFILE = 'FITS2:M82BLUE.FITS                              '
+HISTORY IMLOD RELEASE = '15JAN95'
+HISTORY SUBIM RELEASE ='15JAN95 '  /********* Start 13-SEP-1994   12:59:44
+HISTORY SUBIM INNAME='M82 in blue '   INCLASS='SUBIM '
+HISTORY SUBIM INSEQ=    1   INDISK=  4
+HISTORY SUBIM INTYPE ='MA'      USERID=  103
+HISTORY SUBIM OUTNAME='M82         '   OUTCLASS='Blue  '
+HISTORY SUBIM OUTSEQ=    3   OUTDISK=  4
+HISTORY SUBIM BLC    =    1,    1,    1,    1,    1,    1,    1
+HISTORY SUBIM TRC    =  558,  262,    1,    1,    1,    1,    1
+HISTORY SUBIM XINC   =    1      YINC =    1
+HISTORY SUBIM OPCODE = '    '
+ORIGIN  = 'AIPSGorilla (NRAOCV IPX) 15JAN95'    /
+DATE    = '13/09/94'                    / File written on dd/mm/yy
+HISTORY AIPS   IMNAME='M82         ' IMCLASS='Blue  ' IMSEQ=   3     /
+HISTORY AIPS   USERNO=  103            /
+END

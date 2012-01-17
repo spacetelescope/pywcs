@@ -1,0 +1,134 @@
+SIMPLE  =                    T /                                                
+BITPIX  =                   16 /                                                
+NAXIS   =                    2 /                                                
+NAXIS1  =                  512 /                                                
+NAXIS2  =                  512 /                                                
+EXTEND  =                    T /Tables following main image                     
+BLOCKED =                    T /Tape may be blocked                             
+OBJECT  = 'NONE    '                                                            
+TELESCOP= '        '                                                            
+INSTRUME= '        '                                                            
+OBSERVER= '        '                                                            
+DATE-OBS= '        '                                                            
+DATE-MAP= '24/03/94'                                                            
+BSCALE  =    1.59240089202E-02 /REAL = TAPE * BSCALE + BZERO                    
+BZERO   =    5.16219848633E+02 /                                                
+BUNIT   = '        '                                                            
+EPOCH   =      0.000000000E+00 /EPOCH OF RA DEC                                 
+BLANK   =               -32768 / Blanked pixel tape value                       
+DATAMAX =      1.037890381E+03 /MAX PIXEL VALUE                                 
+DATAMIN =     -5.450668335E+00 /MIN PIXEL VALUE                                 
+CTYPE1  = 'RA---SIN'                                                            
+CRVAL1  =    5.01966661513E+01 /                                                
+CDELT1  =     -1.944444492E-03 /                                                
+CRPIX1  =      2.560000000E+02 /                                                
+CROTA1  =      0.000000000E+00 /                                                
+CTYPE2  = 'DEC--SIN'                                                            
+CRVAL2  =   -3.73856168315E+01 /                                                
+CDELT2  =      1.944444492E-03 /                                                
+CRPIX2  =      2.570000000E+02 /                                                
+CROTA2  =      0.000000000E+00 /                                                
+HISTORY --------------------------------------------------------------------    
+HISTORY /Begin "HISTORY" information found in fits tape header by IMLOD         
+HISTORY BLOCKED =                    T /TAPE MAY BE BLOCKED                     
+HISTORY /--------------------------------------------------------------------   
+HISTORY /BEGIN "HISTORY" INFORMATION FOUND IN FITS TAPE HEADER BY IMLOD         
+HISTORY /END FITS TAPE HEADER "HISTORY" INFORMATION                             
+HISTORY /--------------------------------------------------------------------   
+HISTORY IMLOD OUTNAME ='NGC1316     '      OUTCLASS ='OPT   '                   
+HISTORY IMLOD OUTSEQ =    1     INTAPE = 3     OUTDISK= 1                       
+HISTORY IMLOD RELEASE = '15APR89'                                               
+HISTORY TRANS RELEASE ='15APR89 '  /********* START 17-FEB-1989   08:47:28      
+HISTORY TRANS INNAME='NGC1316     '   INCLASS='OPT   '                          
+HISTORY TRANS INSEQ=    1   INDISK=  1                                          
+HISTORY TRANS OUTNAME='NGC1316/G   '   OUTCLASS='OPT   '                        
+HISTORY TRANS OUTSEQ=    1   OUTDISK=  1                                        
+HISTORY TRANS BLC=    1.,   1.,   1.,   1.,   1.,   1.,   1. / INPUT IMAGE      
+HISTORY TRANS TRC= 2001.,1401.,   1.,   1.,   1.,   1.,   1. / INPUT IMAGE      
+HISTORY TRANS TRANCOD='1-2           ' / OUTPUT AXIS ORDER                      
+HISTORY CNTR   VERSION=  1  / PLOT FILE CREATED 17-FEB-1989 14:03:52            
+HISTORY CNTR   VERSION=  2  / PLOT FILE CREATED 17-FEB-1989 14:07:08            
+HISTORY CNTR   VERSION=  3  / PLOT FILE CREATED 17-FEB-1989 14:08:35            
+HISTORY PUTHEAD CTYPE1   ='        '         / OLD                              
+HISTORY PUTHEAD CTYPE1   ='RA--TAN '         / NEW                              
+HISTORY PUTHEAD CTYPE1   ='RA--TAN '         / OLD                              
+HISTORY PUTHEAD CTYPE1   ='RA---TAN'         / NEW                              
+HISTORY PUTHEAD CTYPE2   ='        '         / OLD                              
+HISTORY PUTHEAD CTYPE2   ='DEC--TAN'         / NEW                              
+HISTORY PUTHEAD CRVAL1   =  0.000000000E+00  / OLD                              
+HISTORY PUTHEAD CRVAL1   =  5.019667053E+01  / NEW                              
+HISTORY PUTHEAD CRVAL2   =  0.000000000E+00  / OLD                              
+HISTORY PUTHEAD CRVAL2   = -3.738555908E+01  / NEW                              
+HISTORY PUTHEAD CRPIX1   =  1.00000E+03      / OLD                              
+HISTORY PUTHEAD CRPIX1   =  7.02000E+02      / NEW                              
+HISTORY PUTHEAD CRPIX1   =  7.02000E+02      / OLD                              
+HISTORY PUTHEAD CRPIX1   =  9.97000E+02      / NEW                              
+HISTORY PUTHEAD CDELT1   =  1.00000E+00      / OLD                              
+HISTORY PUTHEAD CDELT1   =  3.05600E-02      / NEW                              
+HISTORY PUTHEAD CDELT2   = -1.00000E+00      / OLD                              
+HISTORY PUTHEAD CDELT2   =  3.05600E-02      / NEW                              
+HISTORY PUTHEAD CDELT2   =  3.05600E-02      / OLD                              
+HISTORY PUTHEAD CDELT2   =  5.09333E-04      / NEW                              
+HISTORY PUTHEAD CDELT2   =  5.09333E-04      / OLD                              
+HISTORY PUTHEAD CDELT2   =  5.09333E-04      / NEW                              
+HISTORY PUTHEAD CDELT1   =  3.05600E-02      / OLD                              
+HISTORY PUTHEAD CDELT1   = -5.09333E-04      / NEW                              
+HISTORY PUTHEAD CROTA1   =  0.00000E+00      / OLD                              
+HISTORY PUTHEAD CROTA1   =  3.00000E-01      / NEW                              
+HISTORY PUTHEAD CROTA1   =  3.00000E-01      / OLD                              
+HISTORY PUTHEAD CROTA1   =  0.00000E+00      / NEW                              
+HISTORY PUTHEAD CROTA1   =  0.00000E+00      / OLD                              
+HISTORY PUTHEAD CROTA1   =  3.00000E-01      / NEW                              
+HISTORY PUTHEAD CROTA1   =  3.00000E-01      / OLD                              
+HISTORY PUTHEAD CROTA1   =  5.00000E+00      / NEW                              
+HISTORY PUTHEAD CROTA2   =  0.00000E+00      / OLD                              
+HISTORY PUTHEAD CROTA2   =  5.00000E+00      / NEW                              
+HISTORY PUTHEAD CROTA1   =  5.00000E+00      / OLD                              
+HISTORY PUTHEAD CROTA1   =  0.00000E+00      / NEW                              
+HISTORY PUTHEAD CROTA1   =  0.00000E+00      / OLD                              
+HISTORY PUTHEAD CROTA1   =  0.00000E+00      / NEW                              
+HISTORY PUTHEAD CROTA2   =  5.00000E+00      / OLD                              
+HISTORY PUTHEAD CROTA2   =  0.00000E+00      / NEW                              
+HISTORY PUTHEAD CROTA1   =  0.00000E+00      / OLD                              
+HISTORY PUTHEAD CROTA1   =  1.00000E+00      / NEW                              
+HISTORY PUTHEAD CROTA1   =  1.00000E+00      / OLD                              
+HISTORY PUTHEAD CROTA1   =  0.00000E+00      / NEW                              
+HISTORY PUTHEAD CROTA2   =  0.00000E+00      / OLD                              
+HISTORY PUTHEAD CROTA2   =  1.00000E+00      / NEW                              
+HISTORY PUTHEAD CROTA2   =  1.00000E+00      / OLD                              
+HISTORY PUTHEAD CROTA2   =  3.00000E-01      / NEW                              
+HISTORY AIPS   IMNAME='NGC1316/G   ' IMCLASS='OPT   ' IMSEQ=   1     /          
+HISTORY AIPS   USERNO=   51            /                                        
+HISTORY /END FITS tape header "HISTORY" information                             
+HISTORY --------------------------------------------------------------------    
+HISTORY IMLOD OUTNAME ='                                                        
+HISTORY IMLOD OUTSEQ =    0     INTAPE = 1     OUTDISK= 3                       
+HISTORY IMLOD RELEASE = '15JUL94'                                               
+HISTORY SUBIM RELEASE ='15JUL94 '  /********* Start 24-MAR-1994   10:58:33      
+HISTORY SUBIM INNAME='NGC1316/G   '   INCLASS='OPT   '                          
+HISTORY SUBIM INSEQ=    1   INDISK=  1                                          
+HISTORY SUBIM INTYPE ='MA'      USERID=  100                                    
+HISTORY SUBIM OUTNAME='NGC1316/G   '   OUTCLASS='SMOOTH'                        
+HISTORY SUBIM OUTSEQ=    1   OUTDISK=  1                                        
+HISTORY SUBIM BLC    =    1,    1,    1,    1,    1,    1,    1                 
+HISTORY SUBIM TRC    = 2001, 1401,    1,    1,    1,    1,    1                 
+HISTORY SUBIM XINC   =    4      YINC =    4                                    
+HISTORY SUBIM OPCODE = 'AVE '                                                   
+HISTORY HGEOM RELEASE ='15JUL94 '  /********* Start 24-MAR-1994   10:59:29      
+HISTORY HGEOM INNAME='NGC1316/G   '   INCLASS='SMOOTH'                          
+HISTORY HGEOM INSEQ=    1   INDISK=  1                                          
+HISTORY HGEOM IN2NAME='FORNAX      '   IN2CLASS='I     '                        
+HISTORY HGEOM IN2SEQ=    2   IN2DISK=  1                                        
+HISTORY HGEOM OUTNAME='            '   OUTCLASS='Optic '                        
+HISTORY HGEOM OUTSEQ=    1   OUTDISK=  1                                        
+HISTORY HGEOM BLC =    1,    1,   1,   1,   1,   1,   1                         
+HISTORY HGEOM TRC =  501,  351,   1,   1,   1,   1,   1                         
+HISTORY HGEOM IMSIZE =  512,  512          / Output image size                  
+HISTORY HGEOM  / Interpolation order used was BiCubic                           
+HISTORY HGEOM  / Indeterminate pixels filled with magic values                  
+HISTORY HGEOM  /      74383 Pixels blanked due to memory limits or geometry     
+HISTORY HGEOM  /          0 Pixels blanked due to input blanked pixels          
+ORIGIN  = 'AIPSGorilla (NRAOCV IPX) 15JUL94'    /                               
+DATE    = '24/03/94'                    / File written on dd/mm/yy              
+HISTORY AIPS   IMNAME='NGC1316/G   ' IMCLASS='Optic ' IMSEQ=   1     /          
+HISTORY AIPS   USERNO=  100            /                                        

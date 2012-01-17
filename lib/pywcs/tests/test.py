@@ -9,14 +9,14 @@ import pywcs
 
 ROOT_DIR = None
 
-def setup():
+def setup_module():
     global ROOT_DIR
 
     # do not use __file__ here - we want to find the data files that
     # belong to the pywcs that we are testing, even if we are not running
     # this test from the installed copy of this file.  Use pywcs.__file__
-    ROOT_DIR = os.path.dirname(pywcs.__file__) + "/tests"
-
+    ROOT_DIR = os.path.join(os.path.dirname(pywcs.__file__), "tests")
+    
 
 # test_maps() is a generator
 def test_maps():
@@ -45,7 +45,7 @@ def test_maps():
 
     # get the list of the hdr files that we want to test
     hdr_file_list = [ x for x in glob.glob(os.path.join(ROOT_DIR, "maps", "*.hdr")) ]
-
+        
     # actually perform a test for each one
     for filename in hdr_file_list :
 
@@ -127,6 +127,57 @@ def test_spectra():
         # b.t.w.  If this assert happens, nose reports one more test
         # than it would have otherwise.
 
+
+# test_nraos() is a generator
+def test_nrao():
+
+    # test_nrao() is the function that is called to perform the generated test 
+    def test_nrao_file(filename):
+
+        # the test parameter is the base name of the file to use; find
+        # the file in the installed pywcs test directory
+        filename = os.path.join(ROOT_DIR, "nrao", filename)
+
+        fd = open(filename, 'rb')
+        header = fd.read()
+        fd.close()
+
+        wcs = pywcs.WCS(header)
+        wcs.wcs.set()
+
+
+    # get the list of the hdr files that we want to test
+    hdr_file_list = [ x for x in glob.glob(os.path.join(ROOT_DIR, "nrao", "*.hdr")) ]
+        
+    # actually perform a test for each one
+    for filename in hdr_file_list :
+
+        # use the base name of the file, because everything we yield
+        # will show up in the test name in the pandokia report
+        filename = os.path.basename( filename )
+
+        # yield a function name and parameters to make a generated test
+        yield test_nrao_file, filename
+    
+    # AFTER we tested with every file that we found, check to see that we
+    # actually have the list we expect.  If N=0, we will not have performed
+    # any tests at all.  If N < n_data_files, we are missing some files,
+    # so we will have skipped some tests.  Without this check, both cases
+    # happen silently!
+
+    # how many do we expect to see?
+    n_data_files = 6
+
+    if len(hdr_file_list) != n_data_files :
+        assert False, ( 
+            "test_nraos has wrong number data files: found %d, expected "
+            " %d, looking in %s" % (
+                len(hdr_file_list), n_data_files, ROOT_DIR
+                )
+            )
+        # b.t.w.  If this assert happens, nose reports one more test
+        # than it would have otherwise.
+        
 
 def test_units():
     u = pywcs.UnitConverter("log(MHz)", "ln(Hz)")
