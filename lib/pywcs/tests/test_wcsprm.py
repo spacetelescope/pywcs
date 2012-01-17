@@ -16,7 +16,7 @@ def b(s):
 ROOT_DIR = None
 def setup():
     global ROOT_DIR
-    ROOT_DIR = os.path.dirname(__file__)
+    ROOT_DIR = os.path.join(os.path.dirname(pywcs.__file__), "tests")
 
 def test_alt():
     w = _pywcs._Wcsprm()
