@@ -638,13 +638,12 @@ PyWcsprm_fix(
     const char* name;
     const int index;
   };
-  const struct message_map_entry message_map[NWCSFIX] = {
+  const struct message_map_entry message_map[5] = {
     {"datfix", DATFIX},
     {"unitfix", UNITFIX},
     {"celfix", CELFIX},
     {"spcfix", SPCFIX},
     {"cylfix", CYLFIX},
-    {NULL}
   };
   const char* keywords[] = {"translate_units", "naxis", NULL};
 
@@ -678,7 +677,7 @@ PyWcsprm_fix(
     naxis = (int*)PyArray_DATA(naxis_array);
   }
 
-  /* TODO: Use wcsfixi */
+  memset(err, 0, sizeof(struct wcserr) * NWCSFIX);
   wcsprm_python2c(&self->x);
   status = wcsfixi(ctrl, naxis, &self->x, stat, err);
   wcsprm_c2python(&self->x);
@@ -694,12 +693,16 @@ PyWcsprm_fix(
 
   for (i = 0; i < 5; ++i) {
     msg_index = stat[message_map[i].index];
-    if (msg_index > 0 && msg_index < 11) {
-      message = err[message_map[i].index].msg;
-    } else if (msg_index == 0) {
-      message = "Success";
-    } else {
-      message = "No change";
+    message = err[message_map[i].index].msg;
+    if (message == NULL || message[0] == 0) {
+      if (msg_index == FIXERR_SUCCESS) {
+        message = "Success";
+      } else if (msg_index == FIXERR_NO_CHANGE) {
+        message = "No change";
+      } else if (msg_index == FIXERR_UNITS_ALIAS &&
+                 message_map[i].index == CYLFIX){
+        message = "No change";
+      }
     }
     #if PY3K
     subresult = PyUnicode_FromString(message);

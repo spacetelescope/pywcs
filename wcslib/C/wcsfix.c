@@ -61,7 +61,8 @@ const char *wcsfix_errmsg[] = {
   "Ill-conditioned coordinate transformation parameters",
   "All of the corner pixel coordinates are invalid",
   "Could not determine reference pixel coordinate",
-  "Could not determine reference pixel value"};
+  "Could not determine reference pixel value",
+};
 
 /* Convenience macro for invoking wcserr_set(). */
 #define WCSFIX_ERRMSG(status) WCSERR_SET(status), wcsfix_errmsg[status]
@@ -114,28 +115,30 @@ int wcsfixi(int ctrl, const int naxis[], struct wcsprm *wcs, int stat[],
 
   if ((stat[CDFIX] = cdfix(wcs)) > 0) {
     status = 1;
+    wcserr_copy(wcs->err, info+CDFIX);
   }
-  wcserr_copy(wcs->err, info+CDFIX);
 
   if ((stat[DATFIX] = datfix(wcs)) > 0) {
     status = 1;
+    wcserr_copy(wcs->err, info+DATFIX);
   }
-  wcserr_copy(wcs->err, info+DATFIX);
 
-  if ((stat[UNITFIX] = unitfix(ctrl, wcs)) > 0) {
+  stat[UNITFIX] = unitfix(ctrl, wcs);
+  if (stat[UNITFIX] > 0 ||
+      stat[UNITFIX] == FIXERR_UNITS_ALIAS) {
     status = 1;
+    wcserr_copy(wcs->err, info+UNITFIX);
   }
-  wcserr_copy(wcs->err, info+UNITFIX);
 
   if ((stat[CELFIX] = celfix(wcs)) > 0) {
     status = 1;
+    wcserr_copy(wcs->err, info+CELFIX);
   }
-  wcserr_copy(wcs->err, info+CELFIX);
 
   if ((stat[SPCFIX] = spcfix(wcs)) > 0) {
     status = 1;
+    wcserr_copy(wcs->err, info+SPCFIX);
   }
-  wcserr_copy(wcs->err, info+SPCFIX);
 
   if (naxis) {
     if ((stat[CYLFIX] = cylfix(naxis, wcs)) > 0) {
@@ -143,7 +146,7 @@ int wcsfixi(int ctrl, const int naxis[], struct wcsprm *wcs, int stat[],
     }
     wcserr_copy(wcs->err, info+CYLFIX);
   } else {
-    stat[CYLFIX] = -2;
+    stat[CYLFIX] = FIXERR_NO_CHANGE;
     wcserr_copy(0x0, info+CYLFIX);
   }
 
@@ -382,8 +385,6 @@ int unitfix(int ctrl, struct wcsprm *wcs)
     k = strlen(msg) - 2;
     msg[k] = '\0';
     wcserr_set(WCSERR_SET(FIXERR_UNITS_ALIAS), msg);
-
-    status = FIXERR_SUCCESS;
   }
 
   return status;
