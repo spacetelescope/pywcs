@@ -318,12 +318,13 @@ PySip_get_a(
 
   npy_intp dims[2];
 
+  if (self->x.a == NULL) {
+    Py_INCREF(Py_None);
+    return Py_None;
+  }
+
   dims[0] = (npy_intp)self->x.a_order + 1;
   dims[1] = (npy_intp)self->x.a_order + 1;
-
-  if (is_null(self->x.a)) {
-    return NULL;
-  }
 
   return get_double_array("a", self->x.a, 2, dims, (PyObject*)self);
 }
@@ -335,12 +336,13 @@ PySip_get_b(
 
   npy_intp dims[2];
 
+  if (self->x.b == NULL) {
+    Py_INCREF(Py_None);
+    return Py_None;
+  }
+
   dims[0] = (npy_intp)self->x.b_order + 1;
   dims[1] = (npy_intp)self->x.b_order + 1;
-
-  if (is_null(self->x.b)) {
-    return NULL;
-  }
 
   return get_double_array("b", self->x.b, 2, dims, (PyObject*)self);
 }
@@ -352,12 +354,13 @@ PySip_get_ap(
 
   npy_intp dims[2];
 
+  if (self->x.ap == NULL) {
+    Py_INCREF(Py_None);
+    return Py_None;
+  }
+
   dims[0] = (npy_intp)self->x.ap_order + 1;
   dims[1] = (npy_intp)self->x.ap_order + 1;
-
-  if (is_null(self->x.ap)) {
-    return NULL;
-  }
 
   return get_double_array("ap", self->x.ap, 2, dims, (PyObject*)self);
 }
@@ -369,12 +372,13 @@ PySip_get_bp(
 
   npy_intp dims[2];
 
+  if (self->x.bp == NULL) {
+    Py_INCREF(Py_None);
+    return Py_None;
+  }
+
   dims[0] = (npy_intp)self->x.bp_order + 1;
   dims[1] = (npy_intp)self->x.bp_order + 1;
-
-  if (is_null(self->x.bp)) {
-    return NULL;
-  }
 
   return get_double_array("bp", self->x.bp, 2, dims, (PyObject*)self);
 }
