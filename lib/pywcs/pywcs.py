@@ -416,10 +416,10 @@ naxis kwarg.
         det2im1 = self.det2im1
         det2im2 = self.det2im2
         if det2im1 is not None and det2im2 is None:
-            hdulist[0].header['AXISCORR'] = 1
+            hdulist[0].header.update('AXISCORR', 1)
             det2im = det2im1
         elif det2im1 is None and det2im2 is not None:
-            hdulist[0].header['AXISCORR'] = 0
+            hdulist[0].header.update('AXISCORR', 0)
             det2im = det2im2
         elif det2im1 is None and det2im2 is None:
             return
@@ -429,12 +429,12 @@ naxis kwarg.
         image = pyfits.ImageHDU(det2im.data[0], name='D2IMARR')
         header = image.header
 
-        header['CRPIX1'] = det2im.crpix[0]
-        header['CRPIX2'] = det2im.crpix[1]
-        header['CRVAL1'] = det2im.crval[0]
-        header['CRVAL2'] = det2im.crval[1]
-        header['CDELT1'] = det2im.cdelt[0]
-        header['CDELT2'] = det2im.cdelt[1]
+        header.update('CRPIX1', det2im.crpix[0])
+        header.update('CRPIX2', det2im.crpix[1])
+        header.update('CRVAL1', det2im.crval[0])
+        header.update('CRVAL2', det2im.crval[1])
+        header.update('CDELT1', det2im.cdelt[0])
+        header.update('CDELT2', det2im.cdelt[1])
 
         hdulist.append(image)
 
@@ -515,19 +515,21 @@ naxis kwarg.
             if cpdis is None:
                 return
 
-            hdulist[0].header['%s%d' % (dist, num)] = 'LOOKUP'
-            hdulist[0].header['%s%d.EXTVER' % (d_kw, num)] = len(hdulist)
-            hdulist[0].header['%s%d.AXIS.%d' % (d_kw, num, num)] = num
+            hdulist[0].header.update('%s%d' % (dist, num), 'LOOKUP')
+            hdulist[0].header.update('%s%d.EXTVER' % (d_kw, num),
+                                     len(hdulist))
+            hdulist[0].header.update('%s%d.AXIS.%d' % (d_kw, num, num),
+                                     num)
 
             image = pyfits.ImageHDU(cpdis.data, name='WCSDVARR')
             header = image.header
 
-            header['CRPIX1'] = cpdis.crpix[0]
-            header['CRPIX2'] = cpdis.crpix[1]
-            header['CRVAL1'] = cpdis.crval[0]
-            header['CRVAL2'] = cpdis.crval[1]
-            header['CDELT1'] = cpdis.cdelt[0]
-            header['CDELT2'] = cpdis.cdelt[1]
+            header.update('CRPIX1', cpdis.crpix[0])
+            header.update('CRPIX2', cpdis.crpix[1])
+            header.update('CRVAL1', cpdis.crval[0])
+            header.update('CRVAL2', cpdis.crval[1])
+            header.update('CDELT1', cpdis.cdelt[0])
+            header.update('CDELT2', cpdis.cdelt[1])
 
             hdulist.append(image)
 
@@ -1107,8 +1109,8 @@ naxis kwarg.
             header = pyfits.Header()
 
         if self.sip is not None:
-            keywords = self._write_sip_kw()
-            header.update(keywords)
+            for key, val in self._write_sip_kw().items():
+                header.update(key, val)
 
         return header
 
