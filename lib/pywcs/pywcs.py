@@ -61,9 +61,12 @@ together in a pipeline:
 from __future__ import division # confidence high
 
 # stdlib
-import copy
-import io
 import sys
+import copy
+if sys.version_info[0:2] >= (2, 6):
+    from io import BytesIO
+else:
+    from cStringIO import StringIO as BytesIO
 
 # third-party
 import numpy as np
@@ -1132,7 +1135,7 @@ naxis kwarg.
 
         hdulist = self.to_fits(relax=True)
 
-        buffer = io.BytesIO()
+        buffer = BytesIO()
         hdulist.writeto(buffer)
 
         return (_unpickle_wcs, (self.__class__, self.__dict__, buffer.getvalue(),))
@@ -1363,7 +1366,7 @@ def _unpickle_wcs(cls, dct, fits_data):
     self = cls.__new__(cls)
     self.__dict__.update(dct)
 
-    buffer = io.BytesIO(fits_data)
+    buffer = BytesIO(fits_data)
     hdulist = pyfits.open(buffer)
 
     WCS.__init__(self, hdulist[0].header, hdulist)
