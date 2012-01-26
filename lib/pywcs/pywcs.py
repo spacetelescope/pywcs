@@ -61,6 +61,7 @@ together in a pipeline:
 from __future__ import division # confidence high
 
 # stdlib
+import os
 import sys
 import copy
 if sys.version_info[0:2] >= (2, 6):
@@ -235,7 +236,12 @@ class WCS(WCSBase):
             keysel_flags = _parse_keysel(keysel)
 
             if isinstance(header, string_types):
-                header_string = header
+                if HAS_PYFITS and os.path.exists(header):
+                    hdulist = pyfits.open(header)
+                    header = hdulist[0].header
+                    header_string = repr(header.ascard)
+                else:
+                    header_string = header
             elif HAS_PYFITS:
                 assert isinstance(header, pyfits.Header)
                 header_string = repr(header.ascard)
