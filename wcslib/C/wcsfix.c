@@ -273,8 +273,6 @@ int datfix(struct wcsprm *wcs)
           sprintf(dateobs+19, ".%.3d", msec%1000);
         }
       }
-
-      return FIXERR_SUCCESS;
     }
 
   } else {
@@ -382,7 +380,7 @@ int datfix(struct wcsprm *wcs)
 
   if (strncmp(orig_dateobs, dateobs, 72)) {
     return wcserr_set(
-      WCSERR_SET(FIXERR_SUCCESS),
+      WCSERR_SET(FIXERR_DATE_FIX),
       "Fixed '%s' to '%s'", orig_dateobs, dateobs);
   }
 
@@ -550,6 +548,8 @@ int celfix(struct wcsprm *wcs)
 int spcfix(struct wcsprm *wcs)
 
 {
+  static const char *function = "spcfix";
+
   char ctype[9], specsys[9];
   int  i, status;
   struct wcserr **err;
@@ -580,16 +580,17 @@ int spcfix(struct wcsprm *wcs)
     return status;
   }
 
-  if (strncmp(wcs->ctype[i], ctype, 9) || wcs->specsys[1] == '\0') {
+  if (strncmp(wcs->ctype[i], ctype, 9) ||
+      (wcs->specsys[1] == '\0' && strncmp(wcs->specsys, specsys, 9))) {
     if (wcs->specsys[1] == '\0') {
       strncpy(wcs->specsys, specsys, 9);
       wcserr_set(
-        WCSFIX_ERRSET(FIXERR_SUCCESS),
+        WCSERR_SET(FIXERR_SPC_UPDATE),
         "Changed CTYPE%d from '%s' to '%s' and SPECSYS from '%s' to '%s'",
         i+1, wcs->ctype[i], ctype, wcs->specsys, specsys);
     } else {
       wcserr_set(
-        WCSFIX_ERRSET(FIXERR_SUCCESS),
+        WCSERR_SET(FIXERR_SPC_UPDATE),
         "Changed CTYPE%d from '%s' to '%s'",
         i+1, wcs->ctype[i], ctype);
     }
@@ -598,9 +599,11 @@ int spcfix(struct wcsprm *wcs)
 
     wcsutil_null_fill(72, wcs->ctype[i]);
     wcsutil_null_fill(72, wcs->specsys);
+
+    return FIXERR_SUCCESS;
   }
 
-  return FIXERR_SUCCESS;
+  return FIXERR_NO_CHANGE;
 }
 
 /*--------------------------------------------------------------------------*/
