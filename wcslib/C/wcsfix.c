@@ -224,6 +224,7 @@ int datfix(struct wcsprm *wcs)
 {
   static const char *function = "datfix";
 
+  char orig_dateobs[72];
   char *dateobs;
   int  day, dd, hour = 0, jd, minute = 0, month, msec, n4, year;
   double mjdobs, sec = 0.0, t;
@@ -233,6 +234,7 @@ int datfix(struct wcsprm *wcs)
   err = &(wcs->err);
 
   dateobs = wcs->dateobs;
+  strncpy(orig_dateobs, dateobs, 72);
   if (dateobs[0] == '\0') {
     if (undefined(wcs->mjdobs)) {
      /* No date information was provided. */
@@ -378,7 +380,13 @@ int datfix(struct wcsprm *wcs)
     }
   }
 
-  return FIXERR_SUCCESS;
+  if (strncmp(orig_dateobs, dateobs, 72)) {
+    return wcserr_set(
+      WCSERR_SET(FIXERR_SUCCESS),
+      "Fixed '%s' to '%s'", orig_dateobs, dateobs);
+  }
+
+  return FIXERR_NO_CHANGE;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -544,9 +552,11 @@ int spcfix(struct wcsprm *wcs)
 {
   char ctype[9], specsys[9];
   int  i, status;
+  struct wcserr **err;
 
   /* Initialize if required. */
   if (wcs == 0x0) return FIXERR_NULL_POINTER;
+  err = &(wcs->err);
   if (wcs->flag != WCSSET) {
     if ((status = wcsset(wcs))) return status;
   }
@@ -570,11 +580,25 @@ int spcfix(struct wcsprm *wcs)
     return status;
   }
 
-  strcpy(wcs->ctype[i], ctype);
-  if (wcs->specsys[1] == '\0') strcpy(wcs->specsys, specsys);
+  if (strncmp(wcs->ctype[i], ctype, 9) || wcs->specsys[1] == '\0') {
+    if (wcs->specsys[1] == '\0') {
+      strncpy(wcs->specsys, specsys, 9);
+      wcserr_set(
+        WCSFIX_ERRSET(FIXERR_SUCCESS),
+        "Changed CTYPE%d from '%s' to '%s' and SPECSYS from '%s' to '%s'",
+        i+1, wcs->ctype[i], ctype, wcs->specsys, specsys);
+    } else {
+      wcserr_set(
+        WCSFIX_ERRSET(FIXERR_SUCCESS),
+        "Changed CTYPE%d from '%s' to '%s'",
+        i+1, wcs->ctype[i], ctype);
+    }
 
-  wcsutil_null_fill(72, wcs->ctype[i]);
-  wcsutil_null_fill(72, wcs->specsys);
+    strcpy(wcs->ctype[i], ctype);
+
+    wcsutil_null_fill(72, wcs->ctype[i]);
+    wcsutil_null_fill(72, wcs->specsys);
+  }
 
   return FIXERR_SUCCESS;
 }
