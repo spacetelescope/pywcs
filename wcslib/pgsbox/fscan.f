@@ -1,7 +1,7 @@
 *=======================================================================
 *
-* PGSBOX 4.8 - draw curvilinear coordinate axes for PGPLOT.
-* Copyright (C) 1997-2011, Mark Calabretta
+* PGSBOX 4.9 - draw curvilinear coordinate axes for PGPLOT.
+* Copyright (C) 1997-2012, Mark Calabretta
 *
 * This file is part of PGSBOX.
 *
@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: fscan.f,v 4.8.1.1 2011/08/15 08:07:07 cal103 Exp cal103 $
+* $Id: fscan.f,v 4.9 2012/01/24 05:40:30 cal103 Exp $
 *=======================================================================
 *
 * FSCAN defines an azimuth/frequency coordinate system for PGSBOX.

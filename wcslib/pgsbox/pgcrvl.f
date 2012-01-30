@@ -1,5 +1,5 @@
 *=======================================================================
-*                              PGSBOX 4.8
+*                              PGSBOX 4.9
 *-----------------------------------------------------------------------
 *
 * ATTENTION!
@@ -21,7 +21,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: pgcrvl.f,v 4.8.1.1 2011/08/15 08:07:07 cal103 Exp cal103 $
+* $Id: pgcrvl.f,v 4.9 2012/01/24 05:40:30 cal103 Exp $
 *=======================================================================
       SUBROUTINE PGCRVL (AXEN, IDENTS, OPT, LABCTL, LABDEN, CI, GCODE,
      :   TIKLEN, NG1, GRID1, NG2, GRID2, DOEQ, NLFUNC, NLC, NLI, NLD,

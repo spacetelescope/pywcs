@@ -1,7 +1,7 @@
 /*============================================================================
 
-  WCSLIB 4.8 - an implementation of the FITS WCS standard.
-  Copyright (C) 1995-2011, Mark Calabretta
+  WCSLIB 4.9 - an implementation of the FITS WCS standard.
+  Copyright (C) 1995-2012, Mark Calabretta
 
   This file is part of WCSLIB.
 
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: twcsfix.c,v 4.8.1.2 2011/11/17 03:47:56 cal103 Exp cal103 $
+  $Id: twcsfix.c,v 4.9 2012/01/24 05:40:29 cal103 Exp $
 *=============================================================================
 *
 * twcsfix tests the translation routines for non-standard WCS keyvalues, the
@@ -98,7 +98,14 @@ int main()
   wcsprintf(")\n");
 
   if (status) {
-    wcsprintf("wcsfix error %d", status);
+    for (i = 0; i < NWCSFIX; i++) {
+      if (info[i].status) {
+        wcsprintf("\n");
+        wcserr_prt(info+i, 0x0);
+      }
+    }
+
+    wcsprintf("\nwcsfix error %d", status);
     return 1;
   }
 
@@ -113,6 +120,7 @@ int main()
     wcserr_prt(wcs.err, 0x0);
   }
 
+  wcsprintf("\n");
   wcsprt(&wcs);
   wcsprintf("\n------------------------------------"
             "------------------------------------\n");

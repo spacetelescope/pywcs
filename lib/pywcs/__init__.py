@@ -83,4 +83,4 @@ if sys.version_info[0] >= 3:
 else:
     from pywcs import *
 
-__version__ = "1.11-4.8.4"
+__version__ = "1.11-4.9"
