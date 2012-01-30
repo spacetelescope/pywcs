@@ -6,6 +6,7 @@ CONTACT = "Michael Droettboom"
 EMAIL = "mdroe@stsci.edu"
 
 from distutils.core import setup, Extension
+from distutils.dist import Distribution
 import glob
 from os.path import join
 import os.path
@@ -233,6 +234,100 @@ PYWCS_SOURCES = [join('src', x) for x in PYWCS_SOURCES]
 
 ######################################################################
 # DISTUTILS SETUP
+
+def get_distutils_option(option, commands):
+    """ Returns the value of the given distutils option.
+
+    Parameters
+    ----------
+    option : str
+        The name of the option
+
+    commands : list of str
+        The list of commands on which this option is available
+
+    Returns
+    -------
+    val : str or None
+        the value of the given distutils option. If the option is not set,
+        returns None.
+    """
+    # Pre-parse the Distutils command-line options and config files to
+    # if the option is set.
+    dist = Distribution()
+    try:
+        dist.parse_config_files()
+        dist.parse_command_line()
+    except DistutilsError:
+        # Let distutils handle this itself
+        return None
+    except AttributeError:
+        # This seems to get thrown for ./setup.py --help
+        return None
+
+    for cmd in commands:
+        if cmd in dist.commands:
+            break
+    else:
+        return None
+
+    for cmd in commands:
+        cmd_opts = dist.get_option_dict(cmd)
+        if option in cmd_opts:
+            return cmd_opts[option][1]
+    else:
+        return None
+
+
+def adjust_compiler():
+    """
+    This function detects broken compilers and switches to another.  If
+    the environment variable CC is explicitly set, or a compiler is
+    specified on the commandline, no override is performed -- the purpose
+    here is to only override a default compiler.
+
+    The specific compilers with problems are:
+
+        * The default compiler in XCode-4.2, llvm-gcc-4.2,
+          segfaults when compiling wcslib.
+
+    The set of broken compilers can be updated by changing the
+    compiler_mapping variable.  It is a list of 2-tuples where the
+    first in the pair is a regular expression matching the version
+    of the broken compiler, and the second is the compiler to change
+    to.
+    """
+    if 'CC' in os.environ:
+        return
+
+    if get_distutils_option(
+        'compiler', ['build', 'build_ext', 'build_clib']) is not None:
+        return
+
+    from distutils import ccompiler
+    import subprocess
+    import re
+
+    compiler_mapping = [
+        (b'i686-apple-darwin[0-9]*-llvm-gcc-4.2', 'clang')
+        ]
+
+    c = ccompiler.new_compiler()
+    # The MSVC ccompiler class doesn't have a `compiler` member.
+    if not hasattr(c, 'compiler'):
+        return
+    process = subprocess.Popen(
+        c.compiler + ['--version'], stdout=subprocess.PIPE)
+    output = process.communicate()[0].strip()
+    version = output.split()[0]
+    for broken, fixed in compiler_mapping:
+        if re.match(broken, version):
+            os.environ['CC'] = fixed
+            break
+
+
+adjust_compiler()
+
 libraries = []
 define_macros = [('ECHO', None),
                  ('WCSTRIG_MACRO', None),
