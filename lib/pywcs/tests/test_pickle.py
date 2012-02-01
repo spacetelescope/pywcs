@@ -1,7 +1,10 @@
 # TODO: Test that this works for subclasses
 
 import os
-import cPickle
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 
 import numpy as np
 from numpy.testing import assert_array_almost_equal
@@ -17,8 +20,8 @@ def setup():
 
 def test_basic():
     wcs = pywcs.WCS()
-    s = cPickle.dumps(wcs)
-    wcs2 = cPickle.loads(s)
+    s = pickle.dumps(wcs)
+    wcs2 = pickle.loads(s)
 
 
 def test_dist():
@@ -30,8 +33,8 @@ def test_dist():
     hdulist = pyfits.open(os.path.join(ROOT_DIR, "data", "dist.fits"))
     wcs1 = pywcs.WCS(hdulist[0].header, hdulist)
     assert wcs1.det2im2 is not None
-    s = cPickle.dumps(wcs1)
-    wcs2 = cPickle.loads(s)
+    s = pickle.dumps(wcs1)
+    wcs2 = pickle.loads(s)
 
     x = np.random.rand(2 ** 16, wcs1.wcs.naxis)
     world1 = wcs1.all_pix2sky(x, 1)
@@ -50,8 +53,8 @@ def test_sip():
                           ignore_missing_end=True)
     wcs1 = pywcs.WCS(hdulist[0].header)
     assert wcs1.sip is not None
-    s = cPickle.dumps(wcs1)
-    wcs2 = cPickle.loads(s)
+    s = pickle.dumps(wcs1)
+    wcs2 = pickle.loads(s)
 
     x = np.random.rand(2 ** 16, wcs1.wcs.naxis)
     world1 = wcs1.all_pix2sky(x, 1)
@@ -70,8 +73,8 @@ def test_sip2():
                           ignore_missing_end=True)
     wcs1 = pywcs.WCS(hdulist[0].header)
     assert wcs1.sip is not None
-    s = cPickle.dumps(wcs1)
-    wcs2 = cPickle.loads(s)
+    s = pickle.dumps(wcs1)
+    wcs2 = pickle.loads(s)
 
     x = np.random.rand(2 ** 16, wcs1.wcs.naxis)
     world1 = wcs1.all_pix2sky(x, 1)
@@ -92,8 +95,8 @@ def test_wcs():
     fd.close()
 
     wcs1 = pywcs.WCS(header)
-    s = cPickle.dumps(wcs1)
-    wcs2 = cPickle.loads(s)
+    s = pickle.dumps(wcs1)
+    wcs2 = pickle.loads(s)
 
     x = np.random.rand(2 ** 16, wcs1.wcs.naxis)
     world1 = wcs1.all_pix2sky(x, 1)
@@ -109,8 +112,8 @@ class Sub(pywcs.WCS):
 
 def test_subclass():
     wcs = Sub()
-    s = cPickle.dumps(wcs)
-    wcs2 = cPickle.loads(s)
+    s = pickle.dumps(wcs)
+    wcs2 = pickle.loads(s)
 
     assert isinstance(wcs2, Sub)
     assert wcs.foo == 42

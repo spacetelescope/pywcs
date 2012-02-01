@@ -309,7 +309,7 @@ def adjust_compiler():
     import re
 
     compiler_mapping = [
-        (b'i686-apple-darwin[0-9]*-llvm-gcc-4.2', 'clang')
+        ('i686-apple-darwin[0-9]*-llvm-gcc-4.2', 'clang')
         ]
 
     c = ccompiler.new_compiler()
@@ -318,7 +318,7 @@ def adjust_compiler():
         return
     process = subprocess.Popen(
         c.compiler + ['--version'], stdout=subprocess.PIPE)
-    output = process.communicate()[0].strip()
+    output = process.communicate()[0].strip().decode('ascii')
     version = output.split()[0]
     for broken, fixed in compiler_mapping:
         if re.match(broken, version):
