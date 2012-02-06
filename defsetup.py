@@ -79,7 +79,7 @@ except AttributeError:
 
 ######################################################################
 # WCSLIB
-WCSVERSION = "4.9"
+WCSVERSION = "4.10"
 WCSLIB = "wcslib" # Path to wcslib
 WCSLIB_PATCHED = "wcslib"
 WCSLIBC = join(WCSLIB_PATCHED, "C") # Path to wcslib source files

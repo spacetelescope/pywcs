@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-<title>WCSLIB 4.9: spc.h Source File</title>
+<title>WCSLIB 4.10: spc.h Source File</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -16,7 +16,7 @@
   </div>
 <h1>spc.h</h1><a href="spc_8h.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*============================================================================</span>
 <a name="l00002"></a>00002 <span class="comment"></span>
-<a name="l00003"></a>00003 <span class="comment">  WCSLIB 4.9 - an implementation of the FITS WCS standard.</span>
+<a name="l00003"></a>00003 <span class="comment">  WCSLIB 4.10 - an implementation of the FITS WCS standard.</span>
 <a name="l00004"></a>00004 <span class="comment">  Copyright (C) 1995-2012, Mark Calabretta</span>
 <a name="l00005"></a>00005 <span class="comment"></span>
 <a name="l00006"></a>00006 <span class="comment">  This file is part of WCSLIB.</span>
@@ -44,10 +44,10 @@
 <a name="l00028"></a>00028 <span class="comment"></span>
 <a name="l00029"></a>00029 <span class="comment">  Author: Mark Calabretta, Australia Telescope National Facility</span>
 <a name="l00030"></a>00030 <span class="comment">  http://www.atnf.csiro.au/~mcalabre/index.html</span>
-<a name="l00031"></a>00031 <span class="comment">  $Id: spc.h,v 4.9 2012/01/24 05:40:29 cal103 Exp $</span>
+<a name="l00031"></a>00031 <span class="comment">  $Id: spc.h,v 4.10 2012/02/05 23:41:44 cal103 Exp $</span>
 <a name="l00032"></a>00032 <span class="comment">*=============================================================================</span>
 <a name="l00033"></a>00033 <span class="comment">*</span>
-<a name="l00034"></a>00034 <span class="comment">* WCSLIB 4.9 - C routines that implement the spectral coordinate systems</span>
+<a name="l00034"></a>00034 <span class="comment">* WCSLIB 4.10 - C routines that implement the spectral coordinate systems</span>
 <a name="l00035"></a>00035 <span class="comment">* recognized by the FITS World Coordinate System (WCS) standard.  Refer to</span>
 <a name="l00036"></a>00036 <span class="comment">*</span>
 <a name="l00037"></a>00037 <span class="comment">*   "Representations of world coordinates in FITS",</span>
@@ -100,8 +100,8 @@
 <a name="l00084"></a>00084 <span class="comment">*   - Given a set of spectral keywords, a translation routine, spctrne(),</span>
 <a name="l00085"></a>00085 <span class="comment">*     produces the corresponding set for the specified spectral CTYPEia.</span>
 <a name="l00086"></a>00086 <span class="comment">*</span>
-<a name="l00087"></a>00087 <span class="comment">*   - spcaips() translates AIPS-convention spectral keywords, CTYPEn and</span>
-<a name="l00088"></a>00088 <span class="comment">*     VELREF, into CTYPEia and SPECSYSa.</span>
+<a name="l00087"></a>00087 <span class="comment">*   - spcaips() translates AIPS-convention spectral CTYPEia and VELREF</span>
+<a name="l00088"></a>00088 <span class="comment">*     keyvalues.</span>
 <a name="l00089"></a>00089 <span class="comment">*</span>
 <a name="l00090"></a>00090 <span class="comment">* Spectral variable types - S, P, and X:</span>
 <a name="l00091"></a>00091 <span class="comment">* --------------------------------------</span>
@@ -608,13 +608,13 @@
 <a name="l00592"></a>00592 <span class="comment">*</span>
 <a name="l00593"></a>00593 <span class="comment">* spcaips() - Translate AIPS-convention spectral keywords</span>
 <a name="l00594"></a>00594 <span class="comment">* -------------------------------------------------------</span>
-<a name="l00595"></a>00595 <span class="comment">* spcaips() translates AIPS-convention spectral keywords, CTYPEn and VELREF,</span>
-<a name="l00596"></a>00596 <span class="comment">* into CTYPEia and SPECSYSa.</span>
-<a name="l00597"></a>00597 <span class="comment">*</span>
-<a name="l00598"></a>00598 <span class="comment">* Given:</span>
-<a name="l00599"></a>00599 <span class="comment">*   ctypeA    const char[9]</span>
-<a name="l00600"></a>00600 <span class="comment">*                       CTYPEia keyvalue (eight characters, need not be null-</span>
-<a name="l00601"></a>00601 <span class="comment">*                       terminated).</span>
+<a name="l00595"></a>00595 <span class="comment">* spcaips() translates AIPS-convention spectral CTYPEia and VELREF keyvalues.</span>
+<a name="l00596"></a>00596 <span class="comment">*</span>
+<a name="l00597"></a>00597 <span class="comment">* Given:</span>
+<a name="l00598"></a>00598 <span class="comment">*   ctypeA    const char[9]</span>
+<a name="l00599"></a>00599 <span class="comment">*                       CTYPEia keyvalue possibly containing an</span>
+<a name="l00600"></a>00600 <span class="comment">*                       AIPS-convention spectral code (eight characters, need</span>
+<a name="l00601"></a>00601 <span class="comment">*                       not be null-terminated).</span>
 <a name="l00602"></a>00602 <span class="comment">*</span>
 <a name="l00603"></a>00603 <span class="comment">*   velref    int       AIPS-convention VELREF code.  It has the following</span>
 <a name="l00604"></a>00604 <span class="comment">*                       integer values:</span>
@@ -631,271 +631,281 @@
 <a name="l00615"></a>00615 <span class="comment">*                         5: Geocentric.</span>
 <a name="l00616"></a>00616 <span class="comment">*                         6: Source rest frame.</span>
 <a name="l00617"></a>00617 <span class="comment">*                         7: Galactocentric.</span>
-<a name="l00618"></a>00618 <span class="comment">*                       For an AIPS 'VELO' axis, a radio convention velocity</span>
-<a name="l00619"></a>00619 <span class="comment">*                       is denoted by adding 256 to VELREF, otherwise an</span>
-<a name="l00620"></a>00620 <span class="comment">*                       optical velocity is indicated (not applicable to</span>
-<a name="l00621"></a>00621 <span class="comment">*                       'FELO' axes).  Unrecognized values of VELREF are</span>
-<a name="l00622"></a>00622 <span class="comment">*                       simply ignored.</span>
-<a name="l00623"></a>00623 <span class="comment">*</span>
-<a name="l00624"></a>00624 <span class="comment">*                       VELREF takes precedence over CTYPEia in defining the</span>
-<a name="l00625"></a>00625 <span class="comment">*                       Doppler frame, e.g. if</span>
-<a name="l00626"></a>00626 <span class="comment">*</span>
-<a name="l00627"></a>00627 <span class="comment">=                         CTYPEn = 'VELO-HEL'</span>
-<a name="l00628"></a>00628 <span class="comment">=                         VELREF = 1</span>
-<a name="l00629"></a>00629 <span class="comment">*</span>
-<a name="l00630"></a>00630 <span class="comment">*                       the Doppler frame is set to LSRK.</span>
-<a name="l00631"></a>00631 <span class="comment">*</span>
-<a name="l00632"></a>00632 <span class="comment">* Returned:</span>
-<a name="l00633"></a>00633 <span class="comment">*   ctype     char[9]   Translated CTYPEia keyvalue, or a copy of ctypeA if no</span>
-<a name="l00634"></a>00634 <span class="comment">*                       translation was performed (null-filled).</span>
+<a name="l00618"></a>00618 <span class="comment">*</span>
+<a name="l00619"></a>00619 <span class="comment">*                       For an AIPS 'VELO' axis, a radio convention velocity</span>
+<a name="l00620"></a>00620 <span class="comment">*                       (VRAD) is denoted by adding 256 to VELREF, otherwise</span>
+<a name="l00621"></a>00621 <span class="comment">*                       an optical velocity (VOPT) is indicated (this is not</span>
+<a name="l00622"></a>00622 <span class="comment">*                       applicable to 'FREQ' or 'FELO' axes).  Setting velref</span>
+<a name="l00623"></a>00623 <span class="comment">*                       to 0 or 256 chooses between optical and radio velocity</span>
+<a name="l00624"></a>00624 <span class="comment">*                       without specifying a Doppler frame, provided that a</span>
+<a name="l00625"></a>00625 <span class="comment">*                       frame is encoded in ctypeA.  If not, i.e. for</span>
+<a name="l00626"></a>00626 <span class="comment">*                       ctypeA = 'VELO', ctype will be returned as 'VELO'.</span>
+<a name="l00627"></a>00627 <span class="comment">*</span>
+<a name="l00628"></a>00628 <span class="comment">*                       VELREF takes precedence over CTYPEia in defining the</span>
+<a name="l00629"></a>00629 <span class="comment">*                       Doppler frame, e.g.</span>
+<a name="l00630"></a>00630 <span class="comment">*</span>
+<a name="l00631"></a>00631 <span class="comment">=                         ctypeA = 'VELO-HEL'</span>
+<a name="l00632"></a>00632 <span class="comment">=                         velref = 1</span>
+<a name="l00633"></a>00633 <span class="comment">*</span>
+<a name="l00634"></a>00634 <span class="comment">*                       returns ctype = 'VOPT' with specsys set to 'LSRK'.</span>
 <a name="l00635"></a>00635 <span class="comment">*</span>
-<a name="l00636"></a>00636 <span class="comment">*   specsys   char[9]   Doppler reference frame indicated by VELREF or else by</span>
-<a name="l00637"></a>00637 <span class="comment">*                       CTYPEn.</span>
-<a name="l00638"></a>00638 <span class="comment">*</span>
-<a name="l00639"></a>00639 <span class="comment">* Function return value:</span>
-<a name="l00640"></a>00640 <span class="comment">*             int       Status return value:</span>
-<a name="l00641"></a>00641 <span class="comment">*                        -1: No translation required (not an error).</span>
-<a name="l00642"></a>00642 <span class="comment">*                         0: Success.</span>
-<a name="l00643"></a>00643 <span class="comment">*</span>
-<a name="l00644"></a>00644 <span class="comment">*</span>
-<a name="l00645"></a>00645 <span class="comment">* spcprm struct - Spectral transformation parameters</span>
-<a name="l00646"></a>00646 <span class="comment">* --------------------------------------------------</span>
-<a name="l00647"></a>00647 <span class="comment">* The spcprm struct contains information required to transform spectral</span>
-<a name="l00648"></a>00648 <span class="comment">* coordinates.  It consists of certain members that must be set by the user</span>
-<a name="l00649"></a>00649 <span class="comment">* ("given") and others that are set by the WCSLIB routines ("returned").  Some</span>
-<a name="l00650"></a>00650 <span class="comment">* of the latter are supplied for informational purposes while others are for</span>
-<a name="l00651"></a>00651 <span class="comment">* internal use only.</span>
+<a name="l00636"></a>00636 <span class="comment">* Returned:</span>
+<a name="l00637"></a>00637 <span class="comment">*   ctype     char[9]   Translated CTYPEia keyvalue, or a copy of ctypeA if no</span>
+<a name="l00638"></a>00638 <span class="comment">*                       translation was performed (in which case any trailing</span>
+<a name="l00639"></a>00639 <span class="comment">*                       blanks in ctypeA will be replaced with nulls).</span>
+<a name="l00640"></a>00640 <span class="comment">*</span>
+<a name="l00641"></a>00641 <span class="comment">*   specsys   char[9]   Doppler reference frame indicated by VELREF or else</span>
+<a name="l00642"></a>00642 <span class="comment">*                       by CTYPEia with value corresponding to the SPECSYS</span>
+<a name="l00643"></a>00643 <span class="comment">*                       keyvalue in the FITS WCS standard.  May be returned</span>
+<a name="l00644"></a>00644 <span class="comment">*                       blank if neither specifies a Doppler frame, e.g.</span>
+<a name="l00645"></a>00645 <span class="comment">*                       ctypeA = 'FELO' and velref%256 == 0.</span>
+<a name="l00646"></a>00646 <span class="comment">*</span>
+<a name="l00647"></a>00647 <span class="comment">* Function return value:</span>
+<a name="l00648"></a>00648 <span class="comment">*             int       Status return value:</span>
+<a name="l00649"></a>00649 <span class="comment">*                        -1: No translation required (not an error).</span>
+<a name="l00650"></a>00650 <span class="comment">*                         0: Success.</span>
+<a name="l00651"></a>00651 <span class="comment">*                         2: Invalid value of VELREF.</span>
 <a name="l00652"></a>00652 <span class="comment">*</span>
-<a name="l00653"></a>00653 <span class="comment">*   int flag</span>
-<a name="l00654"></a>00654 <span class="comment">*     (Given and returned) This flag must be set to zero whenever any of the</span>
-<a name="l00655"></a>00655 <span class="comment">*     following spcprm structure members are set or changed:</span>
-<a name="l00656"></a>00656 <span class="comment">*</span>
-<a name="l00657"></a>00657 <span class="comment">*       - spcprm::type,</span>
-<a name="l00658"></a>00658 <span class="comment">*       - spcprm::code,</span>
-<a name="l00659"></a>00659 <span class="comment">*       - spcprm::crval,</span>
-<a name="l00660"></a>00660 <span class="comment">*       - spcprm::restfrq,</span>
-<a name="l00661"></a>00661 <span class="comment">*       - spcprm::restwav,</span>
-<a name="l00662"></a>00662 <span class="comment">*       - spcprm::pv[].</span>
-<a name="l00663"></a>00663 <span class="comment">*</span>
-<a name="l00664"></a>00664 <span class="comment">*     This signals the initialization routine, spcset(), to recompute the</span>
-<a name="l00665"></a>00665 <span class="comment">*     returned members of the spcprm struct.  spcset() will reset flag to</span>
-<a name="l00666"></a>00666 <span class="comment">*     indicate that this has been done.</span>
-<a name="l00667"></a>00667 <span class="comment">*</span>
-<a name="l00668"></a>00668 <span class="comment">*   char type[8]</span>
-<a name="l00669"></a>00669 <span class="comment">*     (Given) Four-letter spectral variable type, e.g "ZOPT" for</span>
-<a name="l00670"></a>00670 <span class="comment">*     CTYPEia = 'ZOPT-F2W'.  (Declared as char[8] for alignment reasons.)</span>
-<a name="l00671"></a>00671 <span class="comment">*</span>
-<a name="l00672"></a>00672 <span class="comment">*   char code[4]</span>
-<a name="l00673"></a>00673 <span class="comment">*     (Given) Three-letter spectral algorithm code, e.g "F2W" for</span>
-<a name="l00674"></a>00674 <span class="comment">*     CTYPEia = 'ZOPT-F2W'.</span>
-<a name="l00675"></a>00675 <span class="comment">*</span>
-<a name="l00676"></a>00676 <span class="comment">*   double crval</span>
-<a name="l00677"></a>00677 <span class="comment">*     (Given) Reference value (CRVALia), SI units.</span>
-<a name="l00678"></a>00678 <span class="comment">*</span>
-<a name="l00679"></a>00679 <span class="comment">*   double restfrq</span>
-<a name="l00680"></a>00680 <span class="comment">*     (Given) The rest frequency [Hz], and ...</span>
-<a name="l00681"></a>00681 <span class="comment">*</span>
-<a name="l00682"></a>00682 <span class="comment">*   double restwav</span>
-<a name="l00683"></a>00683 <span class="comment">*     (Given) ... the rest wavelength in vacuo [m], only one of which need be</span>
-<a name="l00684"></a>00684 <span class="comment">*     given, the other should be set to zero.  Neither are required if the</span>
-<a name="l00685"></a>00685 <span class="comment">*     X and S spectral variables are both wave-characteristic, or both</span>
-<a name="l00686"></a>00686 <span class="comment">*     velocity-characteristic, types.</span>
+<a name="l00653"></a>00653 <span class="comment">*</span>
+<a name="l00654"></a>00654 <span class="comment">* spcprm struct - Spectral transformation parameters</span>
+<a name="l00655"></a>00655 <span class="comment">* --------------------------------------------------</span>
+<a name="l00656"></a>00656 <span class="comment">* The spcprm struct contains information required to transform spectral</span>
+<a name="l00657"></a>00657 <span class="comment">* coordinates.  It consists of certain members that must be set by the user</span>
+<a name="l00658"></a>00658 <span class="comment">* ("given") and others that are set by the WCSLIB routines ("returned").  Some</span>
+<a name="l00659"></a>00659 <span class="comment">* of the latter are supplied for informational purposes while others are for</span>
+<a name="l00660"></a>00660 <span class="comment">* internal use only.</span>
+<a name="l00661"></a>00661 <span class="comment">*</span>
+<a name="l00662"></a>00662 <span class="comment">*   int flag</span>
+<a name="l00663"></a>00663 <span class="comment">*     (Given and returned) This flag must be set to zero whenever any of the</span>
+<a name="l00664"></a>00664 <span class="comment">*     following spcprm structure members are set or changed:</span>
+<a name="l00665"></a>00665 <span class="comment">*</span>
+<a name="l00666"></a>00666 <span class="comment">*       - spcprm::type,</span>
+<a name="l00667"></a>00667 <span class="comment">*       - spcprm::code,</span>
+<a name="l00668"></a>00668 <span class="comment">*       - spcprm::crval,</span>
+<a name="l00669"></a>00669 <span class="comment">*       - spcprm::restfrq,</span>
+<a name="l00670"></a>00670 <span class="comment">*       - spcprm::restwav,</span>
+<a name="l00671"></a>00671 <span class="comment">*       - spcprm::pv[].</span>
+<a name="l00672"></a>00672 <span class="comment">*</span>
+<a name="l00673"></a>00673 <span class="comment">*     This signals the initialization routine, spcset(), to recompute the</span>
+<a name="l00674"></a>00674 <span class="comment">*     returned members of the spcprm struct.  spcset() will reset flag to</span>
+<a name="l00675"></a>00675 <span class="comment">*     indicate that this has been done.</span>
+<a name="l00676"></a>00676 <span class="comment">*</span>
+<a name="l00677"></a>00677 <span class="comment">*   char type[8]</span>
+<a name="l00678"></a>00678 <span class="comment">*     (Given) Four-letter spectral variable type, e.g "ZOPT" for</span>
+<a name="l00679"></a>00679 <span class="comment">*     CTYPEia = 'ZOPT-F2W'.  (Declared as char[8] for alignment reasons.)</span>
+<a name="l00680"></a>00680 <span class="comment">*</span>
+<a name="l00681"></a>00681 <span class="comment">*   char code[4]</span>
+<a name="l00682"></a>00682 <span class="comment">*     (Given) Three-letter spectral algorithm code, e.g "F2W" for</span>
+<a name="l00683"></a>00683 <span class="comment">*     CTYPEia = 'ZOPT-F2W'.</span>
+<a name="l00684"></a>00684 <span class="comment">*</span>
+<a name="l00685"></a>00685 <span class="comment">*   double crval</span>
+<a name="l00686"></a>00686 <span class="comment">*     (Given) Reference value (CRVALia), SI units.</span>
 <a name="l00687"></a>00687 <span class="comment">*</span>
-<a name="l00688"></a>00688 <span class="comment">*   double pv[7]</span>
-<a name="l00689"></a>00689 <span class="comment">*     (Given) Grism parameters for 'GRI' and 'GRA' algorithm codes:</span>
-<a name="l00690"></a>00690 <span class="comment">*       - 0: G, grating ruling density.</span>
-<a name="l00691"></a>00691 <span class="comment">*       - 1: m, interference order.</span>
-<a name="l00692"></a>00692 <span class="comment">*       - 2: alpha, angle of incidence [deg].</span>
-<a name="l00693"></a>00693 <span class="comment">*       - 3: n_r, refractive index at the reference wavelength, lambda_r.</span>
-<a name="l00694"></a>00694 <span class="comment">*       - 4: n'_r, dn/dlambda at the reference wavelength, lambda_r (/m).</span>
-<a name="l00695"></a>00695 <span class="comment">*       - 5: epsilon, grating tilt angle [deg].</span>
-<a name="l00696"></a>00696 <span class="comment">*       - 6: theta, detector tilt angle [deg].</span>
-<a name="l00697"></a>00697 <span class="comment">*</span>
-<a name="l00698"></a>00698 <span class="comment">* The remaining members of the spcprm struct are maintained by spcset() and</span>
-<a name="l00699"></a>00699 <span class="comment">* must not be modified elsewhere:</span>
-<a name="l00700"></a>00700 <span class="comment">*</span>
-<a name="l00701"></a>00701 <span class="comment">*   double w[6]</span>
-<a name="l00702"></a>00702 <span class="comment">*     (Returned) Intermediate values:</span>
-<a name="l00703"></a>00703 <span class="comment">*       - 0: Rest frequency or wavelength (SI).</span>
-<a name="l00704"></a>00704 <span class="comment">*       - 1: The value of the X-type spectral variable at the reference point</span>
-<a name="l00705"></a>00705 <span class="comment">*           (SI units).</span>
-<a name="l00706"></a>00706 <span class="comment">*       - 2: dX/dS at the reference point (SI units).</span>
-<a name="l00707"></a>00707 <span class="comment">*      The remainder are grism intermediates.</span>
-<a name="l00708"></a>00708 <span class="comment">*</span>
-<a name="l00709"></a>00709 <span class="comment">*   int isGrism</span>
-<a name="l00710"></a>00710 <span class="comment">*     (Returned) Grism coordinates?</span>
-<a name="l00711"></a>00711 <span class="comment">*       - 0: no,</span>
-<a name="l00712"></a>00712 <span class="comment">*       - 1: in vacuum,</span>
-<a name="l00713"></a>00713 <span class="comment">*       - 2: in air.</span>
-<a name="l00714"></a>00714 <span class="comment">*</span>
-<a name="l00715"></a>00715 <span class="comment">*   int padding1</span>
-<a name="l00716"></a>00716 <span class="comment">*     (An unused variable inserted for alignment purposes only.)</span>
+<a name="l00688"></a>00688 <span class="comment">*   double restfrq</span>
+<a name="l00689"></a>00689 <span class="comment">*     (Given) The rest frequency [Hz], and ...</span>
+<a name="l00690"></a>00690 <span class="comment">*</span>
+<a name="l00691"></a>00691 <span class="comment">*   double restwav</span>
+<a name="l00692"></a>00692 <span class="comment">*     (Given) ... the rest wavelength in vacuo [m], only one of which need be</span>
+<a name="l00693"></a>00693 <span class="comment">*     given, the other should be set to zero.  Neither are required if the</span>
+<a name="l00694"></a>00694 <span class="comment">*     X and S spectral variables are both wave-characteristic, or both</span>
+<a name="l00695"></a>00695 <span class="comment">*     velocity-characteristic, types.</span>
+<a name="l00696"></a>00696 <span class="comment">*</span>
+<a name="l00697"></a>00697 <span class="comment">*   double pv[7]</span>
+<a name="l00698"></a>00698 <span class="comment">*     (Given) Grism parameters for 'GRI' and 'GRA' algorithm codes:</span>
+<a name="l00699"></a>00699 <span class="comment">*       - 0: G, grating ruling density.</span>
+<a name="l00700"></a>00700 <span class="comment">*       - 1: m, interference order.</span>
+<a name="l00701"></a>00701 <span class="comment">*       - 2: alpha, angle of incidence [deg].</span>
+<a name="l00702"></a>00702 <span class="comment">*       - 3: n_r, refractive index at the reference wavelength, lambda_r.</span>
+<a name="l00703"></a>00703 <span class="comment">*       - 4: n'_r, dn/dlambda at the reference wavelength, lambda_r (/m).</span>
+<a name="l00704"></a>00704 <span class="comment">*       - 5: epsilon, grating tilt angle [deg].</span>
+<a name="l00705"></a>00705 <span class="comment">*       - 6: theta, detector tilt angle [deg].</span>
+<a name="l00706"></a>00706 <span class="comment">*</span>
+<a name="l00707"></a>00707 <span class="comment">* The remaining members of the spcprm struct are maintained by spcset() and</span>
+<a name="l00708"></a>00708 <span class="comment">* must not be modified elsewhere:</span>
+<a name="l00709"></a>00709 <span class="comment">*</span>
+<a name="l00710"></a>00710 <span class="comment">*   double w[6]</span>
+<a name="l00711"></a>00711 <span class="comment">*     (Returned) Intermediate values:</span>
+<a name="l00712"></a>00712 <span class="comment">*       - 0: Rest frequency or wavelength (SI).</span>
+<a name="l00713"></a>00713 <span class="comment">*       - 1: The value of the X-type spectral variable at the reference point</span>
+<a name="l00714"></a>00714 <span class="comment">*           (SI units).</span>
+<a name="l00715"></a>00715 <span class="comment">*       - 2: dX/dS at the reference point (SI units).</span>
+<a name="l00716"></a>00716 <span class="comment">*      The remainder are grism intermediates.</span>
 <a name="l00717"></a>00717 <span class="comment">*</span>
-<a name="l00718"></a>00718 <span class="comment">*   struct wcserr *err</span>
-<a name="l00719"></a>00719 <span class="comment">*     (Returned) If enabled, when an error status is returned this structure</span>
-<a name="l00720"></a>00720 <span class="comment">*     contains detailed information about the error, see wcserr_enable().</span>
-<a name="l00721"></a>00721 <span class="comment">*</span>
-<a name="l00722"></a>00722 <span class="comment">*   void *padding2</span>
-<a name="l00723"></a>00723 <span class="comment">*     (An unused variable inserted for alignment purposes only.)</span>
-<a name="l00724"></a>00724 <span class="comment">*   int (*spxX2P)(SPX_ARGS)</span>
-<a name="l00725"></a>00725 <span class="comment">*     (Returned) The first and ...</span>
-<a name="l00726"></a>00726 <span class="comment">*   int (*spxP2S)(SPX_ARGS)</span>
-<a name="l00727"></a>00727 <span class="comment">*     (Returned) ... the second of the pointers to the transformation</span>
-<a name="l00728"></a>00728 <span class="comment">*     functions in the two-step algorithm chain X -&gt; P -&gt; S in the</span>
-<a name="l00729"></a>00729 <span class="comment">*     pixel-to-spectral direction where the non-linear transformation is from</span>
-<a name="l00730"></a>00730 <span class="comment">*     X to P.  The argument list, SPX_ARGS, is defined in spx.h.</span>
-<a name="l00731"></a>00731 <span class="comment">*</span>
-<a name="l00732"></a>00732 <span class="comment">*   int (*spxS2P)(SPX_ARGS)</span>
-<a name="l00733"></a>00733 <span class="comment">*     (Returned) The first and ...</span>
-<a name="l00734"></a>00734 <span class="comment">*   int (*spxP2X)(SPX_ARGS)</span>
-<a name="l00735"></a>00735 <span class="comment">*     (Returned) ... the second of the pointers to the transformation</span>
-<a name="l00736"></a>00736 <span class="comment">*     functions in the two-step algorithm chain S -&gt; P -&gt; X in the</span>
-<a name="l00737"></a>00737 <span class="comment">*     spectral-to-pixel direction where the non-linear transformation is from</span>
-<a name="l00738"></a>00738 <span class="comment">*     P to X.  The argument list, SPX_ARGS, is defined in spx.h.</span>
-<a name="l00739"></a>00739 <span class="comment">*</span>
+<a name="l00718"></a>00718 <span class="comment">*   int isGrism</span>
+<a name="l00719"></a>00719 <span class="comment">*     (Returned) Grism coordinates?</span>
+<a name="l00720"></a>00720 <span class="comment">*       - 0: no,</span>
+<a name="l00721"></a>00721 <span class="comment">*       - 1: in vacuum,</span>
+<a name="l00722"></a>00722 <span class="comment">*       - 2: in air.</span>
+<a name="l00723"></a>00723 <span class="comment">*</span>
+<a name="l00724"></a>00724 <span class="comment">*   int padding1</span>
+<a name="l00725"></a>00725 <span class="comment">*     (An unused variable inserted for alignment purposes only.)</span>
+<a name="l00726"></a>00726 <span class="comment">*</span>
+<a name="l00727"></a>00727 <span class="comment">*   struct wcserr *err</span>
+<a name="l00728"></a>00728 <span class="comment">*     (Returned) If enabled, when an error status is returned this structure</span>
+<a name="l00729"></a>00729 <span class="comment">*     contains detailed information about the error, see wcserr_enable().</span>
+<a name="l00730"></a>00730 <span class="comment">*</span>
+<a name="l00731"></a>00731 <span class="comment">*   void *padding2</span>
+<a name="l00732"></a>00732 <span class="comment">*     (An unused variable inserted for alignment purposes only.)</span>
+<a name="l00733"></a>00733 <span class="comment">*   int (*spxX2P)(SPX_ARGS)</span>
+<a name="l00734"></a>00734 <span class="comment">*     (Returned) The first and ...</span>
+<a name="l00735"></a>00735 <span class="comment">*   int (*spxP2S)(SPX_ARGS)</span>
+<a name="l00736"></a>00736 <span class="comment">*     (Returned) ... the second of the pointers to the transformation</span>
+<a name="l00737"></a>00737 <span class="comment">*     functions in the two-step algorithm chain X -&gt; P -&gt; S in the</span>
+<a name="l00738"></a>00738 <span class="comment">*     pixel-to-spectral direction where the non-linear transformation is from</span>
+<a name="l00739"></a>00739 <span class="comment">*     X to P.  The argument list, SPX_ARGS, is defined in spx.h.</span>
 <a name="l00740"></a>00740 <span class="comment">*</span>
-<a name="l00741"></a>00741 <span class="comment">* Global variable: const char *spc_errmsg[] - Status return messages</span>
-<a name="l00742"></a>00742 <span class="comment">* ------------------------------------------------------------------</span>
-<a name="l00743"></a>00743 <span class="comment">* Error messages to match the status value returned from each function.</span>
-<a name="l00744"></a>00744 <span class="comment">*</span>
-<a name="l00745"></a>00745 <span class="comment">*===========================================================================*/</span>
-<a name="l00746"></a>00746 
-<a name="l00747"></a>00747 <span class="preprocessor">#ifndef WCSLIB_SPC</span>
-<a name="l00748"></a>00748 <span class="preprocessor"></span><span class="preprocessor">#define WCSLIB_SPC</span>
-<a name="l00749"></a>00749 <span class="preprocessor"></span>
-<a name="l00750"></a>00750 <span class="preprocessor">#include "<a class="code" href="spx_8h.html">spx.h</a>"</span>
-<a name="l00751"></a>00751 <span class="preprocessor">#include "<a class="code" href="wcserr_8h.html">wcserr.h</a>"</span>
-<a name="l00752"></a>00752 
-<a name="l00753"></a>00753 <span class="preprocessor">#ifdef __cplusplus</span>
-<a name="l00754"></a>00754 <span class="preprocessor"></span><span class="keyword">extern</span> <span class="stringliteral">"C"</span> {
-<a name="l00755"></a>00755 <span class="preprocessor">#endif</span>
-<a name="l00756"></a>00756 <span class="preprocessor"></span>
-<a name="l00757"></a>00757 
-<a name="l00758"></a>00758 <span class="keyword">extern</span> <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="spc_8h.html#96978fec523018fd6898301a3452c166" title="Status return messages.">spc_errmsg</a>[];
-<a name="l00759"></a>00759 
-<a name="l00760"></a><a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b">00760</a> <span class="keyword">enum</span> <a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b">spc_errmsg_enum</a> {
-<a name="l00761"></a><a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b0b84f38d1e903eacda3122ce55bff741">00761</a>   <a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b0b84f38d1e903eacda3122ce55bff741">SPCERR_SUCCESS</a>         = 0,   <span class="comment">/* Success. */</span>
-<a name="l00762"></a><a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b7c5e0d09fac9f441e39f3cf28801961f">00762</a>   <a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b7c5e0d09fac9f441e39f3cf28801961f">SPCERR_NULL_POINTER</a>    = 1,   <span class="comment">/* Null spcprm pointer passed. */</span>
-<a name="l00763"></a><a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b0653e60411a641a326492c65d257daa8">00763</a>   <a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b0653e60411a641a326492c65d257daa8">SPCERR_BAD_SPEC_PARAMS</a> = 2,   <span class="comment">/* Invalid spectral parameters. */</span>
-<a name="l00764"></a><a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b3ba9183c7c3dace15eef0606980fd615">00764</a>   <a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b3ba9183c7c3dace15eef0606980fd615">SPCERR_BAD_X</a>           = 3,   <span class="comment">/* One or more of x coordinates were</span>
-<a name="l00765"></a>00765 <span class="comment">                                   invalid. */</span>
-<a name="l00766"></a><a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b7e218c5bd52bd6a45d8ad66573653007">00766</a>   <a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b7e218c5bd52bd6a45d8ad66573653007">SPCERR_BAD_SPEC</a>        = 4    <span class="comment">/* One or more of the spec coordinates were</span>
-<a name="l00767"></a>00767 <span class="comment">                                   invalid. */</span>
-<a name="l00768"></a>00768 };
-<a name="l00769"></a>00769 
-<a name="l00770"></a><a class="code" href="structspcprm.html">00770</a> <span class="keyword">struct </span><a class="code" href="structspcprm.html" title="Spectral transformation parameters.">spcprm</a> {
-<a name="l00771"></a>00771   <span class="comment">/* Initialization flag (see the prologue above).                          */</span>
-<a name="l00772"></a>00772   <span class="comment">/*------------------------------------------------------------------------*/</span>
-<a name="l00773"></a><a class="code" href="structspcprm.html#feeb5f4056f271fd37291a712a7b6791">00773</a>   <span class="keywordtype">int</span>    <a class="code" href="structspcprm.html#feeb5f4056f271fd37291a712a7b6791">flag</a>;                  <span class="comment">/* Set to zero to force initialization.     */</span>
-<a name="l00774"></a>00774 
-<a name="l00775"></a>00775   <span class="comment">/* Parameters to be provided (see the prologue above).                    */</span>
-<a name="l00776"></a>00776   <span class="comment">/*------------------------------------------------------------------------*/</span>
-<a name="l00777"></a><a class="code" href="structspcprm.html#387d74de3215763d7e22c222b19a2c44">00777</a>   <span class="keywordtype">char</span>   <a class="code" href="structspcprm.html#387d74de3215763d7e22c222b19a2c44">type</a>[8];               <span class="comment">/* Four-letter spectral variable type.      */</span>
-<a name="l00778"></a><a class="code" href="structspcprm.html#5f9a48a52144f8ced93baaffc107a3a6">00778</a>   <span class="keywordtype">char</span>   <a class="code" href="structspcprm.html#5f9a48a52144f8ced93baaffc107a3a6">code</a>[4];               <span class="comment">/* Three-letter spectral algorithm code.    */</span>
+<a name="l00741"></a>00741 <span class="comment">*   int (*spxS2P)(SPX_ARGS)</span>
+<a name="l00742"></a>00742 <span class="comment">*     (Returned) The first and ...</span>
+<a name="l00743"></a>00743 <span class="comment">*   int (*spxP2X)(SPX_ARGS)</span>
+<a name="l00744"></a>00744 <span class="comment">*     (Returned) ... the second of the pointers to the transformation</span>
+<a name="l00745"></a>00745 <span class="comment">*     functions in the two-step algorithm chain S -&gt; P -&gt; X in the</span>
+<a name="l00746"></a>00746 <span class="comment">*     spectral-to-pixel direction where the non-linear transformation is from</span>
+<a name="l00747"></a>00747 <span class="comment">*     P to X.  The argument list, SPX_ARGS, is defined in spx.h.</span>
+<a name="l00748"></a>00748 <span class="comment">*</span>
+<a name="l00749"></a>00749 <span class="comment">*</span>
+<a name="l00750"></a>00750 <span class="comment">* Global variable: const char *spc_errmsg[] - Status return messages</span>
+<a name="l00751"></a>00751 <span class="comment">* ------------------------------------------------------------------</span>
+<a name="l00752"></a>00752 <span class="comment">* Error messages to match the status value returned from each function.</span>
+<a name="l00753"></a>00753 <span class="comment">*</span>
+<a name="l00754"></a>00754 <span class="comment">*===========================================================================*/</span>
+<a name="l00755"></a>00755 
+<a name="l00756"></a>00756 <span class="preprocessor">#ifndef WCSLIB_SPC</span>
+<a name="l00757"></a>00757 <span class="preprocessor"></span><span class="preprocessor">#define WCSLIB_SPC</span>
+<a name="l00758"></a>00758 <span class="preprocessor"></span>
+<a name="l00759"></a>00759 <span class="preprocessor">#include "<a class="code" href="spx_8h.html">spx.h</a>"</span>
+<a name="l00760"></a>00760 <span class="preprocessor">#include "<a class="code" href="wcserr_8h.html">wcserr.h</a>"</span>
+<a name="l00761"></a>00761 
+<a name="l00762"></a>00762 <span class="preprocessor">#ifdef __cplusplus</span>
+<a name="l00763"></a>00763 <span class="preprocessor"></span><span class="keyword">extern</span> <span class="stringliteral">"C"</span> {
+<a name="l00764"></a>00764 <span class="preprocessor">#endif</span>
+<a name="l00765"></a>00765 <span class="preprocessor"></span>
+<a name="l00766"></a>00766 
+<a name="l00767"></a>00767 <span class="keyword">extern</span> <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="spc_8h.html#96978fec523018fd6898301a3452c166" title="Status return messages.">spc_errmsg</a>[];
+<a name="l00768"></a>00768 
+<a name="l00769"></a><a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b">00769</a> <span class="keyword">enum</span> <a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b">spc_errmsg_enum</a> {
+<a name="l00770"></a><a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3be000828492cbedc0502f757d8b892606">00770</a>   <a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3be000828492cbedc0502f757d8b892606">SPCERR_NO_CHANGE</a>       = -1,  <span class="comment">/* No change. */</span>
+<a name="l00771"></a><a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b0b84f38d1e903eacda3122ce55bff741">00771</a>   <a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b0b84f38d1e903eacda3122ce55bff741">SPCERR_SUCCESS</a>         =  0,  <span class="comment">/* Success. */</span>
+<a name="l00772"></a><a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b7c5e0d09fac9f441e39f3cf28801961f">00772</a>   <a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b7c5e0d09fac9f441e39f3cf28801961f">SPCERR_NULL_POINTER</a>    =  1,  <span class="comment">/* Null spcprm pointer passed. */</span>
+<a name="l00773"></a><a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b0653e60411a641a326492c65d257daa8">00773</a>   <a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b0653e60411a641a326492c65d257daa8">SPCERR_BAD_SPEC_PARAMS</a> =  2,  <span class="comment">/* Invalid spectral parameters. */</span>
+<a name="l00774"></a><a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b3ba9183c7c3dace15eef0606980fd615">00774</a>   <a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b3ba9183c7c3dace15eef0606980fd615">SPCERR_BAD_X</a>           =  3,  <span class="comment">/* One or more of x coordinates were</span>
+<a name="l00775"></a>00775 <span class="comment">                                   invalid. */</span>
+<a name="l00776"></a><a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b7e218c5bd52bd6a45d8ad66573653007">00776</a>   <a class="code" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b7e218c5bd52bd6a45d8ad66573653007">SPCERR_BAD_SPEC</a>        =  4   <span class="comment">/* One or more of the spec coordinates were</span>
+<a name="l00777"></a>00777 <span class="comment">                                   invalid. */</span>
+<a name="l00778"></a>00778 };
 <a name="l00779"></a>00779 
-<a name="l00780"></a><a class="code" href="structspcprm.html#2c5c2d97e6c5f617272834b1516c84de">00780</a>   <span class="keywordtype">double</span> <a class="code" href="structspcprm.html#2c5c2d97e6c5f617272834b1516c84de">crval</a>;                 <span class="comment">/* Reference value (CRVALia), SI units.     */</span>
-<a name="l00781"></a><a class="code" href="structspcprm.html#74433ae0e7e1ec426777bafb402b50c4">00781</a>   <span class="keywordtype">double</span> <a class="code" href="structspcprm.html#74433ae0e7e1ec426777bafb402b50c4">restfrq</a>;               <span class="comment">/* Rest frequency, Hz.                      */</span>
-<a name="l00782"></a><a class="code" href="structspcprm.html#4dbc8c7064ae790483017b6c81e7ded2">00782</a>   <span class="keywordtype">double</span> <a class="code" href="structspcprm.html#4dbc8c7064ae790483017b6c81e7ded2">restwav</a>;               <span class="comment">/* Rest wavelength, m.                      */</span>
-<a name="l00783"></a>00783 
-<a name="l00784"></a><a class="code" href="structspcprm.html#e11db8d7ff8b605eed87298a32fd094d">00784</a>   <span class="keywordtype">double</span> <a class="code" href="structspcprm.html#e11db8d7ff8b605eed87298a32fd094d">pv</a>[7];                 <span class="comment">/* Grism parameters:                        */</span>
-<a name="l00785"></a>00785                                 <span class="comment">/*   0: G, grating ruling density.          */</span>
-<a name="l00786"></a>00786                                 <span class="comment">/*   1: m, interference order.              */</span>
-<a name="l00787"></a>00787                                 <span class="comment">/*   2: alpha, angle of incidence.          */</span>
-<a name="l00788"></a>00788                                 <span class="comment">/*   3: n_r, refractive index at lambda_r.  */</span>
-<a name="l00789"></a>00789                                 <span class="comment">/*   4: n'_r, dn/dlambda at lambda_r.       */</span>
-<a name="l00790"></a>00790                                 <span class="comment">/*   5: epsilon, grating tilt angle.        */</span>
-<a name="l00791"></a>00791                                 <span class="comment">/*   6: theta, detector tilt angle.         */</span>
-<a name="l00792"></a>00792 
-<a name="l00793"></a>00793   <span class="comment">/* Information derived from the parameters supplied.                      */</span>
-<a name="l00794"></a>00794   <span class="comment">/*------------------------------------------------------------------------*/</span>
-<a name="l00795"></a><a class="code" href="structspcprm.html#8ef0c963f1b0ee957f3403da7559a81c">00795</a>   <span class="keywordtype">double</span> <a class="code" href="structspcprm.html#8ef0c963f1b0ee957f3403da7559a81c">w</a>[6];                  <span class="comment">/* Intermediate values.                     */</span>
-<a name="l00796"></a>00796                                 <span class="comment">/*   0: Rest frequency or wavelength (SI).  */</span>
-<a name="l00797"></a>00797                                 <span class="comment">/*   1: CRVALX (SI units).                  */</span>
-<a name="l00798"></a>00798                                 <span class="comment">/*   2: CDELTX/CDELTia = dX/dS (SI units).  */</span>
-<a name="l00799"></a>00799                                 <span class="comment">/* The remainder are grism intermediates.   */</span>
-<a name="l00800"></a>00800 
-<a name="l00801"></a><a class="code" href="structspcprm.html#ec5d37c00d382a84a090d4f52d9a4346">00801</a>   <span class="keywordtype">int</span>    <a class="code" href="structspcprm.html#ec5d37c00d382a84a090d4f52d9a4346">isGrism</a>;               <span class="comment">/* Grism coordinates?  1: vacuum, 2: air.   */</span>
-<a name="l00802"></a><a class="code" href="structspcprm.html#844792d006c308f465ce8ca593a37df3">00802</a>   <span class="keywordtype">int</span>    <a class="code" href="structspcprm.html#844792d006c308f465ce8ca593a37df3">padding1</a>;              <span class="comment">/* (Dummy inserted for alignment purposes.) */</span>
-<a name="l00803"></a>00803 
-<a name="l00804"></a>00804   <span class="comment">/* Error handling                                                         */</span>
-<a name="l00805"></a>00805   <span class="comment">/*------------------------------------------------------------------------*/</span>
-<a name="l00806"></a><a class="code" href="structspcprm.html#6d4124d4db8f7addcbfee99a8634522e">00806</a>   <span class="keyword">struct </span><a class="code" href="structwcserr.html" title="Error message handling.">wcserr</a> *<a class="code" href="structspcprm.html#6d4124d4db8f7addcbfee99a8634522e">err</a>;
-<a name="l00807"></a>00807 
-<a name="l00808"></a>00808   <span class="comment">/* Private                                                                */</span>
-<a name="l00809"></a>00809   <span class="comment">/*------------------------------------------------------------------------*/</span>
-<a name="l00810"></a><a class="code" href="structspcprm.html#55316470e5591401576ba3c5c384df0b">00810</a>   <span class="keywordtype">void</span>   *<a class="code" href="structspcprm.html#55316470e5591401576ba3c5c384df0b">padding2</a>;             <span class="comment">/* (Dummy inserted for alignment purposes.) */</span>
-<a name="l00811"></a>00811   int (*<a class="code" href="structspcprm.html#20db4194170d78054908acf94b41d9d9">spxX2P</a>)(<a class="code" href="spx_8h.html#777e5c4790da397aefcada61445a1bb3" title="For use in declaring spectral conversion function prototypes.">SPX_ARGS</a>);      <span class="comment">/* Pointers to the transformation functions */</span>
-<a name="l00812"></a>00812   int (*<a class="code" href="structspcprm.html#dd01b70b4a074a7bdccff378ab61a948">spxP2S</a>)(<a class="code" href="spx_8h.html#777e5c4790da397aefcada61445a1bb3" title="For use in declaring spectral conversion function prototypes.">SPX_ARGS</a>);      <span class="comment">/* in the two-step algorithm chain in the   */</span>
-<a name="l00813"></a>00813                                 <span class="comment">/* pixel-to-spectral direction.             */</span>
-<a name="l00814"></a>00814 
-<a name="l00815"></a>00815   int (*<a class="code" href="structspcprm.html#fb6a33994ad13f402efb68d20a97eee1">spxS2P</a>)(<a class="code" href="spx_8h.html#777e5c4790da397aefcada61445a1bb3" title="For use in declaring spectral conversion function prototypes.">SPX_ARGS</a>);      <span class="comment">/* Pointers to the transformation functions */</span>
-<a name="l00816"></a>00816   int (*<a class="code" href="structspcprm.html#6727d3a30592e54c7361e0434a795832">spxP2X</a>)(<a class="code" href="spx_8h.html#777e5c4790da397aefcada61445a1bb3" title="For use in declaring spectral conversion function prototypes.">SPX_ARGS</a>);      <span class="comment">/* in the two-step algorithm chain in the   */</span>
-<a name="l00817"></a>00817                                 <span class="comment">/* spectral-to-pixel direction.             */</span>
-<a name="l00818"></a>00818 };
-<a name="l00819"></a>00819 
-<a name="l00820"></a>00820 <span class="comment">/* Size of the spcprm struct in int units, used by the Fortran wrappers. */</span>
-<a name="l00821"></a><a class="code" href="spc_8h.html#4e195ae6c61da3608692a3c7f2395599">00821</a> <span class="preprocessor">#define SPCLEN (sizeof(struct spcprm)/sizeof(int))</span>
-<a name="l00822"></a>00822 <span class="preprocessor"></span>
-<a name="l00823"></a>00823 
-<a name="l00824"></a>00824 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#30c95d776068ef3cc959a50af9995fa9" title="Default constructor for the spcprm struct.">spcini</a>(<span class="keyword">struct</span> <a class="code" href="structspcprm.html" title="Spectral transformation parameters.">spcprm</a> *spc);
-<a name="l00825"></a>00825 
-<a name="l00826"></a>00826 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#2e04fc3ccd8aceebb4bfef56c5399a7d" title="Destructor for the spcprm struct.">spcfree</a>(<span class="keyword">struct</span> <a class="code" href="structspcprm.html" title="Spectral transformation parameters.">spcprm</a> *spc);
-<a name="l00827"></a>00827 
-<a name="l00828"></a>00828 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#7304d0d00bcf9d2bad1f56ba6d8322ea" title="Print routine for the spcprm struct.">spcprt</a>(<span class="keyword">const</span> <span class="keyword">struct</span> <a class="code" href="structspcprm.html" title="Spectral transformation parameters.">spcprm</a> *spc);
+<a name="l00780"></a><a class="code" href="structspcprm.html">00780</a> <span class="keyword">struct </span><a class="code" href="structspcprm.html" title="Spectral transformation parameters.">spcprm</a> {
+<a name="l00781"></a>00781   <span class="comment">/* Initialization flag (see the prologue above).                          */</span>
+<a name="l00782"></a>00782   <span class="comment">/*------------------------------------------------------------------------*/</span>
+<a name="l00783"></a><a class="code" href="structspcprm.html#feeb5f4056f271fd37291a712a7b6791">00783</a>   <span class="keywordtype">int</span>    <a class="code" href="structspcprm.html#feeb5f4056f271fd37291a712a7b6791">flag</a>;                  <span class="comment">/* Set to zero to force initialization.     */</span>
+<a name="l00784"></a>00784 
+<a name="l00785"></a>00785   <span class="comment">/* Parameters to be provided (see the prologue above).                    */</span>
+<a name="l00786"></a>00786   <span class="comment">/*------------------------------------------------------------------------*/</span>
+<a name="l00787"></a><a class="code" href="structspcprm.html#387d74de3215763d7e22c222b19a2c44">00787</a>   <span class="keywordtype">char</span>   <a class="code" href="structspcprm.html#387d74de3215763d7e22c222b19a2c44">type</a>[8];               <span class="comment">/* Four-letter spectral variable type.      */</span>
+<a name="l00788"></a><a class="code" href="structspcprm.html#5f9a48a52144f8ced93baaffc107a3a6">00788</a>   <span class="keywordtype">char</span>   <a class="code" href="structspcprm.html#5f9a48a52144f8ced93baaffc107a3a6">code</a>[4];               <span class="comment">/* Three-letter spectral algorithm code.    */</span>
+<a name="l00789"></a>00789 
+<a name="l00790"></a><a class="code" href="structspcprm.html#2c5c2d97e6c5f617272834b1516c84de">00790</a>   <span class="keywordtype">double</span> <a class="code" href="structspcprm.html#2c5c2d97e6c5f617272834b1516c84de">crval</a>;                 <span class="comment">/* Reference value (CRVALia), SI units.     */</span>
+<a name="l00791"></a><a class="code" href="structspcprm.html#74433ae0e7e1ec426777bafb402b50c4">00791</a>   <span class="keywordtype">double</span> <a class="code" href="structspcprm.html#74433ae0e7e1ec426777bafb402b50c4">restfrq</a>;               <span class="comment">/* Rest frequency, Hz.                      */</span>
+<a name="l00792"></a><a class="code" href="structspcprm.html#4dbc8c7064ae790483017b6c81e7ded2">00792</a>   <span class="keywordtype">double</span> <a class="code" href="structspcprm.html#4dbc8c7064ae790483017b6c81e7ded2">restwav</a>;               <span class="comment">/* Rest wavelength, m.                      */</span>
+<a name="l00793"></a>00793 
+<a name="l00794"></a><a class="code" href="structspcprm.html#e11db8d7ff8b605eed87298a32fd094d">00794</a>   <span class="keywordtype">double</span> <a class="code" href="structspcprm.html#e11db8d7ff8b605eed87298a32fd094d">pv</a>[7];                 <span class="comment">/* Grism parameters:                        */</span>
+<a name="l00795"></a>00795                                 <span class="comment">/*   0: G, grating ruling density.          */</span>
+<a name="l00796"></a>00796                                 <span class="comment">/*   1: m, interference order.              */</span>
+<a name="l00797"></a>00797                                 <span class="comment">/*   2: alpha, angle of incidence.          */</span>
+<a name="l00798"></a>00798                                 <span class="comment">/*   3: n_r, refractive index at lambda_r.  */</span>
+<a name="l00799"></a>00799                                 <span class="comment">/*   4: n'_r, dn/dlambda at lambda_r.       */</span>
+<a name="l00800"></a>00800                                 <span class="comment">/*   5: epsilon, grating tilt angle.        */</span>
+<a name="l00801"></a>00801                                 <span class="comment">/*   6: theta, detector tilt angle.         */</span>
+<a name="l00802"></a>00802 
+<a name="l00803"></a>00803   <span class="comment">/* Information derived from the parameters supplied.                      */</span>
+<a name="l00804"></a>00804   <span class="comment">/*------------------------------------------------------------------------*/</span>
+<a name="l00805"></a><a class="code" href="structspcprm.html#8ef0c963f1b0ee957f3403da7559a81c">00805</a>   <span class="keywordtype">double</span> <a class="code" href="structspcprm.html#8ef0c963f1b0ee957f3403da7559a81c">w</a>[6];                  <span class="comment">/* Intermediate values.                     */</span>
+<a name="l00806"></a>00806                                 <span class="comment">/*   0: Rest frequency or wavelength (SI).  */</span>
+<a name="l00807"></a>00807                                 <span class="comment">/*   1: CRVALX (SI units).                  */</span>
+<a name="l00808"></a>00808                                 <span class="comment">/*   2: CDELTX/CDELTia = dX/dS (SI units).  */</span>
+<a name="l00809"></a>00809                                 <span class="comment">/* The remainder are grism intermediates.   */</span>
+<a name="l00810"></a>00810 
+<a name="l00811"></a><a class="code" href="structspcprm.html#ec5d37c00d382a84a090d4f52d9a4346">00811</a>   <span class="keywordtype">int</span>    <a class="code" href="structspcprm.html#ec5d37c00d382a84a090d4f52d9a4346">isGrism</a>;               <span class="comment">/* Grism coordinates?  1: vacuum, 2: air.   */</span>
+<a name="l00812"></a><a class="code" href="structspcprm.html#844792d006c308f465ce8ca593a37df3">00812</a>   <span class="keywordtype">int</span>    <a class="code" href="structspcprm.html#844792d006c308f465ce8ca593a37df3">padding1</a>;              <span class="comment">/* (Dummy inserted for alignment purposes.) */</span>
+<a name="l00813"></a>00813 
+<a name="l00814"></a>00814   <span class="comment">/* Error handling                                                         */</span>
+<a name="l00815"></a>00815   <span class="comment">/*------------------------------------------------------------------------*/</span>
+<a name="l00816"></a><a class="code" href="structspcprm.html#6d4124d4db8f7addcbfee99a8634522e">00816</a>   <span class="keyword">struct </span><a class="code" href="structwcserr.html" title="Error message handling.">wcserr</a> *<a class="code" href="structspcprm.html#6d4124d4db8f7addcbfee99a8634522e">err</a>;
+<a name="l00817"></a>00817 
+<a name="l00818"></a>00818   <span class="comment">/* Private                                                                */</span>
+<a name="l00819"></a>00819   <span class="comment">/*------------------------------------------------------------------------*/</span>
+<a name="l00820"></a><a class="code" href="structspcprm.html#55316470e5591401576ba3c5c384df0b">00820</a>   <span class="keywordtype">void</span>   *<a class="code" href="structspcprm.html#55316470e5591401576ba3c5c384df0b">padding2</a>;             <span class="comment">/* (Dummy inserted for alignment purposes.) */</span>
+<a name="l00821"></a>00821   int (*<a class="code" href="structspcprm.html#20db4194170d78054908acf94b41d9d9">spxX2P</a>)(<a class="code" href="spx_8h.html#777e5c4790da397aefcada61445a1bb3" title="For use in declaring spectral conversion function prototypes.">SPX_ARGS</a>);      <span class="comment">/* Pointers to the transformation functions */</span>
+<a name="l00822"></a>00822   int (*<a class="code" href="structspcprm.html#dd01b70b4a074a7bdccff378ab61a948">spxP2S</a>)(<a class="code" href="spx_8h.html#777e5c4790da397aefcada61445a1bb3" title="For use in declaring spectral conversion function prototypes.">SPX_ARGS</a>);      <span class="comment">/* in the two-step algorithm chain in the   */</span>
+<a name="l00823"></a>00823                                 <span class="comment">/* pixel-to-spectral direction.             */</span>
+<a name="l00824"></a>00824 
+<a name="l00825"></a>00825   int (*<a class="code" href="structspcprm.html#fb6a33994ad13f402efb68d20a97eee1">spxS2P</a>)(<a class="code" href="spx_8h.html#777e5c4790da397aefcada61445a1bb3" title="For use in declaring spectral conversion function prototypes.">SPX_ARGS</a>);      <span class="comment">/* Pointers to the transformation functions */</span>
+<a name="l00826"></a>00826   int (*<a class="code" href="structspcprm.html#6727d3a30592e54c7361e0434a795832">spxP2X</a>)(<a class="code" href="spx_8h.html#777e5c4790da397aefcada61445a1bb3" title="For use in declaring spectral conversion function prototypes.">SPX_ARGS</a>);      <span class="comment">/* in the two-step algorithm chain in the   */</span>
+<a name="l00827"></a>00827                                 <span class="comment">/* spectral-to-pixel direction.             */</span>
+<a name="l00828"></a>00828 };
 <a name="l00829"></a>00829 
-<a name="l00830"></a>00830 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#f2ee6399a65f2467841be79e4bbb41c3" title="Setup routine for the spcprm struct.">spcset</a>(<span class="keyword">struct</span> <a class="code" href="structspcprm.html" title="Spectral transformation parameters.">spcprm</a> *spc);
-<a name="l00831"></a>00831 
-<a name="l00832"></a>00832 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#e7fe86ae85a1a3bd19c2d78c3dba58f6" title="Transform to spectral coordinates.">spcx2s</a>(<span class="keyword">struct</span> <a class="code" href="structspcprm.html" title="Spectral transformation parameters.">spcprm</a> *spc, <span class="keywordtype">int</span> nx, <span class="keywordtype">int</span> sx, <span class="keywordtype">int</span> sspec,
-<a name="l00833"></a>00833            <span class="keyword">const</span> <span class="keywordtype">double</span> x[], <span class="keywordtype">double</span> spec[], <span class="keywordtype">int</span> stat[]);
-<a name="l00834"></a>00834 
-<a name="l00835"></a>00835 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#e6e89217a5eca87a2101ae195da74347" title="Transform spectral coordinates.">spcs2x</a>(<span class="keyword">struct</span> <a class="code" href="structspcprm.html" title="Spectral transformation parameters.">spcprm</a> *spc, <span class="keywordtype">int</span> nspec, <span class="keywordtype">int</span> sspec, <span class="keywordtype">int</span> sx,
-<a name="l00836"></a>00836            <span class="keyword">const</span> <span class="keywordtype">double</span> spec[], <span class="keywordtype">double</span> x[], <span class="keywordtype">int</span> stat[]);
+<a name="l00830"></a>00830 <span class="comment">/* Size of the spcprm struct in int units, used by the Fortran wrappers. */</span>
+<a name="l00831"></a><a class="code" href="spc_8h.html#4e195ae6c61da3608692a3c7f2395599">00831</a> <span class="preprocessor">#define SPCLEN (sizeof(struct spcprm)/sizeof(int))</span>
+<a name="l00832"></a>00832 <span class="preprocessor"></span>
+<a name="l00833"></a>00833 
+<a name="l00834"></a>00834 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#30c95d776068ef3cc959a50af9995fa9" title="Default constructor for the spcprm struct.">spcini</a>(<span class="keyword">struct</span> <a class="code" href="structspcprm.html" title="Spectral transformation parameters.">spcprm</a> *spc);
+<a name="l00835"></a>00835 
+<a name="l00836"></a>00836 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#2e04fc3ccd8aceebb4bfef56c5399a7d" title="Destructor for the spcprm struct.">spcfree</a>(<span class="keyword">struct</span> <a class="code" href="structspcprm.html" title="Spectral transformation parameters.">spcprm</a> *spc);
 <a name="l00837"></a>00837 
-<a name="l00838"></a>00838 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#eb46b7cc0b8e5a01be7862b3c446204a" title="Spectral CTYPEia keyword analysis.">spctype</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> ctype[], <span class="keywordtype">char</span> stype[], <span class="keywordtype">char</span> scode[], <span class="keywordtype">char</span> sname[],
-<a name="l00839"></a>00839             <span class="keywordtype">char</span> units[], <span class="keywordtype">char</span> *ptype, <span class="keywordtype">char</span> *xtype, <span class="keywordtype">int</span> *restreq,
-<a name="l00840"></a>00840             <span class="keyword">struct</span> <a class="code" href="structwcserr.html" title="Error message handling.">wcserr</a> **err);
+<a name="l00838"></a>00838 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#7304d0d00bcf9d2bad1f56ba6d8322ea" title="Print routine for the spcprm struct.">spcprt</a>(<span class="keyword">const</span> <span class="keyword">struct</span> <a class="code" href="structspcprm.html" title="Spectral transformation parameters.">spcprm</a> *spc);
+<a name="l00839"></a>00839 
+<a name="l00840"></a>00840 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#f2ee6399a65f2467841be79e4bbb41c3" title="Setup routine for the spcprm struct.">spcset</a>(<span class="keyword">struct</span> <a class="code" href="structspcprm.html" title="Spectral transformation parameters.">spcprm</a> *spc);
 <a name="l00841"></a>00841 
-<a name="l00842"></a>00842 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#300fdb21c6e53aca6749db3455e531b2" title="Spectral keyword analysis.">spcspxe</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> ctypeS[], <span class="keywordtype">double</span> crvalS, <span class="keywordtype">double</span> restfrq,
-<a name="l00843"></a>00843             <span class="keywordtype">double</span> restwav, <span class="keywordtype">char</span> *ptype, <span class="keywordtype">char</span> *xtype, <span class="keywordtype">int</span> *restreq,
-<a name="l00844"></a>00844             <span class="keywordtype">double</span> *crvalX, <span class="keywordtype">double</span> *dXdS, <span class="keyword">struct</span> <a class="code" href="structwcserr.html" title="Error message handling.">wcserr</a> **err);
-<a name="l00845"></a>00845 
-<a name="l00846"></a>00846 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#99689938e16d737f26bf6504f2e1599a" title="Spectral keyword synthesis.">spcxpse</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> ctypeS[], <span class="keywordtype">double</span> crvalX, <span class="keywordtype">double</span> restfrq,
-<a name="l00847"></a>00847             <span class="keywordtype">double</span> restwav, <span class="keywordtype">char</span> *ptype, <span class="keywordtype">char</span> *xtype, <span class="keywordtype">int</span> *restreq,
-<a name="l00848"></a>00848             <span class="keywordtype">double</span> *crvalS, <span class="keywordtype">double</span> *dSdX, <span class="keyword">struct</span> <a class="code" href="structwcserr.html" title="Error message handling.">wcserr</a> **err);
-<a name="l00849"></a>00849 
-<a name="l00850"></a>00850 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#cc0b7b9e5bc5495f24129492e4ff5218" title="Spectral keyword translation.">spctrne</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> ctypeS1[], <span class="keywordtype">double</span> crvalS1, <span class="keywordtype">double</span> cdeltS1,
-<a name="l00851"></a>00851             <span class="keywordtype">double</span> restfrq, <span class="keywordtype">double</span> restwav, <span class="keywordtype">char</span> ctypeS2[], <span class="keywordtype">double</span> *crvalS2,
-<a name="l00852"></a>00852             <span class="keywordtype">double</span> *cdeltS2, <span class="keyword">struct</span> <a class="code" href="structwcserr.html" title="Error message handling.">wcserr</a> **err);
-<a name="l00853"></a>00853 
-<a name="l00854"></a>00854 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#615d3ef3a505a8be7da1578d9338d218" title="Translate AIPS-convention spectral keywords.">spcaips</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> ctypeA[], <span class="keywordtype">int</span> velref, <span class="keywordtype">char</span> ctype[], <span class="keywordtype">char</span> specsys[]);
+<a name="l00842"></a>00842 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#e7fe86ae85a1a3bd19c2d78c3dba58f6" title="Transform to spectral coordinates.">spcx2s</a>(<span class="keyword">struct</span> <a class="code" href="structspcprm.html" title="Spectral transformation parameters.">spcprm</a> *spc, <span class="keywordtype">int</span> nx, <span class="keywordtype">int</span> sx, <span class="keywordtype">int</span> sspec,
+<a name="l00843"></a>00843            <span class="keyword">const</span> <span class="keywordtype">double</span> x[], <span class="keywordtype">double</span> spec[], <span class="keywordtype">int</span> stat[]);
+<a name="l00844"></a>00844 
+<a name="l00845"></a>00845 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#e6e89217a5eca87a2101ae195da74347" title="Transform spectral coordinates.">spcs2x</a>(<span class="keyword">struct</span> <a class="code" href="structspcprm.html" title="Spectral transformation parameters.">spcprm</a> *spc, <span class="keywordtype">int</span> nspec, <span class="keywordtype">int</span> sspec, <span class="keywordtype">int</span> sx,
+<a name="l00846"></a>00846            <span class="keyword">const</span> <span class="keywordtype">double</span> spec[], <span class="keywordtype">double</span> x[], <span class="keywordtype">int</span> stat[]);
+<a name="l00847"></a>00847 
+<a name="l00848"></a>00848 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#eb46b7cc0b8e5a01be7862b3c446204a" title="Spectral CTYPEia keyword analysis.">spctype</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> ctype[], <span class="keywordtype">char</span> stype[], <span class="keywordtype">char</span> scode[], <span class="keywordtype">char</span> sname[],
+<a name="l00849"></a>00849             <span class="keywordtype">char</span> units[], <span class="keywordtype">char</span> *ptype, <span class="keywordtype">char</span> *xtype, <span class="keywordtype">int</span> *restreq,
+<a name="l00850"></a>00850             <span class="keyword">struct</span> <a class="code" href="structwcserr.html" title="Error message handling.">wcserr</a> **err);
+<a name="l00851"></a>00851 
+<a name="l00852"></a>00852 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#300fdb21c6e53aca6749db3455e531b2" title="Spectral keyword analysis.">spcspxe</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> ctypeS[], <span class="keywordtype">double</span> crvalS, <span class="keywordtype">double</span> restfrq,
+<a name="l00853"></a>00853             <span class="keywordtype">double</span> restwav, <span class="keywordtype">char</span> *ptype, <span class="keywordtype">char</span> *xtype, <span class="keywordtype">int</span> *restreq,
+<a name="l00854"></a>00854             <span class="keywordtype">double</span> *crvalX, <span class="keywordtype">double</span> *dXdS, <span class="keyword">struct</span> <a class="code" href="structwcserr.html" title="Error message handling.">wcserr</a> **err);
 <a name="l00855"></a>00855 
-<a name="l00856"></a>00856 
-<a name="l00857"></a>00857 <span class="comment">/* Deprecated. */</span>
-<a name="l00858"></a><a class="code" href="spc_8h.html#4d66edc63bfc8a39adc6bac9e88c8e81">00858</a> <span class="preprocessor">#define spcini_errmsg spc_errmsg</span>
-<a name="l00859"></a><a class="code" href="spc_8h.html#c39694faccdd56850677999d714cd14a">00859</a> <span class="preprocessor"></span><span class="preprocessor">#define spcprt_errmsg spc_errmsg</span>
-<a name="l00860"></a><a class="code" href="spc_8h.html#49807752ce4e223d4095cf6ad13bac0a">00860</a> <span class="preprocessor"></span><span class="preprocessor">#define spcset_errmsg spc_errmsg</span>
-<a name="l00861"></a><a class="code" href="spc_8h.html#ab517aed3ee9f8d5a5ca1f990d310b61">00861</a> <span class="preprocessor"></span><span class="preprocessor">#define spcx2s_errmsg spc_errmsg</span>
-<a name="l00862"></a><a class="code" href="spc_8h.html#f0e4274b242fd41625b6ad4f4376b8da">00862</a> <span class="preprocessor"></span><span class="preprocessor">#define spcs2x_errmsg spc_errmsg</span>
-<a name="l00863"></a>00863 <span class="preprocessor"></span>
-<a name="l00864"></a>00864 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#6f88e6f1a549bffa0d0ab2b9523d2000">spctyp</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> ctype[], <span class="keywordtype">char</span> stype[], <span class="keywordtype">char</span> scode[], <span class="keywordtype">char</span> sname[],
-<a name="l00865"></a>00865            <span class="keywordtype">char</span> units[], <span class="keywordtype">char</span> *ptype, <span class="keywordtype">char</span> *xtype, <span class="keywordtype">int</span> *restreq);
-<a name="l00866"></a>00866 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#b9fc42d8e1d281839a0a42ac00bcd180">spcspx</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> ctypeS[], <span class="keywordtype">double</span> crvalS, <span class="keywordtype">double</span> restfrq, <span class="keywordtype">double</span> restwav,
-<a name="l00867"></a>00867            <span class="keywordtype">char</span> *ptype, <span class="keywordtype">char</span> *xtype, <span class="keywordtype">int</span> *restreq, <span class="keywordtype">double</span> *crvalX,
-<a name="l00868"></a>00868            <span class="keywordtype">double</span> *dXdS);
-<a name="l00869"></a>00869 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#49f16254df0e3498ae2c1eb641f5232c">spcxps</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> ctypeS[], <span class="keywordtype">double</span> crvalX, <span class="keywordtype">double</span> restfrq, <span class="keywordtype">double</span> restwav,
-<a name="l00870"></a>00870            <span class="keywordtype">char</span> *ptype, <span class="keywordtype">char</span> *xtype, <span class="keywordtype">int</span> *restreq, <span class="keywordtype">double</span> *crvalS,
-<a name="l00871"></a>00871            <span class="keywordtype">double</span> *dSdX);
-<a name="l00872"></a>00872 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#96e8686daa13255e36506c3bfc213e46">spctrn</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> ctypeS1[], <span class="keywordtype">double</span> crvalS1, <span class="keywordtype">double</span> cdeltS1,
-<a name="l00873"></a>00873            <span class="keywordtype">double</span> restfrq, <span class="keywordtype">double</span> restwav, <span class="keywordtype">char</span> ctypeS2[], <span class="keywordtype">double</span> *crvalS2,
-<a name="l00874"></a>00874            <span class="keywordtype">double</span> *cdeltS2);
-<a name="l00875"></a>00875 
-<a name="l00876"></a>00876 <span class="preprocessor">#ifdef __cplusplus</span>
-<a name="l00877"></a>00877 <span class="preprocessor"></span>}
-<a name="l00878"></a>00878 <span class="preprocessor">#endif</span>
-<a name="l00879"></a>00879 <span class="preprocessor"></span>
-<a name="l00880"></a>00880 <span class="preprocessor">#endif </span><span class="comment">/* WCSLIB_SPC */</span>
+<a name="l00856"></a>00856 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#99689938e16d737f26bf6504f2e1599a" title="Spectral keyword synthesis.">spcxpse</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> ctypeS[], <span class="keywordtype">double</span> crvalX, <span class="keywordtype">double</span> restfrq,
+<a name="l00857"></a>00857             <span class="keywordtype">double</span> restwav, <span class="keywordtype">char</span> *ptype, <span class="keywordtype">char</span> *xtype, <span class="keywordtype">int</span> *restreq,
+<a name="l00858"></a>00858             <span class="keywordtype">double</span> *crvalS, <span class="keywordtype">double</span> *dSdX, <span class="keyword">struct</span> <a class="code" href="structwcserr.html" title="Error message handling.">wcserr</a> **err);
+<a name="l00859"></a>00859 
+<a name="l00860"></a>00860 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#cc0b7b9e5bc5495f24129492e4ff5218" title="Spectral keyword translation.">spctrne</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> ctypeS1[], <span class="keywordtype">double</span> crvalS1, <span class="keywordtype">double</span> cdeltS1,
+<a name="l00861"></a>00861             <span class="keywordtype">double</span> restfrq, <span class="keywordtype">double</span> restwav, <span class="keywordtype">char</span> ctypeS2[], <span class="keywordtype">double</span> *crvalS2,
+<a name="l00862"></a>00862             <span class="keywordtype">double</span> *cdeltS2, <span class="keyword">struct</span> <a class="code" href="structwcserr.html" title="Error message handling.">wcserr</a> **err);
+<a name="l00863"></a>00863 
+<a name="l00864"></a>00864 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#615d3ef3a505a8be7da1578d9338d218" title="Translate AIPS-convention spectral keywords.">spcaips</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> ctypeA[], <span class="keywordtype">int</span> velref, <span class="keywordtype">char</span> ctype[], <span class="keywordtype">char</span> specsys[]);
+<a name="l00865"></a>00865 
+<a name="l00866"></a>00866 
+<a name="l00867"></a>00867 <span class="comment">/* Deprecated. */</span>
+<a name="l00868"></a><a class="code" href="spc_8h.html#4d66edc63bfc8a39adc6bac9e88c8e81">00868</a> <span class="preprocessor">#define spcini_errmsg spc_errmsg</span>
+<a name="l00869"></a><a class="code" href="spc_8h.html#c39694faccdd56850677999d714cd14a">00869</a> <span class="preprocessor"></span><span class="preprocessor">#define spcprt_errmsg spc_errmsg</span>
+<a name="l00870"></a><a class="code" href="spc_8h.html#49807752ce4e223d4095cf6ad13bac0a">00870</a> <span class="preprocessor"></span><span class="preprocessor">#define spcset_errmsg spc_errmsg</span>
+<a name="l00871"></a><a class="code" href="spc_8h.html#ab517aed3ee9f8d5a5ca1f990d310b61">00871</a> <span class="preprocessor"></span><span class="preprocessor">#define spcx2s_errmsg spc_errmsg</span>
+<a name="l00872"></a><a class="code" href="spc_8h.html#f0e4274b242fd41625b6ad4f4376b8da">00872</a> <span class="preprocessor"></span><span class="preprocessor">#define spcs2x_errmsg spc_errmsg</span>
+<a name="l00873"></a>00873 <span class="preprocessor"></span>
+<a name="l00874"></a>00874 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#6f88e6f1a549bffa0d0ab2b9523d2000">spctyp</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> ctype[], <span class="keywordtype">char</span> stype[], <span class="keywordtype">char</span> scode[], <span class="keywordtype">char</span> sname[],
+<a name="l00875"></a>00875            <span class="keywordtype">char</span> units[], <span class="keywordtype">char</span> *ptype, <span class="keywordtype">char</span> *xtype, <span class="keywordtype">int</span> *restreq);
+<a name="l00876"></a>00876 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#b9fc42d8e1d281839a0a42ac00bcd180">spcspx</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> ctypeS[], <span class="keywordtype">double</span> crvalS, <span class="keywordtype">double</span> restfrq, <span class="keywordtype">double</span> restwav,
+<a name="l00877"></a>00877            <span class="keywordtype">char</span> *ptype, <span class="keywordtype">char</span> *xtype, <span class="keywordtype">int</span> *restreq, <span class="keywordtype">double</span> *crvalX,
+<a name="l00878"></a>00878            <span class="keywordtype">double</span> *dXdS);
+<a name="l00879"></a>00879 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#49f16254df0e3498ae2c1eb641f5232c">spcxps</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> ctypeS[], <span class="keywordtype">double</span> crvalX, <span class="keywordtype">double</span> restfrq, <span class="keywordtype">double</span> restwav,
+<a name="l00880"></a>00880            <span class="keywordtype">char</span> *ptype, <span class="keywordtype">char</span> *xtype, <span class="keywordtype">int</span> *restreq, <span class="keywordtype">double</span> *crvalS,
+<a name="l00881"></a>00881            <span class="keywordtype">double</span> *dSdX);
+<a name="l00882"></a>00882 <span class="keywordtype">int</span> <a class="code" href="spc_8h.html#96e8686daa13255e36506c3bfc213e46">spctrn</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> ctypeS1[], <span class="keywordtype">double</span> crvalS1, <span class="keywordtype">double</span> cdeltS1,
+<a name="l00883"></a>00883            <span class="keywordtype">double</span> restfrq, <span class="keywordtype">double</span> restwav, <span class="keywordtype">char</span> ctypeS2[], <span class="keywordtype">double</span> *crvalS2,
+<a name="l00884"></a>00884            <span class="keywordtype">double</span> *cdeltS2);
+<a name="l00885"></a>00885 
+<a name="l00886"></a>00886 <span class="preprocessor">#ifdef __cplusplus</span>
+<a name="l00887"></a>00887 <span class="preprocessor"></span>}
+<a name="l00888"></a>00888 <span class="preprocessor">#endif</span>
+<a name="l00889"></a>00889 <span class="preprocessor"></span>
+<a name="l00890"></a>00890 <span class="preprocessor">#endif </span><span class="comment">/* WCSLIB_SPC */</span>
 </pre></div></div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jan 24 16:40:48 2012 for WCSLIB 4.9 by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Feb 6 10:41:57 2012 for WCSLIB 4.10 by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.6 </small></address>
 </body>

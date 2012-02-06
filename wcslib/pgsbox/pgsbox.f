@@ -1,6 +1,6 @@
 *=======================================================================
 *
-* PGSBOX 4.9 - draw curvilinear coordinate axes for PGPLOT.
+* PGSBOX 4.10 - draw curvilinear coordinate axes for PGPLOT.
 * Copyright (C) 1997-2012, Mark Calabretta
 *
 * This file is part of PGSBOX.
@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: pgsbox.f,v 4.9 2012/01/24 05:40:30 cal103 Exp $
+* $Id: pgsbox.f,v 4.10 2012/02/05 23:41:45 cal103 Exp $
 *=======================================================================
 *
 * PGSBOX draws and labels a curvilinear coordinate grid.  The caller

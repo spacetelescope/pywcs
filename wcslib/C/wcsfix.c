@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.9 - an implementation of the FITS WCS standard.
+  WCSLIB 4.10 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2012, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcsfix.c,v 4.9 2012/01/24 05:40:29 cal103 Exp $
+  $Id: wcsfix.c,v 4.10 2012/02/05 23:41:44 cal103 Exp $
 *===========================================================================*/
 
 #include <math.h>
@@ -85,11 +85,11 @@ int wcsfix(int ctrl, const int naxis[], struct wcsprm *wcs, int stat[])
     status = 1;
   }
 
-  if ((stat[CELFIX] = celfix(wcs)) > 0) {
+  if ((stat[SPCFIX] = spcfix(wcs)) > 0) {
     status = 1;
   }
 
-  if ((stat[SPCFIX] = spcfix(wcs)) > 0) {
+  if ((stat[CELFIX] = celfix(wcs)) > 0) {
     status = 1;
   }
 
@@ -114,7 +114,11 @@ int wcsfixi(int ctrl, const int naxis[], struct wcsprm *wcs, int stat[],
   status on input which should be preserved if no translation errors occur.
   The simplest way seems to be to save a copy of wcs->err and clear it before
   each sub-fixer.  The last real error to occur, excluding informative
-  messages, is the one returned. */
+  messages, is the one returned.
+
+  To get informative messages from spcfix() it must precede celfix() and
+  cylfix().  The latter call wcsset() which also translates AIPS-convention
+  spectral axes. */
   wcserr_copy(wcs->err, &err);
 
   for (ifix = CDFIX; ifix < NWCSFIX; ifix++) {
@@ -131,11 +135,11 @@ int wcsfixi(int ctrl, const int naxis[], struct wcsprm *wcs, int stat[],
     case UNITFIX:
       stat[ifix] = unitfix(ctrl, wcs);
       break;
-    case CELFIX:
-      stat[ifix] = celfix(wcs);
-      break;
     case SPCFIX:
       stat[ifix] = spcfix(wcs);
+      break;
+    case CELFIX:
+      stat[ifix] = celfix(wcs);
       break;
     case CYLFIX:
       stat[ifix] = cylfix(naxis, wcs);
@@ -379,9 +383,10 @@ int datfix(struct wcsprm *wcs)
   }
 
   if (strncmp(orig_dateobs, dateobs, 72)) {
-    return wcserr_set(
-      WCSERR_SET(FIXERR_DATE_FIX),
-      "Fixed '%s' to '%s'", orig_dateobs, dateobs);
+    wcserr_set(WCSERR_SET(FIXERR_DATE_FIX),
+      "Changed '%s' to '%s'", orig_dateobs, dateobs);
+
+    return FIXERR_SUCCESS;
   }
 
   return FIXERR_NO_CHANGE;
@@ -400,7 +405,7 @@ int unitfix(int ctrl, struct wcsprm *wcs)
   if (wcs == 0x0) return FIXERR_NULL_POINTER;
   err = &(wcs->err);
 
-  strcpy(msg, "Translated units: ");
+  strcpy(msg, "Changed units: ");
   for (i = 0; i < wcs->naxis; i++) {
     strncpy(orig_unit, wcs->cunit[i], 80);
     if (wcsutrne(ctrl, wcs->cunit[i], &(wcs->err)) == 0) {
@@ -419,6 +424,72 @@ int unitfix(int ctrl, struct wcsprm *wcs)
   }
 
   return status;
+}
+
+/*--------------------------------------------------------------------------*/
+
+int spcfix(struct wcsprm *wcs)
+
+{
+  static const char *function = "spcfix";
+
+  char ctype[9], specsys[9];
+  int  i, status;
+  struct wcserr **err;
+
+  if (wcs == 0x0) return FIXERR_NULL_POINTER;
+  err = &(wcs->err);
+
+  for (i = 0; i < wcs->naxis; i++) {
+    /* Translate an AIPS-convention spectral type if present. */
+    status = spcaips(wcs->ctype[i], wcs->velref, ctype, specsys);
+    if (status == 0) {
+      /* An AIPS type was found but it may match what we already have. */
+      status = FIXERR_NO_CHANGE;
+
+      /* Was specsys translated? */
+      if (wcs->specsys[0] == '\0' && *specsys) {
+        strncpy(wcs->specsys, specsys, 9);
+        wcserr_set(WCSERR_SET(FIXERR_SPC_UPDATE),
+          "Changed SPECSYS to '%s'", specsys);
+        status = FIXERR_SUCCESS;
+      }
+
+      /* Was ctype translated?  Have to null-fill for comparing them. */
+      wcsutil_null_fill(9, wcs->ctype[i]);
+      if (strncmp(wcs->ctype[i], ctype, 9)) {
+        /* ctype was translated... */
+        if (status == FIXERR_SUCCESS) {
+          /* ...and specsys was also. */
+          wcserr_set(WCSERR_SET(FIXERR_SPC_UPDATE),
+            "Changed CTYPE%d from '%s' to '%s', and SPECSYS to '%s'",
+            i+1, wcs->ctype[i], ctype, wcs->specsys);
+        } else {
+          wcserr_set(WCSERR_SET(FIXERR_SPC_UPDATE),
+            "Changed CTYPE%d from '%s' to '%s'", i+1, wcs->ctype[i], ctype);
+          status = FIXERR_SUCCESS;
+        }
+
+        strncpy(wcs->ctype[i], ctype, 9);
+      }
+
+      /* Tidy up. */
+      if (status == FIXERR_SUCCESS) {
+        wcsutil_null_fill(72, wcs->ctype[i]);
+        wcsutil_null_fill(72, wcs->specsys);
+      }
+
+      /* No need to check for others, wcsset() will fail if so. */
+      return status;
+
+    } else if (status == SPCERR_BAD_SPEC_PARAMS) {
+      /* An AIPS spectral type was found but with invalid velref. */
+      return wcserr_set(WCSERR_SET(FIXERR_BAD_PARAM),
+        "Invalid parameter value: velref = %d", wcs->velref);
+    }
+  }
+
+  return FIXERR_NO_CHANGE;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -538,69 +609,6 @@ int celfix(struct wcsprm *wcs)
 
       return FIXERR_SUCCESS;
     }
-  }
-
-  return FIXERR_NO_CHANGE;
-}
-
-/*--------------------------------------------------------------------------*/
-
-int spcfix(struct wcsprm *wcs)
-
-{
-  static const char *function = "spcfix";
-
-  char ctype[9], specsys[9];
-  int  i, status;
-  struct wcserr **err;
-
-  /* Initialize if required. */
-  if (wcs == 0x0) return FIXERR_NULL_POINTER;
-  err = &(wcs->err);
-  if (wcs->flag != WCSSET) {
-    if ((status = wcsset(wcs))) return status;
-  }
-
-  if ((i = wcs->spec) < 0) {
-    /* Look for a linear spectral axis. */
-    for (i = 0; i < wcs->naxis; i++) {
-      if (wcs->types[i]/100 == 30) {
-        break;
-      }
-    }
-
-    if (i >= wcs->naxis) {
-      /* No spectral axis. */
-      return FIXERR_NO_CHANGE;
-    }
-  }
-
-  /* Translate an AIPS-convention spectral type if present. */
-  if ((status = spcaips(wcs->ctype[i], wcs->velref, ctype, specsys))) {
-    return status;
-  }
-
-  if (strncmp(wcs->ctype[i], ctype, 9) ||
-      (wcs->specsys[1] == '\0' && strncmp(wcs->specsys, specsys, 9))) {
-    if (wcs->specsys[1] == '\0') {
-      strncpy(wcs->specsys, specsys, 9);
-      wcserr_set(
-        WCSERR_SET(FIXERR_SPC_UPDATE),
-        "Changed CTYPE%d from '%s' to '%s' and SPECSYS from '%s' to '%s'",
-        i+1, wcs->ctype[i], ctype, wcs->specsys, specsys);
-    } else {
-      wcserr_set(
-        WCSERR_SET(FIXERR_SPC_UPDATE),
-        "Changed CTYPE%d from '%s' to '%s'",
-        i+1, wcs->ctype[i], ctype);
-    }
-
-    strcpy(wcs->ctype[i], ctype);
-
-    wcsutil_null_fill(72, wcs->ctype[i]);
-    wcsutil_null_fill(72, wcs->specsys);
-
-    return FIXERR_SUCCESS;
   }
 
   return FIXERR_NO_CHANGE;

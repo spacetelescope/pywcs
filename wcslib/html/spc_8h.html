@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-<title>WCSLIB 4.9: spc.h File Reference</title>
+<title>WCSLIB 4.10: spc.h File Reference</title>
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 <link href="tabs.css" rel="stylesheet" type="text/css">
 </head><body>
@@ -47,12 +47,13 @@
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Deprecated.  <a href="#f0e4274b242fd41625b6ad4f4376b8da"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Enumerations</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b">spc_errmsg_enum</a> { <br>
-&nbsp;&nbsp;<a class="el" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b0b84f38d1e903eacda3122ce55bff741">SPCERR_SUCCESS</a> =  0, 
+&nbsp;&nbsp;<a class="el" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3be000828492cbedc0502f757d8b892606">SPCERR_NO_CHANGE</a> =  -1, 
+<a class="el" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b0b84f38d1e903eacda3122ce55bff741">SPCERR_SUCCESS</a> =  0, 
 <a class="el" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b7c5e0d09fac9f441e39f3cf28801961f">SPCERR_NULL_POINTER</a> =  1, 
 <a class="el" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b0653e60411a641a326492c65d257daa8">SPCERR_BAD_SPEC_PARAMS</a> =  2, 
-<a class="el" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b3ba9183c7c3dace15eef0606980fd615">SPCERR_BAD_X</a> =  3, 
 <br>
-&nbsp;&nbsp;<a class="el" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b7e218c5bd52bd6a45d8ad66573653007">SPCERR_BAD_SPEC</a> =  4
+&nbsp;&nbsp;<a class="el" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b3ba9183c7c3dace15eef0606980fd615">SPCERR_BAD_X</a> =  3, 
+<a class="el" href="spc_8h.html#51ba1ce5380fd2e7693c37554d18fc3b7e218c5bd52bd6a45d8ad66573653007">SPCERR_BAD_SPEC</a> =  4
 <br>
  }</td></tr>
 
@@ -123,7 +124,7 @@ Spectral keyword synthesis routine, <a class="el" href="spc_8h.html#99689938e16d
 Given a set of spectral keywords, a translation routine, <a class="el" href="spc_8h.html#cc0b7b9e5bc5495f24129492e4ff5218" title="Spectral keyword translation.">spctrne()</a>, produces the corresponding set for the specified spectral <code><b>CTYPE</b>ia</code>.<p>
 </li>
 <li>
-<a class="el" href="spc_8h.html#615d3ef3a505a8be7da1578d9338d218" title="Translate AIPS-convention spectral keywords.">spcaips()</a> translates AIPS-convention spectral keywords, <code><b>CTYPE</b>n</code> and <code><b>VELREF</b></code>, into <code><b>CTYPE</b>ia</code> and <code><b>SPECSYS</b>a</code>. </li>
+<a class="el" href="spc_8h.html#615d3ef3a505a8be7da1578d9338d218" title="Translate AIPS-convention spectral keywords.">spcaips()</a> translates AIPS-convention spectral <code><b>CTYPE</b>ia</code> and <code><b>VELREF</b></code> keyvalues. </li>
 </ul>
 <p>
 <b>Spectral variable types - <img class="formulaInl" alt="$S$" src="form_32.png">, <img class="formulaInl" alt="$P$" src="form_33.png">, and <img class="formulaInl" alt="$X$" src="form_10.png">:</b> <br>
@@ -258,6 +259,8 @@ Size of the <a class="el" href="structspcprm.html" title="Spectral transformatio
 <p>
 <dl compact><dt><b>Enumerator: </b></dt><dd>
 <table border="0" cellspacing="2" cellpadding="0">
+<tr><td valign="top"><em><a class="anchor" name="51ba1ce5380fd2e7693c37554d18fc3be000828492cbedc0502f757d8b892606"></a><!-- doxytag: member="SPCERR_NO_CHANGE" ref="51ba1ce5380fd2e7693c37554d18fc3be000828492cbedc0502f757d8b892606" args="" -->SPCERR_NO_CHANGE</em>&nbsp;</td><td>
+</td></tr>
 <tr><td valign="top"><em><a class="anchor" name="51ba1ce5380fd2e7693c37554d18fc3b0b84f38d1e903eacda3122ce55bff741"></a><!-- doxytag: member="SPCERR_SUCCESS" ref="51ba1ce5380fd2e7693c37554d18fc3b0b84f38d1e903eacda3122ce55bff741" args="" -->SPCERR_SUCCESS</em>&nbsp;</td><td>
 </td></tr>
 <tr><td valign="top"><em><a class="anchor" name="51ba1ce5380fd2e7693c37554d18fc3b7c5e0d09fac9f441e39f3cf28801961f"></a><!-- doxytag: member="SPCERR_NULL_POINTER" ref="51ba1ce5380fd2e7693c37554d18fc3b7c5e0d09fac9f441e39f3cf28801961f" args="" -->SPCERR_NULL_POINTER</em>&nbsp;</td><td>
@@ -952,25 +955,25 @@ A status value of 2 will be returned if restfrq or restwav are not specified whe
 <div class="memdoc">
 
 <p>
-<b>spcaips</b>() translates AIPS-convention spectral keywords, <code><b>CTYPE</b>n</code> and <code><b>VELREF</b></code>, into <code><b>CTYPE</b>ia</code> and <code><b>SPECSYS</b>a</code>.<p>
+<b>spcaips</b>() translates AIPS-convention spectral <code><b>CTYPE</b>ia</code> and <code><b>VELREF</b></code> keyvalues.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>ctypeA</em>&nbsp;</td><td><code><b>CTYPE</b>ia</code> keyvalue (eight characters, need not be null- terminated). </td></tr>
+    <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>ctypeA</em>&nbsp;</td><td><code><b>CTYPE</b>ia</code> keyvalue possibly containing an AIPS-convention spectral code (eight characters, need not be null-terminated). </td></tr>
     <tr><td valign="top"><tt>[in]</tt>&nbsp;</td><td valign="top"><em>velref</em>&nbsp;</td><td>AIPS-convention <code><b>VELREF</b></code> code. It has the following integer values:<ul>
 <li>1: LSR kinematic, originally described simply as "LSR" without distinction between the kinematic and dynamic definitions.</li><li>2: Barycentric, originally described as "HEL" meaning heliocentric.</li><li>3: Topocentric, originally described as "OBS" meaning geocentric but widely interpreted as topocentric.</li></ul>
 AIPS++ extensions to <code><b>VELREF</b></code> are also recognized:<ul>
 <li>4: LSR dynamic.</li><li>5: Geocentric.</li><li>6: Source rest frame.</li><li>7: Galactocentric.</li></ul>
-For an AIPS '<code><b>VELO</b></code>' axis, a radio convention velocity is denoted by adding 256 to <code><b>VELREF</b></code>, otherwise an optical velocity is indicated (not applicable to '<code><b>FELO</b></code>' axes). Unrecognized values of <code><b>VELREF</b></code> are simply ignored. <br>
- <code><b>VELREF</b></code> takes precedence over <code><b>CTYPE</b>ia</code> in defining the Doppler frame, e.g. if <div class="fragment"><pre class="fragment">                          CTYPEn = <span class="stringliteral">'VELO-HEL'</span>
-                          VELREF = 1
+For an AIPS '<code><b>VELO</b></code>' axis, a radio convention velocity (VRAD) is denoted by adding 256 to <code><b>VELREF</b></code>, otherwise an optical velocity (VOPT) is indicated (this is not applicable to '<code><b>FREQ</b></code>' or '<code><b>FELO</b></code>' axes). Setting velref to 0 or 256 chooses between optical and radio velocity without specifying a Doppler frame, provided that a frame is encoded in ctypeA. If not, i.e. for ctypeA = '<code><b>VELO</b></code>', ctype will be returned as '<code><b>VELO</b></code>'. <br>
+ <code><b>VELREF</b></code> takes precedence over <code><b>CTYPE</b>ia</code> in defining the Doppler frame, e.g. <div class="fragment"><pre class="fragment">                          ctypeA = <span class="stringliteral">'VELO-HEL'</span>
+                          velref = 1
 </pre></div> <br>
- the Doppler frame is set to LSRK.</td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>ctype</em>&nbsp;</td><td>Translated <code><b>CTYPE</b>ia</code> keyvalue, or a copy of ctypeA if no translation was performed (null-filled). </td></tr>
-    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>specsys</em>&nbsp;</td><td>Doppler reference frame indicated by <code><b>VELREF</b></code> or else by <code><b>CTYPE</b>n</code>.</td></tr>
+ returns ctype = '<code><b>VOPT</b></code>' with specsys set to 'LSRK'.</td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>ctype</em>&nbsp;</td><td>Translated <code><b>CTYPE</b>ia</code> keyvalue, or a copy of ctypeA if no translation was performed (in which case any trailing blanks in ctypeA will be replaced with nulls). </td></tr>
+    <tr><td valign="top"><tt>[out]</tt>&nbsp;</td><td valign="top"><em>specsys</em>&nbsp;</td><td>Doppler reference frame indicated by <code><b>VELREF</b></code> or else by <code><b>CTYPE</b>ia</code> with value corresponding to the SPECSYS keyvalue in the FITS WCS standard. May be returned blank if neither specifies a Doppler frame, e.g. ctypeA = '<code><b>FELO</b></code>' and velref256 == 0.</td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>Status return value:<ul>
-<li>-1: No translation required (not an error).</li><li>0: Success. </li></ul>
+<li>-1: No translation required (not an error).</li><li>0: Success.</li><li>2: Invalid value of <code><b>VELREF</b></code>. </li></ul>
 </dd></dl>
 
 </div>
@@ -1264,7 +1267,7 @@ Error messages to match the status value returned from each function.
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Tue Jan 24 16:40:48 2012 for WCSLIB 4.9 by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Feb 6 10:41:57 2012 for WCSLIB 4.10 by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.6 </small></address>
 </body>

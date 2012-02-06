@@ -1,3 +1,17 @@
+WCSLIB version 4.10 (2012/02/06)
+--------------------------------
+
+* C library
+
+  - datfix() and spcfix() now return informative messages when dates and
+    AIPS-convention spectral axes are translated (changes contributed by
+    Michael Droettboom).  spcaips() now returns an error status for
+    invalid values of VELREF.
+
+  - wcssub() has been augmented with the ability to add new axes onto a
+    wcsprm struct.
+
+
 WCSLIB version 4.9 (2012/01/24)
 -------------------------------
 
@@ -1845,4 +1859,4 @@ WCSLIB version 1.0 (1995/01/31)
   Initial release.
 
 ------------------------------------------------------------------------
-$Id: CHANGES,v 4.9 2012/01/24 05:40:30 cal103 Exp $
+$Id: CHANGES,v 4.10 2012/02/05 23:41:45 cal103 Exp $

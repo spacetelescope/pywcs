@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.9 - an implementation of the FITS WCS standard.
+  WCSLIB 4.10 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2012, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -29,7 +29,7 @@
   Author: Mark Calabretta, Australia Telescope National Facility
   Module author: Michael Droettboom
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: wcserr.h,v 4.9 2012/01/24 05:40:29 cal103 Exp $
+  $Id: wcserr.h,v 4.10 2012/02/05 23:41:44 cal103 Exp $
 *=============================================================================
 *
 * Summary of the wcserr routines

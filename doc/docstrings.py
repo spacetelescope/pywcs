@@ -1683,6 +1683,15 @@ practice, this means that the ``PCi_ja`` matrix of the original image
 must not contain non-zero off-diagonal terms that associate any of the
 subimage axes with any of the non-subimage axes.
 
+`sub` can also add axes to a wcsprm struct.  The new axes will be
+created using the defaults set by the Wcsprm constructor which produce
+a simple, unnamed, linear axis with world coordinates equal to the
+pixel coordinate.  These default values can be changed before
+invoking `set`.
+
+No checks are performed to verify that the coordinate axes are
+consistent, that is done by `set`.
+
 - *axes*: int or a sequence.
 
   - If an int, include the first *N* axes in their original
@@ -1690,8 +1699,9 @@ subimage axes with any of the non-subimage axes.
 
   - If a sequence, may contain a combination of image axis numbers
     (1-relative) or special axis identifiers (see below).  Order is
-    significant; ``axes[0]`` is the axis number of the input image that
-    corresponds to the first axis in the subimage, etc.
+    significant; ``axes[0]`` is the axis number of the input image
+    that corresponds to the first axis in the subimage, etc.  Use an
+    axis number of 0 to create a new axis using the defaults.
 
   - If ``0``, ``[]`` or ``None``, do a deep copy.
 

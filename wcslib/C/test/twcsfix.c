@@ -1,6 +1,6 @@
 /*============================================================================
 
-  WCSLIB 4.9 - an implementation of the FITS WCS standard.
+  WCSLIB 4.10 - an implementation of the FITS WCS standard.
   Copyright (C) 1995-2012, Mark Calabretta
 
   This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 
   Author: Mark Calabretta, Australia Telescope National Facility
   http://www.atnf.csiro.au/~mcalabre/index.html
-  $Id: twcsfix.c,v 4.9 2012/01/24 05:40:29 cal103 Exp $
+  $Id: twcsfix.c,v 4.10 2012/02/05 23:41:44 cal103 Exp $
 *=============================================================================
 *
 * twcsfix tests the translation routines for non-standard WCS keyvalues, the
@@ -68,6 +68,10 @@ const double RESTWAV = 0.0;
 /* N.B. non-standard, corresponding to MJD 35884.04861111 */
 const char DATEOBS[] = "1957/02/15 01:10:00";
 
+/* For testing spcfix(). */
+const int  VELREF = 2;
+const char SPECSYS[] = "BARYCENT";
+
 int main()
 
 {
@@ -97,21 +101,16 @@ int main()
   }
   wcsprintf(")\n");
 
-  if (status) {
-    for (i = 0; i < NWCSFIX; i++) {
-      if (info[i].status) {
-        wcsprintf("\n");
-        wcserr_prt(info+i, 0x0);
-      }
+  for (i = 0; i < NWCSFIX; i++) {
+    if (info[i].status < -1 || 0 < info[i].status) {
+      wcsprintf("\n");
+      wcserr_prt(info+i, 0x0);
     }
-
-    wcsprintf("\nwcsfix error %d", status);
-    return 1;
   }
 
-  if (info[UNITFIX].status == -2) {
-    wcsprintf("\n");
-    wcserr_prt(info+UNITFIX, 0x0);
+  if (status) {
+    wcsprintf("\nwcsfix error %d", status);
+    return 1;
   }
 
   /* Extract information from the FITS header. */
@@ -203,7 +202,9 @@ struct wcsprm *wcs;
   wcs->pv[0].value = -1.0;
   wcs->npv = 1;
 
+  wcs->velref  = VELREF;
   strcpy(wcs->dateobs, DATEOBS);
+  strcpy(wcs->specsys, SPECSYS);
 
   return;
 }

@@ -243,7 +243,7 @@ def test_datfix():
     w = _pywcs._Wcsprm()
     w.dateobs = b('31/12/99')
     status = w.datfix()
-    assert status == -4
+    assert status == 0
     assert w.dateobs == b('1999-12-31')
     assert w.mjdobs == 51543.0
 
@@ -270,7 +270,7 @@ def test_fix2():
     status = w.fix()
     assert status == {
         'cylfix': 'No change',
-        'datfix': "Fixed '31/12/99' to '1999-12-31'",
+        'datfix': "Changed '31/12/99' to '1999-12-31'",
         'spcfix': 'No change',
         'unitfix': 'No change',
         'celfix': 'No change'}

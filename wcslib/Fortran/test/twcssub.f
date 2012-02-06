@@ -1,6 +1,6 @@
 *=======================================================================
 *
-* WCSLIB 4.9 - an implementation of the FITS WCS standard.
+* WCSLIB 4.10 - an implementation of the FITS WCS standard.
 * Copyright (C) 1995-2012, Mark Calabretta
 *
 * This file is part of WCSLIB.
@@ -28,7 +28,7 @@
 *
 * Author: Mark Calabretta, Australia Telescope National Facility
 * http://www.atnf.csiro.au/~mcalabre/index.html
-* $Id: twcssub.f,v 4.9 2012/01/24 05:40:30 cal103 Exp $
+* $Id: twcssub.f,v 4.10 2012/02/05 23:41:44 cal103 Exp $
 *=======================================================================
 
       PROGRAM TWCSSUB
@@ -141,11 +141,12 @@
       STATUS = WCSPRT (WCS)
 
 
-*     Extract the coordinate description for a subimage.
-      NSUB = 3
+*     Extract the coordinate description for a subimage and add an axis.
+      NSUB = 4
       AXES(1) = WCSSUB_LONGITUDE
       AXES(2) = WCSSUB_LATITUDE
       AXES(3) = -(WCSSUB_SPECTRAL + WCSSUB_STOKES)
+      AXES(4) = 0
       WRITE (6, 70)
  70   FORMAT (//,'Extracted contents of wcsprm struct:')
 
