@@ -32,6 +32,8 @@ DAMAGE.
 #ifndef PYWCS_API_H
 #define PYWCS_API_H
 
+#include "wcsconfig.h"
+
 #include "pyutil.h"
 #include "distortion.h"
 #include "pipeline.h"
