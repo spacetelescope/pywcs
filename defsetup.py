@@ -143,12 +143,29 @@ h_file.write("""
 #define WCSLIB_INT64 %s
 
 /* Windows needs some other defines */
-#if defined(_MSC_VER) || defined(__MINGW32__) || defined (__MINGW64__)
+/* I think the only one we need is _WIN32, but the others don't hurt - Mark S. 2012-02-14 */
+#if defined(_WIN32) || defined(_MSC_VER) || defined(__MINGW32__) || defined (__MINGW64__)
+
+#ifndef YY_NO_UNISTD_H
 #define YY_NO_UNISTD_H
+#endif
+
+#ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
+#endif
+
+#ifndef _NO_OLDNAMES
 #define _NO_OLDNAMES
+#endif
+
+#ifndef NO_OLDNAMES
 #define NO_OLDNAMES
-#define __STDC__
+#endif
+
+#ifndef __STDC__
+#define __STDC__ 1
+#endif
+
 #endif
 """ % (WCSVERSION, determine_64_bit_int()))
 write_if_different(join(srcroot, 'src', 'wcsconfig.h'), h_file.getvalue())
