@@ -141,6 +141,15 @@ h_file.write("""
 
 /* 64-bit integer data type. */
 #define WCSLIB_INT64 %s
+
+/* Windows needs some other defines */
+#if defined(_MSC_VER) || defined(__MINGW32__) || defined (__MINGW64__)
+#define YY_NO_UNISTD_H
+#define _CRT_SECURE_NO_WARNINGS
+#define _NO_OLDNAMES
+#define NO_OLDNAMES
+#define __STDC__
+#endif
 """ % (WCSVERSION, determine_64_bit_int()))
 write_if_different(join(srcroot, 'src', 'wcsconfig.h'), h_file.getvalue())
 
@@ -354,15 +363,6 @@ elif BUILD.lower() == 'release':
     undef_macros.append('DEBUG')
 else:
     raise ValueError("BUILD should be one of 'debug', 'profile', or 'release'")
-
-if sys.platform == 'win32':
-    define_macros.extend([
-        ('YY_NO_UNISTD_H', None),
-        ('_CRT_SECURE_NO_WARNINGS', None),
-        ('_NO_OLDNAMES', None), # for mingw32
-        ('NO_OLDNAMES', None), # for mingw64
-        ('__STDC__', None) # for MSVC
-        ])
 
 if sys.platform.startswith('linux'):
     define_macros.append(('HAVE_SINCOS', None))
