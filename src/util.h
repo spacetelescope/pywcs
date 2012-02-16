@@ -38,11 +38,11 @@ DAMAGE.
 #define __UTIL_H__
 
 #ifdef __SUNPRO_C
-#define inline
+#define pywcs_inline
 #endif
 
 #ifdef _MSC_VER
-#define inline __inline
+#define pywcs_inline __inline
 #endif
 
 #include <wcs.h>

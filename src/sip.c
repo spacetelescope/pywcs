@@ -193,7 +193,7 @@ sip_free(sip_t* sip) {
   sip->err = NULL;
 }
 
-static inline double
+static pywcs_inline double
 lu(
     const unsigned int order,
     const double* const matrix,

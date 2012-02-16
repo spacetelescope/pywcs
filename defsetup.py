@@ -146,6 +146,7 @@ h_file.write("""
 /* I think the only one we need is _WIN32, but the others don't hurt - Mark S. 2012-02-14 */
 #if defined(_WIN32) || defined(_MSC_VER) || defined(__MINGW32__) || defined (__MINGW64__)
 
+/* */
 #ifndef YY_NO_UNISTD_H
 #define YY_NO_UNISTD_H
 #endif
@@ -154,15 +155,15 @@ h_file.write("""
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#ifndef _NO_OLDNAMES
+#ifndef _NO_OLDNAMES    /* for mingw32 */
 #define _NO_OLDNAMES
 #endif
 
-#ifndef NO_OLDNAMES
+#ifndef NO_OLDNAMES     /* for mingw64 */
 #define NO_OLDNAMES
 #endif
 
-#ifndef __STDC__
+#ifndef __STDC__        /* for MS Visual C */
 #define __STDC__ 1
 #endif
 
@@ -382,6 +383,8 @@ else:
     raise ValueError("BUILD should be one of 'debug', 'profile', or 'release'")
 
 if sys.platform == 'win32':
+    # we are also writing these into wcsconfig.h, but that include
+    # file is not used by wcslib
     define_macros.extend([
         ('YY_NO_UNISTD_H', None),
         ('_CRT_SECURE_NO_WARNINGS', None),

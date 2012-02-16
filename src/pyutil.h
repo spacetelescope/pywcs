@@ -100,7 +100,7 @@ int
 _setup_str_list_proxy_type(
     PyObject* m);
 
-static inline void
+static pywcs_inline void
 offset_c_array(
     double* value,
     npy_intp size,
@@ -112,7 +112,7 @@ offset_c_array(
   }
 }
 
-static inline
+static pywcs_inline
 void nan2undefined(
     double* value,
     unsigned int nvalues) {
@@ -126,7 +126,7 @@ void nan2undefined(
   }
 }
 
-static inline
+static pywcs_inline
 void undefined2nan(
     double* value,
     unsigned int nvalues) {
@@ -219,7 +219,7 @@ wcserr_units_to_python_exc(const struct wcserr *err);
 /***************************************************************************
   Property helpers
  ***************************************************************************/
-static inline int
+static pywcs_inline int
 check_delete(
     const char* propname,
     PyObject* value) {
@@ -234,7 +234,7 @@ check_delete(
   return 0;
 }
 
-static inline PyObject*
+static pywcs_inline PyObject*
 get_string(
     /*@unused@*/ const char* propname,
     const char* value) {
@@ -253,7 +253,7 @@ set_string(
     char* dest,
     Py_ssize_t maxlen);
 
-static inline PyObject*
+static pywcs_inline PyObject*
 get_bool(
     /*@unused@*/ const char* propname,
     long value) {
@@ -267,7 +267,7 @@ set_bool(
     PyObject* value,
     int* dest);
 
-static inline PyObject*
+static pywcs_inline PyObject*
 get_int(
     /*@unused@*/ const char* propname,
     long value) {
@@ -285,7 +285,7 @@ set_int(
     PyObject* value,
     int* dest);
 
-static inline PyObject*
+static pywcs_inline PyObject*
 get_double(
     const char* propname,
     double value) {
@@ -299,7 +299,7 @@ set_double(
     PyObject* value,
     double* dest);
 
-/*@null@*/ static inline PyObject*
+/*@null@*/ static pywcs_inline PyObject*
 get_double_array(
     /*@unused@*/ const char* propname,
     double* value,
@@ -310,7 +310,7 @@ get_double_array(
   return PyArrayProxy_New(owner, ndims, dims, PyArray_DOUBLE, value);
 }
 
-/*@null@*/ static inline PyObject*
+/*@null@*/ static pywcs_inline PyObject*
 get_double_array_readonly(
     /*@unused@*/ const char* propname,
     double* value,
@@ -329,7 +329,7 @@ set_double_array(
     const npy_intp* dims,
     double* dest);
 
-/*@null@*/ static inline PyObject*
+/*@null@*/ static pywcs_inline PyObject*
 get_int_array(
     /*@unused@*/ const char* propname,
     int* value,
@@ -348,7 +348,7 @@ set_int_array(
     const npy_intp* dims,
     int* dest);
 
-static inline PyObject*
+static pywcs_inline PyObject*
 get_str_list_verified(
     /*@unused@*/ const char* propname,
     char (*array)[72],
@@ -360,7 +360,7 @@ get_str_list_verified(
   return PyStrListProxy_New(owner, len, maxlen, array, verify);
 }
 
-static inline PyObject*
+static pywcs_inline PyObject*
 get_str_list(
     /*@unused@*/ const char* propname,
     char (*array)[72],
@@ -380,7 +380,7 @@ set_str_list_verified(
     char (*dest)[72],
     str_verify_fn verify);
 
-static inline int
+static pywcs_inline int
 set_str_list(
     const char* propname,
     PyObject* value,

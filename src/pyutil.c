@@ -43,7 +43,7 @@ DAMAGE.
 #include "wcsprintf.h"
 #include "wcsunits.h"
 
-/*@null@*/ static inline PyObject*
+/*@null@*/ static pywcs_inline PyObject*
 _PyArrayProxy_New(
     /*@shared@*/ PyObject* self,
     int nd,
@@ -183,7 +183,7 @@ is_null(
    quite small.
 */
 
-static inline void
+static pywcs_inline void
 wcsprm_fix_values(
     struct wcsprm* x,
     value_fixer_t value_fixer) {

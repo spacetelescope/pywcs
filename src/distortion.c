@@ -73,7 +73,7 @@ distortion_lookup_t_free(
  * (This is nothing more special than an array lookup with range
  * checking.)
  */
-static inline float
+static pywcs_inline float
 get_dist_clamp(
     const float* const data,
     const unsigned int* const naxis,
@@ -85,7 +85,7 @@ get_dist_clamp(
        CLAMP(x, 0, naxis[0] - 1))];
 }
 
-static inline float
+static pywcs_inline float
 get_dist(
     const float* const data,
     const unsigned int* const naxis,
@@ -99,7 +99,7 @@ get_dist(
  * Converts a pixel coordinate to a fractional coordinate in the
  * lookup table on a single axis
  */
-static inline double
+static pywcs_inline double
 image_coord_to_distortion_coord(
     const distortion_lookup_t * const lookup,
     const unsigned int axis,
@@ -123,7 +123,7 @@ image_coord_to_distortion_coord(
  * Converts a pixel coordinate to a fractional coordinate in the
  * lookup table.
  */
-static inline void
+static pywcs_inline void
 image_coords_to_distortion_coords(
     const distortion_lookup_t * const lookup,
     const double * const img /* [NAXES] */,
@@ -141,7 +141,7 @@ image_coords_to_distortion_coords(
   }
 }
 
-inline double
+pywcs_inline double
 get_distortion_offset(
     const distortion_lookup_t * const lookup,
     const double * const img /*[NAXES]*/) {

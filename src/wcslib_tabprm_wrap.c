@@ -54,7 +54,7 @@ DAMAGE.
  * Helper functions                                                        *
  ***************************************************************************/
 
-static inline void
+static pywcs_inline void
 note_change(PyTabprm* self) {
   self->x->flag = 0;
 }
