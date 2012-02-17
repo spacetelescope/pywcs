@@ -45,6 +45,10 @@ DAMAGE.
 #define pywcs_inline __inline
 #endif
 
+#ifndef pywcs_inline
+#define pywcs_inline inline
+#endif
+
 #include <wcs.h>
 #include <wcsmath.h>
 
