@@ -136,7 +136,8 @@ class WCS(WCSBase):
     """
 
     def __init__(self, header=None, fobj=None, key=' ', minerr=0.0,
-                 relax=False, naxis=None, keysel=None, colsel=None):
+                 relax=False, naxis=None, keysel=None, colsel=None,
+                 fix=True):
         """
         - *header*: A string containing the header content, or a
           PyFITS header object.  If *header* is not provided or None,
@@ -198,6 +199,9 @@ class WCS(WCSBase):
           to restrict the WCS transformations considered to only those
           pertaining to the specified columns.  If `None`, there is no
           restriction.
+
+        - *fix* : When `True` (default), call `fix` on the resulting
+          object to fix any non-standard uses in the header.
 
         .. warning::
 
@@ -282,6 +286,10 @@ distortion, you must select or reduce these to 2 dimensions using the
 naxis kwarg.
 """ %
                     wcsprm.naxis)
+
+        if fix:
+            wcsprm.fix()
+
         self.get_naxis(header)
         WCSBase.__init__(self, sip, cpdis, wcsprm, det2im)
 
