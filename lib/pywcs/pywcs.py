@@ -533,8 +533,7 @@ naxis kwarg.
                 return
 
             hdulist[0].header.update('%s%d' % (dist, num), 'LOOKUP')
-            hdulist[0].header.update('%s%d.EXTVER' % (d_kw, num),
-                                     len(hdulist))
+            hdulist[0].header.update('%s%d.EXTVER' % (d_kw, num), num)
             for i in range(cpdis.data.ndim):    
                 hdulist[0].header.update('%s%d.AXIS.%d' % (d_kw, num, i+1),
                                      i+1)
@@ -548,7 +547,7 @@ naxis kwarg.
             header.update('CRVAL2', cpdis.crval[1])
             header.update('CDELT1', cpdis.cdelt[0])
             header.update('CDELT2', cpdis.cdelt[1])
-            header.update('EXTVER', hdulist[0].header['%s%d.EXTVER' % (d_kw, num)])
+            image.update_ext_version(int(hdulist[0].header['%s%d.EXTVER' % (d_kw, num)]))
             hdulist.append(image)
 
         write_dist(1, self.cpdis1)
