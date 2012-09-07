@@ -271,7 +271,7 @@ class WCS(WCSBase):
                 wcsprm = wcsprm.sub(naxis)
             self.naxis = wcsprm.naxis
 
-            det2im = self._read_det2im_kw(header, fobj)
+            det2im = self._read_det2im_kw(header, fobj, err=minerr)
             cpdis = self._read_distortion_kw(
                 header, fobj, dist='CPDIS', err=minerr)
             sip = self._read_sip_kw(header)
@@ -381,11 +381,15 @@ naxis kwarg.
         else:
             return self.wcs_pix2sky(corners,1)
 
-    def _read_det2im_kw(self, header, fobj):
+    def _read_det2im_kw(self, header, fobj, err=0.0):
         """
         Create a `Paper IV`_ type lookup table for detector to image
         plane correction.
         """
+        d_error = header.get('D2IMERR', 0.0)   
+        if d_error < err:
+            return (None, None)
+        
         cpdis = [None, None]
         crpix = [0.,0.]
         crval = [0.,0.]
@@ -532,21 +536,31 @@ naxis kwarg.
             if cpdis is None:
                 return
 
-            hdulist[0].header.update('%s%d' % (dist, num), 'LOOKUP')
-            hdulist[0].header.update('%s%d.EXTVER' % (d_kw, num), num)
+            hdulist[0].header.update('%s%d' % (dist, num), 
+                                     ('LOOKUP', 'Prior distortion funcion type'))
+            hdulist[0].header.update('%s%d.EXTVER' % (d_kw, num), 
+                                     (num, 'Version number of WCSDVARR extension'))
+            hdulist[0].header.update('%s%d.NAXES' % (d_kw, num), (len(cpdis.data.shape), 
+                    'Number of independent variables in distortion function'))
             for i in range(cpdis.data.ndim):    
                 hdulist[0].header.update('%s%d.AXIS.%d' % (d_kw, num, i+1),
-                                     i+1)
+                                     (i+1, 'Axis number of the jth independent variable in a distortion function'))
             
             image = pyfits.ImageHDU(cpdis.data, name='WCSDVARR')
             header = image.header
 
-            header.update('CRPIX1', cpdis.crpix[0])
-            header.update('CRPIX2', cpdis.crpix[1])
-            header.update('CRVAL1', cpdis.crval[0])
-            header.update('CRVAL2', cpdis.crval[1])
-            header.update('CDELT1', cpdis.cdelt[0])
-            header.update('CDELT2', cpdis.cdelt[1])
+            header.update('CRPIX1', (cpdis.crpix[0], 
+                                     'Coordinate system reference pixel'))
+            header.update('CRPIX2', (cpdis.crpix[1], 
+                                     'Coordinate system reference pixel'))
+            header.update('CRVAL1', (cpdis.crval[0], 
+                                     'Coordinate system value at reference pixel'))
+            header.update('CRVAL2', (cpdis.crval[1], 
+                                     'Coordinate system value at reference pixel'))
+            header.update('CDELT1', (cpdis.cdelt[0], 
+                                     'Coordinate increment along axis'))
+            header.update('CDELT2', (cpdis.cdelt[1],
+                                     'Coordinate increment along axis'))
             image.update_ext_version(int(hdulist[0].header['%s%d.EXTVER' % (d_kw, num)]))
             hdulist.append(image)
 
