@@ -94,6 +94,9 @@ if sys.version_info[0] >= 3:
 else:
     string_types = (str, unicode)
 
+# bit flags for relax keyword
+WCSHDO_SIP =  0x40
+
 # This is here for the sake of epydoc
 WCSBase = _pywcs._Wcs
 DistortionLookupTable = _pywcs.DistortionLookupTable
@@ -1123,7 +1126,15 @@ naxis kwarg.
         if not HAS_PYFITS:
             raise ImportError(
                 "pyfits is required to generate a FITS header")
-
+        
+        if relax == True or relax == WCSHDO_all:
+            dosip = True
+        elif relax == WCSHDO_SIP:
+            relax = False
+            dosip = True
+        else:
+            dosip = False
+            
         if self.wcs is not None:
             header_string = self.wcs.to_header(relax)
             cards = pyfits.CardList()
@@ -1139,7 +1150,7 @@ naxis kwarg.
         else:
             header = pyfits.Header()
 
-        if self.sip is not None:
+        if dosip and self.sip is not None:
             for key, val in self._write_sip_kw().items():
                 header.update(key, val)
 

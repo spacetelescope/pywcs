@@ -360,3 +360,5 @@ The flag bits are:
   lists.  While the constructor treats ``WCSNna`` and ``TWCSna`` as
   equivalent, other parsers may not.  Consequently, this usage is
   potentially unsafe and is not recommended at this time.
+  
+- `WCSHDO_SIP`: Write out Simnple Imaging Polynomial (SIP) keywords
