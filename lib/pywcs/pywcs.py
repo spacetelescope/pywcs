@@ -454,12 +454,12 @@ naxis kwarg.
         image = pyfits.ImageHDU(det2im.data[0], name='D2IMARR')
         header = image.header
 
-        header.update('CRPIX1', det2im.crpix[0])
-        header.update('CRPIX2', det2im.crpix[1])
-        header.update('CRVAL1', det2im.crval[0])
-        header.update('CRVAL2', det2im.crval[1])
-        header.update('CDELT1', det2im.cdelt[0])
-        header.update('CDELT2', det2im.cdelt[1])
+        header.update('CRPIX1', value=det2im.crpix[0], comment="Coordinate system reference pixel")
+        header.update('CRPIX2', value=det2im.crpix[1], comment="Coordinate system reference pixel")
+        header.update('CRVAL1', value=det2im.crval[0], comment="Coordinate system value at reference pixel")
+        header.update('CRVAL2', value=det2im.crval[1], comment="Coordinate system value at reference pixel")
+        header.update('CDELT1', value=det2im.cdelt[0], comment='Coordinate increment along axis')
+        header.update('CDELT2', value=det2im.cdelt[1], comment="Coordinate increment along axis")
 
         hdulist.append(image)
 
@@ -540,31 +540,31 @@ naxis kwarg.
             if cpdis is None:
                 return
 
-            hdulist[0].header.update('%s%d' % (dist, num), 
-                                     ('LOOKUP', 'Prior distortion funcion type'))
-            hdulist[0].header.update('%s%d.EXTVER' % (d_kw, num), 
-                                     (num, 'Version number of WCSDVARR extension'))
-            hdulist[0].header.update('%s%d.NAXES' % (d_kw, num), (len(cpdis.data.shape), 
-                    'Number of independent variables in distortion function'))
+            hdulist[0].header.update('%s%d' % (dist, num), value='LOOKUP', 
+                                     comment='Prior distortion function type')
+            hdulist[0].header.update('%s%d.EXTVER' % (d_kw, num), value=num, 
+                                     comment='Version number of WCSDVARR extension')
+            hdulist[0].header.update('%s%d.NAXES' % (d_kw, num), value=len(cpdis.data.shape), 
+                            comment='Number of independent variables in distortion function')
             for i in range(cpdis.data.ndim):    
-                hdulist[0].header.update('%s%d.AXIS.%d' % (d_kw, num, i+1),
-                                     (i+1, 'Axis number of the jth independent variable in a distortion function'))
+                hdulist[0].header.update('%s%d.AXIS.%d' % (d_kw, num, i+1), value=i+1,
+                                comment='Axis number of the jth independent variable in a distortion function')
             
             image = pyfits.ImageHDU(cpdis.data, name='WCSDVARR')
             header = image.header
 
-            header.update('CRPIX1', (cpdis.crpix[0], 
-                                     'Coordinate system reference pixel'))
-            header.update('CRPIX2', (cpdis.crpix[1], 
-                                     'Coordinate system reference pixel'))
-            header.update('CRVAL1', (cpdis.crval[0], 
-                                     'Coordinate system value at reference pixel'))
-            header.update('CRVAL2', (cpdis.crval[1], 
-                                     'Coordinate system value at reference pixel'))
-            header.update('CDELT1', (cpdis.cdelt[0], 
-                                     'Coordinate increment along axis'))
-            header.update('CDELT2', (cpdis.cdelt[1],
-                                     'Coordinate increment along axis'))
+            header.update('CRPIX1', value=cpdis.crpix[0], 
+                                comment='Coordinate system reference pixel')
+            header.update('CRPIX2', value=cpdis.crpix[1], 
+                                comment='Coordinate system reference pixel')
+            header.update('CRVAL1', value=cpdis.crval[0], 
+                                comment='Coordinate system value at reference pixel')
+            header.update('CRVAL2', value=cpdis.crval[1], 
+                                comment='Coordinate system value at reference pixel')            
+            header.update('CDELT1', value=cpdis.cdelt[0], 
+                                comment='Coordinate increment along axis')
+            header.update('CDELT2', value=cpdis.cdelt[1],
+                                comment='Coordinate increment along axis')
             image.update_ext_version(int(hdulist[0].header['%s%d.EXTVER' % (d_kw, num)]))
             hdulist.append(image)
 
