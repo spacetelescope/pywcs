@@ -389,7 +389,7 @@ naxis kwarg.
         Create a `Paper IV`_ type lookup table for detector to image
         plane correction.
         """
-    
+
         cpdis = [None, None]
         crpix = [0.,0.]
         crval = [0.,0.]
@@ -404,8 +404,8 @@ naxis kwarg.
 
         if not isinstance(fobj, pyfits.HDUList):
             return (None, None)
-        
-        d_error = header.get('D2IMERR', 0.0)   
+
+        d_error = header.get('D2IMERR', 0.0)
         if d_error < err:
             return (None, None)
 
@@ -540,28 +540,28 @@ naxis kwarg.
             if cpdis is None:
                 return
 
-            hdulist[0].header.update('%s%d' % (dist, num), value='LOOKUP', 
+            hdulist[0].header.update('%s%d' % (dist, num), value='LOOKUP',
                                      comment='Prior distortion function type')
-            hdulist[0].header.update('%s%d.EXTVER' % (d_kw, num), value=num, 
+            hdulist[0].header.update('%s%d.EXTVER' % (d_kw, num), value=num,
                                      comment='Version number of WCSDVARR extension')
-            hdulist[0].header.update('%s%d.NAXES' % (d_kw, num), value=len(cpdis.data.shape), 
+            hdulist[0].header.update('%s%d.NAXES' % (d_kw, num), value=len(cpdis.data.shape),
                             comment='Number of independent variables in distortion function')
-            for i in range(cpdis.data.ndim):    
+            for i in range(cpdis.data.ndim):
                 hdulist[0].header.update('%s%d.AXIS.%d' % (d_kw, num, i+1), value=i+1,
                                 comment='Axis number of the jth independent variable in a distortion function')
-            
+
             image = pyfits.ImageHDU(cpdis.data, name='WCSDVARR')
             header = image.header
 
-            header.update('CRPIX1', value=cpdis.crpix[0], 
+            header.update('CRPIX1', value=cpdis.crpix[0],
                                 comment='Coordinate system reference pixel')
-            header.update('CRPIX2', value=cpdis.crpix[1], 
+            header.update('CRPIX2', value=cpdis.crpix[1],
                                 comment='Coordinate system reference pixel')
-            header.update('CRVAL1', value=cpdis.crval[0], 
+            header.update('CRVAL1', value=cpdis.crval[0],
                                 comment='Coordinate system value at reference pixel')
-            header.update('CRVAL2', value=cpdis.crval[1], 
-                                comment='Coordinate system value at reference pixel')            
-            header.update('CDELT1', value=cpdis.cdelt[0], 
+            header.update('CRVAL2', value=cpdis.crval[1],
+                                comment='Coordinate system value at reference pixel')
+            header.update('CDELT1', value=cpdis.cdelt[0],
                                 comment='Coordinate increment along axis')
             header.update('CDELT2', value=cpdis.cdelt[1],
                                 comment='Coordinate increment along axis')
@@ -1127,15 +1127,13 @@ naxis kwarg.
         if not HAS_PYFITS:
             raise ImportError(
                 "pyfits is required to generate a FITS header")
-        
-        if relax == True or relax == WCSHDO_all:
+
+        if (relax == True or relax == WCSHDO_all or
+            (relax & WCSHDO_SIP)):
             dosip = True
-        elif relax == WCSHDO_SIP:
-            relax = False
-            dosip = True
-        else:
-            dosip = False
-            
+        if relax not in (True, False):
+            relax &= ~WCSHDO_SIP
+
         if self.wcs is not None:
             header_string = self.wcs.to_header(relax)
             cards = pyfits.CardList()
