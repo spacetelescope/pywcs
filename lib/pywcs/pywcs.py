@@ -1128,6 +1128,7 @@ naxis kwarg.
             raise ImportError(
                 "pyfits is required to generate a FITS header")
 
+        dosip = False
         if (relax == True or relax == WCSHDO_all or
             (relax & WCSHDO_SIP)):
             dosip = True
