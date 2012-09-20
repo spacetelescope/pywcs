@@ -674,9 +674,6 @@ naxis kwarg.
         write_array('AP', self.sip.ap)
         write_array('BP', self.sip.bp)
 
-        keywords['CRPIX1'] = self.sip.crpix[0]
-        keywords['CRPIX2'] = self.sip.crpix[1]
-
         return keywords
 
     def _denormalize_sky(self, sky):
