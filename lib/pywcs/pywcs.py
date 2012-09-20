@@ -405,6 +405,11 @@ naxis kwarg.
         if not isinstance(fobj, pyfits.HDUList):
             return (None, None)
 
+        try:
+            d2imext = header['D2IMEXT']
+        except KeyError:
+            return (None, None)
+        
         d_error = header.get('D2IMERR', 0.0)
         if d_error < err:
             return (None, None)
@@ -1067,7 +1072,7 @@ naxis kwarg.
 
         return hdulist
 
-    def to_header(self, relax=False):
+    def to_header(self, relax=False, wkey=" "):
         """
         Generate a `pyfits.Header` object with the basic WCS and SIP
         information stored in this object.  This should be logically
@@ -1121,6 +1126,10 @@ naxis kwarg.
 
           - `int`: a bit field selecting specific extensions to write.
             See :ref:`relaxwrite` for details.
+            
+        - *wkey*: A string.  The name of a particular WCS transform to
+          use.  This may be either ``' '`` or ``'A'``-``'Z'`` and
+          corresponds to the ``"a"`` part of the ``CTYPEia`` cards.
 
         Returns a `pyfits.Header` object.
         """
@@ -1145,14 +1154,18 @@ naxis kwarg.
                 else:
                     card = pyfits.Card()
                     card.fromstring(card_string)
-                cards.append(card)
+                if wkey.strip():
+                    ncard = pyfits.Card(keyword=card.key+wkey, value=card.value, comment=card.comment)
+                    cards.append(ncard)
+                else:
+                    cards.append(card)
             header = pyfits.Header(cards)
         else:
             header = pyfits.Header()
 
         if dosip and self.sip is not None:
             for key, val in self._write_sip_kw().items():
-                header.update(key, val)
+                header.update(key+wkey, val)
 
         return header
 
