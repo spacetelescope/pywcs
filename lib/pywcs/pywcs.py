@@ -1165,7 +1165,7 @@ naxis kwarg.
 
         if dosip and self.sip is not None:
             for key, val in self._write_sip_kw().items():
-                header.update(key+wkey, val)
+                header.update(key, val)
 
         return header
 
