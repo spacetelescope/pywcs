@@ -404,11 +404,12 @@ naxis kwarg.
 
         if not isinstance(fobj, pyfits.HDUList):
             return (None, None)
-
-        try:
-            d2imext = header['D2IMEXT']
+        
+        try:            
+            axiscorr = header['AXISCORR']
         except KeyError:
             return (None, None)
+        
         
         d_error = header.get('D2IMERR', 0.0)
         if d_error < err:
@@ -420,6 +421,7 @@ naxis kwarg.
             return (None, None)
         except AttributeError:
             return (None, None)
+        
         d2im_data = np.array([d2im_data])
         d2im_hdr = fobj[('D2IMARR', 1)].header
         naxis = d2im_hdr['NAXIS']
@@ -431,13 +433,14 @@ naxis kwarg.
 
         cpdis = DistortionLookupTable(d2im_data, crpix, crval, cdelt)
 
-        axiscorr = header.get('AXISCORR', None)
-
         if axiscorr == 1:
             return (cpdis, None)
-        else:
+        elif axiscorr == 2:
             return (None, cpdis)
-
+        else:
+            print "Expected AXISCORR to be 1 or 2"
+            return (None, None)
+        
     def _write_det2im(self, hdulist):
         """
         Writes a Paper IV type lookup table for detector to image
@@ -449,7 +452,7 @@ naxis kwarg.
             hdulist[0].header.update('AXISCORR', 1)
             det2im = det2im1
         elif det2im1 is None and det2im2 is not None:
-            hdulist[0].header.update('AXISCORR', 0)
+            hdulist[0].header.update('AXISCORR', 2)
             det2im = det2im2
         elif det2im1 is None and det2im2 is None:
             return
