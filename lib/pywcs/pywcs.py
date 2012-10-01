@@ -460,6 +460,7 @@ naxis kwarg.
             raise ValueError("Saving both distortion images is not supported")
 
         image = pyfits.ImageHDU(det2im.data[0], name='D2IMARR')
+        image.update_ext_version(1)
         header = image.header
 
         header.update('CRPIX1', value=det2im.crpix[0], comment="Coordinate system reference pixel")
@@ -1035,7 +1036,7 @@ naxis kwarg.
         - `ValueError`: Invalid coordinate transformation parameters.
         """ % (__.TWO_OR_THREE_ARGS('pixel coordinates', '2', 8))
 
-    def to_fits(self, relax=False):
+    def to_fits(self, relax=False, wkey=None):
         """
         Generate a `pyfits.HDUList` object with all of the information
         stored in this object.  This should be logically identical to
@@ -1062,7 +1063,7 @@ naxis kwarg.
             raise ImportError(
                 "pyfits is required to generate a FITS file")
 
-        header = self.to_header(relax=relax)
+        header = self.to_header(relax=relax, wkey=wkey)
 
         hdu = pyfits.PrimaryHDU(header=header)
         hdulist = pyfits.HDUList(hdu)
@@ -1072,7 +1073,7 @@ naxis kwarg.
 
         return hdulist
 
-    def to_header(self, relax=False, wkey=" "):
+    def to_header(self, relax=False, wkey=None):
         """
         Generate a `pyfits.Header` object with the basic WCS and SIP
         information stored in this object.  This should be logically
@@ -1133,6 +1134,9 @@ naxis kwarg.
 
         Returns a `pyfits.Header` object.
         """
+        if wkey:
+            self.wcs.alt = wkey
+        
         if not HAS_PYFITS:
             raise ImportError(
                 "pyfits is required to generate a FITS header")
@@ -1154,11 +1158,8 @@ naxis kwarg.
                 else:
                     card = pyfits.Card()
                     card.fromstring(card_string)
-                if wkey.strip():
-                    ncard = pyfits.Card(keyword=card.key+wkey, value=card.value, comment=card.comment)
-                    cards.append(ncard)
-                else:
-                    cards.append(card)
+                
+                cards.append(card)
             header = pyfits.Header(cards)
         else:
             header = pyfits.Header()
