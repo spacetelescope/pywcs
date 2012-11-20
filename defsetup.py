@@ -7,6 +7,7 @@ EMAIL = "mdroe@stsci.edu"
 
 from distutils.core import setup, Extension
 from distutils.dist import Distribution
+from distutils.errors import DistutilsError
 import glob
 from os.path import join
 import os.path
