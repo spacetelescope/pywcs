@@ -246,12 +246,12 @@ class WCS(WCSBase):
                 if HAS_PYFITS and os.path.exists(header):
                     hdulist = pyfits.open(header)
                     header = hdulist[0].header
-                    header_string = repr(header.ascard)
+                    header_string = header.tostring()
                 else:
                     header_string = header
             elif HAS_PYFITS:
                 assert isinstance(header, pyfits.Header)
-                header_string = repr(header.ascard)
+                header_string = header.tostring()
             else:
                 raise TypeError(
                     "header must be a string or a pyfits.Header object")
