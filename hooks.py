@@ -3,7 +3,7 @@ from distutils.dist import Distribution
 
 def pywcs_hook(config) :
 
-    WCSVERSION = config['metadata']['version'].split('-')[1]
+    WCSVERSION = config['metadata']['stsci_wcs_version'].strip()
 
     ## write wcsconfig.h
     write_if_different( 'src/wcsconfig.h', wcsconfig_h_proto % ( WCSVERSION, determine_64_bit_int()) )
