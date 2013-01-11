@@ -83,8 +83,6 @@ if sys.version_info[0] >= 3:
 else:
     from pywcs_real import *
 
-__version__ = "1.11-4.10"
-
 def test( verbose=False ) :
     import os, sys, nose
 
@@ -103,3 +101,5 @@ def test( verbose=False ) :
         return nose.main( argv = argv )
     except SystemExit as e :
         return e.code
+
+from .version import *
