@@ -81,17 +81,14 @@ import sys
 if sys.version_info[0] >= 3:
     exec("from .pywcs import *")
 else:
-    from pywcs_real import *
+    from .core import *
 
 def test( verbose=False ) :
     import os, sys, nose
 
-    # import the test package
-    test_pkg = __name__ + '.tests'
-    exec( "import %s" % test_pkg )
-
     # find the directory where the test package lives
-    dir = os.path.dirname( sys.modules[test_pkg].__file__ )
+    from . import tests
+    dir = os.path.dirname( tests.__file__ )
 
     # get the name of the test package
     argv = [ 'nosetests', '--exe', dir ]
