@@ -81,6 +81,25 @@ import sys
 if sys.version_info[0] >= 3:
     exec("from .pywcs import *")
 else:
-    from pywcs import *
+    from pywcs_real import *
 
 __version__ = "1.11-4.10"
+
+def test( verbose=False ) :
+    import os, sys, nose
+
+    # import the test package
+    test_pkg = __name__ + '.tests'
+    exec( "import %s" % test_pkg )
+
+    # find the directory where the test package lives
+    dir = os.path.dirname( sys.modules[test_pkg].__file__ )
+
+    # get the name of the test package
+    argv = [ 'nosetests', '--exe', dir ]
+
+    # run nose
+    try :
+        return nose.main( argv = argv )
+    except SystemExit as e :
+        return e.code
