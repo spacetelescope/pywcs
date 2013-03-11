@@ -211,10 +211,10 @@ The ``CDi_ja`` linear transformation matrix.
 
 For historical compatibility, three alternate specifications of the
 linear transforations are available in wcslib.  The canonical
-``PCi_ja`` with ``CDELTia``, and the deprecated ``CDi_ja`` and
-``CROTAia`` keywords.  Although the deprecated versions may not
-formally co-exist with ``PCi_ja``, the approach here is simply to
-ignore them if given in conjunction with ``PCi_ja``.
+``PCi_ja`` with ``CDELTia``, ``CDi_ja``, and the deprecated
+``CROTAia`` keywords.  Although the latter may not formally co-exist
+with ``PCi_ja``, the approach here is simply to ignore them if given
+in conjunction with ``PCi_ja``.
 
 `~pywcs.Wcsprm.has_pc`, `~pywcs.Wcsprm.has_cd` and
 `~pywcs.Wcsprm.has_crota` can be used to determine which of these
@@ -330,10 +330,10 @@ crota = """
 
 For historical compatibility, three alternate specifications of the
 linear transforations are available in wcslib.  The canonical
-``PCi_ja`` with ``CDELTia``, and the deprecated ``CDi_ja`` and
-``CROTAia`` keywords.  Although the deprecated versions may not
-formally co-exist with ``PCi_ja``, the approach here is simply to
-ignore them if given in conjunction with ``PCi_ja``.
+``PCi_ja`` with ``CDELTia``, ``CDi_ja``, and the deprecated
+``CROTAia`` keywords.  Although the latter may not formally co-exist
+with ``PCi_ja``, the approach here is simply to ignore them if given
+in conjunction with ``PCi_ja``.
 
 `~pywcs.Wcsprm.has_pc`, `~pywcs.Wcsprm.has_cd` and
 `~pywcs.Wcsprm.has_crota` can be used to determine which of these
@@ -682,11 +682,11 @@ get_cdelt() -> double array[naxis]
 Coordinate increments (``CDELTia``) for each coord axis.
 
 Returns the ``CDELT`` offsets in read-only form.  Unlike the
-`~pywcs.Wcsprm.cdelt` property, this works even when the header specifies
-the linear transformation matrix in one of the deprecated ``CDi_ja``
-or ``CROTAia`` forms.  This is useful when you want access to the
-linear transformation matrix, but don't care how it was specified in
-the header.
+`~pywcs.Wcsprm.cdelt` property, this works even when the header
+specifies the linear transformation matrix in one of the alternative
+``CDi_ja`` or ``CROTAia`` forms.  This is useful when you want access
+to the linear transformation matrix, but don't care how it was
+specified in the header.
 """
 
 get_pc = """
@@ -694,7 +694,7 @@ get_pc() -> double array[naxis][naxis]
 
 Returns the ``PC`` matrix in read-only form.  Unlike the
 `~pywcs.Wcsprm.pc` property, this works even when the header specifies
-the linear transformation matrix in one of the deprecated ``CDi_ja``
+the linear transformation matrix in one of the alternative ``CDi_ja``
 or ``CROTAia`` forms.  This is useful when you want access to the
 linear transformation matrix, but don't care how it was specified in
 the header.
@@ -1238,10 +1238,10 @@ The ``PCi_ja`` (pixel coordinate) transformation matrix.  The order is::
 
 For historical compatibility, three alternate specifications of the
 linear transforations are available in wcslib.  The canonical
-``PCi_ja`` with ``CDELTia``, and the deprecated ``CDi_ja`` and
-``CROTAia`` keywords.  Although the deprecated versions may not
-formally co-exist with ``PCi_ja``, the approach here is simply to
-ignore them if given in conjunction with ``PCi_ja``.
+``PCi_ja`` with ``CDELTia``, ``CDi_ja``, and the deprecated
+``CROTAia`` keywords.  Although the latter may not formally co-exist
+with ``PCi_ja``, the approach here is simply to ignore them if given
+in conjunction with ``PCi_ja``.
 
 `~pywcs.Wcsprm.has_pc`, `~pywcs.Wcsprm.has_cd` and
 `~pywcs.Wcsprm.has_crota` can be used to determine which of these
