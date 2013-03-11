@@ -6,7 +6,7 @@ API documentation
 :mod:`pywcs`
 ------------
 
-.. automodule:: pywcs.pywcs
+.. automodule:: pywcs
 
 Classes
 -------
@@ -29,4 +29,3 @@ The unit tests are written for use with `nose
 and then at the commandline::
 
    nosetests pywcs.tests
-
