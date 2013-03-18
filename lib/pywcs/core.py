@@ -64,6 +64,7 @@ from __future__ import division # confidence high
 import os
 import sys
 import copy
+import warnings
 if sys.version_info[0:2] >= (2, 6):
     from io import BytesIO
 else:
@@ -390,11 +391,7 @@ naxis kwarg.
         plane correction.
         """
 
-        cpdis = [None, None]
-        crpix = [0.,0.]
-        crval = [0.,0.]
-        cdelt = [1.,1.]
-
+        
         if fobj is None:
             return (None, None)
 
@@ -404,17 +401,66 @@ naxis kwarg.
 
         if not isinstance(fobj, pyfits.HDUList):
             return (None, None)
-        
+
         try:            
             axiscorr = header['AXISCORR']
+            d2imdis = self._old_style_d2im(header, fobj, axiscorr)
+            return d2imdis
         except KeyError:
-            return (None, None)
+            pass
         
-        
-        d_error = header.get('D2IMERR', 0.0)
-        if d_error < err:
-            return (None, None)
+        dist = 'D2IMDIS'
+        d_kw = 'D2IM'
+        err_kw = 'D2IMERR'
+        tables = {}
+        for i in range(1, self.naxis+1):
+            d_error = header.get(err_kw+str(i), 0.0)
+            if d_error < err:
+                tables[i] = None
+                continue
+            distortion = dist+str(i)
+            if distortion in header:
+                dis = header[distortion].lower()
+                if dis == 'lookup':
+                    if fobj is not None and not HAS_PYFITS:
+                        raise ImportError(
+                            "pyfits is required to use Paper IV lookup tables")
 
+                    assert isinstance(fobj, pyfits.HDUList), \
+                        'A pyfits HDUList is required for Lookup table distortion.'
+                    dp = (d_kw+str(i)).strip()
+                    d_extver = header.get(dp+'.EXTVER', 1)
+                    if i == header[dp+'.AXIS.%s'%i]:
+                        d_data = fobj['D2IMARR', d_extver].data
+                    else:
+                        d_data = (fobj['D2IMARR', d_extver].data).transpose()
+                    d_header = fobj['D2IMARR', d_extver].header
+                    d_crpix = (d_header.get('CRPIX1', 0.0), d_header.get('CRPIX2', 0.0))
+                    d_crval = (d_header.get('CRVAL1', 0.0), d_header.get('CRVAL2', 0.0))
+                    d_cdelt = (d_header.get('CDELT1', 1.0), d_header.get('CDELT2', 1.0))
+                    d_lookup = DistortionLookupTable(d_data, d_crpix,
+                                                     d_crval, d_cdelt)
+                    tables[i] = d_lookup
+                else:
+                    print('Polynomial distortion is not implemented.\n')
+            else:
+                tables[i] = None
+        if not tables:
+            return (None, None)
+        else:
+            return (tables.get(1), tables.get(2))
+        
+    def _old_style_d2im(self, header, fobj, axiscorr):
+        warnings.warn("The use of ``AXISCORR`` for D2IM correction has been deprecated."
+                      "The new style of this correction is described at"
+                      ""
+                      "PyWCS will read in files with ``AXISCORR`` but to_fits() will write"
+                      "out files in the new style",
+                      DeprecationWarning)
+        cpdis = [None, None]
+        crpix = [0.,0.]
+        crval = [0.,0.]
+        cdelt = [1.,1.]
         try:
             d2im_data = fobj[('D2IMARR', 1)].data
         except KeyError:
@@ -440,37 +486,53 @@ naxis kwarg.
         else:
             print "Expected AXISCORR to be 1 or 2"
             return (None, None)
-        
+
     def _write_det2im(self, hdulist):
         """
-        Writes a Paper IV type lookup table for detector to image
-        place correction to the given `pyfits.HDUList`.
+        Write out Detector to Image Correction to the given
+        `pyfits.HDUList`.
         """
-        det2im1 = self.det2im1
-        det2im2 = self.det2im2
-        if det2im1 is not None and det2im2 is None:
-            hdulist[0].header.update('AXISCORR', 1)
-            det2im = det2im1
-        elif det2im1 is None and det2im2 is not None:
-            hdulist[0].header.update('AXISCORR', 2)
-            det2im = det2im2
-        elif det2im1 is None and det2im2 is None:
+        if self.det2im1 is None and self.det2im2 is None:
             return
-        else:
-            raise ValueError("Saving both distortion images is not supported")
+        
+        dist = 'D2IMDIS'
+        d_kw = 'D2IM'
+        err_kw = 'D2IMERR'
+            
+        def write_d2i(num, det2im):
+            if det2im is None:
+                return
 
-        image = pyfits.ImageHDU(det2im.data[0], name='D2IMARR')
-        image.update_ext_version(1)
-        header = image.header
+            hdulist[0].header.update('%s%d' % (dist, num), value='LOOKUP',
+                                     comment='Detector to image correction type')
+            hdulist[0].header.update('%s%d.EXTVER' % (d_kw, num), value=num,
+                                     comment='Version number of WCSDVARR extension')
+            hdulist[0].header.update('%s%d.NAXES' % (d_kw, num), value=len(det2im.data.shape),
+                            comment='Number of independent variables in d2im function')
+            for i in range(det2im.data.ndim):
+                hdulist[0].header.update('%s%d.AXIS.%d' % (d_kw, num, i+1), value=i+1,
+                                comment='Axis number of the jth independent variable in a d2im function')
 
-        header.update('CRPIX1', value=det2im.crpix[0], comment="Coordinate system reference pixel")
-        header.update('CRPIX2', value=det2im.crpix[1], comment="Coordinate system reference pixel")
-        header.update('CRVAL1', value=det2im.crval[0], comment="Coordinate system value at reference pixel")
-        header.update('CRVAL2', value=det2im.crval[1], comment="Coordinate system value at reference pixel")
-        header.update('CDELT1', value=det2im.cdelt[0], comment='Coordinate increment along axis')
-        header.update('CDELT2', value=det2im.cdelt[1], comment="Coordinate increment along axis")
+            image = pyfits.ImageHDU(det2im.data, name='D2IMARR')
+            header = image.header
 
-        hdulist.append(image)
+            header.update('CRPIX1', value=det2im.crpix[0],
+                                comment='Coordinate system reference pixel')
+            header.update('CRPIX2', value=det2im.crpix[1],
+                                comment='Coordinate system reference pixel')
+            header.update('CRVAL1', value=det2im.crval[0],
+                                comment='Coordinate system value at reference pixel')
+            header.update('CRVAL2', value=det2im.crval[1],
+                                comment='Coordinate system value at reference pixel')
+            header.update('CDELT1', value=det2im.cdelt[0],
+                                comment='Coordinate increment along axis')
+            header.update('CDELT2', value=det2im.cdelt[1],
+                                comment='Coordinate increment along axis')
+            image.update_ext_version(int(hdulist[0].header['%s%d.EXTVER' % (d_kw, num)]))
+            hdulist.append(image)
+
+        write_d2i(1, self.det2im1)
+        write_d2i(2, self.det2im2)
 
     def _read_distortion_kw(self, header, fobj, dist='CPDIS', err=0.0):
         """
