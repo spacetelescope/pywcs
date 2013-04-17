@@ -653,7 +653,7 @@ naxis kwarg.
             # TODO: Parse SIP from a string without pyfits around
             return None
 
-        if "A_ORDER" in header:
+        if "A_ORDER" in header and header['A_ORDER'] > 1:
             if "B_ORDER" not in header:
                 raise ValueError(
                     "A_ORDER provided without corresponding B_ORDER "
@@ -666,11 +666,15 @@ naxis kwarg.
                     a[i, j] = header.get(("A_%d_%d" % (i, j)), 0.0)
 
             m = int(header["B_ORDER"])
-            b = np.zeros((m+1, m+1), np.double)
-            for i in range(m+1):
-                for j in range(m-i+1):
-                    b[i, j] = header.get(("B_%d_%d" % (i, j)), 0.0)
-        elif "B_ORDER" in header:
+            if m > 1:
+                b = np.zeros((m+1, m+1), np.double)
+                for i in range(m+1):
+                    for j in range(m-i+1):
+                        b[i, j] = header.get(("B_%d_%d" % (i, j)), 0.0)
+            else:
+                a = None
+                b = None
+        elif "B_ORDER" in header and header['B_ORDER'] > 1:
             raise ValueError(
                 "B_ORDER provided without corresponding A_ORDER "
                 "keyword for SIP distortion")
@@ -678,7 +682,7 @@ naxis kwarg.
             a = None
             b = None
 
-        if "AP_ORDER" in header:
+        if "AP_ORDER" in header and header['AP_ORDER'] > 1:
             if "BP_ORDER" not in header:
                 raise ValueError(
                     "AP_ORDER provided without corresponding BP_ORDER "
@@ -691,11 +695,15 @@ naxis kwarg.
                     ap[i, j] = header.get("AP_%d_%d" % (i, j), 0.0)
 
             m = int(header["BP_ORDER"])
-            bp = np.zeros((m+1, m+1), np.double)
-            for i in range(m+1):
-                for j in range(m-i+1):
-                    bp[i, j] = header.get("BP_%d_%d" % (i, j), 0.0)
-        elif "BP_ORDER" in header:
+            if m > 1:
+                bp = np.zeros((m+1, m+1), np.double)
+                for i in range(m+1):
+                    for j in range(m-i+1):
+                        bp[i, j] = header.get("BP_%d_%d" % (i, j), 0.0)
+            else:
+                ap = None
+                bp = None
+        elif "BP_ORDER" in header and header['BP_ORDER'] > 1:
             raise ValueError(
                 "BP_ORDER provided without corresponding AP_ORDER "
                 "keyword for SIP distortion")
