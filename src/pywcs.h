@@ -37,6 +37,16 @@ DAMAGE.
 #ifndef __PYWCS_H__
 #define __PYWCS_H__
 
+/* 
+* This is necessary to avoid the wcsset() function that is in the 
+* Windows libraries.  We define it here so that any other module that 
+* also uses pywcs C code can also get the right behavior. 
+*/ 
+#ifdef _WIN32 
+#define __STDC__ 1 
+#endif 
+
+
 /* util.h must be imported first */
 #include "pyutil.h"
 #include "pipeline.h"
