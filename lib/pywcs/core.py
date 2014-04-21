@@ -345,7 +345,7 @@ naxis kwarg.
         return copy
     sub.__doc__ = _pywcs._Wcsprm.sub.__doc__
 
-    def calcFootprint(self, header=None, undistort=True):
+    def calcFootprint(self, header=None, undistort=True, axes=None, corner=False):
         """
         Calculates the footprint of the image on the sky.
 
@@ -353,37 +353,62 @@ naxis kwarg.
         image on the sky after all available distortions have been
         applied.
 
-        Returns a (4, 2) array of (*x*, *y*) coordinates.
-        """
-        if header is None:
-            try:
-                # classes that inherit from WCS and define naxis1/2
-                # do not require a header parameter
-                naxis1 = self.naxis1
-                naxis2 = self.naxis2
-            except AttributeError :
-                print("Need a valid header in order to calculate footprint\n")
-                return None
-        else:
-            naxis1 = header.get('NAXIS1', None)
-            naxis2 = header.get('NAXIS2', None)
+        Parameters
+        ----------
+        header : astropy.io.fits header object, optional
 
-        corners = np.zeros(shape=(4,2),dtype=np.float64)
+        undistort : bool, optional
+            If `True`, take SIP and distortion lookup table into
+            account
+
+        axes : length 2 sequence ints, optional
+            If provided, use the given sequence as the shape of the
+            image.  Otherwise, use the ``NAXIS1`` and ``NAXIS2``
+            keywords from the header that was used to create this
+            `WCS` object.
+
+        corner : boolean
+            If True use the corner of the pixel, otherwise use the center.
+
+        Returns
+        -------
+        corners : (4, 2) array of (*x*, *y*) coordinates.
+            The order is counter-clockwise starting with bottom left corner.
+        """
+        if axes is not None:
+            naxis1, naxis2 = axes
+        else:
+            if header is None:
+                try:
+                    # classes that inherit from WCS and define naxis1/2
+                    # do not require a header parameter
+                    naxis1 = self._naxis1
+                    naxis2 = self._naxis2
+                except AttributeError:
+                    warnings.warn("Need a valid header in order to calculate footprint\n", AstropyUserWarning)
+                    return None
+            else:
+                naxis1 = header.get('NAXIS1', None)
+                naxis2 = header.get('NAXIS2', None)
+
         if naxis1 is None or naxis2 is None:
             return None
 
-        corners[0,0] = 1.
-        corners[0,1] = 1.
-        corners[1,0] = 1.
-        corners[1,1] = naxis2
-        corners[2,0] = naxis1
-        corners[2,1] = naxis2
-        corners[3,0] = naxis1
-        corners[3,1] = 1.
-        if undistort:
-            return self.all_pix2sky(corners, 1)
+        if corner:
+            corners = np.array([[0.5, 0.5],
+                                [0.5, naxis1 + 0.5],
+                                [naxis1 + 0.5, naxis2 + 0.5],
+                                [naxis1 + 0.5, naxis2 + 0.5]], dtype=np.float64)
         else:
-            return self.wcs_pix2sky(corners,1)
+            corners = np.array([[1., 1],
+                                [1, naxis1],
+                                [naxis1, naxis2],
+                                [naxis1, naxis2]], dtype=np.float64)
+
+        if undistort:
+            return self.all_pix2world(corners, 1)
+        else:
+            return self.wcs_pix2world(corners, 1)
 
     def _read_det2im_kw(self, header, fobj, err=0.0):
         """
@@ -391,7 +416,6 @@ naxis kwarg.
         plane correction.
         """
 
-        
         if fobj is None:
             return (None, None)
 
@@ -401,14 +425,13 @@ naxis kwarg.
 
         if not isinstance(fobj, pyfits.HDUList):
             return (None, None)
-
-        try:            
+        try:
             axiscorr = header['AXISCORR']
             d2imdis = self._old_style_d2im(header, fobj, axiscorr)
             return d2imdis
         except KeyError:
             pass
-        
+
         dist = 'D2IMDIS'
         d_kw = 'D2IM'
         err_kw = 'D2IMERR'
@@ -449,7 +472,7 @@ naxis kwarg.
             return (None, None)
         else:
             return (tables.get(1), tables.get(2))
-        
+
     def _old_style_d2im(self, header, fobj, axiscorr):
         warnings.warn("The use of ``AXISCORR`` for D2IM correction has been deprecated."
                       "The new style of this correction is described at"
@@ -461,13 +484,14 @@ naxis kwarg.
         crpix = [0.,0.]
         crval = [0.,0.]
         cdelt = [1.,1.]
+
         try:
             d2im_data = fobj[('D2IMARR', 1)].data
         except KeyError:
             return (None, None)
         except AttributeError:
             return (None, None)
-        
+
         d2im_data = np.array([d2im_data])
         d2im_hdr = fobj[('D2IMARR', 1)].header
         naxis = d2im_hdr['NAXIS']
@@ -494,11 +518,11 @@ naxis kwarg.
         """
         if self.det2im1 is None and self.det2im2 is None:
             return
-        
+
         dist = 'D2IMDIS'
         d_kw = 'D2IM'
         err_kw = 'D2IMERR'
-            
+
         def write_d2i(num, det2im):
             if det2im is None:
                 return
@@ -1197,7 +1221,7 @@ naxis kwarg.
 
           - `int`: a bit field selecting specific extensions to write.
             See :ref:`relaxwrite` for details.
-            
+
         - *wkey*: A string.  The name of a particular WCS transform to
           use.  This may be either ``' '`` or ``'A'``-``'Z'`` and
           corresponds to the ``"a"`` part of the ``CTYPEia`` cards.
@@ -1206,7 +1230,7 @@ naxis kwarg.
         """
         if wkey:
             self.wcs.alt = wkey
-        
+
         if not HAS_PYFITS:
             raise ImportError(
                 "pyfits is required to generate a FITS header")
@@ -1228,7 +1252,7 @@ naxis kwarg.
                 else:
                     card = pyfits.Card()
                     card.fromstring(card_string)
-                
+
                 cards.append(card)
             header = pyfits.Header(cards)
         else:
