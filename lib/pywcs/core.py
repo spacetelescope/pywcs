@@ -345,7 +345,7 @@ naxis kwarg.
         return copy
     sub.__doc__ = _pywcs._Wcsprm.sub.__doc__
 
-    def calcFootprint(self, header=None, undistort=True, axes=None, corner=False):
+    def calcFootprint(self, header=None, undistort=True, axes=None, center=True):
         """
         Calculates the footprint of the image on the sky.
 
@@ -367,7 +367,7 @@ naxis kwarg.
             keywords from the header that was used to create this
             `WCS` object.
 
-        corner : boolean
+        center : boolean
             If True use the corner of the pixel, otherwise use the center.
 
         Returns
@@ -394,16 +394,16 @@ naxis kwarg.
         if naxis1 is None or naxis2 is None:
             return None
 
-        if corner:
-            corners = np.array([[0.5, 0.5],
-                                [0.5, naxis1 + 0.5],
-                                [naxis1 + 0.5, naxis2 + 0.5],
-                                [naxis1 + 0.5, naxis2 + 0.5]], dtype=np.float64)
-        else:
+        if center == True:
             corners = np.array([[1., 1],
-                                [1, naxis1],
+                                [1, naxis2],
                                 [naxis1, naxis2],
-                                [naxis1, naxis2]], dtype=np.float64)
+                                [naxis1, 1]], dtype=np.float64)
+        else:
+            corners = np.array([[0.5, 0.5],
+                                [0.5, naxis2 + 0.5],
+                                [naxis1 + 0.5, naxis2 + 0.5],
+                                [naxis1 + 0.5, 0.5]], dtype=np.float64)
 
         if undistort:
             return self.all_pix2world(corners, 1)
