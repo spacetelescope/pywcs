@@ -385,7 +385,7 @@ naxis kwarg.
                     naxis1 = self._naxis1
                     naxis2 = self._naxis2
                 except AttributeError:
-                    warnings.warn("Need a valid header in order to calculate footprint\n", AstropyUserWarning)
+                    warnings.warn("Need a valid header in order to calculate footprint\n")
                     return None
             else:
                 naxis1 = header.get('NAXIS1', None)
