@@ -406,9 +406,9 @@ naxis kwarg.
                                 [naxis1 + 0.5, 0.5]], dtype=np.float64)
 
         if undistort:
-            return self.all_pix2world(corners, 1)
+            return self.all_pix2sky(corners, 1)
         else:
-            return self.wcs_pix2world(corners, 1)
+            return self.wcs_pix2sky(corners, 1)
 
     def _read_det2im_kw(self, header, fobj, err=0.0):
         """
