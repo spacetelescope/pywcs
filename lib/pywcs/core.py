@@ -1313,11 +1313,11 @@ naxis kwarg.
         f.close()
 
     def get_naxis(self, header=None):
-        self.naxis1 = 0.0
-        self.naxis2 = 0.0
+        self._naxis1 = 0.0
+        self._naxis2 = 0.0
         if header != None and not isinstance(header, string_types):
-            self.naxis1 = header.get('NAXIS1', 0.0)
-            self.naxis2 = header.get('NAXIS2', 0.0)
+            self._naxis1 = header.get('NAXIS1', 0.0)
+            self._naxis2 = header.get('NAXIS2', 0.0)
 
     def rotateCD(self, theta):
         _theta = DEGTORAD(theta)
@@ -1337,7 +1337,7 @@ naxis kwarg.
             print('CD_21  CD_22: %r %r' % (self.wcs.cd[1,0],  self.wcs.cd[1,1]))
         print('CRVAL    : %r %r' % (self.wcs.crval[0], self.wcs.crval[1]))
         print('CRPIX    : %r %r' % (self.wcs.crpix[0], self.wcs.crpix[1]))
-        print('NAXIS    : %r %r' % (self.naxis1, self.naxis2))
+        print('NAXIS    : %r %r' % (self._naxis1, self._naxis2))
 
     def get_axis_types(self):
         """
