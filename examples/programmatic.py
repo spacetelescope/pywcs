@@ -1,7 +1,7 @@
 # Set the WCS information manually by setting properties of the WCS
 # object.
 
-from __future__ import division # confidence high
+from __future__ import division, print_function # confidence high
 
 import numpy
 import pywcs
@@ -21,7 +21,7 @@ wcs.wcs.ctype = ["RA---AIR", "DEC--AIR"]
 wcs.wcs.set_pv([(2, 1, 45.0)])
 
 # Print out the "name" of the WCS, as defined in the FITS header
-print wcs.wcs.name
+print(wcs.wcs.name)
 
 wcs.wcs.print_contents()
 
@@ -30,11 +30,11 @@ pixcrd = numpy.array([[0,0],[24,38],[45,98]], numpy.float_)
 
 # Convert pixel coordinates to world coordinates
 world = wcs.wcs_pix2sky(pixcrd, 1)
-print world
+print(world)
 
 # Convert the same coordinates back to pixel coordinates.
 pixcrd2 = wcs.wcs_sky2pix(world, 1)
-print pixcrd2
+print(pixcrd2)
 
 # These should be the same as the original pixel coordinates, modulo
 # some floating-point error.

@@ -58,7 +58,7 @@ together in a pipeline:
    - `wcslib`_ WCS transformation (by a `~pywcs.Wcsprm` object)
 """
 
-from __future__ import division # confidence high
+from __future__ import division, print_function # confidence high
 
 # stdlib
 import os
@@ -508,7 +508,7 @@ naxis kwarg.
         elif axiscorr == 2:
             return (None, cpdis)
         else:
-            print "Expected AXISCORR to be 1 or 2"
+            print("Expected AXISCORR to be 1 or 2")
             return (None, None)
 
     def _write_det2im(self, hdulist):
