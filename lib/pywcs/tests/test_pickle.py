@@ -26,7 +26,7 @@ def test_basic():
 
 def test_dist():
     try:
-        import pyfits
+        from astropy.io import fits as pyfits
     except ImportError:
         pass
 
@@ -45,7 +45,7 @@ def test_dist():
 
 def test_sip():
     try:
-        import pyfits
+        from astropy.io import fits as pyfits
     except ImportError:
         pass
 
@@ -65,7 +65,7 @@ def test_sip():
 
 def test_sip2():
     try:
-        import pyfits
+        from astropy.io import fits as pyfits
     except ImportError:
         pass
 
@@ -85,7 +85,7 @@ def test_sip2():
 
 def test_wcs():
     try:
-        import pyfits
+        from astropy.io import fits as pyfits
     except ImportError:
         pass
 

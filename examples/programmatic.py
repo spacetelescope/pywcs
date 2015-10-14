@@ -5,7 +5,7 @@ from __future__ import division, print_function # confidence high
 
 import numpy
 import pywcs
-import pyfits
+from astropy.io import fits as pyfits
 import sys
 
 # Create a new WCS object.  The number of axes must be set
