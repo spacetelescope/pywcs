@@ -1,3 +1,7 @@
+All of the functionality of Pywcs is now available in Astropy as the astropy.wcs package.
+This repository is deprecated.
+
+
 Introduction
 ------------
 
